@@ -1,0 +1,28 @@
+{
+  "//comment": "start with this cmd( npm run start:inspect and F5 to start debugging)",
+  "name": "course-created-files",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node Server.js",
+    "start-server": "node Server.js",
+    "start-nodemon": "nodemon -L Server.js",
+    "start:inspect": "nodemon --exec \"node --inspect Server.js\""
+  },
+  "author": "Khdir",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "cors": "^2.8.5",
+    "ejs": "^3.1.8",
+    "express": "^4.17.3",
+    "helmet": "^5.1.0",
+    "lodash": "^4.17.21",
+    "mysql2": "^2.3.3"
+  }
+}
