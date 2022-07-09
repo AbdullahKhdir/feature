@@ -7,8 +7,13 @@ const CartItem        = require("../../models/shop/CartItem");
 const Product         = require("../../models/shop/Product");
 const Constants       = require("../../utils/Constants");
 
-/*
-* Customer Actions 
+/**
+ * @class Shop
+ * @constructor
+ * @extends BaseController
+ * @description Class Shop is the main controller
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 module.exports = class Shop extends BaseController{
     constructor() {

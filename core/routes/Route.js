@@ -2,6 +2,14 @@
 
 const Express = require('../framework/Express');
 
+/**
+ * @class Routes
+ * @constructor
+ * @extends Express
+ * @description Class Routes is used to define the routes Object and set the configurations
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 module.exports = class Routes extends Express {
     
     constructor() {
@@ -17,10 +25,10 @@ module.exports = class Routes extends Express {
         * difference between "/route" and "/route/" 
         */
         const options = {
-            caseSensitive: false, // treating “/Foo” and “/foo” as the same.
+            caseSensitive: false, // Do not treat “/Foo” and “/foo” as the same.
             mergeParams: true,    // Preserve the req.params values from the parent router.
                                   // If the parent and the child have conflicting param names, the child’s value take precedence.
-            strict: true,         // Enable strict routing.
+            strict: false,        // Enable strict routing.
         }
         this.framework.Router(options);
         this.router     = this.framework.Router(options);

@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * @class Constants
+ * @constructor
+ * @description Class Constants is defining all the constants for the application
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 module.exports = class Constants{
     
     #constants;

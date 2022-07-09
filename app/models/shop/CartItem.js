@@ -3,6 +3,14 @@
 const BaseModel = require("../../../core/model/BaseModel");
 const Lodash = require("../../utils/Lodash");
 
+/**
+ * @class CartItem
+ * @constructor
+ * @extends BaseModel
+ * @description Defining Model CartItem
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 module.exports = class CartItem extends BaseModel{
 
     constructor() {

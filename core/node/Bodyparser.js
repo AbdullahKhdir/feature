@@ -1,5 +1,13 @@
 'use strict';
 
+
+/**
+ * @class Bodyparser
+ * @constructor
+ * @description Class Bodyparser is used to parse the sent body 
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 module.exports = class Bodyparser {
     
     constructor(body_parser = require('body-parser')) {

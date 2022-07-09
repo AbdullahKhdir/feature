@@ -10,6 +10,14 @@ const Lodash          = require('./utils/Lodash.js');
 const Helmet          = require("helmet");
 const BadRequestError = require('../core/error/types/BadRequestError.js');
 
+/**
+ * @class Application
+ * @constructor
+ * @extends BaseController
+ * @description Class Application is used to configure the application and set the main rules of the express server
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 module.exports = class Application extends BaseController {
 
     #app;

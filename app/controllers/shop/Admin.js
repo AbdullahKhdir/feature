@@ -1,11 +1,17 @@
 'use strict';
 
 const BaseController = require("../../../core/controller/BaseController");
-const Product = require("../../models/shop/Product");
-const Lodash = require("../../utils/Lodash");
+const Product        = require("../../models/shop/Product");
+const Lodash         = require("../../utils/Lodash");
+const Promise        = require("../../../core/utils/Promise");
 
-/*
-* Admin Actions 
+/**
+ * @class Admin
+ * @constructor
+ * @extends BaseController
+ * @description Class Admin is the admin controller
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 module.exports = class Admin extends BaseController {
     
@@ -49,7 +55,7 @@ module.exports = class Admin extends BaseController {
         }
     }
 
-    product           = () => this.getRouterInstance().get('/admin/add-product/', (req, res, next) => {
+    product           = () => this.getRouterInstance().get('/admin/add-product/', Promise.asyncHandler(async (req, res, next) => {
         res.render(
             'admin/add-product',
             {
@@ -57,9 +63,9 @@ module.exports = class Admin extends BaseController {
                 path : '/admin/add-product/'
             }
         );
-    });
+    }));
 
-    editProduct       = () => this.getRouterInstance().get('/admin/edit-product/:product_id/', (req, res, next) => {
+    editProduct       = () => this.getRouterInstance().get('/admin/edit-product/:product_id/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = +req.params.product_id ?? false;
         const user_id    = +req.registered_user.id;
         
@@ -88,9 +94,9 @@ module.exports = class Admin extends BaseController {
         } else {
             return res.redirect('/');
         }
-    });
+    }));
 
-    postEditedProduct = () => this.getRouterInstance().post('/admin/edit-product/', (req, res, next) => {
+    postEditedProduct = () => this.getRouterInstance().post('/admin/edit-product/', Promise.asyncHandler(async  (req, res, next) => {
             const product_id = +req.body.product_id ?? false;
             const title = this._.capitalize(req.body.title) ?? false;
             const price = req.body.price ?? false;
@@ -113,9 +119,9 @@ module.exports = class Admin extends BaseController {
                     throw err;
                 });
             }
-    });
+    }));
 
-    addProduct        = () => this.getRouterInstance().post('/admin/add-product/', (req, res, next) => {
+    addProduct        = () => this.getRouterInstance().post('/admin/add-product/', Promise.asyncHandler(async (req, res, next) => {
             const title       = this._.capitalize(req.body.title);
             const imageUrl    = req.body.imageUrl;
             const description = this._.capitalize(req.body.description);
@@ -131,9 +137,9 @@ module.exports = class Admin extends BaseController {
             }).catch((err) => {
                 throw err;
             });
-    });
+    }));
 
-    deleteProduct     = () => this.getRouterInstance().post('/admin/delete-product/', (req, res, next) => {
+    deleteProduct     = () => this.getRouterInstance().post('/admin/delete-product/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = req.body.product_id ?? false;
         const user_id = +req.registered_user.id ?? false;
         
@@ -151,9 +157,9 @@ module.exports = class Admin extends BaseController {
                 })
                 .catch(err => console.log(err));
         }
-    });
+    }));
 
-    products          = () => this.getRouterInstance().get('/admin/products/', this.cors(this.#corsOptionsDelegate), (req, res, next) => {
+    products          = () => this.getRouterInstance().get('/admin/products/', this.cors(this.#corsOptionsDelegate), Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.registered_user.getProducts();
         user_products
             .then(rows => {
@@ -167,5 +173,5 @@ module.exports = class Admin extends BaseController {
                     }
                 );
             });
-    });
+    }));
 }

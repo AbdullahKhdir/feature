@@ -1,9 +1,6 @@
 'use strict';
 
-const Db = require('../database/node/Db');
-const is_number = require('../../app/utils/RegEx');
 const Lodash = require('../../app/utils/Lodash');
-const { query } = require('express');
 const QueryBuilder = require('./QueryBuilder');
 
 /**

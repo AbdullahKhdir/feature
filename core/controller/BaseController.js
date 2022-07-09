@@ -7,6 +7,16 @@ const Lodash      = require("../../app/utils/Lodash");
 const Application = require("../../app/Application");
 const Constants   = require("../../app/utils/Constants");
 
+/**
+ * @class BaseController
+ * @constructor
+ * @extends Routes
+ * @description 
+ * Class BaseController is used to define the controllers 
+ * and deploy all the defined routes in the controller's folder
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 module.exports = class BaseController extends Routes {
     constructor() {
         super();
@@ -143,9 +153,8 @@ module.exports = class BaseController extends Routes {
                 }      
 
                 if (predefined_direction_from_route.includes(':')) {
-                    const _predefined_direction_from_route = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
-                    const _predefined_direction_from_route_length = _predefined_direction_from_route.length;
-                    const _requested_path_in_browser = requested_path_in_browser.substr(0, _predefined_direction_from_route_length);
+                    const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
+                    const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
                     if (_predefined_direction_from_route === _requested_path_in_browser) {
                         site_is_found = true;
                     }
@@ -198,17 +207,14 @@ module.exports = class BaseController extends Routes {
                     requested_path_in_browser       = this._.trimEnd(requested_path_in_browser, '/');
                     predefined_direction_from_route = this._.trimEnd(predefined_direction_from_route, '/');
                 }
-
                 
                 if (predefined_direction_from_route.includes(':')) {
-                    const _predefined_direction_from_route = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
-                    const _predefined_direction_from_route_length = _predefined_direction_from_route.length;
-                    const _requested_path_in_browser = requested_path_in_browser.substr(0, _predefined_direction_from_route_length);
+                    const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
+                    const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
                     if (_predefined_direction_from_route === _requested_path_in_browser) {
                         is_post_request_successful = true;
                     }
                 }
-                
                 
                 if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
                     is_post_request_successful = true;

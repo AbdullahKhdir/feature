@@ -1,7 +1,7 @@
 'use strict';
 
 const Lodash = require("../../app/utils/Lodash");
-const Db = require("../database/node/Db");
+const Db = require("../database/Db");
 const FileSystem = require("../node/FileSystem");
 const Path = require("../node/Path");
 

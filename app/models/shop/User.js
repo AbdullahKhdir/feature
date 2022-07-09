@@ -3,6 +3,14 @@
 const BaseModel = require("../../../core/model/BaseModel");
 const Lodash = require("../../utils/Lodash");
 
+/**
+ * @class User
+ * @constructor
+ * @extends BaseModel
+ * @description Defining Model User
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 module.exports = class User extends BaseModel {
     constructor() {
         super();

@@ -2,6 +2,14 @@
 
 const Application = require('./app/Application');
 
+/**
+ * @class Server
+ * @constructor
+ * @extends Application
+ * @description Class Server is used to initiate the whole application and open a socket to serve the application
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 class Server extends Application{
     
     constructor() {

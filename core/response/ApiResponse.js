@@ -2,6 +2,13 @@
 
 const Constants = require("../../app/utils/Constants");
 
+/**
+ * @class ApiResponse
+ * @constructor
+ * @description Class ApiResponse is used to define the Response Objects 
+ * @version 1.0.0
+ * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+*/
 module.exports = class ApiResponse {
 
     #status_code;
