@@ -12,6 +12,12 @@
                 "cwd": "${workspaceFolder}/core/database/migrations/shell"
             },
             "problemMatcher": []
+        },
+        {
+            "label": "Sass Compile",
+            "type": "shell",
+            "command": "npx sass --update -c --verbose app/public/sass:app/public/css",
+            "group": "build"
         }
     ]
 }

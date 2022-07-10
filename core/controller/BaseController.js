@@ -131,11 +131,9 @@ module.exports = class BaseController extends Routes {
                 }
             });
             
-            if (req.path === '/') {
-                res.redirect('/shop/');
-                res.end();
-                return;
-            }
+            // if (req.path === '/') {
+            //     res.redirect('/shop/');
+            // }
 
             routes.forEach(route => {
                 let check_path = req.path.toString().slice(1, req.path.toString().length);

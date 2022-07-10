@@ -1,7 +1,7 @@
 'use strict';
 
 const FileSystem = require('../node/FileSystem');
-const Path = require('../node/Path');
+const Path       = require('../node/Path');
 
 /**
  * @class Db

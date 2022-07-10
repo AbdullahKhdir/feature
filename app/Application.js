@@ -132,18 +132,29 @@ module.exports = class Application extends BaseController {
             user_model.get({name: 'Abdullah'})
             .then(rows => {
                 if (!this._.isEmpty(rows)) {
-                    req.registered_user = rows[0];
-                    req.registered_user.getCart = function () {
-                        let Cart = require('../app/models/shop/Cart');
-                        let cart_model = new Cart();
-                        return cart_model.filter({user_id: req.registered_user.id});
-                    };
-                    req.registered_user.getProducts = function () {
-                        let Product = require('../app/models/shop/Product');
-                        let product_model = new Product();
-                        return product_model.filter({user_id: req.registered_user.id});
+                    if (typeof rows[0] !== 'undefined') {
+                        rows[0] = Object.assign(
+                            rows[0],
+                            {
+                                getCart: () => {
+                                    let Cart = require('../app/models/shop/Cart');
+                                    let cart_model = new Cart();
+                                    return cart_model.filter({user_id: rows[0].id});    
+                                },
+                                getProducts: () => {
+                                    let Product = require('../app/models/shop/Product');
+                                    let product_model = new Product();
+                                    return product_model.filter({user_id: rows[0].id});
+                                }
+                            }
+                        );
+                        let add_to_request_on_send = {
+                            registered_user: rows[0]
+                        };
+                        req = Object.assign(req, add_to_request_on_send);
+                        req.registered_user = rows[0];
+                        next();
                     }
-                    next();
                 } else {
                     throw new BadRequestError('User not registered');
                 }

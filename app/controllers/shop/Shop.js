@@ -67,7 +67,7 @@ module.exports = class Shop extends BaseController{
             });
     }));
 
-    index              = () => this.getRouterInstance().get('/shop/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next) => {
+    index              = () => this.getRouterInstance().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.registered_user.getProducts();
         user_products
             .then((rows) => {
@@ -92,33 +92,45 @@ module.exports = class Shop extends BaseController{
         }
         user_cart
         .then(rows => {
-            rows['getProducts']
-            .then(users_cart => {
-                users_cart['getProducts'].then(cart_products => {
-                    if (cart_products.length > 0) {
-                        if (!this._.isEmpty(cart_products)) {
-                            this.product.filter({id: cart_products[0].product_id})
-                            .then((rows) => {
-                                cart_products[0]['title']      = rows[0].title;
-                                cart_products[0]['product_id'] = rows[0].id;
-                                return this.render(
-                                    res,
-                                    'shop/cart',
-                                    {
-                                        page_title: 'My Cart',
-                                        path : '/cart/',
-                                        products: cart_products,
-                                        lodash: this._                                            
+            if (rows['getProducts']) {
+                rows['getProducts']
+                .then(users_cart => {
+                    users_cart['getProducts'].then(cart_products => {
+                        if (cart_products.length > 0) {
+                            if (!this._.isEmpty(cart_products)) {
+                                let where_clause;
+                                cart_products.forEach((cart_product, index) => {
+                                    if (index > 0) {
+                                        where_clause = where_clause + ' or id = '+ cart_products[index].product_id;
+                                    } else {
+                                        where_clause = 'id = '+ cart_products[index].product_id;
                                     }
-                                );
-                            })
-                            .catch(err => console.log(err));
+                                });
+                                this.product.filter(where_clause)
+                                .then((rows) => {
+                                    cart_products.forEach((cart_product, index) => {
+                                        cart_products[index]['title']      = rows[index].title;
+                                        cart_products[index]['product_id'] = rows[index].id;
+                                    });
+                                    return this.render(
+                                        res,
+                                        'shop/cart',
+                                        {
+                                            page_title: 'My Cart',
+                                            path : '/cart/',
+                                            products: cart_products,
+                                            lodash: this._                                            
+                                        }
+                                    );
+                                })
+                                .catch(err => console.log(err));
+                            }
+                        } else {
+                            res.redirect(this.constants.getConstants().HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/');
                         }
-                    } else {
-                        res.redirect(this.constants.getConstants().HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/');
-                    }
+                    });
                 });
-            }); 
+            }
         })
         .catch(err => console.log(err));
     }));

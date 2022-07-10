@@ -1,7 +1,7 @@
 'use strict';
 
 const Constants = require("../../../app/utils/Constants");
-const ApiError = require("../ApiError");
+const ApiError  = require("../ApiError");
 
 module.exports = class SiteNotFound extends ApiError {
     constructor(message = 'Site Not Found') {

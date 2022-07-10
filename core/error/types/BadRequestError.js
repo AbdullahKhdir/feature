@@ -1,7 +1,7 @@
 'use strict';
 
 const Constants = require("../../../app/utils/Constants");
-const ApiError = require("../ApiError");
+const ApiError  = require("../ApiError");
 
 module.exports = class BadRequestError extends ApiError {
     constructor(message = 'Bad Request') {

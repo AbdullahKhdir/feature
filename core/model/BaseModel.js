@@ -1,6 +1,6 @@
 'use strict';
 
-const Lodash = require('../../app/utils/Lodash');
+const Lodash       = require('../../app/utils/Lodash');
 const QueryBuilder = require('./QueryBuilder');
 
 /**

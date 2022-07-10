@@ -7,15 +7,14 @@
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class Constants{
+module.exports = class Constants {
     
     #constants;
     constructor(constants = []){
         constants = {
             ROUTES: {
                 ADMIN: '/admin',
-                HOME: '/home',
-                SHOP: '/shop',
+                SHOP: '/',
                 DEFAULT: '/'
             },
             PORTS: {
