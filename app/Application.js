@@ -101,9 +101,8 @@ module.exports = class Application extends BaseController {
         /*
         * Parse JSON-BODY or ANY DATA TYPE Requests
         */
-        app.use(this.body_parser.json());
-        app.use(this.body_parser.urlencoded({extended: true}));
-        
+       app.use(this.body_parser.json());
+       app.use(this.body_parser.urlencoded({extended: true}));        
 
         /*
         * Middleware To Set Static Public Folder
@@ -126,7 +125,22 @@ module.exports = class Application extends BaseController {
         /*
         * Middleware To Always Get The First User
         */
-       app.use((req, res, next) => {
+        // let interval = null;
+        app.use((req, res, next) => {
+            res.setTimeout(5000, () => {
+                // clearInterval(interval);
+                console.log('Request has timed out.');
+                res.status(500).send('Response Processing Timed Out.');
+            });
+            // console.log('Got request.');
+            // var now = Date.now();
+            // interval = setInterval(() => {
+            //     console.log('Still Waiting: ', (Date.now() - now) / 1000);
+            // }, 1000);
+            next();
+        });
+
+        app.use((req, res, next) => {
             const User = require('./models/shop/User');
             let user_model = new User();
             user_model.get({name: 'Abdullah'})
@@ -162,7 +176,7 @@ module.exports = class Application extends BaseController {
                 }
             })
             .catch(err => console.log(err));
-       });
+        });
         
         /*
         * Routes 
