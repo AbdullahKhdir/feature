@@ -153,7 +153,9 @@ module.exports = class Application extends BaseController {
                         };
                         req = Object.assign(req, add_to_request_on_send);
                         req.registered_user = rows[0];
-                        next();
+                        if (!res.headersSent) {
+                            next();
+                        }
                     }
                 } else {
                     throw new BadRequestError('User not registered');

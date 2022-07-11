@@ -3,7 +3,9 @@
 const BaseController  = require("../../../core/controller/BaseController");
 const Promise         = require("../../../core/utils/Promise");
 const Cart            = require("../../models/shop/Cart");
+const Order           = require("../../models/shop/Order");
 const CartItem        = require("../../models/shop/CartItem");
+const OrderItem       = require("../../models/shop/OrderItem");
 const Product         = require("../../models/shop/Product");
 const Constants       = require("../../utils/Constants");
 
@@ -27,15 +29,18 @@ module.exports = class Shop extends BaseController{
             'cart',
             'checkout',
             'orders',
+            'postOrders',
             'postCart',
             'deleteCartProducts',
             'deleteCartProduct',
             'dynProductInfo'
         ];
-        this.product           = new Product();
-        this.cart_object       = new Cart();
-        this.cart_items_object = new CartItem();
-        this.constants         = Object.assign(new Constants);
+        this.product            = new Product();
+        this.cart_object        = new Cart();
+        this.order_object       = new Order();
+        this.cart_items_object  = new CartItem();
+        this.order_items_object = new OrderItem();
+        this.constants          = Object.assign(new Constants);
 
         /*
          ? DEMO OF THE CORS CONFIGURATIONS 
@@ -222,6 +227,110 @@ module.exports = class Shop extends BaseController{
         );
     }));
 
+    postOrders         = () => this.getRouterInstance().post('/create-order/', Promise.asyncHandler(async (req, res, next) => {
+        const user_id    = req.registered_user.id;
+        
+        req.registered_user.getCart().then(cart => {
+            if (cart) {
+                if (cart['getProducts']) {
+                    return cart['getProducts'].then(product => {
+                        if (product) {
+                            if (product.getProducts) {
+                                return product.getProducts.then(item => {
+                                    if (item) {
+                                        return item;
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            }
+        })
+        .then(products => {
+            if (products) {
+                this.order_object.get({user_id: user_id}).then((rows) => {
+                    if (!this._.isEmpty(rows)) {
+                        const order_id = rows[0].id;
+                        products.forEach(product => {
+                            if (product) {
+                                this.order_items_object.filter({order_id: order_id, product_id: product.product_id}).then((order_items_rows) => {
+                                    if (typeof order_items_rows === 'undefined') {
+                                        const order_item_params = {
+                                            order_id: +order_id,
+                                            product_id: +product.product_id,
+                                            quantity: product.quantity
+                                        };
+                                        this.order_items_object.create(order_item_params).then((order_item_element) => {
+                                            if (order_item_element) {
+                                                if (!res.headersSent) {
+                                                    res.redirect('/orders/');
+                                                }
+                                            }
+                                        });
+                                    } else if (typeof order_items_rows !== 'undefined') {
+                                        order_items_rows.forEach(order_items_row => {
+                                            this.order_items_object.filter({id: order_items_row.id}).then(item => {
+                                                let order_item_id = item[0].id;
+                                                let order_item_params = {
+                                                    order_id: +order_id,
+                                                    product_id: +product.product_id,
+                                                    quantity: product.quantity
+                                                };
+                                                this.order_items_object.update(order_item_params, order_item_id).then((order_item_element) => {
+                                                    if (order_item_element) {
+                                                        if (!res.headersSent) {
+                                                            res.redirect('/orders/');
+                                                        }
+                                                    }
+                                                });
+                                            });
+                                        });
+                                    }
+                                });   
+                            }
+                        });
+                    } else {
+                        const order_params = {
+                            user_id: user_id
+                        };
+        
+                        this.order_object.create(order_params)
+                        .then(order_element => {
+                            const id = order_element[0].insertId;
+                            if (id) {
+                                products.forEach(product => {
+                                    if (product) {
+                                        this.order_items_object.filter({order_id: id, product_id: product.product_id}).then((order_items_rows) => {
+                                            if (typeof order_items_rows === 'undefined') {
+                                                const order_item_params = {
+                                                    order_id:   +id,
+                                                    product_id: +product.product_id,
+                                                    quantity:   product.quantity
+                                                };
+                                                this.order_items_object.create(order_item_params).then((order_item_element) => {
+                                                    if (order_item_element) {
+                                                        if (!res.headersSent) {
+                                                            res.redirect('/orders/');
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                            if (!res.headersSent) {
+                                                res.redirect('/orders/');
+                                            }
+                                        });  
+                                    }
+                                });
+                            }
+                        })
+                        .catch((err) => { throw err});
+                    }
+                });
+            }
+        });
+    }));
+
     dynProductInfo     = () => this.getRouterInstance().get('/products/:productId/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = +req.params.productId ?? false;
         const user_id = +req.registered_user.id ?? false;
@@ -253,7 +362,18 @@ module.exports = class Shop extends BaseController{
                     this.cart_items_object.delete({product_id: cart_item_product_id})
                         .then((result) => {
                             if (result[0].affectedRows > 0) {
-                                res.redirect('/cart/');
+                                this.order_items_object.filter({product_id: cart_item_product_id}).then(item => {
+                                    if (typeof item !== 'undefined') {
+                                        this.order_items_object.delete({product_id: cart_item_product_id})
+                                        .then(_result => {
+                                            if (_result[0].affectedRows > 0) {
+                                                res.redirect('/cart/');             
+                                            }
+                                        });
+                                    } else {
+                                        res.redirect('/cart/');
+                                    }
+                                });
                             }
                         })
                         .catch(err => console.log(err));

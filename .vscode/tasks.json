@@ -18,6 +18,12 @@
             "type": "shell",
             "command": "npx sass --update -c --verbose app/public/sass:app/public/css",
             "group": "build"
+        },
+        {
+            "label": "Read Migrations",
+            "type": "shell",
+            "command": "node core/database/migrations/execute_migrations/ExecuteSQL.js",
+            "group": "build"
         }
     ]
 }

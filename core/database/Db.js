@@ -62,8 +62,7 @@ module.exports = class Db {
     readMigrations() {
         let _path        = Object.assign(new Path().path);
         let _file_system = Object.assign(new FileSystem().fs);
-        let directory_routes = _path.join(__dirname, '..', '..', 'database', 'migrations', 'sql');
-        let methods_array = null;
+        let directory_routes = _path.join(__dirname, '..', '..', 'core', 'database', 'migrations', 'sql');
         _file_system.readdir(directory_routes, { withFileTypes: true }, (err, files) => {
             if (err) {
                 return console.log('Unable to scan directory: ' + err);
@@ -71,13 +70,7 @@ module.exports = class Db {
             files.forEach((file) => {
                 let is_file = file.isFile(); 
                 if (is_file) {
-                    const sql_migration_path = _path.join(
-                        _path.dirname(__dirname, '..', 'core'),
-                        'migrations',
-                        'sql',
-                        file.name
-                    );
-                    
+                    const sql_migration_path = directory_routes + '/' + file.name;                    
                     let sql_content = _file_system.readFileSync(sql_migration_path).toString();
                     console.log('\u001b[' + 36 + 'm' + 'Reading SQL-FIle ' + file.name + '\u001b[0m');
                     let query = this.mysql.execute(sql_content)
