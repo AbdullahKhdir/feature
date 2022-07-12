@@ -30,8 +30,8 @@
 - 📫 How to reach me **Abdullahkhder77@gmail.com**
 
 - 📄 Know about my experiences <br>
-  English: [https://abdullahkhdir.github.io/cv/](CV) <br>
-  Deutsch: [https://abdullahkhdir.github.io/lebenslauf/](Lebenslauf) <br>
+  English: <a href="https://abdullahkhdir.github.io/cv/" target="blank">CV</a> <br>
+  Deutsch: <a href="https://abdullahkhdir.github.io/lebenslauf/" target="blank">Lebenslauf</a> <br>
 
 - ⚡ Fun fact <br> 
   **https://abdullahkhdir.github.io/Web-Bootcamp-using-Node.js**
