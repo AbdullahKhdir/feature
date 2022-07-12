@@ -29,11 +29,12 @@
 
 - 📫 How to reach me **Abdullahkhder77@gmail.com**
 
-- 📄 Know about my experiences 
-  English: [https://abdullahkhdir.github.io/cv/](CV)
-  Deutsch: [https://abdullahkhdir.github.io/lebenslauf/](Lebenslauf)
+- 📄 Know about my experiences <br>
+  English: [https://abdullahkhdir.github.io/cv/](CV) <br>
+  Deutsch: [https://abdullahkhdir.github.io/lebenslauf/](Lebenslauf) <br>
 
-- ⚡ Fun fact **https://abdullahkhdir.github.io/Web-Bootcamp-using-Node.js/?fbclid=IwAR0vPSMEk0V6l5-eWJ2VUYqNPAgvPsrRIMIuPLM2vqxncXWjldfTW5mtWu8**
+- ⚡ Fun fact <br> 
+  **https://abdullahkhdir.github.io/Web-Bootcamp-using-Node.js**
 
 <h3 align="left">Connect with me:</h3>
 <p align="left">
