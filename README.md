@@ -29,7 +29,9 @@
 
 - 📫 How to reach me **Abdullahkhder77@gmail.com**
 
-- 📄 Know about my experiences [https://resumee-detusch.herokuapp.com/?fbclid=IwAR3TMlM63kd7KSYXvXvKBvU-Cb2At3P2Fkh9JpM2WWhrS2Z0ulTIcLy1HLM](https://resumee-detusch.herokuapp.com/?fbclid=IwAR3TMlM63kd7KSYXvXvKBvU-Cb2At3P2Fkh9JpM2WWhrS2Z0ulTIcLy1HLM)
+- 📄 Know about my experiences 
+  English: [https://abdullahkhdir.github.io/cv/](CV)
+  Deutsch: [https://abdullahkhdir.github.io/lebenslauf/](Lebenslauf)
 
 - ⚡ Fun fact **https://abdullahkhdir.github.io/Web-Bootcamp-using-Node.js/?fbclid=IwAR0vPSMEk0V6l5-eWJ2VUYqNPAgvPsrRIMIuPLM2vqxncXWjldfTW5mtWu8**
 
