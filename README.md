@@ -33,9 +33,8 @@
   English: <a href="https://abdullahkhdir.github.io/cv/" target="blank">CV</a> <br>
   Deutsch: <a href="https://abdullahkhdir.github.io/lebenslauf/" target="blank">Lebenslauf</a> <br>
 
-- ⚡ Fun fact <br> 
-  **https://abdullahkhdir.github.io/Web-Bootcamp-using-Node.js**
-
+- ⚡ Fun fact <a href="https://abdullahkhdir.github.io/Web-Bootcamp-using-Node.js" target="blank">Web</a>
+  
 <h3 align="left">Connect with me:</h3>
 <p align="left">
 <a href="https://fb.com/https://www.facebook.com/abdullah.khoudeer/" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/facebook.svg" alt="https://www.facebook.com/abdullah.khoudeer/" height="30" width="40" /></a>
