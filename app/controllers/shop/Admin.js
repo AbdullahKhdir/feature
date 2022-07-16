@@ -67,7 +67,7 @@ module.exports = class Admin extends BaseController {
 
     editProduct       = () => this.getRouterInstance().get('/admin/edit-product/:product_id/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = +req.params.product_id ?? false;
-        const user_id    = +req.registered_user.id;
+        const user_id    = +req.session.currentUser.id;
         
         if (this._.isNumber(user_id) && this._.isNumber(product_id)) {
             this.product_object.filter({id: product_id, user_id: user_id})
@@ -126,7 +126,7 @@ module.exports = class Admin extends BaseController {
             const imageUrl    = req.body.imageUrl;
             const description = this._.capitalize(req.body.description);
             const price       = req.body.price;
-            const user_id     = req.registered_user.id;
+            const user_id     = req.session.currentUser.id;
 
             this.product_object.create({title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id}).then((results) => {
                 const primary_key = results[0].insertId
@@ -141,7 +141,7 @@ module.exports = class Admin extends BaseController {
 
     deleteProduct     = () => this.getRouterInstance().post('/admin/delete-product/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = req.body.product_id ?? false;
-        const user_id = +req.registered_user.id ?? false;
+        const user_id = +req.session.currentUser.id ?? false;
         
         if (product_id && user_id) {
             this.product_object.get({id: product_id, user_id: user_id})
@@ -160,7 +160,7 @@ module.exports = class Admin extends BaseController {
     }));
 
     products          = () => this.getRouterInstance().get('/admin/products/', this.cors(this.#corsOptionsDelegate), Promise.asyncHandler(async (req, res, next) => {
-        const user_products = req.registered_user.getProducts();
+        const user_products = req.session.currentUser.getProducts();
         user_products
             .then(rows => {
                 res.render(

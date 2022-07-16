@@ -46,7 +46,7 @@ module.exports = class Shop extends BaseController{
          ? DEMO OF THE CORS CONFIGURATIONS 
          */
         this.corsOptions = {
-            origin:               'http://localhost:9009.com',
+            origin:               'http://localhost:8010.com',
             methods:              ['GET'],
             preflightContinue:    false,
             maxAge:               86400,
@@ -56,7 +56,7 @@ module.exports = class Shop extends BaseController{
     }
 
     products           = () => this.getRouterInstance().get('/products/', Promise.asyncHandler(async (req, res, next) => {
-        const user_products = req.registered_user.getProducts();
+        const user_products = req.session.currentUser.getProducts();
         user_products
             .then(rows => {
                 return this.render(
@@ -73,7 +73,7 @@ module.exports = class Shop extends BaseController{
     }));
 
     index              = () => this.getRouterInstance().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next) => {
-        const user_products = req.registered_user.getProducts();
+        const user_products = req.session.currentUser.getProducts();
         user_products
             .then((rows) => {
                 return this.render(
@@ -91,7 +91,7 @@ module.exports = class Shop extends BaseController{
     }));
 
     cart               = () => this.getRouterInstance().get('/cart/', Promise.asyncHandler(async (req, res, next) => {
-        const user_cart = req.registered_user.getCart();
+        const user_cart = req.session.currentUser.getCart();
         if (!user_cart) {
             throw new Error('User is not availabel');
         }
@@ -99,41 +99,40 @@ module.exports = class Shop extends BaseController{
         .then(rows => {
             if (rows['getProducts']) {
                 rows['getProducts']
-                .then(users_cart => {
-                    users_cart['getProducts'].then(cart_products => {
-                        if (cart_products.length > 0) {
-                            if (!this._.isEmpty(cart_products)) {
-                                let where_clause;
+                .then(cart_products => {
+                    if (cart_products['getProducts'].length > 0) {
+                        cart_products = cart_products['getProducts'];
+                        if (!this._.isEmpty(cart_products)) {
+                            let where_clause;
+                            cart_products.forEach((cart_product, index) => {
+                                if (index > 0) {
+                                    where_clause = where_clause + ' or id = '+ cart_products[index].product_id;
+                                } else {
+                                    where_clause = 'id = '+ cart_products[index].product_id;
+                                }
+                            });
+                            this.product.filter(where_clause)
+                            .then((rows) => {
                                 cart_products.forEach((cart_product, index) => {
-                                    if (index > 0) {
-                                        where_clause = where_clause + ' or id = '+ cart_products[index].product_id;
-                                    } else {
-                                        where_clause = 'id = '+ cart_products[index].product_id;
-                                    }
+                                    cart_products[index]['title']      = rows[index].title;
+                                    cart_products[index]['product_id'] = rows[index].id;
                                 });
-                                this.product.filter(where_clause)
-                                .then((rows) => {
-                                    cart_products.forEach((cart_product, index) => {
-                                        cart_products[index]['title']      = rows[index].title;
-                                        cart_products[index]['product_id'] = rows[index].id;
-                                    });
-                                    return this.render(
-                                        res,
-                                        'shop/cart',
-                                        {
-                                            page_title: 'My Cart',
-                                            path : '/cart/',
-                                            products: cart_products,
-                                            lodash: this._                                            
-                                        }
-                                    );
-                                })
-                                .catch(err => console.log(err));
-                            }
-                        } else {
-                            res.redirect(this.constants.getConstants().HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/');
+                                return this.render(
+                                    res,
+                                    'shop/cart',
+                                    {
+                                        page_title: 'My Cart',
+                                        path : '/cart/',
+                                        products: cart_products,
+                                        lodash: this._                                            
+                                    }
+                                );
+                            })
+                            .catch(err => console.log(err));
                         }
-                    });
+                    } else {
+                        res.redirect(this.constants.getConstants().HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/');
+                    }
                 });
             }
         })
@@ -142,7 +141,7 @@ module.exports = class Shop extends BaseController{
 
     postCart           = () => this.getRouterInstance().post('/cart/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = req.body.product_id ?? '';
-        const user_id    = req.registered_user.id;
+        const user_id    = req.session.currentUser.id;
 
         this.cart_object.get({user_id: user_id}).then((rows) => {
             if (!this._.isEmpty(rows)) {
@@ -228,20 +227,14 @@ module.exports = class Shop extends BaseController{
     }));
 
     postOrders         = () => this.getRouterInstance().post('/create-order/', Promise.asyncHandler(async (req, res, next) => {
-        const user_id    = req.registered_user.id;
+        const user_id    = req.session.currentUser.id;
         
-        req.registered_user.getCart().then(cart => {
+        req.session.currentUser.getCart().then(cart => {
             if (cart) {
                 if (cart['getProducts']) {
                     return cart['getProducts'].then(product => {
                         if (product) {
-                            if (product.getProducts) {
-                                return product.getProducts.then(item => {
-                                    if (item) {
-                                        return item;
-                                    }
-                                });
-                            }
+                            return product.getProducts;
                         }
                     });
                 }
@@ -252,7 +245,7 @@ module.exports = class Shop extends BaseController{
                 this.order_object.get({user_id: user_id}).then((rows) => {
                     if (!this._.isEmpty(rows)) {
                         const order_id = rows[0].id;
-                        products.forEach(product => {
+                        products.forEach(product => {                
                             if (product) {
                                 this.order_items_object.filter({order_id: order_id, product_id: product.product_id}).then((order_items_rows) => {
                                     if (typeof order_items_rows === 'undefined') {
@@ -333,7 +326,7 @@ module.exports = class Shop extends BaseController{
 
     dynProductInfo     = () => this.getRouterInstance().get('/products/:productId/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = +req.params.productId ?? false;
-        const user_id = +req.registered_user.id ?? false;
+        const user_id = +req.session.currentUser.id ?? false;
         
         this.product.get({id: product_id, user_id: user_id}).then(rows => {
             if (rows) {

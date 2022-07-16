@@ -24,7 +24,7 @@ class Server extends Application{
     }
 
     port() {
-        return this.constants.getConstants().PORTS.SERVER_PORT;
+        return this.constants.PORTS.SERVER_PORT;
     }
 
     static init() {

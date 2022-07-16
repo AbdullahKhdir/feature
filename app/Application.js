@@ -30,9 +30,10 @@ module.exports = class Application extends BaseController {
         
         this.body_parser    = new Bodyparser().body_parse;
         this.path           = new Path().path;
-        this.constants      = Object.assign(new Constants());
+        this.constants      = Object.assign(new Constants().getConstants());
         this.sub_controller = this;
-        this._              = new Lodash()._; 
+        this._              = new Lodash()._;
+        this.session        = this.express_session;
 
         /*
         * Init The Application
@@ -40,7 +41,7 @@ module.exports = class Application extends BaseController {
         app = this.express();
         
         /*
-        * Sets the follwing policies
+        * Sets the following policies
           ! contentSecurityPolicy
           ! crossOriginEmbedderPolicy
           ! crossOriginOpenerPolicy
@@ -125,57 +126,67 @@ module.exports = class Application extends BaseController {
         /*
         * Middleware To Always Get The First User
         */
-        // let interval = null;
+
+        app.use(this.session({
+            key: 'session_cookie_name',
+            secret: 'session_cookie_secret',
+            store: this.db_session,
+            resave: false,
+            saveUninitialized: true,
+            cookie: {
+                _expires: new Date(Date.now() + this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT),
+                maxAge: this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
+                secure: false,
+                //secure: true,
+                //httpOnly: true,
+            }
+        }));
+
         app.use((req, res, next) => {
-            res.setTimeout(5000, () => {
-                // clearInterval(interval);
-                console.log('Request has timed out.');
-                res.status(500).send('Response Processing Timed Out.');
-            });
-            // console.log('Got request.');
-            // var now = Date.now();
-            // interval = setInterval(() => {
-            //     console.log('Still Waiting: ', (Date.now() - now) / 1000);
-            // }, 1000);
-            next();
+            if (this._.isEmpty(req.session.currentUser) || typeof req.session.currentUser === 'undefined') {
+                req.session.currentUser = {}
+                const User = require('./models/shop/User');
+                let user_model = new User();
+                user_model.get({name: 'Abdullah'})
+                .then(rows => {
+                    if (!this._.isEmpty(rows)) {
+                        if (typeof rows[0] !== 'undefined') {
+                            req.session.currentUser = rows[0];
+                            if (!res.headersSent) {
+                                next();
+                            }
+                        }
+                    } else {
+                        throw new BadRequestError('User not registered');
+                    }
+                })
+                .catch(err => console.log(err));
+            } else {
+                if (!res.headersSent) {
+                    next();
+                }
+            }
         });
 
         app.use((req, res, next) => {
-            const User = require('./models/shop/User');
-            let user_model = new User();
-            user_model.get({name: 'Abdullah'})
-            .then(rows => {
-                if (!this._.isEmpty(rows)) {
-                    if (typeof rows[0] !== 'undefined') {
-                        rows[0] = Object.assign(
-                            rows[0],
-                            {
-                                getCart: () => {
-                                    let Cart = require('../app/models/shop/Cart');
-                                    let cart_model = new Cart();
-                                    return cart_model.filter({user_id: rows[0].id});    
-                                },
-                                getProducts: () => {
-                                    let Product = require('../app/models/shop/Product');
-                                    let product_model = new Product();
-                                    return product_model.filter({user_id: rows[0].id});
-                                }
-                            }
-                        );
-                        let add_to_request_on_send = {
-                            registered_user: rows[0]
-                        };
-                        req = Object.assign(req, add_to_request_on_send);
-                        req.registered_user = rows[0];
-                        if (!res.headersSent) {
-                            next();
-                        }
+            if (!this._.isEmpty(req.session.currentUser) || typeof req.session.currentUser !== 'undefined') {
+                req.session.currentUser = Object.assign(req.session.currentUser, {
+                    getCart: () => {
+                        let Cart = require('../app/models/shop/Cart');
+                        let cart_model = new Cart();
+                        return cart_model.filter({user_id: req.session.currentUser.id});
+                    },
+                    getProducts: () => {
+                        let Product = require('../app/models/shop/Product');
+                        let product_model = new Product();
+                        return product_model.filter({user_id: req.session.currentUser.id});
                     }
-                } else {
-                    throw new BadRequestError('User not registered');
-                }
-            })
-            .catch(err => console.log(err));
+                });
+                next();
+            } else {
+                console.log('redirected');
+                res.redirect('/');
+            }
         });
         
         /*
@@ -195,17 +206,6 @@ module.exports = class Application extends BaseController {
      */
     getApp() {
         return this.#app;
-    }
-
-    /**
-     * @function getConstants
-     * @description  gets an instance of the constants class
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @return Constants Object
-     */
-    getConstants() {
-        return this.constants;
     }
 }
 

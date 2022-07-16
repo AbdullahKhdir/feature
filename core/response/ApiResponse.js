@@ -1,6 +1,7 @@
 'use strict';
 
 const Constants = require("../../app/utils/Constants");
+const Db = require("../database/Db");
 
 /**
  * @class ApiResponse
@@ -9,13 +10,14 @@ const Constants = require("../../app/utils/Constants");
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class ApiResponse {
+module.exports = class ApiResponse extends Db {
 
     #status_code;
     #response_status;
     #message;
     #codes;
     constructor(status_code, response_status, message = '') {
+        super();
         this.#message         = message;
         this.#status_code     = status_code;
         this.#response_status = response_status;

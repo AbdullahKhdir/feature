@@ -1,7 +1,10 @@
 'use strict';
 
-const FileSystem = require('../node/FileSystem');
-const Path       = require('../node/Path');
+const Constants           = require('../../app/utils/Constants');
+const ExpressMysqlSession = require('../framework/ExpressMysqlSession');
+const FileSystem          = require('../node/FileSystem');
+const Path                = require('../node/Path');
+const mysql               = require('mysql2');
 
 /**
  * @class Db
@@ -10,22 +13,12 @@ const Path       = require('../node/Path');
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class Db {
-    #mysql_core;
-    constructor(mysql = require('mysql2')) {
-        if (typeof this.mysql !== 'undefined') {
-            return this.getDbInstance();
-        }
-        const pool = mysql.createPool(
-            {
-                host: 'localhost',
-                user: 'root',
-                database: 'node',
-                password: 'root'
-            }
-        );
-        this.#mysql_core = pool;
-        this.mysql       = pool.promise();
+module.exports = class Db extends ExpressMysqlSession {
+    
+    constructor() {
+        const _mysql_session = super().mysql_session;
+        this.MysqlStore = _mysql_session;
+        this.mysql      = mysql;
     }
 
     /**
@@ -37,17 +30,6 @@ module.exports = class Db {
      */
     getDbInstance () {
         return this.mysql;
-    }
-
-    /**
-     * @function getDbCoreInstance
-     * @description returns an instance of the initiated core database object
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @return {void}
-     */
-     getDbCoreInstance () {
-        return this.#mysql_core;
     }
 
      /**
@@ -95,5 +77,64 @@ module.exports = class Db {
                 }
             });
         });
+    }
+
+    async executeModelQuery(sql, arr = []) {
+        return (async () => {
+            let connection = this.mysql.createPool(
+                {
+                    host: 'localhost',
+                    port: 3306,
+                    user: 'root',
+                    database: 'node',
+                    password: 'root',
+                    connectionLimit: 10
+                }
+            );
+            let mysql_connection = connection.promise();
+        
+            const constants       = Object.assign(new Constants().getConstants());
+            const session_options = {
+                // Host name for database connection:
+                host: 'localhost',
+                // Port number for database connection:
+                port: 3306,
+                // Database user:
+                user: 'root',
+                // Password for the above database user:
+                password: 'root',
+                // Database name:
+                database: 'node',
+                // Whether or not to automatically check for and clear expired sessions:
+                clearExpired: constants.SESSION.DB_CONNECTION_SESSION_CLEAR_EXPIRED,
+                // How frequently expired sessions will be cleared; milliseconds:
+                checkExpirationInterval: constants.SESSION.DB_CONNECTION_SESSION_EXPIRATION_INTERVAL,
+                // The maximum age of a valid session; milliseconds:
+                expiration: constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
+                // Whether or not to create the sessions database table, if one does not already exist:
+                createDatabaseTable: constants.SESSION.DB_CONNECTION_CREATE_SESSION_TABLE_IF_NOT_EXISTS,
+                // Number of connections when creating a connection pool:
+                connectionLimit: constants.SESSION.DB_SESSION_MAX_CONNECTIONS,
+                // Whether or not to end the database connection when the store is closed.
+                // The default value of this option depends on whether or not a connection was passed to the constructor.
+                // If a connection object is passed to the constructor, the default value for this option is false.
+                endConnectionOnClose: constants.SESSION.DB_SESSION_END_CONNECTION_ON_CLOSE,
+                charset: constants.SESSION.DB_CONNECTION_SESSION_CHARSET,
+                schema: {
+                    tableName: constants.SESSION.DB_SESSION_TABLE,
+                    columnNames: {
+                        session_id: constants.SESSION.DB_CONNECTION_SESSION_ID,
+                        expires: constants.SESSION.DB_CONNECTION_SESSION_EXPIRATION,
+                        data: constants.SESSION.DB_CONNECTION_SESSION_DATA
+                    }
+                }
+            };
+            this.db_session       = new this.MysqlStore({session_options}, mysql_connection);
+        
+            return await mysql_connection.query(sql, arr).then(result => {
+                mysql_connection.end();
+                return result;
+            });
+        })();
     }
 }

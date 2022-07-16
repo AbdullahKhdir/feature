@@ -1,6 +1,7 @@
 'use strict';
 
 const ApiResponse = require('../response/ApiResponse');
+const SharePoint  = require('../share_point/SharePoint');
 
 /**
  * @class Express
@@ -10,8 +11,7 @@ const ApiResponse = require('../response/ApiResponse');
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class Express extends ApiResponse {
-    
+module.exports = class Express extends SharePoint {
     constructor(framework = require('express')) {
         super();
         this.framework = framework;
