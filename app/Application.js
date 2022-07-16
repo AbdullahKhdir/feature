@@ -137,7 +137,7 @@ module.exports = class Application extends BaseController {
                 _expires: new Date(Date.now() + this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT),
                 maxAge: this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
                 secure: false,
-                //secure: true,
+                //secure: true, //true with https
                 //httpOnly: true,
             }
         }));
@@ -184,7 +184,6 @@ module.exports = class Application extends BaseController {
                 });
                 next();
             } else {
-                console.log('redirected');
                 res.redirect('/');
             }
         });
@@ -193,7 +192,6 @@ module.exports = class Application extends BaseController {
         * Routes 
         */
         this.sub_controller.deployRoutes(app);
-
         this.#app = app;
     }
 

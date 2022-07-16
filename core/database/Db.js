@@ -1,5 +1,6 @@
 'use strict';
 
+const {host, port, user, database, password, connectionLimit} = require('../config');
 const Constants           = require('../../app/utils/Constants');
 const ExpressMysqlSession = require('../framework/ExpressMysqlSession');
 const FileSystem          = require('../node/FileSystem');
@@ -83,12 +84,12 @@ module.exports = class Db extends ExpressMysqlSession {
         return (async () => {
             let connection = this.mysql.createPool(
                 {
-                    host: 'localhost',
-                    port: 3306,
-                    user: 'root',
-                    database: 'node',
-                    password: 'root',
-                    connectionLimit: 10
+                    host,
+                    port,
+                    user,
+                    database,
+                    password,
+                    connectionLimit
                 }
             );
             let mysql_connection = connection.promise();
@@ -96,15 +97,15 @@ module.exports = class Db extends ExpressMysqlSession {
             const constants       = Object.assign(new Constants().getConstants());
             const session_options = {
                 // Host name for database connection:
-                host: 'localhost',
+                host,
                 // Port number for database connection:
-                port: 3306,
+                port,
                 // Database user:
-                user: 'root',
+                user,
                 // Password for the above database user:
-                password: 'root',
+                password,
                 // Database name:
-                database: 'node',
+                database,
                 // Whether or not to automatically check for and clear expired sessions:
                 clearExpired: constants.SESSION.DB_CONNECTION_SESSION_CLEAR_EXPIRED,
                 // How frequently expired sessions will be cleared; milliseconds:

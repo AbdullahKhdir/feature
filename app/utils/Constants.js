@@ -235,7 +235,7 @@ module.exports = class Constants {
                 DB_CONNECTION_SESSION_EXPIRATION_INTERVAL:        1000 * 60 * 60 * 6, //? Every six hours (4 times a day)
                 DB_CONNECTION_SESSION_CLEAR_EXPIRED:              true,
                 DB_CONNECTION_CREATE_SESSION_TABLE_IF_NOT_EXISTS: true,
-                DB_SESSION_MAX_CONNECTIONS:                       1,
+                DB_SESSION_MAX_CONNECTIONS:                       10,
                 DB_SESSION_END_CONNECTION_ON_CLOSE:               true,
                 DB_CONNECTION_SESSION_CHARSET:                    'utf8mb4_bin',
                 DB_SESSION_TABLE:                                 'db_requests_session',

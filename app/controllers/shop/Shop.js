@@ -325,26 +325,44 @@ module.exports = class Shop extends BaseController{
     }));
 
     dynProductInfo     = () => this.getRouterInstance().get('/products/:productId/', Promise.asyncHandler(async (req, res, next) => {
-        const product_id = +req.params.productId ?? false;
+        let product_id = req.params.productId ?? false;
         const user_id = +req.session.currentUser.id ?? false;
-        
-        this.product.get({id: product_id, user_id: user_id}).then(rows => {
-            if (rows) {
-                const product = rows[0];
-                res.render(
-                    'shop/product-detail',
-                    {
-                        page_title: product.title ?? 'Product Details',
-                        path: '/products/',
-                        product: product ?? [],
-                        lodash: this._
-                    }
-                );
-            }
-        })
-        .catch((err) => {
-            throw err
-        });
+        if (!isNaN(product_id)) {
+            product_id = +product_id;
+            this.product.get({id: product_id, user_id: user_id}).then(rows => {
+                if (rows) {
+                    const product = rows[0];
+                    res.render(
+                        'shop/product-detail',
+                        {
+                            page_title: product.title ?? 'Product Details',
+                            path: '/products/',
+                            product: product ?? [],
+                            lodash: this._
+                        }
+                    );
+                } else {
+                    return this.render(
+                        res,
+                        '404',
+                        {page_title: 'Page not found', path: '/404/'},
+                        null,
+                        this.constants.getConstants().HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
+                    );
+                }
+            })
+            .catch((err) => {
+                throw err
+            });
+        } else {
+            return this.render(
+                res,
+                '404',
+                {page_title: 'Page not found', path: '/404/'},
+                null,
+                this.constants.getConstants().HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
+            );
+        }
     }));
     
     deleteCartProducts = () => this.getRouterInstance().post('/cart/delete-items/', Promise.asyncHandler(async (req, res, next) => {
@@ -378,7 +396,7 @@ module.exports = class Shop extends BaseController{
     deleteCartProduct  = () => this.getRouterInstance().post('/cart/delete-item/', Promise.asyncHandler(async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
-            this.cart_items_object.filter({product_id: cart_item_product_id}).then((result) => {
+            this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
                 if (result) {
                     if (result[0].quantity > 1) {
                         this.cart_items_object.update({quantity: result[0].quantity - 1}, result[0].id)
