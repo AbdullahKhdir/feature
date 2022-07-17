@@ -1,5 +1,7 @@
 'use strict';
 
+const { server_port, environment } = require('../../core/config');
+
 /**
  * @class Constants
  * @constructor
@@ -18,7 +20,7 @@ module.exports = class Constants {
                 DEFAULT: '/'
             },
             PORTS: {
-                SERVER_PORT: process.env.PORT || 8010
+                SERVER_PORT: server_port || 8010
             },
             HTTPS_STATUS: {
                 /*
@@ -231,17 +233,17 @@ module.exports = class Constants {
                 }
             },
             SESSION: {
-                DB_CONNECTION_SESSION_TIME_OUT:                   1000 * 60 * 60 * 24, //? ONE DAY (24 Hours)
-                DB_CONNECTION_SESSION_EXPIRATION_INTERVAL:        1000 * 60 * 60 * 6, //? Every six hours (4 times a day)
+                DB_CONNECTION_SESSION_TIME_OUT:                   environment === 'production' ? 1000 * 60 * 60 * 1 : 1000 * 60 * 60 * 24, //? ONE DAY (24 Hours)
+                DB_CONNECTION_SESSION_EXPIRATION_INTERVAL:        environment === 'production' ? 1000 * 60 * 60 * 1 : 1000 * 60 * 60 * 6,  //? Every six hours (4 times a day)
                 DB_CONNECTION_SESSION_CLEAR_EXPIRED:              true,
-                DB_CONNECTION_CREATE_SESSION_TABLE_IF_NOT_EXISTS: true,
-                DB_SESSION_MAX_CONNECTIONS:                       10,
+                DB_CONNECTION_CREATE_SESSION_TABLE_IF_NOT_EXISTS: environment === 'production' ? false : true ,
+                DB_SESSION_MAX_CONNECTIONS:                       environment === 'production' ? 10 : 1,
                 DB_SESSION_END_CONNECTION_ON_CLOSE:               true,
                 DB_CONNECTION_SESSION_CHARSET:                    'utf8mb4_bin',
-                DB_SESSION_TABLE:                                 'db_requests_session',
-                DB_CONNECTION_SESSION_ID:                         'db_request_session_id',
-                DB_CONNECTION_SESSION_EXPIRATION:                 'db_request_expires',
-                DB_CONNECTION_SESSION_DATA:                       'db_request_data'
+                DB_SESSION_TABLE:                                 'sessions',
+                DB_CONNECTION_SESSION_ID:                         'session_id',
+                DB_CONNECTION_SESSION_EXPIRATION:                 'expires',
+                DB_CONNECTION_SESSION_DATA:                       'data'
             }
         }
         this.#constants = Object.assign(constants);

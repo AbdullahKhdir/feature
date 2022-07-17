@@ -1907,7 +1907,7 @@ module.exports = class QueryBuilder extends Db {
             if (this._.isString(built_query)) {
                 if (!this._.isEmpty(built_query)) {
                     return (async () => {
-                        return await this.executeModelQuery(built_query).then(result => {
+                        return await this.executeQuery(built_query).then(result => {
                             if (result) {
                                 return result;
                             }

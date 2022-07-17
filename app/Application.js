@@ -124,24 +124,27 @@ module.exports = class Application extends BaseController {
         app.use(this.express.static(this.path.join(__dirname, 'public'), options));
 
         /*
-        * Middleware To Always Get The First User
+        * Middleware To Initiate Mysql Session
         */
-
+        const secret = require('crypto').randomBytes(48).toString('base64');
+        const key    = require('crypto').randomBytes(48).toString('base64');
         app.use(this.session({
-            key: 'session_cookie_name',
-            secret: 'session_cookie_secret',
-            store: this.db_session,
+            key: key,
+            secret: secret,
+            store: this.initiateSession(),
             resave: false,
             saveUninitialized: true,
             cookie: {
-                _expires: new Date(Date.now() + this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT),
+                _expires: this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
                 maxAge: this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
-                secure: false,
                 //secure: true, //true with https
                 //httpOnly: true,
-            }
+            },
         }));
 
+        /*
+        * Middleware To Get the logged in user
+        */
         app.use((req, res, next) => {
             if (this._.isEmpty(req.session.currentUser) || typeof req.session.currentUser === 'undefined') {
                 req.session.currentUser = {}
@@ -168,6 +171,9 @@ module.exports = class Application extends BaseController {
             }
         });
 
+        /*
+        * Middleware To check if user has logged in to save the login in data in the session
+        */
         app.use((req, res, next) => {
             if (!this._.isEmpty(req.session.currentUser) || typeof req.session.currentUser !== 'undefined') {
                 req.session.currentUser = Object.assign(req.session.currentUser, {

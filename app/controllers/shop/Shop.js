@@ -91,49 +91,73 @@ module.exports = class Shop extends BaseController{
     }));
 
     cart               = () => this.getRouterInstance().get('/cart/', Promise.asyncHandler(async (req, res, next) => {
-        const user_cart = req.session.currentUser.getCart();
+        const user_cart = req.session.currentUser.getCart() ?? [];
         if (!user_cart) {
             throw new Error('User is not availabel');
         }
         user_cart
         .then(rows => {
-            if (rows['getProducts']) {
-                rows['getProducts']
-                .then(cart_products => {
-                    if (cart_products['getProducts'].length > 0) {
-                        cart_products = cart_products['getProducts'];
-                        if (!this._.isEmpty(cart_products)) {
-                            let where_clause;
-                            cart_products.forEach((cart_product, index) => {
-                                if (index > 0) {
-                                    where_clause = where_clause + ' or id = '+ cart_products[index].product_id;
-                                } else {
-                                    where_clause = 'id = '+ cart_products[index].product_id;
-                                }
-                            });
-                            this.product.filter(where_clause)
-                            .then((rows) => {
+            if (rows) {
+                if (typeof rows['getProducts'] !== 'undefined') {
+                    rows['getProducts']
+                    .then(cart_products => {
+                        if (cart_products['getProducts'].length > 0) {
+                            cart_products = cart_products['getProducts'];
+                            if (!this._.isEmpty(cart_products)) {
+                                let where_clause;
                                 cart_products.forEach((cart_product, index) => {
-                                    cart_products[index]['title']      = rows[index].title;
-                                    cart_products[index]['product_id'] = rows[index].id;
-                                });
-                                return this.render(
-                                    res,
-                                    'shop/cart',
-                                    {
-                                        page_title: 'My Cart',
-                                        path : '/cart/',
-                                        products: cart_products,
-                                        lodash: this._                                            
+                                    if (index > 0) {
+                                        where_clause = where_clause + ' or id = '+ cart_products[index].product_id;
+                                    } else {
+                                        where_clause = 'id = '+ cart_products[index].product_id;
                                     }
-                                );
-                            })
-                            .catch(err => console.log(err));
+                                });
+                                this.product.filter(where_clause)
+                                .then((rows) => {
+                                    cart_products.forEach((cart_product, index) => {
+                                        cart_products[index]['title']      = rows[index].title;
+                                        cart_products[index]['product_id'] = rows[index].id;
+                                    });
+                                    return this.render(
+                                        res,
+                                        'shop/cart',
+                                        {
+                                            page_title: 'My Cart',
+                                            path : '/cart/',
+                                            products: cart_products,
+                                            lodash: this._                                            
+                                        }
+                                    );
+                                })
+                                .catch(err => console.log(err));
+                            }
+                        } else {
+                            res.redirect(this.constants.getConstants().HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/');
                         }
-                    } else {
-                        res.redirect(this.constants.getConstants().HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/');
+                    });
+                } else {
+                    return this.render(
+                        res,
+                        'shop/cart',
+                        {
+                            page_title: 'My Cart',
+                            path : '/cart/',
+                            products: [],
+                            lodash: this._                                            
+                        }
+                    );
+                }
+            } else {
+                return this.render(
+                    res,
+                    'shop/cart',
+                    {
+                        page_title: 'My Cart',
+                        path : '/cart/',
+                        products: [],
+                        lodash: this._                                            
                     }
-                });
+                );
             }
         })
         .catch(err => console.log(err));
