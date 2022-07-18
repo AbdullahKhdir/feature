@@ -8,5 +8,6 @@ module.exports = {
     database:        process.env.DATABASE,
     connectionLimit: process.env.CONNECTION_LIMIT,
     environment:     process.env.NODE_ENV,
-    server_port:     process.env.PORT
+    server_port:     process.env.PORT,
+    migration:       process.env.MIGRATION
 };

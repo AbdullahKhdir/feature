@@ -29,7 +29,6 @@
     "express-session": "^1.17.3",
     "helmet": "^5.1.0",
     "lodash": "^4.17.21",
-    "mysql": "^2.18.1",
     "mysql2": "^2.3.3"
   }
 }
