@@ -81,10 +81,6 @@ web_modules/
 .env.local
 .env.test.local
 
-# database configuration file for db-migrate
-# FOR LEARNING PURPOSES THE CONFIGURATION FILE WILL BE COMMITED
-# database.json
-
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache

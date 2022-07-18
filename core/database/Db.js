@@ -106,7 +106,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                                             if (err) {
                                                                 return console.log('Unable to scan directory: ' + err);
                                                             } 
-                                                            files.forEach((file) => {
+                                                            files.map((file) => {
                                                                 let is_file = file.isFile(); 
                                                                 if (is_file) {
                                                                     const migrations_name = file.name.toString().substr(0,file.name.toString().length - 4);
@@ -188,7 +188,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                         if (err) {
                                             return console.log('Unable to scan directory: ' + err);
                                         } 
-                                        files.forEach((file) => {
+                                        files.map((file) => {
                                             let is_file = file.isFile(); 
                                             if (is_file) {
                                                 const migrations_name = file.name.toString().substr(0,file.name.toString().length - 4);
@@ -349,7 +349,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                                                 if (err) {
                                                                     return console.log('Unable to scan directory: ' + err);
                                                                 } 
-                                                                files.forEach((file) => {
+                                                                files.map((file) => {
                                                                     let is_file = file.isFile(); 
                                                                     if (is_file) {
                                                                         const migrations_name = file.name.toString().substr(0,file.name.toString().length - 4);
@@ -431,7 +431,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                             if (err) {
                                                 return console.log('Unable to scan directory: ' + err);
                                             } 
-                                            files.forEach((file) => {
+                                            files.map((file) => {
                                                 let is_file = file.isFile(); 
                                                 if (is_file) {
                                                     const migrations_name = file.name.toString().substr(0,file.name.toString().length - 4);

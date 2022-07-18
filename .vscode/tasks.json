@@ -14,81 +14,15 @@
             "problemMatcher": []
         },
         {
-            "label": "Production-DB-Migration - create migration",
-            "type": "shell",
-            "command": "sh 001_create_db_migration.sh",
-            "group": "build",
-            "options": {
-                "cwd": "${workspaceFolder}/core/database/migrations/shell"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Development-DB-Migration - create migration",
-            "type": "shell",
-            "command": "sh 002_create_db_migration.sh",
-            "group": "build",
-            "options": {
-                "cwd": "${workspaceFolder}/core/database/migrations/shell"
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Test-DB-Migration - create migration",
-            "type": "shell",
-            "command": "sh 003_create_db_migration.sh",
-            "group": "build",
-            "options": {
-                "cwd": "${workspaceFolder}/core/database/migrations/shell"
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Sass Compile",
             "type": "shell",
             "command": "npx sass --update -c --verbose app/public/sass:app/public/css",
             "group": "build"
         },
         {
-            "label": "Read Migrations (old)",
+            "label": "Read Migrations",
             "type": "shell",
             "command": "node core/database/migrations/execute_migrations/ExecuteSQL.js",
-            "group": "build"
-        },
-        {
-            "label": "Read Test Migrations UP",
-            "type": "shell",
-            "command": "node node_modules/db-migrate/bin/db-migrate up --config './database.json' --migrations-dir './core/database/migrations/db_migrate/test_migrations/'  --migration-table 'migrations' --env test --force-exit",
-            "group": "build"
-        },
-        {
-            "label": "Read Test Migrations DOWN",
-            "type": "shell",
-            "command": "node node_modules/db-migrate/bin/db-migrate down --config './database.json' --migrations-dir './core/database/migrations/db_migrate/test_migrations/'  --migration-table 'migrations' --env test --force-exit",
-            "group": "build"
-        },
-        {
-            "label": "Read Development Migrations UP",
-            "type": "shell",
-            "command": "node node_modules/db-migrate/bin/db-migrate up --config './database.json' --migrations-dir './core/database/migrations/db_migrate/development_migrations/'  --migration-table 'migrations' --env development --force-exit",
-            "group": "build"
-        },
-        {
-            "label": "Read Development Migrations DOWN",
-            "type": "shell",
-            "command": "node node_modules/db-migrate/bin/db-migrate down --config './database.json' --migrations-dir './core/database/migrations/db_migrate/development_migrations/'  --migration-table 'migrations' --env development --force-exit ",
-            "group": "build"
-        },
-        {
-            "label": "Read Production Migrations DOWN",
-            "type": "shell",
-            "command": "node node_modules/db-migrate/bin/db-migrate down --config './database.json' --migrations-dir './core/database/migrations/db_migrate/production_migrations/'  --migration-table 'migrations' --env production --force-exit",
-            "group": "build"
-        },
-        {
-            "label": "Read Production Migrations UP",
-            "type": "shell",
-            "command": "node node_modules/db-migrate/bin/db-migrate up --config './database.json' --migrations-dir './core/database/migrations/db_migrate/production_migrations/'  --migration-table 'migrations' --env production --force-exit",
             "group": "build"
         }
     ]
