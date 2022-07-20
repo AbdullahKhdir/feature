@@ -105,7 +105,7 @@ module.exports = class BaseController extends Routes {
      * * can be used to issue a requests tests
      * * or parsing or even filtering
      * * all requests will be checked if
-     * * thier path is a valid path
+     * * their path is a valid path
      * * if not it will render 404 page
      * * it acceptes all kind of routes with (next())
      * @version 1.0.0
@@ -122,7 +122,6 @@ module.exports = class BaseController extends Routes {
             
             app._router.stack.forEach((middleware) => {
                 if(middleware.route){ // routes registered directly on the app
-                    console.log(middleware.route);
                     routes.push(middleware.route);
                 } else if(middleware.name === 'router'){ // router middleware 
                     middleware.handle.stack.forEach(function(handler){
@@ -131,11 +130,11 @@ module.exports = class BaseController extends Routes {
                     });
                 }
             });
-            
+
             let route_exists = routes.filter(route => {
                 return route.path.toString() === req.path.toString();
             });
-
+            
             routes.forEach(route => {
                 let check_path = req.path.toString().slice(1, req.path.toString().length);
                 let direction  = Object.assign(route.path.slice(1, route.path.length));
@@ -155,7 +154,10 @@ module.exports = class BaseController extends Routes {
                     const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
                     const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
                     if (_predefined_direction_from_route === _requested_path_in_browser) {
-                        site_is_found = true;
+                        if (this._.isEmpty(route_exists)) {
+                            route_exists = 'dynamic routes';
+                        }
+                        site_is_found    = true;
                     }
                 }
                 
@@ -225,6 +227,9 @@ module.exports = class BaseController extends Routes {
                     const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
                     const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
                     if (_predefined_direction_from_route === _requested_path_in_browser) {
+                        if (this._.isEmpty(route_exists)) {
+                            route_exists = 'dynamic routes';
+                        }
                         is_post_request_successful = true;
                     }
                 }
