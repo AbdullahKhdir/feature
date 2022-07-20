@@ -120,8 +120,9 @@ module.exports = class BaseController extends Routes {
         app.use(this.getRouterInstance().get('*', (req, res, next) => {
             let route, routes = [];
             
-            app._router.stack.forEach(function(middleware){
+            app._router.stack.forEach((middleware) => {
                 if(middleware.route){ // routes registered directly on the app
+                    console.log(middleware.route);
                     routes.push(middleware.route);
                 } else if(middleware.name === 'router'){ // router middleware 
                     middleware.handle.stack.forEach(function(handler){
@@ -131,9 +132,9 @@ module.exports = class BaseController extends Routes {
                 }
             });
             
-            // if (req.path === '/') {
-            //     res.redirect('/shop/');
-            // }
+            let route_exists = routes.filter(route => {
+                return route.path.toString() === req.path.toString();
+            });
 
             routes.forEach(route => {
                 let check_path = req.path.toString().slice(1, req.path.toString().length);
@@ -163,6 +164,16 @@ module.exports = class BaseController extends Routes {
                 }
             });
 
+            if (this._.isEmpty(route_exists)) {
+                return this.render(
+                    res,
+                    '404',
+                    {page_title: 'Page not found', path: '/404/'},
+                    null,
+                    _constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
+                );
+            }
+
             if (site_is_found === true) {
                 next();
                 site_is_found = false;
@@ -190,6 +201,10 @@ module.exports = class BaseController extends Routes {
                     });
                 }
             });
+
+            let route_exists = routes.filter(route => {
+                return route.path.toString() === req.path.toString();
+            })
 
             routes.forEach(route => {
                 let check_path = req.path.toString().slice(1, req.path.toString().length);
@@ -219,6 +234,16 @@ module.exports = class BaseController extends Routes {
                 }
             });
 
+            if (this._.isEmpty(route_exists)) {
+                return this.render(
+                    res,
+                    '404',
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support posting requests!'},
+                    null,
+                    _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+                );
+            }
+            
             if (is_post_request_successful === true) {
                 next();
                 is_post_request_successful = false;
