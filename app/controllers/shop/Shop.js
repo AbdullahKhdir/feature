@@ -118,6 +118,7 @@ module.exports = class Shop extends BaseController{
                                         cart_products[index]['title']      = rows[index].title;
                                         cart_products[index]['product_id'] = rows[index].id;
                                     });
+                                    // console.log(cart_products);
                                     return this.render(
                                         res,
                                         'shop/cart',
@@ -241,13 +242,55 @@ module.exports = class Shop extends BaseController{
     }));
 
     orders             = () => this.getRouterInstance().get('/orders/', Promise.asyncHandler(async (req, res, next) => {
-        res.render(
-            'shop/orders',
-            {
-                page_title: 'My Orders',
-                path : '/orders/'
-            }
-        );
+        req.session.currentUser.getOrder().then(order => {
+            order.getProducts.then(ordered_products => {
+                if (!this._.isEmpty(ordered_products.getProducts)) {
+                    let where_clause;
+                    ordered_products.getProducts.forEach((product, index) => {
+                        if (index > 0) {
+                            where_clause = where_clause + ' or id = '+ ordered_products.getProducts[index].product_id;
+                        } else {
+                            where_clause = 'id = '+ ordered_products.getProducts[index].product_id;
+                        }
+                    });
+                    this.product.filter(where_clause)
+                    .then(_products => {
+                        ordered_products.getProducts.forEach((element, index) => {
+                            _products.forEach((_product, _index) => {
+                                if (+_product.id === +element.product_id) {
+                                    ordered_products.getProducts[index].title = _products[_index].title 
+                                }
+                            });
+                        });
+                        return this.render(
+                            res,
+                            'shop/orders',
+                            {
+                                page_title: 'My Orders',
+                                path : '/orders/',
+                                orders : ordered_products.getProducts,
+                                user_order_id : ordered_products.getProducts[0].order_id
+                            }
+                        );
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                } else {
+                    res.render(
+                        'shop/orders',
+                        {
+                            page_title: 'My Orders',
+                            path : '/orders/',
+                            orders : []
+                        }
+                    );
+                }
+            });
+        })
+        .catch(err => {
+            console.log(err);
+        });
     }));
 
     postOrders         = () => this.getRouterInstance().post('/create-order/', Promise.asyncHandler(async (req, res, next) => {
@@ -269,8 +312,9 @@ module.exports = class Shop extends BaseController{
                 this.order_object.get({user_id: user_id}).then((rows) => {
                     if (!this._.isEmpty(rows)) {
                         const order_id = rows[0].id;
-                        products.forEach(product => {                
+                        products.forEach(product => {
                             if (product) {
+                                this.cart_items_object.delete(product.id);
                                 this.order_items_object.filter({order_id: order_id, product_id: product.product_id}).then((order_items_rows) => {
                                     if (typeof order_items_rows === 'undefined') {
                                         const order_item_params = {
@@ -311,13 +355,13 @@ module.exports = class Shop extends BaseController{
                         const order_params = {
                             user_id: user_id
                         };
-        
                         this.order_object.create(order_params)
                         .then(order_element => {
                             const id = order_element[0].insertId;
                             if (id) {
                                 products.forEach(product => {
                                     if (product) {
+                                        this.cart_items_object.delete(product.id);
                                         this.order_items_object.filter({order_id: id, product_id: product.product_id}).then((order_items_rows) => {
                                             if (typeof order_items_rows === 'undefined') {
                                                 const order_item_params = {
@@ -392,7 +436,7 @@ module.exports = class Shop extends BaseController{
     deleteCartProducts = () => this.getRouterInstance().post('/cart/delete-items/', Promise.asyncHandler(async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
-            this.cart_items_object.filter({product_id: cart_item_product_id}).then((result) => {
+            this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
                 if (result) {
                     this.cart_items_object.delete({product_id: cart_item_product_id})
                         .then((result) => {
@@ -422,7 +466,7 @@ module.exports = class Shop extends BaseController{
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
                 if (result) {
-                    if (result[0].quantity > 1) {
+                    if (+result[0].product_id === +cart_item_product_id && result[0].quantity > 1) {
                         this.cart_items_object.update({quantity: result[0].quantity - 1}, result[0].id)
                             .then((result) => {
                                 if (result) {

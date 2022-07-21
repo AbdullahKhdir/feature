@@ -5,6 +5,25 @@
 <body>
     <%- include('../includes/navigation.ejs')  %> 
     <main>
-        <h1>Nothing there!</h1>
+        <% if (typeof orders !== 'undefined') { %>
+            <% if (orders.length > 0) { %>
+                <ul>
+                    <li>
+                        <h1># <%= user_order_id %></h1>
+                    </li>
+                    <ul>
+                        <% orders.forEach(order => { %> 
+                            <li>
+                                <p><%= order.title %> (<%= order.quantity %>)</p>
+                            </li>
+                        <% }); %>
+                    </ul> 
+                </ul>
+            <% } else { %>
+                <h1>Nothing there!</h1>
+            <% } %>%>
+        <% } else { %>
+            <h1>Nothing there!</h1>
+        <% } %>
     </main>
     <%- include('../includes/end.ejs')  %> 

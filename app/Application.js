@@ -186,6 +186,11 @@ module.exports = class Application extends BaseController {
                         let Product = require('../app/models/shop/Product');
                         let product_model = new Product();
                         return product_model.filter({user_id: req.session.currentUser.id});
+                    },
+                    getOrder: () => {
+                        let Order = require('../app/models/shop/Order');
+                        let order_model = new Order();
+                        return order_model.filter({user_id: req.session.currentUser.id});
                     }
                 });
                 next();
