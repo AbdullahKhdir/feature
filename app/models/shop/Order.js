@@ -48,6 +48,6 @@ module.exports = class Order extends BaseModel{
             }
         };
 
-        this._ = new Lodash()._;
+        this.__ = new Lodash().__;
     }
 };

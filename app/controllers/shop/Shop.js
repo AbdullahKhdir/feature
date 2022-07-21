@@ -55,7 +55,7 @@ module.exports = class Shop extends BaseController{
         }
     }
 
-    products           = () => this.getRouterInstance().get('/products/', Promise.asyncHandler(async (req, res, next) => {
+    products           = () => this._().get('/products/', Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
             .then(rows => {
@@ -66,13 +66,13 @@ module.exports = class Shop extends BaseController{
                         products: rows ?? [],
                         page_title: 'All Products',
                         path: '/products/',
-                        lodash: this._
+                        lodash: this.__
                     }
                 );
             });
     }));
 
-    index              = () => this.getRouterInstance().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next) => {
+    index              = () => this._().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
             .then((rows) => {
@@ -83,17 +83,17 @@ module.exports = class Shop extends BaseController{
                         products: rows ?? [],
                         page_title: 'Shop',
                         path: '/',
-                        lodash: this._
+                        lodash: this.__
                     }
                 );
             })
             .catch(err => console.log(err)); 
     }));
 
-    cart               = () => this.getRouterInstance().get('/cart/', Promise.asyncHandler(async (req, res, next) => {
+    cart               = () => this._().get('/cart/', Promise.asyncHandler(async (req, res, next) => {
         const user_cart = req.session.currentUser.getCart() ?? [];
         if (!user_cart) {
-            throw new Error('User is not availabel');
+            throw new Error('User is not available');
         }
         user_cart
         .then(rows => {
@@ -103,7 +103,7 @@ module.exports = class Shop extends BaseController{
                     .then(cart_products => {
                         if (cart_products['getProducts'].length > 0) {
                             cart_products = cart_products['getProducts'];
-                            if (!this._.isEmpty(cart_products)) {
+                            if (!this.__.isEmpty(cart_products)) {
                                 let where_clause;
                                 cart_products.forEach((cart_product, index) => {
                                     if (index > 0) {
@@ -126,7 +126,7 @@ module.exports = class Shop extends BaseController{
                                             page_title: 'My Cart',
                                             path : '/cart/',
                                             products: cart_products,
-                                            lodash: this._                                            
+                                            lodash: this.__                                    
                                         }
                                     );
                                 })
@@ -144,7 +144,7 @@ module.exports = class Shop extends BaseController{
                             page_title: 'My Cart',
                             path : '/cart/',
                             products: [],
-                            lodash: this._                                            
+                            lodash: this.__                                           
                         }
                     );
                 }
@@ -156,7 +156,7 @@ module.exports = class Shop extends BaseController{
                         page_title: 'My Cart',
                         path : '/cart/',
                         products: [],
-                        lodash: this._                                            
+                        lodash: this.__                                          
                     }
                 );
             }
@@ -164,12 +164,12 @@ module.exports = class Shop extends BaseController{
         .catch(err => console.log(err));
     }));
 
-    postCart           = () => this.getRouterInstance().post('/cart/', Promise.asyncHandler(async (req, res, next) => {
+    postCart           = () => this._().post('/cart/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = req.body.product_id ?? '';
         const user_id    = req.session.currentUser.id;
 
         this.cart_object.get({user_id: user_id}).then((rows) => {
-            if (!this._.isEmpty(rows)) {
+            if (!this.__.isEmpty(rows)) {
                 const cart_id = rows[0].id;  
                 this.cart_items_object.filter({cart_id: cart_id, product_id: product_id}).then((cart_items_rows) => {
                     if (typeof cart_items_rows !== 'undefined') {
@@ -231,8 +231,9 @@ module.exports = class Shop extends BaseController{
         });
     }));
 
-    checkout           = () => this.getRouterInstance().get('/checkout/', Promise.asyncHandler(async (req, res, next) => {
-        res.render(
+    checkout           = () => this._().get('/checkout/', Promise.asyncHandler(async (req, res, next) => {
+        return this.render(
+            res,
             'shop/checkout',
             {
                 page_title: 'Checkout',
@@ -241,10 +242,10 @@ module.exports = class Shop extends BaseController{
         );
     }));
 
-    orders             = () => this.getRouterInstance().get('/orders/', Promise.asyncHandler(async (req, res, next) => {
+    orders             = () => this._().get('/orders/', Promise.asyncHandler(async (req, res, next) => {
         req.session.currentUser.getOrder().then(order => {
             order.getProducts.then(ordered_products => {
-                if (!this._.isEmpty(ordered_products.getProducts)) {
+                if (!this.__.isEmpty(ordered_products.getProducts)) {
                     let where_clause;
                     ordered_products.getProducts.forEach((product, index) => {
                         if (index > 0) {
@@ -277,7 +278,8 @@ module.exports = class Shop extends BaseController{
                         console.log(err);
                     });
                 } else {
-                    res.render(
+                    return this.render(
+                        res,
                         'shop/orders',
                         {
                             page_title: 'My Orders',
@@ -293,7 +295,7 @@ module.exports = class Shop extends BaseController{
         });
     }));
 
-    postOrders         = () => this.getRouterInstance().post('/create-order/', Promise.asyncHandler(async (req, res, next) => {
+    postOrders         = () => this._().post('/create-order/', Promise.asyncHandler(async (req, res, next) => {
         const user_id    = req.session.currentUser.id;
         
         req.session.currentUser.getCart().then(cart => {
@@ -310,7 +312,7 @@ module.exports = class Shop extends BaseController{
         .then(products => {
             if (products) {
                 this.order_object.get({user_id: user_id}).then((rows) => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         const order_id = rows[0].id;
                         products.forEach(product => {
                             if (product) {
@@ -392,7 +394,7 @@ module.exports = class Shop extends BaseController{
         });
     }));
 
-    dynProductInfo     = () => this.getRouterInstance().get('/products/:productId/', Promise.asyncHandler(async (req, res, next) => {
+    dynProductInfo     = () => this._().get('/products/:productId/', Promise.asyncHandler(async (req, res, next) => {
         let product_id = req.params.productId ?? false;
         const user_id = +req.session.currentUser.id ?? false;
         if (!isNaN(product_id)) {
@@ -400,13 +402,14 @@ module.exports = class Shop extends BaseController{
             this.product.get({id: product_id, user_id: user_id}).then(rows => {
                 if (rows) {
                     const product = rows[0];
-                    res.render(
+                    return this.render(
+                        res,
                         'shop/product-detail',
                         {
                             page_title: product.title ?? 'Product Details',
                             path: '/products/',
                             product: product ?? [],
-                            lodash: this._
+                            lodash: this.__
                         }
                     );
                 } else {
@@ -433,7 +436,7 @@ module.exports = class Shop extends BaseController{
         }
     }));
     
-    deleteCartProducts = () => this.getRouterInstance().post('/cart/delete-items/', Promise.asyncHandler(async (req, res, next) => {
+    deleteCartProducts = () => this._().post('/cart/delete-items/', Promise.asyncHandler(async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
@@ -461,7 +464,7 @@ module.exports = class Shop extends BaseController{
         }
     }));
 
-    deleteCartProduct  = () => this.getRouterInstance().post('/cart/delete-item/', Promise.asyncHandler(async (req, res, next) => {
+    deleteCartProduct  = () => this._().post('/cart/delete-item/', Promise.asyncHandler(async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {

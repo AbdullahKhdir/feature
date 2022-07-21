@@ -44,7 +44,7 @@ module.exports = class QueryBuilder extends Db {
     constructor(model_name = null, query = null, table = null, columns = []) {
         const mysql = super().mysql;
         this.#mysql = mysql;
-        this._      = new Lodash()._;
+        this.__      = new Lodash().__;
         
         this.#model   = model_name;
         this.#query   = query;
@@ -96,13 +96,13 @@ module.exports = class QueryBuilder extends Db {
      * @returns QueryBuilder
      */
     selectModel(modul_name) {
-        if (!this._.isNull(modul_name)) {
-            if (this._.isFunction(modul_name)) {
+        if (!this.__.isNull(modul_name)) {
+            if (this.__.isFunction(modul_name)) {
                 this.path        = Object.assign(new Path().path);
                 this.file_system = Object.assign(new FileSystem().fs);
                 let modules_directory = this.path.join(__dirname, '..', '..', 'app', 'models');
                 const level_one = this.file_system.readdirSync(modules_directory, { withFileTypes: true });
-                if (this._.isEmpty(level_one) || !this._.isObject(level_one)) {
+                if (this.__.isEmpty(level_one) || !this.__.isObject(level_one)) {
                     throw new Error ('Unable to scan models directory');
                 } else {
                     level_one.forEach((file) => {
@@ -111,7 +111,7 @@ module.exports = class QueryBuilder extends Db {
                         const model = modul_name.toString().match(/ (\w+)/)[1];
                             
                         if (is_file) {
-                            const searched_model = this._.replace(file.name.toString(), '.js', '');
+                            const searched_model = this.__.replace(file.name.toString(), '.js', '');
                             if (searched_model === model) {
                                 let file_name    = model;
                                 let required_model   = require(
@@ -125,13 +125,13 @@ module.exports = class QueryBuilder extends Db {
                         } else if (is_dir) {
                             let directory_name = file.name;
                             const level_two = this.file_system.readdirSync(modules_directory+'/'+file.name, { withFileTypes: true });
-                            if (this._.isEmpty(level_two) || !this._.isObject(level_two)) {
+                            if (this.__.isEmpty(level_two) || !this.__.isObject(level_two)) {
                                 throw new Error ('Unable to scan models directory');
                             }
                             level_two.forEach((file) => {
                                 let is_file = file.isFile(); 
                                 if (is_file) {
-                                    const searched_model = this._.replace(file.name.toString(), '.js', '');
+                                    const searched_model = this.__.replace(file.name.toString(), '.js', '');
                                     if (searched_model === model) {
                                         let file_name    = model;
                                         let required_model   = require(
@@ -147,12 +147,12 @@ module.exports = class QueryBuilder extends Db {
                         }
                     });
                 }
-            } else if (this._.isString(modul_name)) {
+            } else if (this.__.isString(modul_name)) {
                 this.path        = Object.assign(new Path().path);
                 this.file_system = Object.assign(new FileSystem().fs);
                 let modules_directory = this.path.join(__dirname, '..', '..', 'app', 'models');
                 const level_one = this.file_system.readdirSync(modules_directory, { withFileTypes: true });
-                if (this._.isEmpty(level_one) || !this._.isObject(level_one)) {
+                if (this.__.isEmpty(level_one) || !this.__.isObject(level_one)) {
                     throw new Error ('Unable to scan models directory');
                 } else {
                     level_one.forEach((file) => {
@@ -161,7 +161,7 @@ module.exports = class QueryBuilder extends Db {
                         const model = modul_name;
                             
                         if (is_file) {
-                            const searched_model = this._.replace(file.name.toString(), '.js', '');
+                            const searched_model = this.__.replace(file.name.toString(), '.js', '');
                             if (searched_model === model) {
                                 let file_name    = model;
                                 let required_model   = require(
@@ -175,13 +175,13 @@ module.exports = class QueryBuilder extends Db {
                         } else if (is_dir) {
                             let directory_name = file.name;
                             const level_two = this.file_system.readdirSync(modules_directory+'/'+file.name, { withFileTypes: true });
-                            if (this._.isEmpty(level_two) || !this._.isObject(level_two)) {
+                            if (this.__.isEmpty(level_two) || !this.__.isObject(level_two)) {
                                 throw new Error ('Unable to scan models directory');
                             }
                             level_two.forEach((file) => {
                                 let is_file = file.isFile(); 
                                 if (is_file) {
-                                    const searched_model = this._.replace(file.name.toString(), '.js', '');
+                                    const searched_model = this.__.replace(file.name.toString(), '.js', '');
                                     if (searched_model === model) {
                                         let file_name    = model;
                                         let required_model   = require(
@@ -214,7 +214,7 @@ module.exports = class QueryBuilder extends Db {
      * @returns Promise
      */
     done() {
-        if (!this._.isEmpty(this.#query)) {
+        if (!this.__.isEmpty(this.#query)) {
             this.#query = this.#query + ';';
         }
         return !!this.#query ? this.#executeQuery(this.#query) : !!this.#query;
@@ -231,7 +231,7 @@ module.exports = class QueryBuilder extends Db {
      * @returns QueryBuilder
      */
     _and_() {
-        if (!this._.isEmpty(this.#query)) {
+        if (!this.__.isEmpty(this.#query)) {
             this.#query = this.#query + ' AND ';
         }
         return !!this.#query ? new QueryBuilder(this.#model, this.#query, this.#table, this.#columns) : !!this.#query;
@@ -245,7 +245,7 @@ module.exports = class QueryBuilder extends Db {
      * @returns QueryBuilder
      */
     _or_() {
-        if (!this._.isEmpty(this.#query)) {
+        if (!this.__.isEmpty(this.#query)) {
             this.#query = this.#query + ' OR ';
         }
         return !!this.#query ? new QueryBuilder(this.#model, this.#query, this.#table, this.#columns) : !!this.#query;
@@ -270,16 +270,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -289,7 +289,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -297,12 +297,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -312,7 +312,7 @@ module.exports = class QueryBuilder extends Db {
         
         const _value = this.escapeValue(value);
 
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} = ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} = ${_value} `;
@@ -337,16 +337,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -356,7 +356,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -364,12 +364,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -378,7 +378,7 @@ module.exports = class QueryBuilder extends Db {
         }
         
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} != ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} != ${_value} `;
@@ -407,16 +407,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -426,7 +426,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -434,12 +434,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -449,7 +449,7 @@ module.exports = class QueryBuilder extends Db {
         
         value = '%'.concat(value);
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} LIKE ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} LIKE ${_value} `;
@@ -474,16 +474,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -493,7 +493,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -501,12 +501,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -516,7 +516,7 @@ module.exports = class QueryBuilder extends Db {
 
         value = '%'.concat(value);
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} NOT LIKE ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} NOT LIKE ${_value} `;
@@ -543,16 +543,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -562,7 +562,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -570,12 +570,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -585,7 +585,7 @@ module.exports = class QueryBuilder extends Db {
 
         value = '%'.concat(value);
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} LIKE ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} LIKE ${_value} `;
@@ -609,16 +609,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -628,7 +628,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -636,12 +636,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -651,7 +651,7 @@ module.exports = class QueryBuilder extends Db {
 
         value = '%'.concat(value);
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} NOT LIKE ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} NOT LIKE ${_value} `;
@@ -678,16 +678,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -697,7 +697,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -705,12 +705,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -721,7 +721,7 @@ module.exports = class QueryBuilder extends Db {
         value = value.concat('%');
         const _value = this.escapeValue(value);
         
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} LIKE ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} LIKE ${_value} `;
@@ -746,16 +746,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -765,7 +765,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -773,12 +773,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -789,7 +789,7 @@ module.exports = class QueryBuilder extends Db {
         value = value.concat('%');
         const _value = this.escapeValue(value);
 
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} NOT LIKE ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} NOT LIKE ${_value} `;
@@ -814,8 +814,8 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(sub_query)) {
-            if (this._.isEmpty(sub_query)) {
+        if (this.__.isString(sub_query)) {
+            if (this.__.isEmpty(sub_query)) {
                 return false;
             }
         }
@@ -825,14 +825,14 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             model   = this.#model;
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             model   = this.model;
         }
 
         const custom_query = this.escapeValue(sub_query).replaceAll("'", '').replaceAll('"', '');
         
-        if (!this._.isEmpty(custom_query)) {
+        if (!this.__.isEmpty(custom_query)) {
             this.#query = `${this.#query} ${custom_query} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ( ${custom_query} )`;
@@ -858,8 +858,8 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             model   = this.#model;
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             model   = this.model;
         }
         
@@ -884,8 +884,8 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -895,7 +895,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -903,12 +903,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -916,7 +916,7 @@ module.exports = class QueryBuilder extends Db {
             }
         }
 
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} IS NULL `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} IS NULL `;
@@ -939,8 +939,8 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -950,7 +950,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -963,7 +963,7 @@ module.exports = class QueryBuilder extends Db {
             object  = Object.values(Object.keys(columns));
             model   = this.model;
 
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -971,7 +971,7 @@ module.exports = class QueryBuilder extends Db {
             }
         }
 
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} IS NOT NULL `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} IS NOT NULL `;
@@ -998,14 +998,14 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(regex)) {
-            if (this._.isEmpty(regex)) {
+        if (this.__.isString(regex)) {
+            if (this.__.isEmpty(regex)) {
                 return false;
             }
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1015,7 +1015,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1023,12 +1023,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1036,7 +1036,7 @@ module.exports = class QueryBuilder extends Db {
             }
         }
 
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} REGEXP ${regex} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} REGEXP ${regex} `;
@@ -1060,14 +1060,14 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(regex)) {
-            if (this._.isEmpty(regex)) {
+        if (this.__.isString(regex)) {
+            if (this.__.isEmpty(regex)) {
                 return false;
             }
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1077,7 +1077,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1085,12 +1085,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1098,7 +1098,7 @@ module.exports = class QueryBuilder extends Db {
             }
         }
 
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} NOT REGEXP ${regex} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} NOT REGEXP ${regex} `;
@@ -1126,16 +1126,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1145,7 +1145,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1153,12 +1153,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1168,7 +1168,7 @@ module.exports = class QueryBuilder extends Db {
 
         value = '%'.concat(value.concat('%'));
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} LIKE ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} LIKE ${_value} `;
@@ -1193,16 +1193,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1212,7 +1212,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1220,12 +1220,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1235,7 +1235,7 @@ module.exports = class QueryBuilder extends Db {
 
         value = '%'.concat(value.concat('%'));
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} NOT LIKE ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} NOT LIKE ${_value} `;
@@ -1263,16 +1263,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1282,7 +1282,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1290,12 +1290,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1304,7 +1304,7 @@ module.exports = class QueryBuilder extends Db {
         }
 
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} >= ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} >= ${_value} `;
@@ -1329,16 +1329,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1348,7 +1348,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1356,12 +1356,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1370,7 +1370,7 @@ module.exports = class QueryBuilder extends Db {
         }
 
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} <= ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} <= ${_value} `;
@@ -1398,16 +1398,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1417,7 +1417,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1425,12 +1425,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1439,7 +1439,7 @@ module.exports = class QueryBuilder extends Db {
         }
 
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} < ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} < ${_value} `;
@@ -1464,16 +1464,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1483,7 +1483,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1491,12 +1491,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1505,7 +1505,7 @@ module.exports = class QueryBuilder extends Db {
         }
 
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} > ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} > ${_value} `;
@@ -1533,16 +1533,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1552,7 +1552,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1560,12 +1560,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1574,7 +1574,7 @@ module.exports = class QueryBuilder extends Db {
         }
 
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} <= ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} <= ${_value} `;
@@ -1599,16 +1599,16 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(value)) {
-            if (this._.isEmpty(value)) {
+        if (this.__.isString(value)) {
+            if (this.__.isEmpty(value)) {
                 return false;
             }
-        } else if (!this._.isNumber(value)) {
+        } else if (!this.__.isNumber(value)) {
             return false;
         }
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1618,7 +1618,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1626,12 +1626,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1640,7 +1640,7 @@ module.exports = class QueryBuilder extends Db {
         }
 
         const _value = this.escapeValue(value);
-        if (!this._.isEmpty(this.#query) && object.includes(col.toString())) {
+        if (!this.__.isEmpty(this.#query) && object.includes(col.toString())) {
             this.#query = `${this.#query} ${col.toString()} >= ${_value} `;
         } else {
             this.#query = `SELECT * FROM ${table} WHERE ${col.toString()} >= ${_value} `;
@@ -1669,12 +1669,12 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             model   = this.#model;
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             model   = this.model;
         }
 
-        if (!this._.isEmpty(this.#query)) {
+        if (!this.__.isEmpty(this.#query)) {
             this.#query = `${this.#query} WHERE `;
         }
 
@@ -1695,8 +1695,8 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1706,7 +1706,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1714,12 +1714,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1727,7 +1727,7 @@ module.exports = class QueryBuilder extends Db {
             }
         }
 
-        if (!this._.isEmpty(this.#query)) {
+        if (!this.__.isEmpty(this.#query)) {
             this.#query = `${this.#query} GROUP BY ${col.toString()} `;
         } else {
             this.#query = `SELECT * FROM ${table} GROUP BY ${col.toString()} `;
@@ -1750,8 +1750,8 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(condition)) {
-            if (this._.isEmpty(condition)) {
+        if (this.__.isString(condition)) {
+            if (this.__.isEmpty(condition)) {
                 return false;
             }
         }
@@ -1761,12 +1761,12 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             model   = this.#model;
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             model   = this.model;
         }
 
-        if (!this._.isEmpty(this.#query) && !this._.isEmpty(condition)) {
+        if (!this.__.isEmpty(this.#query) && !this.__.isEmpty(condition)) {
             if (this.#query.search('GROUP BY') === -1 && this.#query.search('group by') === -1) {
                 throw new Error('Using "Having" key word requires using "Group By" key word');
             }
@@ -1792,8 +1792,8 @@ module.exports = class QueryBuilder extends Db {
         let columns = null;
         let model   = null;
 
-        if (this._.isString(col)) {
-            if (this._.isEmpty(col)) {
+        if (this.__.isString(col)) {
+            if (this.__.isEmpty(col)) {
                 return false;
             }
         }
@@ -1803,7 +1803,7 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             object  = Object.values(Object.keys(columns));
             model   = this.#model;
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             
@@ -1811,12 +1811,12 @@ module.exports = class QueryBuilder extends Db {
                 throw new Error('The giving column '+col.toString()+' does not exist in the table '+ table);
             }
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             object  = Object.values(Object.keys(columns));
             model   = this.model;
             
-            if (this._.isEmpty(Object.keys(columns))) {
+            if (this.__.isEmpty(Object.keys(columns))) {
                 return false;
             }
             if (!object.includes(col.toString())) {
@@ -1824,7 +1824,7 @@ module.exports = class QueryBuilder extends Db {
             }
         }
 
-        if (!this._.isEmpty(this.#query)) {
+        if (!this.__.isEmpty(this.#query)) {
             this.#query = `${this.#query} ORDER BY ${col.toString()} ${sort} `;
         } else {
             this.#query = `SELECT * FROM ${table} ORDER BY ${col.toString()} ${sort} `;
@@ -1850,12 +1850,12 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             model   = this.#model;
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             model   = this.model;
         }
 
-        if (!this._.isEmpty(this.#query)) {
+        if (!this.__.isEmpty(this.#query)) {
             this.#query = `${this.#query} ( `;
         }
 
@@ -1879,12 +1879,12 @@ module.exports = class QueryBuilder extends Db {
             columns = this.#model.columns ?? this.#columns ?? this.columns;
             model   = this.#model;
         } else {
-            table   = this._.isEmpty(this.#table) ? this.table : this.#table;
-            columns = this._.isEmpty(this.#columns) ? this.columns : this.#columns
+            table   = this.__.isEmpty(this.#table) ? this.table : this.#table;
+            columns = this.__.isEmpty(this.#columns) ? this.columns : this.#columns
             model   = this.model;
         }
 
-        if (!this._.isEmpty(this.#query)) {
+        if (!this.__.isEmpty(this.#query)) {
             this.#query = `${this.#query} ) `;
         }
 
@@ -1903,9 +1903,9 @@ module.exports = class QueryBuilder extends Db {
      * @returns Promise
      */
     #executeQuery(built_query = this.#query) {
-        if (!this._.isNull(built_query)) {
-            if (this._.isString(built_query)) {
-                if (!this._.isEmpty(built_query)) {
+        if (!this.__.isNull(built_query)) {
+            if (this.__.isString(built_query)) {
+                if (!this.__.isEmpty(built_query)) {
                     return (async () => {
                         return await this.executeQuery(built_query).then(result => {
                             if (result) {

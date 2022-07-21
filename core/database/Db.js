@@ -21,7 +21,7 @@ module.exports = class Db extends ExpressMysqlSession {
         const _mysql_session = super().mysql_session;
         this.MysqlStore = _mysql_session;
         this.mysql      = mysql;
-        this._          = new Lodash()._;
+        this.__          = new Lodash().__;
         this.connection_configurations = {
             // Host name for database connection:
             host,
@@ -76,7 +76,7 @@ module.exports = class Db extends ExpressMysqlSession {
                     return (async () => {
                         return await this.executeSql(_check_migrations)
                         .then(([rows, fields]) => {
-                            if (this._.isEmpty(rows)) {
+                            if (this.__.isEmpty(rows)) {
                                 console.log('\r');
                                 console.log('\u001b[' + 31 + 'm' + 'Table Migration: "'+ migration.toString() +'" does not exist!' + '\u001b[0m');
                                 const readline = require('readline');
@@ -87,7 +87,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                 const _question = '\u001b[' + 33 + 'm' + 'Would you like to create the table "' + migration.toString() + '"? (Y / N)  ' + '\u001b[0m';
                                 console.log('\r');
                                 prompt_user.question(_question, (answer) => {
-                                    if (this._.isEmpty(answer) || this._.isEqual(answer, 'Y') || this._.isEqual(answer, 'y')) {
+                                    if (this.__.isEmpty(answer) || this.__.isEqual(answer, 'Y') || this.__.isEqual(answer, 'y')) {
                                         console.log('\r');
                                         console.log('\u001b[' + 21 + 'm' + 'Creating db_migration table '+ migration.toString() +', please wait!' + '\u001b[0m');
                                         return (async () => {
@@ -117,7 +117,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                                                             `SELECT migrations_file_name FROM node.db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
                                                                         )
                                                                         .then(([rows, fields]) => {
-                                                                            if (this._.isEmpty(rows)) {
+                                                                            if (this.__.isEmpty(rows)) {
                                                                                 return (async () => {
                                                                                     return await this.executeSql(sql_content)
                                                                                     .then(() => {
@@ -199,7 +199,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                                         `SELECT migrations_file_name FROM node.db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
                                                     )
                                                     .then(([rows, fields]) => {
-                                                        if (this._.isEmpty(rows)) {
+                                                        if (this.__.isEmpty(rows)) {
                                                             (async () => {
                                                                 await this.executeSql(sql_content)
                                                                 .then(() => {
@@ -276,7 +276,7 @@ module.exports = class Db extends ExpressMysqlSession {
                     });
                     const _question = '\u001b[' + 33 + 'm' + 'Would you like to create the database "' + database.toString() + '"? (Y / N)  ' + '\u001b[0m';
                     prompt_user.question(_question, (answer) => {
-                        if (this._.isEmpty(answer) || this._.isEqual(answer, 'Y') || this._.isEqual(answer, 'y')) {
+                        if (this.__.isEmpty(answer) || this.__.isEqual(answer, 'Y') || this.__.isEqual(answer, 'y')) {
                             console.log('\r');
                             console.log('\u001b[' + 21 + 'm' + 'Creating database '+ database.toString() +', please wait!' + '\u001b[0m');
                             var _mysql = require('mysql2');
@@ -319,7 +319,7 @@ module.exports = class Db extends ExpressMysqlSession {
                         return (async () => {
                             await this.executeSql(_check_migrations)
                             .then(([rows, fields]) => {
-                                if (this._.isEmpty(rows)) {
+                                if (this.__.isEmpty(rows)) {
                                     console.log('\r');
                                     console.log('\u001b[' + 31 + 'm' + 'Table Migration: "'+ migration.toString() +'" does not exist!' + '\u001b[0m');
                                     const readline = require('readline');
@@ -330,7 +330,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                     const _question = '\u001b[' + 33 + 'm' + 'Would you like to create the table "' + migration.toString() + '"? (Y / N)  ' + '\u001b[0m';
                                     console.log('\r');
                                     prompt_user.question(_question, (answer) => {
-                                        if (this._.isEmpty(answer) || this._.isEqual(answer, 'Y') || this._.isEqual(answer, 'y')) {
+                                        if (this.__.isEmpty(answer) || this.__.isEqual(answer, 'Y') || this.__.isEqual(answer, 'y')) {
                                             console.log('\r');
                                             console.log('\u001b[' + 21 + 'm' + 'Creating db_migration table '+ migration.toString() +', please wait!' + '\u001b[0m');
                                             return (async () => {
@@ -360,7 +360,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                                                                 `SELECT migrations_file_name FROM node.db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
                                                                             )
                                                                             .then(([rows, fields]) => {
-                                                                                if (this._.isEmpty(rows)) {
+                                                                                if (this.__.isEmpty(rows)) {
                                                                                     return (async () => {
                                                                                         return await this.executeSql(sql_content)
                                                                                         .then(() => {
@@ -442,7 +442,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                                             `SELECT migrations_file_name FROM node.db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
                                                         )
                                                         .then(([rows, fields]) => {
-                                                            if (this._.isEmpty(rows)) {
+                                                            if (this.__.isEmpty(rows)) {
                                                                 (async () => {
                                                                     await this.executeSql(sql_content)
                                                                     .then(() => {

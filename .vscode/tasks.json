@@ -16,8 +16,17 @@
         {
             "label": "Sass Compile",
             "type": "shell",
-            "command": "npx sass --update -c --verbose app/public/sass:app/public/css",
+            "command": "npx sass --update -c --verbose app/public/sass:app/public/css --style=compressed",
             "group": "build"
+        },
+        {
+            "label": "SASS force recompile",
+            "type": "shell",
+            "command": "rm -rf app/public/css; npx sass --update -c --verbose app/public/sass:app/public/css --style=compressed",
+            "group": "build",
+            "problemMatcher": [
+                "$node-sass"
+            ]
         },
         {
             "label": "Read Migrations",

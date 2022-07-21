@@ -16,7 +16,7 @@ module.exports = class Routes extends Express {
         super();
 
         if (typeof this.router !== 'undefined') {
-            return this.getRouterInstance();
+            return this._();
         }
         this.framework = new Express().framework
         
@@ -36,13 +36,13 @@ module.exports = class Routes extends Express {
     }
 
     /**
-     * @function getRouterInstance
+     * @function _
      * @description  gets an instance of the Routes class
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @return {Routes}
      */
-    getRouterInstance() {
+    _() {
         return this.router;
     }
 

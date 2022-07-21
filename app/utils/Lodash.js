@@ -5,14 +5,14 @@
  * @copyright lodash
  */
 module.exports = class Lodash{
-    constructor (_ = require('lodash')) {
-        if (typeof this._ !== 'undefined') {
+    constructor (__ = require('lodash')) {
+        if (typeof this.__ !== 'undefined') {
             return this.getLodashInstance();
         }
-        this._ = _;
+        this.__ = __;
     }
 
     getLodashInstance () {
-        return this._;
+        return this.__;
     }
 }

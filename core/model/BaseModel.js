@@ -19,7 +19,7 @@ module.exports = class BaseModel extends QueryBuilder {
         const parent = super();
         this.#parent = parent;
         this.model   = this.#parent.constructor.name.toString();
-        this._       = new Lodash()._;
+        this.__       = new Lodash().__;
         this.mysql   = this.getDb();
     }
 
@@ -34,19 +34,19 @@ module.exports = class BaseModel extends QueryBuilder {
      * @returns Promise
      */
     delete(id, table = this.table) {
-        if (this._.isString(id)) {
+        if (this.__.isString(id)) {
             id = +id;
         }
 
-        if (this._.isEmpty(table)) {
+        if (this.__.isEmpty(table)) {
             return false;
         }
 
-        if (this._.isObject(id)) {
+        if (this.__.isObject(id)) {
             return (async () => {
                 return await this.executeModelQuery(`DELETE FROM ${table} WHERE ?;`, id);
             })()
-        } else if (this._.isNumber(id)) {
+        } else if (this.__.isNumber(id)) {
             return (async () => {
                 return await this.executeModelQuery(`DELETE FROM ${table} WHERE ID = ?;`, id);
             })()
@@ -64,7 +64,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @returns Promise
      */
     deleteAll(table = this.table) {
-        if (this._.isEmpty(table)) {
+        if (this.__.isEmpty(table)) {
             return false;
         }
 
@@ -89,18 +89,18 @@ module.exports = class BaseModel extends QueryBuilder {
      * @returns Promise
      */
     filter(sql_query = null, table = this.table) {
-        if (this._.isEmpty(table)) {
+        if (this.__.isEmpty(table)) {
             return [];
         }
         
-        if (this._.isObject(sql_query) && this._.isEmpty(table) === false) {
+        if (this.__.isObject(sql_query) && this.__.isEmpty(table) === false) {
             let where_clause = '';
             for (const key in sql_query) {
                 if (Object.hasOwnProperty.call(sql_query, key)) {
                     where_clause = where_clause + key + ' = ' + this.mysql.escape(sql_query[key]) + ' AND ';
                 }
             }
-            if (this._.isString(where_clause) && !this._.isEmpty(where_clause)) {
+            if (this.__.isString(where_clause) && !this.__.isEmpty(where_clause)) {
                 const where_clause_length = where_clause.length;
                 where_clause = where_clause.substring(0, where_clause_length - 4);
             }
@@ -109,7 +109,7 @@ module.exports = class BaseModel extends QueryBuilder {
             return (async () => {
                 return await this.executeModelQuery(`SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC`)
                 .then(([rows, fields]) => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         for (const key in this.columns) {
                             rows['reverse_table_name'] = this.table; 
                             let column_name = key;
@@ -146,7 +146,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                 .then((id) =>
                                     {
                                         if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this._.isEmpty(typeof rows[0][where_col])) {
+                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
                                                 return this.getTablePrimaryKey(where_tbl)
                                                 .then((_id) => {
                                                     const _statement = where_tbl && where_col && reverse_table ? 
@@ -191,7 +191,7 @@ module.exports = class BaseModel extends QueryBuilder {
             //                 sql: `SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC`, 
             //             }
             //         ).then(([rows, fields]) => {
-            //             if (!this._.isEmpty(rows)) {
+            //             if (!this.__.isEmpty(rows)) {
             //                 for (const key in this.columns) {
             //                     rows['reverse_table_name'] = this.table; 
             //                     let column_name = key;
@@ -226,7 +226,7 @@ module.exports = class BaseModel extends QueryBuilder {
             //                         .then((id) =>
             //                             {
             //                                 if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-            //                                     if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this._.isEmpty(typeof rows[0][where_col])) {
+            //                                     if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
             //                                         return this.getTablePrimaryKey(where_tbl)
             //                                         .then((_id) => {
             //                                             const _statement = where_tbl && where_col && reverse_table ? 
@@ -268,7 +268,7 @@ module.exports = class BaseModel extends QueryBuilder {
             // });
         }
 
-        if (this._.isString(sql_query) && !this._.isEmpty(table)) {
+        if (this.__.isString(sql_query) && !this.__.isEmpty(table)) {
             sql_query = this.mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
 
             return (async () => {
@@ -281,7 +281,7 @@ module.exports = class BaseModel extends QueryBuilder {
                     `
                 )
                 .then(([rows, fields]) => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         for (const key in this.columns) {
                             rows['reverse_table_name'] = this.table; 
                             let column_name = key;
@@ -318,7 +318,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                 .then((id) =>
                                     {
                                         if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this._.isEmpty(typeof rows[0][where_col])) {
+                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
                                                 return this.getTablePrimaryKey(where_tbl)
                                                 .then((_id) => {
                                                     const _statement = where_tbl && where_col && reverse_table ? 
@@ -358,11 +358,11 @@ module.exports = class BaseModel extends QueryBuilder {
             })()
         }
 
-        if (!this._.isNaN(sql_query) && this._.isString(sql_query)) {
+        if (!this.__.isNaN(sql_query) && this.__.isString(sql_query)) {
             sql_query = +sql_query;
         }
         
-        if (!this._.isNaN(sql_query) && this._.isEmpty(table) === false) {
+        if (!this.__.isNaN(sql_query) && this.__.isEmpty(table) === false) {
             return (async () => {
                 return await this.executeModelQuery(
                     `
@@ -375,7 +375,7 @@ module.exports = class BaseModel extends QueryBuilder {
                     [sql_query]
                 )
                 .then(([rows, fields]) => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         for (const key in this.columns) {
                             rows['reverse_table_name'] = this.table; 
                             let column_name = key;
@@ -412,7 +412,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                 .then((id) =>
                                     {
                                         if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this._.isEmpty(typeof rows[0][where_col])) {
+                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
                                                 return this.getTablePrimaryKey(where_tbl)
                                                 .then((_id) => {
                                                     const _statement = where_tbl && where_col && reverse_table ? 
@@ -452,7 +452,7 @@ module.exports = class BaseModel extends QueryBuilder {
             })()
         }
 
-        if ((this._.isEmpty(sql_query) && !this._.isNaN(sql_query)) || sql_query == null) {
+        if ((this.__.isEmpty(sql_query) && !this.__.isNaN(sql_query)) || sql_query == null) {
             return this.all(table);
         }
     }
@@ -468,18 +468,18 @@ module.exports = class BaseModel extends QueryBuilder {
      * @returns Promise
      */
     get(sql_query, table = this.table) {
-        if (this._.isEmpty(table)) {
+        if (this.__.isEmpty(table)) {
             return [];
         }
 
-        if (this._.isObject(sql_query) && this._.isEmpty(table) === false) {
+        if (this.__.isObject(sql_query) && this.__.isEmpty(table) === false) {
             let where_clause = '';
             for (const key in sql_query) {
                 if (Object.hasOwnProperty.call(sql_query, key)) {
                     where_clause = where_clause + key + ' = ' + this.mysql.escape(sql_query[key]) + ' AND ';
                 }
             }
-            if (this._.isString(where_clause) && !this._.isEmpty(where_clause)) {
+            if (this.__.isString(where_clause) && !this.__.isEmpty(where_clause)) {
                 const where_clause_length = where_clause.length;
                 where_clause = where_clause.substring(0, where_clause_length - 4);
             }
@@ -488,7 +488,7 @@ module.exports = class BaseModel extends QueryBuilder {
             return (async () => {
                 return await this.executeModelQuery(`SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC LIMIT 1`)
                 .then(([rows, fields]) => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         for (const key in this.columns) {
                             rows['reverse_table_name'] = this.table; 
                             let column_name = key;
@@ -525,7 +525,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         .then((id) =>
                                             {
                                                 if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this._.isEmpty(typeof rows[0][where_col])) {
+                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
                                                         return this.getTablePrimaryKey(where_tbl)
                                                         .then((_id) => {
                                                             const _statement = where_tbl && where_col && reverse_table ? 
@@ -565,7 +565,7 @@ module.exports = class BaseModel extends QueryBuilder {
             })()
         }
 
-        if (this._.isString(sql_query) && !this._.isEmpty(table)) {
+        if (this.__.isString(sql_query) && !this.__.isEmpty(table)) {
             sql_query = this.mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
             
             return (async () => {
@@ -578,7 +578,7 @@ module.exports = class BaseModel extends QueryBuilder {
                     `
                 )
                 .then(([rows, fields]) => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         for (const key in this.columns) {
                             rows['reverse_table_name'] = this.table; 
                             let column_name = key;
@@ -615,7 +615,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         .then((id) =>
                                             {
                                                 if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this._.isEmpty(typeof rows[0][where_col])) {
+                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
                                                         return this.getTablePrimaryKey(where_tbl)
                                                         .then((_id) => {
                                                             const _statement = where_tbl && where_col && reverse_table ? 
@@ -655,11 +655,11 @@ module.exports = class BaseModel extends QueryBuilder {
             })()
         }
 
-        if (!this._.isNaN(sql_query) && this._.isString(sql_query)) {
+        if (!this.__.isNaN(sql_query) && this.__.isString(sql_query)) {
             sql_query = +sql_query;
         }
         
-        if (!this._.isNaN(sql_query) && this._.isEmpty(table) === false) {
+        if (!this.__.isNaN(sql_query) && this.__.isEmpty(table) === false) {
             return (async () => {
                 return await this.executeModelQuery(
                     `
@@ -672,7 +672,7 @@ module.exports = class BaseModel extends QueryBuilder {
                     [sql_query]
                 )
                 .then(([rows, fields]) => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         for (const key in this.columns) {
                             rows['reverse_table_name'] = this.table; 
                             let column_name = key;
@@ -709,7 +709,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         .then((id) =>
                                             {
                                                 if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this._.isEmpty(typeof rows[0][where_col])) {
+                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
                                                         return this.getTablePrimaryKey(where_tbl)
                                                         .then((_id) => {
                                                             const _statement = where_tbl && where_col && reverse_table ? 
@@ -760,7 +760,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @returns Promise
      */
     all(table = this.table) {
-        if (this._.isEmpty(table) && !this._.isString(table)) {
+        if (this.__.isEmpty(table) && !this.__.isString(table)) {
             return [];
         }
 
@@ -773,7 +773,7 @@ module.exports = class BaseModel extends QueryBuilder {
             `
             )
             .then(([rows, fields]) => {
-                if (!this._.isEmpty(rows)) {
+                if (!this.__.isEmpty(rows)) {
                     for (const key in this.columns) {
                         rows['reverse_table_name'] = this.table; 
                         let column_name = key;
@@ -810,7 +810,7 @@ module.exports = class BaseModel extends QueryBuilder {
                             .then((id) =>
                                 {
                                     if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this._.isEmpty(typeof rows[0][where_col])) {
+                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
                                             return this.getTablePrimaryKey(where_tbl)
                                             .then((_id) => {
                                                 const _statement = where_tbl && where_col && reverse_table ? 
@@ -860,11 +860,11 @@ module.exports = class BaseModel extends QueryBuilder {
      * @returns Promise
      */
     create(values, table = this.table) {
-        if (this._.isEmpty(table) && !this._.isString(table)) {
+        if (this.__.isEmpty(table) && !this.__.isString(table)) {
             return false;
         }
         
-        if (!this._.isObject(values) || this._.isEmpty(values)) {
+        if (!this.__.isObject(values) || this.__.isEmpty(values)) {
             return false;
         }
         
@@ -884,20 +884,20 @@ module.exports = class BaseModel extends QueryBuilder {
      * @returns Promise
      */
     update(values, where = null, table = this.table) {
-        if (this._.isEmpty(table) && !this._.isString(table)) {
+        if (this.__.isEmpty(table) && !this.__.isString(table)) {
             return false;
         }
         
-        if (!this._.isObject(values) || this._.isEmpty(values)) {
+        if (!this.__.isObject(values) || this.__.isEmpty(values)) {
             return false;
         }
         
         if (where !== null && typeof where !== 'undefined') {
-            if (this._.isObject(where)) {
+            if (this.__.isObject(where)) {
                 return (async () => {
                     return await this.executeModelQuery(`UPDATE ${table} SET ? where ? ;`, [values, where]);
                 })()
-            } else if (!this._.isNaN(where)) {
+            } else if (!this.__.isNaN(where)) {
                 where = +where;
                 return (async () => {
                     return await this.executeModelQuery(`UPDATE ${table} SET ? where id = ? ;`, [values, where]);                    

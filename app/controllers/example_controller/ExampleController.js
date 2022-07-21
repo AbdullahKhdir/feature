@@ -23,12 +23,12 @@ module.exports = class ExampleController extends BaseController{
         this.exmaple_model = new ExampleModel();
     }
 
-    firstMethod = () => this.getRouterInstance().get('/get_exmaple', (req, res, next) => {
+    firstMethod = () => this._().get('/get_exmaple', (req, res, next) => {
         res.send('<h1>THIS IS AN EXAMPLE OF A GET REQUEST</h1>');
         res.end();
     });
 
-    secondMethod = () => this.getRouterInstance().post('/post_example', (req, res, next) => {
+    secondMethod = () => this._().post('/post_example', (req, res, next) => {
         this.exmaple_model
             .all()
             .then(([rows, fieldData]) => {
@@ -39,7 +39,7 @@ module.exports = class ExampleController extends BaseController{
     });
 
     thirdMethod() {
-        return this.getRouterInstance().put('/put_example', (req, res, next) => {
+        return this._().put('/put_example', (req, res, next) => {
             this.exmaple_model
                 .all()
                 .then(([rows, fieldData]) => {
@@ -60,7 +60,7 @@ module.exports = class ExampleController extends BaseController{
     }
 
     fourthMethod() {
-        return this.getRouterInstance().patch('/patch_example', (req, res, next) => {
+        return this._().patch('/patch_example', (req, res, next) => {
             this.exmaple_model
                 .all()
                 .then(([rows, fieldData]) => {
@@ -81,7 +81,7 @@ module.exports = class ExampleController extends BaseController{
     }
 
     fifthMethod() {
-        return this.getRouterInstance().delete('/delete_example', (req, res, next) => {
+        return this._().delete('/delete_example', (req, res, next) => {
             this.exmaple_model
                 .all()
                 .then(([rows, fieldData]) => {
@@ -103,12 +103,13 @@ module.exports = class ExampleController extends BaseController{
 
     
     firstDynMethod() {
-        return this.getRouterInstance().get('/dynamic/:dynamicInput', (req, res, next) => {
+        return this._().get('/dynamic/:dynamicInput', (req, res, next) => {
             const dynamicInput = +req.params.dynamicInput ?? false;
             this.exmaple_model.filter(dynamicInput).then(([rows, fields]) => {
                 if (rows) {
                     const rows = rows[0];
-                    res.render(
+                    return this.render(
+                        res,
                         'example/index',
                         {
                             page_title: rows ?? 'Dynamic route',
@@ -125,12 +126,13 @@ module.exports = class ExampleController extends BaseController{
     }
 
     secondDynMethod() {
-        return this.getRouterInstance().get('/dynamic_two/:dynamicInput', (req, res, next) => {
+        return this._().get('/dynamic_two/:dynamicInput', (req, res, next) => {
             const dynamicInput = +req.params.dynamicInput ?? false;
             this.exmaple_model.filter(dynamicInput).then(([rows, fields]) => {
                 if (rows) {
                     const rows = rows[0];
-                    res.render(
+                    return this.render(
+                        res,
                         'example/index',
                         {
                             page_title: rows ?? 'Dynamic route',

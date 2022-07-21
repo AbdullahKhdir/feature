@@ -32,7 +32,7 @@ module.exports = class Application extends BaseController {
         this.path           = new Path().path;
         this.constants      = Object.assign(new Constants().getConstants());
         this.sub_controller = this;
-        this._              = new Lodash()._;
+        this.__             = new Lodash().__;
         this.session        = this.express_session;
 
         /*
@@ -146,13 +146,13 @@ module.exports = class Application extends BaseController {
         * Middleware To Get the logged in user
         */
         app.use((req, res, next) => {
-            if (this._.isEmpty(req.session.currentUser) || typeof req.session.currentUser === 'undefined') {
+            if (this.__.isEmpty(req.session.currentUser) || typeof req.session.currentUser === 'undefined') {
                 req.session.currentUser = {}
                 const User = require('./models/shop/User');
                 let user_model = new User();
                 user_model.get({name: 'Abdullah'})
                 .then(rows => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         if (typeof rows[0] !== 'undefined') {
                             req.session.currentUser = rows[0];
                             if (!res.headersSent) {
@@ -175,7 +175,7 @@ module.exports = class Application extends BaseController {
         * Middleware To check if user has logged in to save the login in data in the session
         */
         app.use((req, res, next) => {
-            if (!this._.isEmpty(req.session.currentUser) || typeof req.session.currentUser !== 'undefined') {
+            if (!this.__.isEmpty(req.session.currentUser) || typeof req.session.currentUser !== 'undefined') {
                 req.session.currentUser = Object.assign(req.session.currentUser, {
                     getCart: () => {
                         let Cart = require('../app/models/shop/Cart');

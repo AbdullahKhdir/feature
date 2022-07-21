@@ -22,7 +22,7 @@ module.exports = class BaseController extends Routes {
         super();
         this.path        = Object.assign(new Path().path);
         this.file_system = Object.assign(new FileSystem().fs);
-        this._           = Object.assign(new Lodash()._);
+        this.__          = Object.assign(new Lodash().__);
     }
 
     /**
@@ -56,7 +56,7 @@ module.exports = class BaseController extends Routes {
                      * let content   = this.file_system.readFileSync(directory_routes+'/'+file);
                     */
 
-                    let file_name    = this._.capitalize(file.name.substring(0, file.name.indexOf('js') - 1));
+                    let file_name    = this.__.capitalize(file.name.substring(0, file.name.indexOf('js') - 1));
                     let route_name   = require('../../app/controllers/'+file_name+'.js');
                     let instance_of  = new route_name();
 
@@ -76,7 +76,7 @@ module.exports = class BaseController extends Routes {
                         files.forEach((file) => {
                             let is_file = file.isFile(); 
                             if (is_file) {
-                                let file_name    = this._.capitalize(file.name.substring(0, file.name.indexOf('js') - 1));
+                                let file_name    = this.__.capitalize(file.name.substring(0, file.name.indexOf('js') - 1));
                                 let route_name   = require(
                                     '../../app/controllers/'+directory_name+'/'+file_name+'.js'
                                 );
@@ -117,7 +117,7 @@ module.exports = class BaseController extends Routes {
         let is_post_request_successful = false;
         let _constants                 = new Constants().getConstants();
         
-        app.use(this.getRouterInstance().get('*', (req, res, next) => {
+        app.use(this._().get('*', (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach((middleware) => {
@@ -139,22 +139,22 @@ module.exports = class BaseController extends Routes {
                 let check_path = req.path.toString().slice(1, req.path.toString().length);
                 let direction  = Object.assign(route.path.slice(1, route.path.length));
                 
-                let predefined_direction_from_route = this._.toLower(direction.toString());
-                let requested_path_in_browser       = this._.toLower(check_path.toString());
+                let predefined_direction_from_route = this.__.toLower(direction.toString());
+                let requested_path_in_browser       = this.__.toLower(check_path.toString());
                 
                 /*
                 * "/route" is same as "/route/"
                 */
-                if (this._.endsWith(requested_path_in_browser, '/') || this._.endsWith(predefined_direction_from_route, '/')) {
-                    requested_path_in_browser       = this._.trimEnd(requested_path_in_browser, '/');
-                    predefined_direction_from_route = this._.trimEnd(predefined_direction_from_route, '/');
+                if (this.__.endsWith(requested_path_in_browser, '/') || this.__.endsWith(predefined_direction_from_route, '/')) {
+                    requested_path_in_browser       = this.__.trimEnd(requested_path_in_browser, '/');
+                    predefined_direction_from_route = this.__.trimEnd(predefined_direction_from_route, '/');
                 }      
 
                 if (predefined_direction_from_route.includes(':')) {
                     const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
                     const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
                     if (_predefined_direction_from_route === _requested_path_in_browser) {
-                        if (this._.isEmpty(route_exists)) {
+                        if (this.__.isEmpty(route_exists)) {
                             route_exists = 'dynamic routes';
                         }
                         site_is_found    = true;
@@ -166,7 +166,7 @@ module.exports = class BaseController extends Routes {
                 }
             });
 
-            if (this._.isEmpty(route_exists)) {
+            if (this.__.isEmpty(route_exists)) {
                 return this.render(
                     res,
                     '404',
@@ -190,7 +190,7 @@ module.exports = class BaseController extends Routes {
             }
         }));
 
-        app.use(this.getRouterInstance().post('*', (req, res, next) => {
+        app.use(this._().post('*', (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach(function(middleware){
@@ -212,22 +212,22 @@ module.exports = class BaseController extends Routes {
                 let check_path = req.path.toString().slice(1, req.path.toString().length);
                 let direction  = Object.assign(route.path.slice(1, route.path.length));
                 
-                let predefined_direction_from_route = this._.toLower(direction.toString());
-                let requested_path_in_browser       = this._.toLower(check_path.toString());
+                let predefined_direction_from_route = this.__.toLower(direction.toString());
+                let requested_path_in_browser       = this.__.toLower(check_path.toString());
                 
                 /*
                 * "/route" is same as "/route/"
                 */
-                if (this._.endsWith(requested_path_in_browser, '/') || this._.endsWith(predefined_direction_from_route, '/')) {
-                    requested_path_in_browser       = this._.trimEnd(requested_path_in_browser, '/');
-                    predefined_direction_from_route = this._.trimEnd(predefined_direction_from_route, '/');
+                if (this.__.endsWith(requested_path_in_browser, '/') || this.__.endsWith(predefined_direction_from_route, '/')) {
+                    requested_path_in_browser       = this.__.trimEnd(requested_path_in_browser, '/');
+                    predefined_direction_from_route = this.__.trimEnd(predefined_direction_from_route, '/');
                 }
                 
                 if (predefined_direction_from_route.includes(':')) {
                     const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
                     const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
                     if (_predefined_direction_from_route === _requested_path_in_browser) {
-                        if (this._.isEmpty(route_exists)) {
+                        if (this.__.isEmpty(route_exists)) {
                             route_exists = 'dynamic routes';
                         }
                         is_post_request_successful = true;
@@ -239,7 +239,7 @@ module.exports = class BaseController extends Routes {
                 }
             });
 
-            if (this._.isEmpty(route_exists)) {
+            if (this.__.isEmpty(route_exists)) {
                 return this.render(
                     res,
                     '404',

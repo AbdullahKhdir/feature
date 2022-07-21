@@ -27,7 +27,7 @@ module.exports = class Admin extends BaseController {
             'editProduct'
         ];
         this.product_object = new Product();
-        this._ = new Lodash()._;
+        this.__ = new Lodash().__;
 
         /*
          ? CORS CONFIGURATIONS 
@@ -55,8 +55,9 @@ module.exports = class Admin extends BaseController {
         }
     }
 
-    product           = () => this.getRouterInstance().get('/admin/add-product/', Promise.asyncHandler(async (req, res, next) => {
-        res.render(
+    product           = () => this._().get('/admin/add-product/', Promise.asyncHandler(async (req, res, next) => {
+        return this.render(
+            res,
             'admin/add-product',
             {
                 page_title: 'Add Product',
@@ -65,22 +66,23 @@ module.exports = class Admin extends BaseController {
         );
     }));
 
-    editProduct       = () => this.getRouterInstance().get('/admin/edit-product/:product_id/', Promise.asyncHandler(async (req, res, next) => {
+    editProduct       = () => this._().get('/admin/edit-product/:product_id/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = +req.params.product_id ?? false;
         const user_id    = +req.session.currentUser.id;
         
-        if (this._.isNumber(user_id) && this._.isNumber(product_id)) {
+        if (this.__.isNumber(user_id) && this.__.isNumber(product_id)) {
             this.product_object.filter({id: product_id, user_id: user_id})
             .then(rows => {
-                if (!this._.isEmpty(rows)) {
+                if (!this.__.isEmpty(rows)) {
                     const product = rows[0];
-                    res.render(
+                    return this.render(
+                        res,
                         'admin/edit-product',
                         {
                             page_title: 'Edit Product',
                             path : '/admin/edit-product/',
                             product_id: product_id,
-                            lodash: this._,
+                            lodash: this.__,
                             product: product
                         }
                     );
@@ -96,11 +98,11 @@ module.exports = class Admin extends BaseController {
         }
     }));
 
-    postEditedProduct = () => this.getRouterInstance().post('/admin/edit-product/', Promise.asyncHandler(async  (req, res, next) => {
+    postEditedProduct = () => this._().post('/admin/edit-product/', Promise.asyncHandler(async  (req, res, next) => {
             const product_id = +req.body.product_id ?? false;
-            const title = this._.capitalize(req.body.title) ?? false;
+            const title = this.__.capitalize(req.body.title) ?? false;
             const price = req.body.price ?? false;
-            const description = this._.capitalize(req.body.description) ?? false;
+            const description = this.__.capitalize(req.body.description) ?? false;
             const image = req.body.imageUrl ?? false;
 
             const values = {
@@ -121,10 +123,10 @@ module.exports = class Admin extends BaseController {
             }
     }));
 
-    addProduct        = () => this.getRouterInstance().post('/admin/add-product/', Promise.asyncHandler(async (req, res, next) => {
-            const title       = this._.capitalize(req.body.title);
+    addProduct        = () => this._().post('/admin/add-product/', Promise.asyncHandler(async (req, res, next) => {
+            const title       = this.__.capitalize(req.body.title);
             const imageUrl    = req.body.imageUrl;
-            const description = this._.capitalize(req.body.description);
+            const description = this.__.capitalize(req.body.description);
             const price       = req.body.price;
             const user_id     = req.session.currentUser.id;
 
@@ -139,14 +141,14 @@ module.exports = class Admin extends BaseController {
             });
     }));
 
-    deleteProduct     = () => this.getRouterInstance().post('/admin/delete-product/', Promise.asyncHandler(async (req, res, next) => {
+    deleteProduct     = () => this._().post('/admin/delete-product/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = req.body.product_id ?? false;
         const user_id = +req.session.currentUser.id ?? false;
         
         if (product_id && user_id) {
             this.product_object.get({id: product_id, user_id: user_id})
                 .then(rows => {
-                    if (!this._.isEmpty(rows)) {
+                    if (!this.__.isEmpty(rows)) {
                         const id = rows[0].id;
                         this.product_object.delete(id).then((result) => {
                             res.redirect('/admin/products/');
@@ -159,15 +161,16 @@ module.exports = class Admin extends BaseController {
         }
     }));
 
-    products          = () => this.getRouterInstance().get('/admin/products/', this.cors(this.#corsOptionsDelegate), Promise.asyncHandler(async (req, res, next) => {
+    products          = () => this._().get('/admin/products/', this.cors(this.#corsOptionsDelegate), Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
             .then(rows => {
-                res.render(
+                return this.render(
+                    res,
                     'admin/products',
                     {
                         products: rows ?? [],
-                        lodash: this._,
+                        lodash: this.__,
                         page_title: 'Admin Products',
                         path : '/admin/products/'
                     }
