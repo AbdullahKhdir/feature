@@ -195,7 +195,7 @@ module.exports = class Application extends BaseController {
                 });
                 next();
             } else {
-                res.redirect('/');
+                return this.redirect(res, '/');
             }
         });
         

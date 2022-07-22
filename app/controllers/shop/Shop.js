@@ -154,7 +154,7 @@ module.exports = class Shop extends BaseController{
                                 .catch(err => console.log(err));
                             }
                         } else {
-                            res.redirect(this.constants.getConstants().HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/');
+                            return this.redirect(res, '/', this.constants.getConstants().HTTPS_STATUS.REDIRECTION.SEE_OTHER);
                         }
                     });
                 } else {
@@ -205,7 +205,7 @@ module.exports = class Shop extends BaseController{
                         const id       = cart_items_rows[0].id; 
                         this.cart_items_object.update({quantity: quantity}, id).then((check => {
                             if (check) {
-                                res.redirect('/cart/');
+                                return this.redirect(res, '/cart/');
                             }
                         }));
                     } else {
@@ -216,7 +216,7 @@ module.exports = class Shop extends BaseController{
                         };
                         this.cart_items_object.create(cart_item_params).then((cart_item_element) => {
                             if (cart_item_element) {
-                                res.redirect('/cart/');
+                                return this.redirect(res, '/cart/');
                             }
                         });
                     }
@@ -236,7 +236,7 @@ module.exports = class Shop extends BaseController{
                                 const id       = cart_items_rows[0].id; 
                                 this.cart_items_object.update({quantity: quantity}, id).then((check => {
                                     if (check) {
-                                        res.redirect('/cart/');
+                                        return this.redirect(res, '/cart/');
                                     }
                                 }));
                             } else {
@@ -247,7 +247,7 @@ module.exports = class Shop extends BaseController{
                                 };
                                 this.cart_items_object.create(cart_item_params).then((cart_item_element) => {
                                     if (cart_item_element) {
-                                        res.redirect('/cart/');
+                                        return this.redirect(res, '/cart/');
                                     }
                                 });
                             }
@@ -376,7 +376,7 @@ module.exports = class Shop extends BaseController{
                                         this.order_items_object.create(order_item_params).then((order_item_element) => {
                                             if (order_item_element) {
                                                 if (!res.headersSent) {
-                                                    res.redirect('/orders/');
+                                                    return this.redirect(res, '/orders/');
                                                 }
                                             }
                                         });
@@ -392,7 +392,7 @@ module.exports = class Shop extends BaseController{
                                                 this.order_items_object.update(order_item_params, order_item_id).then((order_item_element) => {
                                                     if (order_item_element) {
                                                         if (!res.headersSent) {
-                                                            res.redirect('/orders/');
+                                                            return this.redirect(res, '/orders/');
                                                         }
                                                     }
                                                 });
@@ -423,13 +423,13 @@ module.exports = class Shop extends BaseController{
                                                 this.order_items_object.create(order_item_params).then((order_item_element) => {
                                                     if (order_item_element) {
                                                         if (!res.headersSent) {
-                                                            res.redirect('/orders/');
+                                                            return this.redirect(res, '/orders/');
                                                         }
                                                     }
                                                 });
                                             }
                                             if (!res.headersSent) {
-                                                res.redirect('/orders/');
+                                                return this.redirect(res, '/orders/');
                                             }
                                         });  
                                     }
@@ -512,11 +512,11 @@ module.exports = class Shop extends BaseController{
                                         this.order_items_object.delete({product_id: cart_item_product_id})
                                         .then(_result => {
                                             if (_result[0].affectedRows > 0) {
-                                                res.redirect('/cart/');             
+                                                return this.redirect(res, '/cart/');
                                             }
                                         });
                                     } else {
-                                        res.redirect('/cart/');
+                                        return this.redirect(res, '/cart/');
                                     }
                                 });
                             }
@@ -543,7 +543,7 @@ module.exports = class Shop extends BaseController{
                         this.cart_items_object.update({quantity: result[0].quantity - 1}, result[0].id)
                             .then((result) => {
                                 if (result) {
-                                    res.redirect('/cart/');
+                                    return this.redirect(res, '/cart/');
                                 }
                             })
                             .catch(err => console.log(err));
@@ -551,7 +551,7 @@ module.exports = class Shop extends BaseController{
                         this.cart_items_object.delete({product_id: cart_item_product_id})
                             .then((result) => {
                                 if (result[0].affectedRows > 0) {
-                                    res.redirect('/cart/');
+                                    return this.redirect(res, '/cart/');
                                 }
                             })
                             .catch(err => console.log(err));

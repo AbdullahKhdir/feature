@@ -18,7 +18,8 @@ module.exports = class Auth extends BaseController {
     constructor() {
         super();
         this.methods = [
-            'authenticate'
+            'getAuthenticate',
+            'postAuthenticate'
         ];
         this.__ = new Lodash().__;
 
@@ -49,13 +50,13 @@ module.exports = class Auth extends BaseController {
     }
 
     /**
-     * @function authenticate
-     * @description authentication route
+     * @function getAuthenticate
+     * @description Get authentication user
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
      */
-    authenticate           = () => this._().get('/login/', Promise.asyncHandler(async (req, res, next) => {
+    getAuthenticate           = () => this._().get('/login/', Promise.asyncHandler(async (req, res, next) => {
         return this.render(
             res,
             'shop/auth',
@@ -64,5 +65,16 @@ module.exports = class Auth extends BaseController {
                 path : '/login/'
             }
         );
+    }));
+
+    /**
+     * @function postAuthenticate
+     * @description Check user's authentication's infos 
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    postAuthenticate          = () => this._().post('/login/', Promise.asyncHandler(async (req, res, next) => {
+        return this.redirect(res, '/');
     }));
 }

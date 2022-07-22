@@ -101,14 +101,14 @@ module.exports = class Admin extends BaseController {
                         }
                     );
                 } else {
-                    res.redirect('/products/');
+                    return this.redirect(res, '/products/');
                 }
             })
             .catch((err) => {
                 throw err;
             });
         } else {
-            return res.redirect('/');
+            return this.redirect(res, '/');
         }
     }));
 
@@ -161,9 +161,8 @@ module.exports = class Admin extends BaseController {
             this.product_object.create({title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id}).then((results) => {
                 const primary_key = results[0].insertId
                 if (primary_key) {
-                    res.redirect('/');
+                    return this.redirect(res, '/');
                 }
-                res.end();
             }).catch((err) => {
                 throw err;
             });
@@ -186,7 +185,7 @@ module.exports = class Admin extends BaseController {
                     if (!this.__.isEmpty(rows)) {
                         const id = rows[0].id;
                         this.product_object.delete(id).then((result) => {
-                            res.redirect('/admin/products/');
+                            return this.redirect(res, '/admin/products/');
                         }).catch((err) => {
                             throw err
                         });                

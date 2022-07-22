@@ -31,8 +31,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     firstMethod = () => this._().get('/get_exmaple', (req, res, next) => {
-        res.send('<h1>THIS IS AN EXAMPLE OF A GET REQUEST</h1>');
-        res.end();
+        return this.send(res, '<h1>THIS IS AN EXAMPLE OF A GET REQUEST</h1>');
     });
 
     /**
@@ -46,8 +45,7 @@ module.exports = class ExampleController extends BaseController{
         this.exmaple_model
             .all()
             .then(([rows, fieldData]) => {
-                res.send('<h1>DATA FETCHED FROM EXAMPLE MODEL SUCCESSFULY</h1>');
-                res.end();
+                return this.send(res, '<h1>DATA FETCHED FROM EXAMPLE MODEL SUCCESSFULY</h1>');
             })
             .catch(err => console.log(err)); 
     });
@@ -73,8 +71,7 @@ module.exports = class ExampleController extends BaseController{
                             })
                             .catch(err => console.log(err));
                     }
-                    res.redirect('/get_example');
-                    res.end();
+                    return this.redirect(res, '/get_example');
                 })
                 .catch(err => console.log(err));
         });
@@ -101,8 +98,7 @@ module.exports = class ExampleController extends BaseController{
                             })
                             .catch(err => console.log(err));
                     }
-                    res.redirect('/get_example');
-                    res.end();
+                    return this.redirect(res, '/get_example');
                 })
                 .catch(err => console.log(err));
         });
@@ -129,8 +125,7 @@ module.exports = class ExampleController extends BaseController{
                             })
                             .catch(err => console.log(err));
                     }
-                    res.redirect('/get_example');
-                    res.end();
+                    return this.redirect(res, '/get_example');
                 })
                 .catch(err => console.log(err));
         });

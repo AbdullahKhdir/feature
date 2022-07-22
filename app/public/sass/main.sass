@@ -34,8 +34,10 @@ form
 
 .main-header__nav
   height: 100%
-  display: none
+  width: 100%
+  display: flex
   align-items: center
+  justify-content: space-between
 
 .main-header__item-list
   list-style: none
@@ -47,11 +49,20 @@ form
   margin: 0 1rem
   padding: 0
 
-  a
+  a, button
+    font: inherit
+    background: transparent
+    border: none
     text-decoration: none
     color: white
+    cursor: pointer
 
+  a
     &:hover, &:active, &.active
+      color: #ffeb3b
+
+  button
+    &:hover, &:active
       color: #ffeb3b
 
 .mobile-nav

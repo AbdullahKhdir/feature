@@ -63,6 +63,24 @@ module.exports = class ApiResponse extends Db {
     }
 
     /**
+     * @function redirect
+     * @description redirect response to html page
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param Response res
+     * @param String url
+     * @param Number status
+     * @returns Response
+    */
+    redirect(res, url, status = this.#codes.getConstants().HTTPS_STATUS.SUCCESS.OK) {
+        res.type(this.#codes.getConstants().RESPONSE.TYPES.HTML);
+        if (typeof this.#status_code === 'undefined') {
+            return res.status(status).redirect(url);
+        }
+        return res.status(this.#status_code).redirect(url);
+    }
+
+    /**
      * @function send
      * @description Sends a html response
      * @version 1.0.0
