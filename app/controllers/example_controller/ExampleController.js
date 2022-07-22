@@ -23,11 +23,25 @@ module.exports = class ExampleController extends BaseController{
         this.exmaple_model = new ExampleModel();
     }
 
+    /**
+     * @function firstMethod
+     * @description firstMethod route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     firstMethod = () => this._().get('/get_exmaple', (req, res, next) => {
         res.send('<h1>THIS IS AN EXAMPLE OF A GET REQUEST</h1>');
         res.end();
     });
 
+    /**
+     * @function secondMethod
+     * @description secondMethod route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     secondMethod = () => this._().post('/post_example', (req, res, next) => {
         this.exmaple_model
             .all()
@@ -38,6 +52,13 @@ module.exports = class ExampleController extends BaseController{
             .catch(err => console.log(err)); 
     });
 
+    /**
+     * @function thirdMethod
+     * @description thirdMethod route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     thirdMethod() {
         return this._().put('/put_example', (req, res, next) => {
             this.exmaple_model
@@ -59,6 +80,13 @@ module.exports = class ExampleController extends BaseController{
         });
     }
 
+    /**
+     * @function fourthMethod
+     * @description fourthMethod route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     fourthMethod() {
         return this._().patch('/patch_example', (req, res, next) => {
             this.exmaple_model
@@ -80,6 +108,13 @@ module.exports = class ExampleController extends BaseController{
         });
     }
 
+    /**
+     * @function fifthMethod
+     * @description fifthMethod route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     fifthMethod() {
         return this._().delete('/delete_example', (req, res, next) => {
             this.exmaple_model
@@ -101,7 +136,13 @@ module.exports = class ExampleController extends BaseController{
         });
     }
 
-    
+    /**
+     * @function firstDynMethod
+     * @description firstDynMethod route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     firstDynMethod() {
         return this._().get('/dynamic/:dynamicInput', (req, res, next) => {
             const dynamicInput = +req.params.dynamicInput ?? false;
@@ -125,6 +166,13 @@ module.exports = class ExampleController extends BaseController{
         });
     }
 
+    /**
+     * @function secondDynMethod
+     * @description secondDynMethod route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     secondDynMethod() {
         return this._().get('/dynamic_two/:dynamicInput', (req, res, next) => {
             const dynamicInput = +req.params.dynamicInput ?? false;

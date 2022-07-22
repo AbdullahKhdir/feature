@@ -22,14 +22,36 @@ module.exports =  class JsonResponse extends ApiResponse {
         this.#data    = data;
     }
  
+    /**
+     * @function sendAsJson
+     * @description Sends json response to the client 
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param Response res
+     * @returns Response
+    */
     sendAsJson(res) {
        return super.renderAsJson(res, Object.assign(this, {message: this.getMessage()}, {data: this.getData()}));
     }
 
+    /**
+     * @function getData
+     * @description Gets the json data
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Object
+    */
     getData() {
         return this.#data;
     }
 
+    /**
+     * @function getMessage
+     * @description Gets the message
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Object
+    */
     getMessage() {
         return this.#message;
     }

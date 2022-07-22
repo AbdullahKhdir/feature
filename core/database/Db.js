@@ -511,11 +511,25 @@ module.exports = class Db extends ExpressMysqlSession {
         })();
     }
 
+    /**
+     * @function establishConnection
+     * @description Creates the database connection object
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns pool
+    */
     establishConnection () {
         let connection = this.mysql.createPool(this.connection_configurations);
         return connection.promise();
     }
 
+    /**
+     * @function initiateSession
+     * @description Initiates the database store object for caching 
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns mysql store
+    */
     initiateSession() {
         const constants       = Object.assign(new Constants().getConstants());
         const options = {
@@ -546,18 +560,51 @@ module.exports = class Db extends ExpressMysqlSession {
         return new this.MysqlStore(options, this.establishConnection());
     }
 
+    /**
+     * @async
+     * @function executeModelQuery
+     * @description Executes model's query
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns promise
+    */
     async executeModelQuery(sql, arr = []) {
         return this.#query(sql, arr);
     }
 
+    /**
+     * @async
+     * @function executeSql
+     * @description Executes a sql
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns promise
+    */
     async executeSql (sql, arr = []) {
         return this.#query(sql, arr);
     }
 
+    /**
+     * @async
+     * @function executeQuery
+     * @description Executes a random query
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns promise
+    */
     async executeQuery (sql, arr = []) {
         return this.#query(sql, arr);
     }
 
+    /**
+     * @async
+     * @protected
+     * @function query
+     * @description prepare query for execution
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns promise
+    */
     async #query(sql, arr = []) {
         return (async () => {
             let mysql_connection = this.establishConnection();

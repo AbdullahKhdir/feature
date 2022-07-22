@@ -58,7 +58,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Db Object
-     */
+    */
     getDb() {
         return this.#mysql;
     }
@@ -69,7 +69,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Model Object
-     */
+    */
     getModel() {
         return this.#model ?? this.model;
     }
@@ -82,19 +82,19 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns User escaped values
-     */
+    */
     escapeValue (value) {
         return this.getDb().escape(value);
     }
 
-     /**
+    /**
      * @method selectModel
      * @description Selects all from the model's table and returns a string with sql query
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {Class} modul_name
      * @returns QueryBuilder
-     */
+    */
     selectModel(modul_name) {
         if (!this.__.isNull(modul_name)) {
             if (this.__.isFunction(modul_name)) {
@@ -212,7 +212,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Promise
-     */
+    */
     done() {
         if (!this.__.isEmpty(this.#query)) {
             this.#query = this.#query + ';';
@@ -229,7 +229,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns QueryBuilder
-     */
+    */
     _and_() {
         if (!this.__.isEmpty(this.#query)) {
             this.#query = this.#query + ' AND ';
@@ -243,7 +243,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns QueryBuilder
-     */
+    */
     _or_() {
         if (!this.__.isEmpty(this.#query)) {
             this.#query = this.#query + ' OR ';
@@ -263,7 +263,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     is(col, value) {
         let object  = null;
         let table   = null;
@@ -330,7 +330,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     isNot(col, value) {
         let object  = null;
         let table   = null;
@@ -400,7 +400,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     contains(col, value) {
         let object  = null;
         let table   = null;
@@ -467,7 +467,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     notContains(col, value) {
         let object  = null;
         let table   = null;
@@ -536,7 +536,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     startsWith(col, value) {
         let object  = null;
         let table   = null;
@@ -602,7 +602,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     notStartsWith(col, value) {
         let object  = null;
         let table   = null;
@@ -671,7 +671,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     endsWith(col, value) {
         let object  = null;
         let table   = null;
@@ -739,7 +739,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     notEndsWith(col, value) {
         let object  = null;
         let table   = null;
@@ -808,7 +808,7 @@ module.exports = class QueryBuilder extends Db {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param string SQL
      * @returns QueryBuilder
-     */
+    */
     custom(sub_query) {
         let table   = null;
         let columns = null;
@@ -847,7 +847,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Boolean
-     */
+    */
     reset() {
         let table   = null;
         let columns = null;
@@ -877,7 +877,7 @@ module.exports = class QueryBuilder extends Db {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param string column
      * @returns QueryBuilder
-     */
+    */
     isNull(col) {
         let object  = null;
         let table   = null;
@@ -925,14 +925,14 @@ module.exports = class QueryBuilder extends Db {
         return !!this.#query ? new QueryBuilder(this.#model, this.#query, table, columns) : !!this.#query;
     }
 
-   /**
+    /**
      * @method isNotNull
      * @description Checks if column is not null
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param string column
      * @returns QueryBuilder
-     */
+    */
     isNotNull(col) {
         let object  = null;
         let table   = null;
@@ -991,7 +991,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string column
      * @param string regex
      * @returns QueryBuilder
-     */
+    */
     matchesPattern(col, regex) {
         let object  = null;
         let table   = null;
@@ -1053,7 +1053,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string column
      * @param string regex
      * @returns QueryBuilder
-     */
+    */
     notMatchesPattern(col, regex) {
         let object  = null;
         let table   = null;
@@ -1119,7 +1119,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     matchesSearchTerm(col, value) {
         let object  = null;
         let table   = null;
@@ -1186,7 +1186,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     notMatchesSearchTerm(col, value) {
         let object  = null;
         let table   = null;
@@ -1256,7 +1256,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     from(col, value) {
         let object  = null;
         let table   = null;
@@ -1322,7 +1322,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     to(col, value) {
         let object  = null;
         let table   = null;
@@ -1391,7 +1391,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     isLessThan(col, value) {
         let object  = null;
         let table   = null;
@@ -1457,7 +1457,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     isGreaterThan(col, value) {
         let object  = null;
         let table   = null;
@@ -1526,7 +1526,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     isLessThanEqual(col, value) {
         let object  = null;
         let table   = null;
@@ -1592,7 +1592,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string value
      * @param number value
      * @returns QueryBuilder
-     */
+    */
     isGreaterThanEqual(col, value) {
         let object  = null;
         let table   = null;
@@ -1658,7 +1658,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns QueryBuilder
-     */
+    */
     where() {
         let table   = null;
         let columns = null;
@@ -1688,7 +1688,7 @@ module.exports = class QueryBuilder extends Db {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param string column
      * @returns QueryBuilder
-     */
+    */
     groupBy(col) {
         let object  = null;
         let table   = null;
@@ -1744,7 +1744,7 @@ module.exports = class QueryBuilder extends Db {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param string condition
      * @returns QueryBuilder
-     */
+    */
     having(condition) {
         let table   = null;
         let columns = null;
@@ -1785,7 +1785,7 @@ module.exports = class QueryBuilder extends Db {
      * @param string column
      * @param string sort
      * @returns QueryBuilder
-     */
+    */
     orderBy(col, sort = 'ASC') {
         let object  = null;
         let table   = null;
@@ -1839,7 +1839,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns QueryBuilder
-     */
+    */
     nesting() {
         let table   = null;
         let columns = null;
@@ -1868,7 +1868,7 @@ module.exports = class QueryBuilder extends Db {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns QueryBuilder
-     */
+    */
     closeNesting() {
         let table   = null;
         let columns = null;
@@ -1901,7 +1901,7 @@ module.exports = class QueryBuilder extends Db {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param string built_query
      * @returns Promise
-     */
+    */
     #executeQuery(built_query = this.#query) {
         if (!this.__.isNull(built_query)) {
             if (this.__.isString(built_query)) {

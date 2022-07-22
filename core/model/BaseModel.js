@@ -7,7 +7,7 @@ const QueryBuilder = require('./QueryBuilder');
  * @class BaseModel
  * @constructor
  * @extends QueryBuilder
- * @description Class BaseModel is used to prepare suitable environment to the models
+ * @description Class BaseModel is used to prepare suitable environment to build queries for the models
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
@@ -32,7 +32,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @param Number id
      * @param Object id
      * @returns Promise
-     */
+    */
     delete(id, table = this.table) {
         if (this.__.isString(id)) {
             id = +id;
@@ -62,7 +62,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {String} table
      * @returns Promise
-     */
+    */
     deleteAll(table = this.table) {
         if (this.__.isEmpty(table)) {
             return false;
@@ -87,7 +87,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @param {String} table
      * @param {Object} sql_query
      * @returns Promise
-     */
+    */
     filter(sql_query = null, table = this.table) {
         if (this.__.isEmpty(table)) {
             return [];
@@ -184,88 +184,6 @@ module.exports = class BaseModel extends QueryBuilder {
                 })
                 .catch(error => error)
             })()
-            // return Promise.resolve(
-            //     [
-            //         this.mysql.query(
-            //             {
-            //                 sql: `SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC`, 
-            //             }
-            //         ).then(([rows, fields]) => {
-            //             if (!this.__.isEmpty(rows)) {
-            //                 for (const key in this.columns) {
-            //                     rows['reverse_table_name'] = this.table; 
-            //                     let column_name = key;
-            //                     let is_constraint = this.columns[column_name].references;
-            //                     if (typeof is_constraint !== 'undefined') {
-            //                         let constraint_table = this.columns[column_name].references.table;
-            //                         rows[column_name] = this.getTablePrimaryKey(constraint_table)
-            //                         .then((id) => (
-            //                             {
-            //                                 [is_constraint.name]: this.mysql.query(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
-            //                                                         .then(([rows, fields]) => rows)
-            //                                                         .catch(err => err)
-            //                             } 
-            //                         ));
-            //                     }
-            //                 }
-            //                 return rows;
-            //             }
-            //         })
-            //         .then(rows => {
-            //             if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-            //                 for (const key in this.reverse_references) {
-            //                     let reverse_table = this.reverse_references[key].table;
-            //                     let reverse_col   = this.reverse_references[key].column;
-            //                     let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-            //                                     this.reverse_references[key].setting.where_column : '';
-            //                     let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-            //                                     this.reverse_references[key].setting.where_table : '';
-            //                     let reverse_name  = key;
-            //                     if (typeof rows !== 'undefined') {
-            //                         rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-            //                         .then((id) =>
-            //                             {
-            //                                 if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-            //                                     if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-            //                                         return this.getTablePrimaryKey(where_tbl)
-            //                                         .then((_id) => {
-            //                                             const _statement = where_tbl && where_col && reverse_table ? 
-            //                                                             'SELECT * FROM '+reverse_table+' '+
-            //                                                             'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-            //                                                             'SELECT '+_id+' FROM '+where_tbl+' '+
-            //                                                             'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-            //                                                             ')' : '';
-            //                                             return {
-            //                                                 [reverse_name]: this.mysql.query(_statement) 
-            //                                                             .then(([results, fields]) => results)
-            //                                                             .catch(err => err)
-            //                                             }
-            //                                         });
-            //                                     }
-            //                                 } else {
-            //                                     return {
-            //                                         [reverse_name]: this.mysql.query(`SELECT * FROM ${reverse_table}`) 
-            //                                                     .then(([results, fields]) => results)
-            //                                                     .catch(err => err)
-            //                                     }
-            //                                 }
-            //                             }
-            //                         );
-            //                     } else {
-            //                         continue;   
-            //                     }
-            //                 }
-            //             }
-            //             return rows;
-            //         })
-            //         .catch(error => error)
-            //     ]
-            // )
-            // .then((final_result) => {
-            //     return (async () => {
-            //         return await final_result[0];
-            //     })();
-            // });
         }
 
         if (this.__.isString(sql_query) && !this.__.isEmpty(table)) {
@@ -466,7 +384,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @param {String} table
      * @param {Object} sql_query
      * @returns Promise
-     */
+    */
     get(sql_query, table = this.table) {
         if (this.__.isEmpty(table)) {
             return [];
@@ -758,7 +676,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {String} table
      * @returns Promise
-     */
+    */
     all(table = this.table) {
         if (this.__.isEmpty(table) && !this.__.isString(table)) {
             return [];
@@ -858,7 +776,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @param {String} table
      * @param {Object} values
      * @returns Promise
-     */
+    */
     create(values, table = this.table) {
         if (this.__.isEmpty(table) && !this.__.isString(table)) {
             return false;
@@ -882,7 +800,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @param {Array} values
      * @param {Object} where
      * @returns Promise
-     */
+    */
     update(values, where = null, table = this.table) {
         if (this.__.isEmpty(table) && !this.__.isString(table)) {
             return false;
@@ -919,7 +837,7 @@ module.exports = class BaseModel extends QueryBuilder {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {String} table
      * @returns Promise
-     */
+    */
     getTablePrimaryKey(table = this.table) {
         const length         = table.toString().length;
         const database_index = table.indexOf('.');

@@ -36,6 +36,7 @@ module.exports = class BaseController extends Routes {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {Application} app
+     * @return void
      */
     deployRoutes(app) {
         let directory_routes = this.path.join(__dirname, '..', '..', 'app', 'controllers');
@@ -111,6 +112,7 @@ module.exports = class BaseController extends Routes {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {Application} app
+     * @return void
      */
     undefinedRoutes(app) {
         let site_is_found              = false;

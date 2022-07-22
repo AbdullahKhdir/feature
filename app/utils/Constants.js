@@ -250,39 +250,51 @@ module.exports = class Constants {
     }
     
     /**
-     * Gets a list of all constants
+     * @function getConstants
+     * @description Gets a list of all constants
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns array
-     */
+    */
     getConstants()
     {
         return this.#constants;
     }
 
     /**
-     * Sets only one and a new key value pair for a new constant
+     * @function addOneConstant
+     * @description adds only one key value pair constant
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {string, int} key 
      * @param {string, int, boolean} value
      * @returns array|object
-     */
+    */
     addOneConstant(key, value)
     {
         return this.#constants[key] = value;
     }
 
     /**
-     * Appends to the constant object the passed object
+     * @function addObjectConstant
+     * @description Appends to the constant object the passed object
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {object} object
      * @returns array|object
-     */
+    */
     addObjectConstant(...object)
     {
         return this.#constants = Object.assign(this.#constants, ...object);
     }
 
     /**
-     * clears all the constants and returns true or false
+     * @function clearConstants
+     * @description clears all the constants and returns true or false
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns boolean
-     */
+    */
     clearConstants()
     {
         this.#constants = {};

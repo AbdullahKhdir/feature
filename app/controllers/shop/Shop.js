@@ -55,6 +55,13 @@ module.exports = class Shop extends BaseController{
         }
     }
 
+    /**
+     * @function products
+     * @description products route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     products           = () => this._().get('/products/', Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
@@ -72,6 +79,13 @@ module.exports = class Shop extends BaseController{
             });
     }));
 
+    /**
+     * @function index
+     * @description index route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     index              = () => this._().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
@@ -90,6 +104,13 @@ module.exports = class Shop extends BaseController{
             .catch(err => console.log(err)); 
     }));
 
+    /**
+     * @function cart
+     * @description cart route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     cart               = () => this._().get('/cart/', Promise.asyncHandler(async (req, res, next) => {
         const user_cart = req.session.currentUser.getCart() ?? [];
         if (!user_cart) {
@@ -164,6 +185,13 @@ module.exports = class Shop extends BaseController{
         .catch(err => console.log(err));
     }));
 
+    /**
+     * @function postCart
+     * @description postCart route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     postCart           = () => this._().post('/cart/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = req.body.product_id ?? '';
         const user_id    = req.session.currentUser.id;
@@ -231,6 +259,13 @@ module.exports = class Shop extends BaseController{
         });
     }));
 
+    /**
+     * @function checkout
+     * @description checkout route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     checkout           = () => this._().get('/checkout/', Promise.asyncHandler(async (req, res, next) => {
         return this.render(
             res,
@@ -242,6 +277,13 @@ module.exports = class Shop extends BaseController{
         );
     }));
 
+    /**
+     * @function orders
+     * @description orders route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     orders             = () => this._().get('/orders/', Promise.asyncHandler(async (req, res, next) => {
         req.session.currentUser.getOrder().then(order => {
             order.getProducts.then(ordered_products => {
@@ -295,6 +337,13 @@ module.exports = class Shop extends BaseController{
         });
     }));
 
+    /**
+     * @function postOrders
+     * @description postOrders route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     postOrders         = () => this._().post('/create-order/', Promise.asyncHandler(async (req, res, next) => {
         const user_id    = req.session.currentUser.id;
         
@@ -394,6 +443,13 @@ module.exports = class Shop extends BaseController{
         });
     }));
 
+    /**
+     * @function dynProductInfo
+     * @description dynProductInfo route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     dynProductInfo     = () => this._().get('/products/:productId/', Promise.asyncHandler(async (req, res, next) => {
         let product_id = req.params.productId ?? false;
         const user_id = +req.session.currentUser.id ?? false;
@@ -436,6 +492,13 @@ module.exports = class Shop extends BaseController{
         }
     }));
     
+    /**
+     * @function deleteCartProducts
+     * @description deleteCartProducts route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     deleteCartProducts = () => this._().post('/cart/delete-items/', Promise.asyncHandler(async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
@@ -464,6 +527,13 @@ module.exports = class Shop extends BaseController{
         }
     }));
 
+    /**
+     * @function deleteCartProduct
+     * @description deleteCartProduct route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     deleteCartProduct  = () => this._().post('/cart/delete-item/', Promise.asyncHandler(async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {

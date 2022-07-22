@@ -17,6 +17,13 @@ module.exports = class Path {
     }
 
 
+    /**
+     * @function getPathInstance
+     * @description Getter method for path object
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Path
+    */
     getPathInstance() {
         return this.path;
     }

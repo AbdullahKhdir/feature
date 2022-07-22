@@ -1,5 +1,5 @@
 <h1 align="center">Hi 👋, I'm Abdullah Khdir</h1>
-<h3 align="center">A syrian passionate full stack and software developer living in Germany</h3>
+<h3 align="center">A Syrian passionate full stack and software developer living in Germany</h3>
 
 
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?size=19&color=f3f5f0&lines=Hey+it's+Abdullah!;I'm+a+Full+Stack+%26+Software+Developer)](https://git.io/typing-svg)
@@ -19,13 +19,13 @@
 
 - 👯 I’m looking to collaborate on **Node JS Projects**
 
-- 🤝 I’m looking for help with building an infrastructure (Framework) using Node JS Technologie **Node JS**
+- 🤝 I’m looking for help with building an infrastructure (Framework) using Node JS Technology **Node JS**
 
 - 👨‍💻 All of my projects are available at [https://github.com/AbdullahKhdir](https://github.com/AbdullahKhdir)
 
 - 📝 I regularly fork interesting projects [https://github.com/AbdullahKhdir?tab=repositories&q=&type=fork&language=&sort=](https://github.com/AbdullahKhdir?tab=repositories&q=&type=fork&language=&sort=)
 
-- 💬 Ask me about **React, PHP, Node, Express, Java, C++, C#**
+- 💬 Ask me about **React, PHP (Laravel), Node, Express, Java (Swing), C++, C# (WPF)**
 
 - 📫 How to reach me **Abdullahkhder77@gmail.com**
 

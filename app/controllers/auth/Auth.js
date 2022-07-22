@@ -48,6 +48,13 @@ module.exports = class Auth extends BaseController {
         }
     }
 
+    /**
+     * @function authenticate
+     * @description authentication route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+     */
     authenticate           = () => this._().get('/login/', Promise.asyncHandler(async (req, res, next) => {
         return this.render(
             res,

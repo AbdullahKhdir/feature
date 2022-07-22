@@ -17,6 +17,13 @@ module.exports = class FileSystem {
         this.fs = fs;
     }
 
+    /**
+     * @function getFileSystemInstance
+     * @description Getter method for file system object
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns FileSystem
+    */
     getFileSystemInstance () {
         return this.fs;
     }

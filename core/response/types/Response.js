@@ -18,7 +18,18 @@ module.exports = class Response extends ApiResponse {
         super(_constants.getConstants().HTTPS_STATUS.SUCCESS.OK, 'OK');
     }
  
-    render(res, view, options = {}, callback = null) {
-       return super.render(res, view, options, callback);
+    /**
+     * @function render
+     * @description Sends html response to the client 
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param Response res
+     * @param String template
+     * @param Object options
+     * @param Function callback
+     * @returns Response
+    */
+    render(res, template, options = {}, callback = null) {
+       return super.render(res, template, options, callback);
     }
  }

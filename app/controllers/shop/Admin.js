@@ -55,6 +55,13 @@ module.exports = class Admin extends BaseController {
         }
     }
 
+    /**
+     * @function product
+     * @description product route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     product           = () => this._().get('/admin/add-product/', Promise.asyncHandler(async (req, res, next) => {
         return this.render(
             res,
@@ -66,6 +73,13 @@ module.exports = class Admin extends BaseController {
         );
     }));
 
+    /**
+     * @function editProduct
+     * @description editProduct route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     editProduct       = () => this._().get('/admin/edit-product/:product_id/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = +req.params.product_id ?? false;
         const user_id    = +req.session.currentUser.id;
@@ -98,6 +112,13 @@ module.exports = class Admin extends BaseController {
         }
     }));
 
+    /**
+     * @function postEditedProduct
+     * @description postEditedProduct route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     postEditedProduct = () => this._().post('/admin/edit-product/', Promise.asyncHandler(async  (req, res, next) => {
             const product_id = +req.body.product_id ?? false;
             const title = this.__.capitalize(req.body.title) ?? false;
@@ -123,6 +144,13 @@ module.exports = class Admin extends BaseController {
             }
     }));
 
+    /**
+     * @function addProduct
+     * @description addProduct route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     addProduct        = () => this._().post('/admin/add-product/', Promise.asyncHandler(async (req, res, next) => {
             const title       = this.__.capitalize(req.body.title);
             const imageUrl    = req.body.imageUrl;
@@ -141,6 +169,13 @@ module.exports = class Admin extends BaseController {
             });
     }));
 
+    /**
+     * @function deleteProduct
+     * @description deleteProduct route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     deleteProduct     = () => this._().post('/admin/delete-product/', Promise.asyncHandler(async (req, res, next) => {
         const product_id = req.body.product_id ?? false;
         const user_id = +req.session.currentUser.id ?? false;
@@ -161,6 +196,13 @@ module.exports = class Admin extends BaseController {
         }
     }));
 
+    /**
+     * @function products
+     * @description products route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
     products          = () => this._().get('/admin/products/', this.cors(this.#corsOptionsDelegate), Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
