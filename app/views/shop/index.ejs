@@ -20,7 +20,9 @@
                             <p class="product__description"><%= lodash.capitalize(product.description) %></p>
                         </div>
                         <div class="card__actions">
-                            <%- include('../includes/shop/add_to_cart.ejs', {product: product})  %>
+                            <% if (is_authenticated) { %>
+                                <%- include('../includes/shop/add_to_cart.ejs', {product: product})  %>
+                            <% } %>
                         </div>
                     </article>
                 </div>

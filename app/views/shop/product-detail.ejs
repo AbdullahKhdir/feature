@@ -13,7 +13,9 @@
             </div>
             <h2><%= product.price %></h2>
             <p><%= lodash.capitalize(product.description) %></p>
-            <%- include('../includes/shop/add_to_cart.ejs', {product: product})  %>
+            <% if (is_authenticated) { %>
+                <%- include('../includes/shop/add_to_cart.ejs', {product: product})  %>
+            <% } %>
         </main>
     <% } else { %>
         <h1>No product details is available!</h1>

@@ -19,7 +19,8 @@ module.exports = class Auth extends BaseController {
         super();
         this.methods = [
             'getAuthenticate',
-            'postAuthenticate'
+            'postAuthenticate',
+            'logout'
         ];
         this.__ = new Lodash().__;
 
@@ -75,6 +76,23 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     postAuthenticate          = () => this._().post('/login/', Promise.asyncHandler(async (req, res, next) => {
+        req.session.is_authenticated = true;
         return this.redirect(res, '/');
+    }));
+
+    /**
+     * @function logout
+     * @description Log user out 
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    logout                   = () => this._().post('/logout/', Promise.asyncHandler(async (req, res, next) => {
+        req.session.destroy((err) => {
+            if (err) {
+                console.log(err);
+            }
+            return this.redirect(res, '/');
+        });
     }));
 }

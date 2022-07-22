@@ -133,13 +133,13 @@ module.exports = class Application extends BaseController {
             secret: secret,
             store: this.initiateSession(),
             resave: false,
-            saveUninitialized: true,
+            saveUninitialized: false,
             cookie: {
                 _expires: this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
                 maxAge: this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
                 //secure: true, //true with https
-                //httpOnly: true,
-            },
+                httpOnly: true,
+            }
         }));
 
         /*
@@ -147,7 +147,6 @@ module.exports = class Application extends BaseController {
         */
         app.use((req, res, next) => {
             if (this.__.isEmpty(req.session.currentUser) || typeof req.session.currentUser === 'undefined') {
-                req.session.currentUser = {}
                 const User = require('./models/shop/User');
                 let user_model = new User();
                 user_model.get({name: 'Abdullah'})
@@ -155,9 +154,14 @@ module.exports = class Application extends BaseController {
                     if (!this.__.isEmpty(rows)) {
                         if (typeof rows[0] !== 'undefined') {
                             req.session.currentUser = rows[0];
-                            if (!res.headersSent) {
-                                next();
-                            }
+                            req.session.save((err) => {
+                                if (err) {
+                                    console.log(err)
+                                }
+                                if (!res.headersSent) {
+                                    next();
+                                }
+                            });
                         }
                     } else {
                         throw new BadRequestError('User not registered');
@@ -168,7 +172,7 @@ module.exports = class Application extends BaseController {
                 if (!res.headersSent) {
                     next();
                 }
-            }
+            }            
         });
 
         /*
@@ -193,7 +197,12 @@ module.exports = class Application extends BaseController {
                         return order_model.filter({user_id: req.session.currentUser.id});
                     }
                 });
-                next();
+                req.session.save((err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                    next();
+                });
             } else {
                 return this.redirect(res, '/');
             }
