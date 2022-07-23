@@ -1,6 +1,7 @@
 'use strict';
 
 const { Request, Response, NextFunction } = require('express');
+const { environment } = require('../config');
  
 /**
  * @class AsyncHandler
@@ -45,13 +46,13 @@ module.exports = class Promise {
            Set-Cookie: <cookie-name>=<cookie-value>; SameSite=None; Secure
          */
         res.setCookie = (
-            object, 
-            expires   = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now()).toUTCString(), 
+            object,
+            expires   = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now()).toUTCString(),
             domain    = null,
-            path      = null, 
-            secure    = null, 
+            path      = null,
+            secure    = environment === 'production' ? true : null,
             http_only = true,
-            same_site = null,
+            same_site = environment === 'production' ? 'Strict' : null,
         ) => {
             let _cookie = '';
             if (!expires) {

@@ -9,6 +9,7 @@ const Constants       = require('./utils/Constants.js');
 const Lodash          = require('./utils/Lodash.js');
 const Helmet          = require("helmet");
 const BadRequestError = require('../core/error/types/BadRequestError.js');
+const { environment } = require('../core/config');
 
 /**
  * @class Application
@@ -74,7 +75,6 @@ module.exports = class Application extends BaseController {
         app.use(Helmet.referrerPolicy());
         app.use(Helmet.xssFilter());
 
-
         /*
         * DISABLE CORS
         */
@@ -129,19 +129,18 @@ module.exports = class Application extends BaseController {
         const secret = require('crypto').randomBytes(48).toString('base64');
         const key    = require('crypto').randomBytes(48).toString('base64');
         app.use(this.session({
-            key: key,
-            secret: secret,
-            store: this.initiateSession(),
-            resave: false,
+            key:               key,
+            secret:            secret,
+            store:             this.initiateSession(),
+            resave:            false,
             saveUninitialized: false,
             cookie: {
-                _expires: this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
-                maxAge: this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
-                //secure: true, //true with https
-                httpOnly: true,
+                _expires:      this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
+                maxAge:        this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
+                secure:        environment === 'production' ? true : false,
+                httpOnly:      true,
             }
         }));
-
         /*
         * Middleware To Get the logged in user
         */

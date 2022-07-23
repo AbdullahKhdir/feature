@@ -22,7 +22,7 @@ export const scrollToTop    = (dom_element) => dom_element.scrollIntoView({ beha
  * @description Scrolls to the bottom of the page
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
- * @param Object dom_element 
+ * @param Object dom_element
  * @returns void
 */
 export const scrollToBottom = (dom_element) => dom_element.scrollIntoView({ behavior: "smooth", block: "end" });

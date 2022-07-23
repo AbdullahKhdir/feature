@@ -16,7 +16,6 @@ module.exports = class Path {
         this.path = path;
     }
 
-
     /**
      * @function getPathInstance
      * @description Getter method for path object

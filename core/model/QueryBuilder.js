@@ -1,10 +1,9 @@
 'use strict';
 
-const { isEmpty } = require("lodash");
-const Lodash     = require("../../app/utils/Lodash");
-const Db         = require("../database/Db");
-const FileSystem = require("../node/FileSystem");
-const Path       = require("../node/Path");
+const Lodash      = require("../../app/utils/Lodash");
+const Db          = require("../database/Db");
+const FileSystem  = require("../node/FileSystem");
+const Path        = require("../node/Path");
 
 /**
  * @class QueryBuilder
@@ -44,7 +43,7 @@ module.exports = class QueryBuilder extends Db {
     constructor(model_name = null, query = null, table = null, columns = []) {
         const mysql = super().mysql;
         this.#mysql = mysql;
-        this.__      = new Lodash().__;
+        this.__     = new Lodash().__;
         
         this.#model   = model_name;
         this.#query   = query;
@@ -386,7 +385,6 @@ module.exports = class QueryBuilder extends Db {
 
         return !!this.#query ? new QueryBuilder(model, this.#query, table, columns) : !!this.#query;
     }
-    
 
     //###########################\\
     //###########################\\
@@ -1735,7 +1733,6 @@ module.exports = class QueryBuilder extends Db {
 
         return !!this.#query ? new QueryBuilder(this.#model, this.#query, table, columns) : !!this.#query;
     }
-
 
     /**
      * @method having

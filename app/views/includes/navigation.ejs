@@ -37,17 +37,20 @@
             <% } %>
         </ul>
         <% if (is_authenticated) { %>
-            <form action="/logout/" method="post">
-                <ul class="main-header__item-list">
-                    <li class="main-header__item">
+            <ul class="main-header__item-list">
+                <li class="main-header__item">
+                    <form action="/logout/" method="post">
                         <button type="submit">Logout</button>
-                    </li>
-                </ul>
-            </form>   
+                    </form>   
+                </li>
+            </ul>
         <% } else { %>
             <ul class="main-header__item-list">
                 <li class="main-header__item">
                     <a class="<%= path === '/login/' ? 'active' : '' %>" href="/login/">Login</a>
+                </li>
+                <li class="main-header__item">
+                    <a class="<%= path === '/signup/' ? 'active' : '' %>" href="/signup/">Signup</a>
                 </li>
             </ul>
         <% } %>
@@ -67,25 +70,41 @@
                 Products
             </a>
         </li>
-        <li class="mobile-nav__item">
-            <a class="<%= typeof path !== 'undefined' ? (path === '/cart/' ? 'active' : '') : '' %>" href="/cart/">
-                Cart
-            </a>
-        </li>
-        <li class="mobile-nav__item">
-            <a class="<%= typeof path !== 'undefined' ? (path === '/orders/' ? 'active' : '') : '' %>" href="/orders/">
-                Orders
-            </a>
-        </li>
-        <li class="mobile-nav__item">
-            <a class="<%= typeof path !== 'undefined' ? (path === '/admin/add-product/' ? 'active' : '') : '' %>" href="/admin/add-product/">
-                Add Product
-            </a>
-        </li>
-        <li class="mobile-nav__item">
-            <a class="<%= typeof path !== 'undefined' ? (path === '/admin/products/' ? 'active' : '') : '' %>" href="/admin/products/">
-                Admin Products
-            </a>
-        </li>
+        <% if (is_authenticated) { %>
+            <li class="mobile-nav__item">
+                <a class="<%= typeof path !== 'undefined' ? (path === '/cart/' ? 'active' : '') : '' %>" href="/cart/">
+                    Cart
+                </a>
+            </li>
+            <li class="mobile-nav__item">
+                <a class="<%= typeof path !== 'undefined' ? (path === '/orders/' ? 'active' : '') : '' %>" href="/orders/">
+                    Orders
+                </a>
+            </li>
+            <li class="mobile-nav__item">
+                <a class="<%= typeof path !== 'undefined' ? (path === '/admin/add-product/' ? 'active' : '') : '' %>" href="/admin/add-product/">
+                    Add Product
+                </a>
+            </li>
+            <li class="mobile-nav__item">
+                <a class="<%= typeof path !== 'undefined' ? (path === '/admin/products/' ? 'active' : '') : '' %>" href="/admin/products/">
+                    Admin Products
+                </a>
+            </li>
+            <% } %>
+            <% if (is_authenticated) { %>
+                <li class="mobile-nav__item">
+                    <form action="/logout/" method="post">
+                        <button type="submit">Logout</button>
+                    </form>   
+                </li>
+            <% } else { %>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/login/' ? 'active' : '' %>" href="/login/">Login</a>
+                </li>
+                <li class="mobile-nav__item">
+                    <a class="<%= path === '/signup/' ? 'active' : '' %>" href="/signup/">Signup</a>
+                </li>
+            <% } %>
     </ul>
 </nav>

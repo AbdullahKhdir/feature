@@ -20,6 +20,8 @@ module.exports = class Auth extends BaseController {
         this.methods = [
             'getAuthenticate',
             'postAuthenticate',
+            'getSignUp',
+            'postSignUp',
             'logout'
         ];
         this.__ = new Lodash().__;
@@ -56,11 +58,11 @@ module.exports = class Auth extends BaseController {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
-     */
+    */
     getAuthenticate           = () => this._().get('/login/', Promise.asyncHandler(async (req, res, next) => {
         return this.render(
             res,
-            'shop/auth',
+            'shop/login',
             {
                 page_title: 'Login',
                 path : '/login/'
@@ -77,6 +79,35 @@ module.exports = class Auth extends BaseController {
     */
     postAuthenticate          = () => this._().post('/login/', Promise.asyncHandler(async (req, res, next) => {
         req.session.is_authenticated = true;
+        return this.redirect(res, '/');
+    }));
+
+    /**
+     * @function getAuthenticate
+     * @description Get authentication user
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    getSignUp           = () => this._().get('/signup/', Promise.asyncHandler(async (req, res, next) => {
+        return this.render(
+            res,
+            'shop/signup',
+            {
+                page_title: 'Sign up',
+                path : '/signup/'
+            }
+        );
+    }));
+
+    /**
+     * @function postSignUp
+     * @description Check user's authentication's infos 
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    postSignUp          = () => this._().post('/signup/', Promise.asyncHandler(async (req, res, next) => {
         return this.redirect(res, '/');
     }));
 
