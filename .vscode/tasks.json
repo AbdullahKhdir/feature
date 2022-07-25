@@ -33,6 +33,12 @@
             "type": "shell",
             "command": "node core/database/migrations/execute_migrations/ExecuteSQL.js",
             "group": "build"
+        },
+        {
+            "label": "Requests tester dev server",
+            "type": "shell",
+            "command": "node_modules/autocannon/autocannon.js  http://localhost:8010",
+            "group": "build"
         }
     ]
 }
