@@ -54,10 +54,7 @@ module.exports = class Shop extends BaseController{
             optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
         }
         
-        /**
-         * Todo 
-         * object could not be cloned issue on calling worker queued functions
-        */
+        // TODO: object could not be cloned issue on calling worker queued functions
         // this.workerpool.index(this)
         // console.log('this.workerpool');
     }
