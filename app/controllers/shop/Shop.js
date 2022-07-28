@@ -53,6 +53,13 @@ module.exports = class Shop extends BaseController{
             allowedHeaders:       ['Content-Type', 'Authorization'],
             optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
         }
+        
+        /**
+         * Todo 
+         * object could not be cloned issue on calling worker queued functions
+        */
+        // this.workerpool.index(this)
+        // console.log('this.workerpool');
     }
 
     /**
@@ -76,7 +83,7 @@ module.exports = class Shop extends BaseController{
                         lodash: this.__
                     }
                 );
-            });
+            });      
     }));
 
     /**
@@ -86,7 +93,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    index              = () => this._().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next) => {
+    index              = () => this._().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next,) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
             .then((rows) => {

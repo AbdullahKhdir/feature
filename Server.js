@@ -1,6 +1,9 @@
 'use strict';
 
-const Application = require('./app/Application');
+const Application               = require('./app/Application');
+const OS                        = require('os');
+const { is_worker_pool_active } = require('./core/config');
+const worker                    = require('./core/worker_pool/workerpool')
 
 /**
  * @class Server
@@ -14,6 +17,7 @@ class Server extends Application{
     
     constructor() {
         super();
+        process.env.UV_THREADPOOL_SIZE = OS.cpus().length;
     }
 
     run() {
@@ -35,4 +39,13 @@ class Server extends Application{
 
 
 let system = new Server();
-system.run();
+
+(async () => {
+    if (is_worker_pool_active === '1') {
+        await worker.init();
+    }
+    if (worker.get() != null  && typeof worker.get() !== 'undefined') {
+        // console.log(worker.get());
+        system.run()
+    }
+})();

@@ -45,45 +45,47 @@ module.exports = class Promise {
            Set-Cookie: <cookie-name>=<cookie-value>; SameSite=Lax
            Set-Cookie: <cookie-name>=<cookie-value>; SameSite=None; Secure
          */
-        res.setCookie = (
-            object,
-            expires   = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now()).toUTCString(),
-            domain    = null,
-            path      = null,
-            secure    = environment === 'production' ? true : null,
-            http_only = true,
-            same_site = environment === 'production' ? 'Strict' : null,
-        ) => {
-            let _cookie = '';
-            if (!expires) {
-                expires = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now()).toUTCString();
-            }
-            if (typeof object === 'string') {
-                _cookie = object + '; ' + 'Expires=' + expires + '; ';
-
-                domain       ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
-                path         ? _cookie = _cookie + 'Path='+path+'; '          : _cookie;
-                secure       ? _cookie = _cookie + 'secure; '                 : _cookie;
-                http_only    ? _cookie = _cookie + 'http_only; '              : _cookie;
-                same_site    ? _cookie = _cookie + 'SameSite='+same_site+'; ' : _cookie;
-
-                res.setHeader('Set-Cookie', _cookie);
-            } else if (typeof object === 'object') {
-                for (const key in object) {
-                    if (Object.hasOwnProperty.call(object, key)) {
-                        _cookie = key + '=' + object[key]+ '; ' + 'Expires=' + expires + '; '; 
-                    }
+        if(typeof res !== 'undefined') {
+            res.setCookie = (
+                object,
+                expires   = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now()).toUTCString(),
+                domain    = null,
+                path      = null,
+                secure    = environment === 'production' ? true : null,
+                http_only = true,
+                same_site = environment === 'production' ? 'Strict' : null,
+            ) => {
+                let _cookie = '';
+                if (!expires) {
+                    expires = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now()).toUTCString();
                 }
-
-                domain       ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
-                path         ? _cookie = _cookie + 'Path='+path+'; '          : _cookie;
-                secure       ? _cookie = _cookie + 'Secure; '                 : _cookie;
-                http_only    ? _cookie = _cookie + 'HttpOnly; '              : _cookie;
-                same_site    ? _cookie = _cookie + 'SameSite='+same_site+'; ' : _cookie;
-
-                res.setHeader('Set-Cookie', _cookie);
-            }
-        };
+                if (typeof object === 'string') {
+                    _cookie = object + '; ' + 'Expires=' + expires + '; ';
+    
+                    domain       ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
+                    path         ? _cookie = _cookie + 'Path='+path+'; '          : _cookie;
+                    secure       ? _cookie = _cookie + 'secure; '                 : _cookie;
+                    http_only    ? _cookie = _cookie + 'http_only; '              : _cookie;
+                    same_site    ? _cookie = _cookie + 'SameSite='+same_site+'; ' : _cookie;
+    
+                    res.setHeader('Set-Cookie', _cookie);
+                } else if (typeof object === 'object') {
+                    for (const key in object) {
+                        if (Object.hasOwnProperty.call(object, key)) {
+                            _cookie = key + '=' + object[key]+ '; ' + 'Expires=' + expires + '; '; 
+                        }
+                    }
+    
+                    domain       ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
+                    path         ? _cookie = _cookie + 'Path='+path+'; '          : _cookie;
+                    secure       ? _cookie = _cookie + 'Secure; '                 : _cookie;
+                    http_only    ? _cookie = _cookie + 'HttpOnly; '              : _cookie;
+                    same_site    ? _cookie = _cookie + 'SameSite='+same_site+'; ' : _cookie;
+    
+                    res.setHeader('Set-Cookie', _cookie);
+                }
+            };
+        }
         execution(req, res, next).catch(next);
     };
 }

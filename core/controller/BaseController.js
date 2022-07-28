@@ -82,8 +82,8 @@ module.exports = class BaseController extends Routes {
                                     '../../app/controllers/'+directory_name+'/'+file_name+'.js'
                                 );
                                 let instance_of  = new route_name();
-            
                                 methods_array    = instance_of.methods;
+
                                 if(methods_array.length > 0) {
                                     methods_array.forEach((route) => {
                                         eval('app.use(instance_of.'+route+'());');
@@ -95,7 +95,6 @@ module.exports = class BaseController extends Routes {
                 }
             });
         });
-        
         this.undefinedRoutes(app);
     }
 

@@ -19,7 +19,6 @@
     "sass": "^1.53.0"
   },
   "dependencies": {
-    "bcrypt": "^5.0.1",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
@@ -29,6 +28,8 @@
     "express-session": "^1.17.3",
     "helmet": "^5.1.0",
     "lodash": "^4.17.21",
-    "mysql2": "^2.3.3"
+    "morgan": "^1.10.0",
+    "mysql2": "^2.3.3",
+    "workerpool": "^6.2.1"
   }
 }

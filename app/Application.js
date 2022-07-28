@@ -10,6 +10,8 @@ const Lodash          = require('./utils/Lodash.js');
 const Helmet          = require("helmet");
 const BadRequestError = require('../core/error/types/BadRequestError.js');
 const { environment } = require('../core/config');
+const Morgan          = require('morgan');
+const FileSystem      = require('../core/node/FileSystem.js');
 
 /**
  * @class Application
@@ -25,7 +27,7 @@ module.exports = class Application extends BaseController {
     constructor(app) {
         super();
 
-        if (typeof this.app !== 'undefined') {
+        if (typeof this.#app !== 'undefined') {
             return this.getApp();
         }
         
@@ -35,6 +37,7 @@ module.exports = class Application extends BaseController {
         this.sub_controller = this;
         this.__             = new Lodash().__;
         this.session        = this.express_session;
+        this.file_system    = new FileSystem().fs;
 
         /*
         * Init The Application
@@ -74,6 +77,19 @@ module.exports = class Application extends BaseController {
         app.use(Helmet.permittedCrossDomainPolicies());
         app.use(Helmet.referrerPolicy());
         app.use(Helmet.xssFilter());
+
+        /*
+        * Enable Logger
+        */
+        app.use(
+            Morgan(
+                'combined', 
+                {
+                    stream: this.file_system.createWriteStream(this.path.join(__dirname, '..' ,'access.log'), { flags: 'a' }),
+                    skip: (req, res) => res.statusCode <= this.constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST
+                }
+            )
+        );
 
         /*
         * DISABLE CORS
