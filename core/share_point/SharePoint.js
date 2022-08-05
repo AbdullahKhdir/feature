@@ -1,6 +1,7 @@
 'use strict';
 
 const ApiResponse               = require("../response/ApiResponse");
+const Workerpool = require("../worker_pool/workerpool");
 
 /**
  * @class SharePoint
@@ -10,9 +11,10 @@ const ApiResponse               = require("../response/ApiResponse");
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 module.exports = class SharePoint extends ApiResponse {
+    
+    worker_pool;
     constructor() {
         super();
-        // const _workerpool = require("../worker_pool/workerpool");
-        // this.workerpool = _workerpool.get() ?? [];
+        this.worker_pool = new Workerpool().pool_proxy;
     }
 }

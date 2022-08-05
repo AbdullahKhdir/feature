@@ -53,10 +53,6 @@ module.exports = class Shop extends BaseController{
             allowedHeaders:       ['Content-Type', 'Authorization'],
             optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
         }
-        
-        // TODO: object could not be cloned issue on calling worker queued functions
-        // this.workerpool.index(this)
-        // console.log('this.workerpool');
     }
 
     /**
@@ -92,6 +88,9 @@ module.exports = class Shop extends BaseController{
     */
     index              = () => this._().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next,) => {
         const user_products = req.session.currentUser.getProducts();
+        this.worker_pool.then(methods => {
+            methods.logger();
+        });
         user_products
             .then((rows) => {
                 return this.render(
