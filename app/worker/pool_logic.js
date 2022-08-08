@@ -23,7 +23,7 @@ const index = (obj) => Promise.asyncHandler(async (req, res, next,) => {
 });
 
 const logger = () => {
-    const number = 400;
+    const number = 100;
     let n1 = 0, n2 = 1, nextTerm;
 
     console.log('Fibonacci Series:');
@@ -33,7 +33,7 @@ const logger = () => {
         n1 = n2;
         n2 = nextTerm;
     }
-    console.log(n1); 
+    console.log(n1);
 };
 
 

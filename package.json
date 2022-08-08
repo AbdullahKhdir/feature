@@ -16,6 +16,7 @@
   "devDependencies": {
     "autocannon": "^7.9.0",
     "nodemon": "^2.0.15",
+    "rewire": "^6.0.0",
     "sass": "^1.53.0"
   },
   "dependencies": {

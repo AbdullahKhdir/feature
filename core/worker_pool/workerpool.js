@@ -21,8 +21,8 @@ module.exports = class Workerpool {
 
         const script = path.join(__dirname, '..', '..', 'app', 'worker', './pool_logic.js');
         
-        const pool = worker_pool.pool(script, options);
-        this.pool_proxy = pool.proxy();
+        this.worker_pool = worker_pool.pool(script, options);
+        this.pool_proxy = this.worker_pool.proxy();
         // console.log(`Worker Threads Enabled - Min Workers: ${pool.minWorkers} - Max Workers: ${pool.maxWorkers} - Worker Type: ${pool.workerType}`);
     }
 }

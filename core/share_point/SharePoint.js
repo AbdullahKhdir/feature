@@ -12,9 +12,11 @@ const Workerpool = require("../worker_pool/workerpool");
 */
 module.exports = class SharePoint extends ApiResponse {
     
-    worker_pool;
+    worker_methods;
     constructor() {
         super();
-        this.worker_pool = new Workerpool().pool_proxy;
+        const worker = new Workerpool();
+        this.worker_methods = worker.pool_proxy;
+        this.worker_pool    = worker.worker_pool;
     }
 }

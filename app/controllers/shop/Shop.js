@@ -88,7 +88,8 @@ module.exports = class Shop extends BaseController{
     */
     index              = () => this._().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next,) => {
         const user_products = req.session.currentUser.getProducts();
-        this.worker_pool.then(methods => {
+        this.worker_methods.then(methods => {
+            // TODO: postMessage.on('message', () => { }) implementing to send worker_pool object to terminate task on finish
             methods.logger();
         });
         user_products
