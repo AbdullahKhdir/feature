@@ -12,11 +12,18 @@ const Workerpool = require("../worker_pool/workerpool");
 */
 module.exports = class SharePoint extends ApiResponse {
     
-    worker_methods;
     constructor() {
         super();
-        const worker = new Workerpool();
-        this.worker_methods = worker.pool_proxy;
-        this.worker_pool    = worker.worker_pool;
+    }
+
+    /**
+     * @function getWorkerPool
+     * @description Returns an instance of the workerpool
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Workerpool
+    */
+    getWorkerPool() {
+        return new Workerpool();
     }
 }

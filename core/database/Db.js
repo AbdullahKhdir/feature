@@ -34,7 +34,8 @@ module.exports = class Db extends ExpressMysqlSession {
             // Database name:
             database,
             // Number of connections when creating a connection pool:
-            connectionLimit
+            connectionLimit,
+            socketPath: '/tmp/mysql.sock' // ON Linux and MAC OS
         };
     }
 
@@ -283,7 +284,8 @@ module.exports = class Db extends ExpressMysqlSession {
                             var con = _mysql.createConnection({
                                 host,
                                 user,
-                                password
+                                password,
+                                socketPath: '/tmp/mysql.sock' // ON Linux and MAC OS
                             });
                             con.connect((err) => {
                                 if (err) {

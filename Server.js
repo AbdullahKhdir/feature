@@ -1,8 +1,7 @@
 'use strict';
 
-const Application               = require('./app/Application');
-const OS                        = require('os');
-const { is_worker_pool_active } = require('./core/config');
+const Application   = require('./app/Application');
+const OS            = require('os');
 
 /**
  * @class Server
@@ -14,7 +13,6 @@ const { is_worker_pool_active } = require('./core/config');
 */
 class Server extends Application{
     
-    thread_worker;
     constructor() {
         super();
         process.env.UV_THREADPOOL_SIZE = OS.cpus().length;
