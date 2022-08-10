@@ -62,7 +62,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    products           = () => this._().get('/products/', Promise.asyncHandler(async (req, res, next) => {
+    products           = () => this._().get('/products', Promise.asyncHandler(async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
             .then(rows => {
@@ -88,41 +88,6 @@ module.exports = class Shop extends BaseController{
     */
     index              = () => this._().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next,) => {
         const user_products = req.session.currentUser.getProducts();
-        
-        /*
-         * Workerpool example
-         */
-        let worker = this.getWorkerPool();
-        // TODO: manage to send a process status via workerpool.workerEmit 
-        // console.log(worker.loadPool());
-        // worker.loadPool().exec('exampleLoggerWithEvent', [200], {
-        //     on: function (payload) {
-        //         if (payload.status === 'in_progress') {
-        //             console.log(payload)
-        //             console.log('In progress...');
-        //         } else if (payload.status === 'complete') {
-        //             console.log('Done!');
-        //         } else {
-        //             console.log(payload);
-        //         }
-        //     }
-        // }).then(result => {
-        //     console.log(result);
-        // });
-        worker.loadProxy()
-            .then(methods => {
-                return methods.exampleLogger(568);
-            })
-            .then(result => {
-                console.log(result)
-            })
-            .catch(err => {
-                console.error(err);
-            })
-            .then(() => {
-                worker.terminate();
-                console.log(worker.isTerminated());
-            });
         user_products
             .then((rows) => {
                 return this.render(

@@ -8,19 +8,27 @@ module.exports = class ExampleController extends BaseController{
         super();
         /**
         * ! DYNAMIC ROUTES MUST BE THE LAST INDEX OF THE METHODS ARRAY
+        * ? UNCOMMENT THE ELEMENTS IN THE ARRAY TO DEPLOY THE ROUTES
         */
         this.methods = [
-            'firstMethod',
-            'secondMethod',
-            'thirdMethod',
-            'fourthMethod',
-            'fifthMethod',
+            // 'firstMethod',
+            // 'secondMethod',
+            // 'thirdMethod',
+            // 'fourthMethod',
+            // 'fifthMethod',
+            // 'workerPool',
+            // 'workerEmit',
              /*
              * AT LAST WE DEFINE THE DYNAMIC METHODS
              */
-            'firstDynMethod'
+            // 'firstDynMethod'
         ];
         this.exmaple_model = new ExampleModel();
+
+        /*
+        * Init Workerpool
+        */
+        this.worker = this.getWorkerPool();
     }
 
     /**
@@ -187,6 +195,77 @@ module.exports = class ExampleController extends BaseController{
             })
             .catch((err) => {
                 throw err
+            });
+        });
+    }
+
+    /**
+     * @function workerPool
+     * @description workerPool function offloads heavy tasks to be executed by the cpu
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    workerPool() {
+        return this._().get('/workerpool/', (req, res, next) => {
+            /*
+            * Workerpool example
+            */
+            this.worker.loadProxy()
+                .then(methods => {
+                    return methods.exampleLogger(100);
+                })
+                .then(result => {
+                    console.log(result)
+                    return result;
+                })
+                .catch(err => {
+                    console.error(err);
+                })
+                .then((result) => {
+                    res.status(200).send('<h1>Worker Pool In Progress</h1><br><p>'+result+'</p>');
+                    res.end();
+                    console.log('Terminating');
+                    this.worker.terminate();
+                    console.log('is terminated ?: ', this.worker.isTerminated());
+                });
+        });
+    }
+
+    /**
+     * @function workerEmit
+     * @description 
+     * workerEmit function offloads heavy tasks to be executed
+     * by the cpu with the usage of status or state
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    workerEmit() {
+        return this._().get('/workeremit/', (req, res, next) => {
+            /*
+             * workerEmit event Exampel 
+             */
+            this.worker.loadPool().exec('exampleLoggerWithEvent', [101], {
+                on: function (payload) {
+                    if (payload.status === 'in_progress') {
+                        console.log(payload)
+                        console.log('In progress...');
+                    } else if (payload.status === 'complete') {
+                        console.log('Done!');
+                    }
+                }
+            }).then(result => {
+                console.log(result);
+                return result
+            }).catch(err => {
+                console.log(err)
+            }).then(result => {
+                res.status(200).send('<h1>Worker Emit In Progress</h1><br><p>'+result+'</p>');
+                res.end();
+                console.log('Terminating');
+                this.worker.terminate();
+                console.log('is terminated ?: ', this.worker.isTerminated());
             });
         });
     }

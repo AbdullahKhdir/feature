@@ -149,7 +149,7 @@ module.exports = class BaseController extends Routes {
                 if (this.__.endsWith(requested_path_in_browser, '/') || this.__.endsWith(predefined_direction_from_route, '/')) {
                     requested_path_in_browser       = this.__.trimEnd(requested_path_in_browser, '/');
                     predefined_direction_from_route = this.__.trimEnd(predefined_direction_from_route, '/');
-                }      
+                }
 
                 if (predefined_direction_from_route.includes(':')) {
                     const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
@@ -163,6 +163,7 @@ module.exports = class BaseController extends Routes {
                 }
                 
                 if (predefined_direction_from_route === requested_path_in_browser && route.methods.get) {
+                    route_exists = 'true';
                     site_is_found = true;
                 }
             });
@@ -236,6 +237,7 @@ module.exports = class BaseController extends Routes {
                 }
                 
                 if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                    route_exists = 'true';
                     is_post_request_successful = true;
                 }
             });

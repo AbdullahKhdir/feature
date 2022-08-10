@@ -1,4 +1,5 @@
 const dotenv = require('dotenv');
+const { mysqlSocket } = require('./utils/CommandExecuter');
 dotenv.config();
 module.exports = {
     host:                  process.env.HOST,
@@ -10,5 +11,7 @@ module.exports = {
     environment:           process.env.NODE_ENV,
     server_port:           process.env.PORT,
     migration:             process.env.MIGRATION,
-    is_worker_pool_active: process.env.WORKER_POOL_ENABLED === 0 ? process.env.NODE_ENV === 'production' ? process.env.WORKER_POOL_ENABLED = "1" : process.env.WORKER_POOL_ENABLED = "0" : process.env.WORKER_POOL_ENABLED
+    is_worker_pool_active: process.env.WORKER_POOL_ENABLED === 0 ? process.env.NODE_ENV === 'production' ? process.env.WORKER_POOL_ENABLED = "1" : process.env.WORKER_POOL_ENABLED = "0" : process.env.WORKER_POOL_ENABLED,
+    os                   : process.platform === 'darwin' ? 'MAC' : process.platform === 'linux' ? 'LINUX' : process.platform === 'win32' ? 'WINDOWS' : process.platform === 'freebsd' || process.platform === 'openbsd' || process.platform === 'sunos' ? 'UNIX' : 'UNKNOWN',
+    socket_path          : mysqlSocket()
 };

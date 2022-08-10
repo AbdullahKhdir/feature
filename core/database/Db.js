@@ -1,6 +1,6 @@
 'use strict';
 
-const {host, port, user, database, password, connectionLimit, migration} = require('../config');
+const {host, port, user, database, password, connectionLimit, migration, os} = require('../config');
 const Constants           = require('../../app/utils/Constants');
 const ExpressMysqlSession = require('../framework/ExpressMysqlSession');
 const FileSystem          = require('../node/FileSystem');
@@ -19,9 +19,10 @@ module.exports = class Db extends ExpressMysqlSession {
     
     constructor() {
         const _mysql_session = super().mysql_session;
-        this.MysqlStore = _mysql_session;
-        this.mysql      = mysql;
+        this.MysqlStore  = _mysql_session;
+        this.mysql       = mysql;
         this.__          = new Lodash().__;
+
         this.connection_configurations = {
             // Host name for database connection:
             host,
@@ -35,7 +36,8 @@ module.exports = class Db extends ExpressMysqlSession {
             database,
             // Number of connections when creating a connection pool:
             connectionLimit,
-            socketPath: '/tmp/mysql.sock' // ON Linux and MAC OS
+            // ON Linux and MAC OS
+            socketPath: os !== 'WINDOWS' ? '/tmp/mysql.sock' : ''
         };
     }
 
@@ -63,7 +65,7 @@ module.exports = class Db extends ExpressMysqlSession {
         let _path            = Object.assign(new Path().path);
         let _file_system     = Object.assign(new FileSystem().fs);
         let directory_routes = _path.join(__dirname, '..', '..', 'core', 'database', 'migrations', 'sql');
-
+        
         const _sql              = `SHOW DATABASES LIKE '${database}';`;
         const _create_sql       = `CREATE DATABASE IF NOT EXISTS ${database};`;
         const _check_migrations = `SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '${migration}'`;
@@ -285,11 +287,11 @@ module.exports = class Db extends ExpressMysqlSession {
                                 host,
                                 user,
                                 password,
-                                socketPath: '/tmp/mysql.sock' // ON Linux and MAC OS
+                                // ON Linux and MAC OS
+                                socketPath: os !== 'WINDOWS' ? '/tmp/mysql.sock' : ''
                             });
                             con.connect((err) => {
                                 if (err) {
-                                    console.log(err)
                                     console.log('\r');
                                     console.log('\u001b[' + 41 + 'm' + 'Connection could not be established!' + '\u001b[0m');
                                     console.log('\u001b[' + 41 + 'm' + 'Database could not be created!' + '\u001b[0m');
@@ -298,7 +300,6 @@ module.exports = class Db extends ExpressMysqlSession {
                                     console.log('\u001b[' + 21 + 'm' + 'connecting... ' + '\u001b[0m');
                                     con.query(_create_sql, (err, result) => {
                                         if (err) {
-                                            console.log(err)
                                             console.log('\r');
                                             console.log('\u001b[' + 41 + 'm' + 'Database: "' + database.toString() + '" could not be created!' + '\u001b[0m');
                                             console.log('\u001b[' + 41 + 'm' + 'Please check the connection!' + '\u001b[0m');
@@ -610,7 +611,6 @@ module.exports = class Db extends ExpressMysqlSession {
     async #query(sql, arr = []) {
         return (async () => {
             let mysql_connection = this.establishConnection();
-        
             return await mysql_connection.query(sql, arr).then(result => {
                 mysql_connection.end();
                 return result;
