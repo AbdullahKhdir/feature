@@ -21,7 +21,7 @@ class Server extends Application{
     run() {
         let port = Server.init().port();
         this.getApp().listen(port, () => {
-            console.log('\u001b[' + 46 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');
+            console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');
         });
     }
 
@@ -38,4 +38,3 @@ class Server extends Application{
 
 let system = new Server();
 system.run()
-

@@ -157,6 +157,7 @@ module.exports = class Application extends BaseController {
                 httpOnly:      true,
             }
         }));
+        
         /*
         * Middleware To Get the logged in user
         */
@@ -229,7 +230,7 @@ module.exports = class Application extends BaseController {
         app.set('case sensitive routing', false);
         app.set('strict routing', false);
         this.sub_controller.deployRoutes(app);
-        
+
         this.#app = app;
     }
 
