@@ -95,7 +95,6 @@ module.exports = class Admin extends BaseController {
                             page_title: 'Edit Product',
                             path : '/admin/edit-product/',
                             product_id: product_id,
-                            lodash: this.__,
                             product: product
                         }
                     );
@@ -210,7 +209,6 @@ module.exports = class Admin extends BaseController {
                     'admin/products',
                     {
                         products: rows ?? [],
-                        lodash: this.__,
                         page_title: 'Admin Products',
                         path : '/admin/products/'
                     }

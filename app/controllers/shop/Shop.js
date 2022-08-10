@@ -59,8 +59,7 @@ module.exports = class Shop extends BaseController{
                     {
                         products: rows ?? [],
                         page_title: 'All Products',
-                        path: '/products/',
-                        lodash: this.__
+                        path: '/products/'
                     }
                 );
             });      
@@ -83,8 +82,7 @@ module.exports = class Shop extends BaseController{
                     {
                         products: rows ?? [],
                         page_title: 'Shop',
-                        path: '/',
-                        lodash: this.__
+                        path: '/'
                     }
                 );
             })
@@ -133,8 +131,7 @@ module.exports = class Shop extends BaseController{
                                         {
                                             page_title: 'My Cart',
                                             path : '/cart/',
-                                            products: cart_products,
-                                            lodash: this.__                                    
+                                            products: cart_products,                                 
                                         }
                                     );
                                 })
@@ -151,8 +148,7 @@ module.exports = class Shop extends BaseController{
                         {
                             page_title: 'My Cart',
                             path : '/cart/',
-                            products: [],
-                            lodash: this.__                                           
+                            products: [],                                   
                         }
                     );
                 }
@@ -163,8 +159,7 @@ module.exports = class Shop extends BaseController{
                     {
                         page_title: 'My Cart',
                         path : '/cart/',
-                        products: [],
-                        lodash: this.__                                          
+                        products: []                                      
                     }
                 );
             }
@@ -451,8 +446,7 @@ module.exports = class Shop extends BaseController{
                         {
                             page_title: product.title ?? 'Product Details',
                             path: '/products/',
-                            product: product ?? [],
-                            lodash: this.__
+                            product: product ?? []
                         }
                     );
                 } else {

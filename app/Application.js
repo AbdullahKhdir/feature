@@ -12,6 +12,7 @@ const BadRequestError = require('../core/error/types/BadRequestError.js');
 const { environment } = require('../core/config');
 const Morgan          = require('morgan');
 const FileSystem      = require('../core/node/FileSystem.js');
+const { _locals } = require('../core/utils/AppLocals.js');
 
 /**
  * @class Application
@@ -118,8 +119,8 @@ module.exports = class Application extends BaseController {
         /*
         * Parse JSON-BODY or ANY DATA TYPE Requests
         */
-       app.use(this.body_parser.json());
-       app.use(this.body_parser.urlencoded({extended: true}));        
+        app.use(this.body_parser.json());
+        app.use(this.body_parser.urlencoded({extended: true}));        
 
         /*
         * Middleware To Set Static Public Folder
@@ -157,7 +158,7 @@ module.exports = class Application extends BaseController {
                 httpOnly:      true,
             }
         }));
-        
+
         /*
         * Middleware To Get the logged in user
         */
@@ -230,7 +231,12 @@ module.exports = class Application extends BaseController {
         app.set('case sensitive routing', false);
         app.set('strict routing', false);
         this.sub_controller.deployRoutes(app);
-
+        
+        /*
+        * Passing default and helpful properties to all templates
+        ? lasts for the life cycle of the application 
+        */
+        app.locals = Object.assign(app.locals, _locals);
         this.#app = app;
     }
 
