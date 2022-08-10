@@ -1,6 +1,8 @@
 'use strict';
 
+const Lodash = require('../../app/utils/Lodash');
 const Express = require('../framework/Express');
+const _Promise = require('../utils/Promise');
 
 /**
  * @class Routes
@@ -33,6 +35,19 @@ module.exports = class Routes extends Express {
         this.framework.Router(options);
         this.router     = this.framework.Router(options);
         this.express    = this.framework;
+        this.__         = new Lodash().__;
+
+        /*
+            ? DEMO OF THE CORS CONFIGURATIONS 
+        */
+        this.corsOptions = {
+            origin:               'http://localhost:8010.com',
+            methods:              ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+            preflightContinue:    false,
+            maxAge:               86400,
+            allowedHeaders:       ['Content-Type', 'Authorization'],
+            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+        }
     }
 
     /**
@@ -55,5 +70,50 @@ module.exports = class Routes extends Express {
      */
     getExpressInstance() {
         return this.express;
+    }
+
+    /**
+     * @function Route
+     * @description  Initiate new route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param {String} method
+     * @param {String} url
+     * @param {Function} callback
+     * @param {Object} cors
+     * @return ExpressRoute
+     */
+    route(method, url, callback, cors = this.cors(this.corsOptions)) {
+        if (typeof method === 'undefined' || method === '' || method == null) {
+            method = 'Get';
+        }
+
+        if (typeof url === 'undefined' || url === '' || url == null) {
+            return false;
+        }
+        
+        if (typeof callback === 'undefined' || this.__.isString(callback) || callback == null) {
+            return false;
+        }
+
+        if (this.__.capitalize(method) === 'Get' && !this.__.isEmpty(url) && typeof callback === 'function') {
+            return this._().get(url, cors, _Promise.asyncHandler(callback));
+        }
+
+        if (this.__.capitalize(method) === 'Post' && !this.__.isEmpty(url) && typeof callback === 'function') {
+            return this._().post(url, cors, _Promise.asyncHandler(callback));
+        }
+
+        if (this.__.capitalize(method) === 'Put' && !this.__.isEmpty(url) && typeof callback === 'function') {
+            return this._().post(url, cors, _Promise.asyncHandler(callback));
+        }
+        
+        if (this.__.capitalize(method) === 'Patch' && !this.__.isEmpty(url) && typeof callback === 'function') {
+            return this._().post(url, cors, _Promise.asyncHandler(callback));
+        }
+        
+        if (this.__.capitalize(method) === 'Delete' && !this.__.isEmpty(url) && typeof callback === 'function') {
+            return this._().post(url, cors, _Promise.asyncHandler(callback));
+        }
     }
 }

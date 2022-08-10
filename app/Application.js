@@ -226,7 +226,10 @@ module.exports = class Application extends BaseController {
         /*
         * Routes 
         */
+        app.set('case sensitive routing', false);
+        app.set('strict routing', false);
         this.sub_controller.deployRoutes(app);
+        
         this.#app = app;
     }
 

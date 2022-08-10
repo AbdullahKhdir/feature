@@ -2,7 +2,6 @@
 
 const BaseController = require("../../../core/controller/BaseController");
 const Lodash         = require("../../utils/Lodash");
-const Promise        = require("../../../core/utils/Promise");
 
 /**
  * @class Auth
@@ -59,7 +58,7 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getAuthenticate           = () => this._().get('/login/', Promise.asyncHandler(async (req, res, next) => {
+    getAuthenticate           = () => this.route('get', '/login/', async (req, res, next) => {
         return this.render(
             res,
             'shop/login',
@@ -68,7 +67,7 @@ module.exports = class Auth extends BaseController {
                 path : '/login/'
             }
         );
-    }));
+    }, this.cors(this.#corsOptionsDelegate));
 
     /**
      * @function postAuthenticate
@@ -77,10 +76,10 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postAuthenticate          = () => this._().post('/login/', Promise.asyncHandler(async (req, res, next) => {
+    postAuthenticate          = () => this.route('post', '/login/', async (req, res, next) => {
         req.session.is_authenticated = true;
         return this.redirect(res, '/');
-    }));
+    });
 
     /**
      * @function getAuthenticate
@@ -89,7 +88,7 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getSignUp           = () => this._().get('/signup/', Promise.asyncHandler(async (req, res, next) => {
+    getSignUp           = () => this.route('get', '/signup/', async (req, res, next) => {
         return this.render(
             res,
             'shop/signup',
@@ -98,7 +97,7 @@ module.exports = class Auth extends BaseController {
                 path : '/signup/'
             }
         );
-    }));
+    });
 
     /**
      * @function postSignUp
@@ -107,9 +106,9 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postSignUp          = () => this._().post('/signup/', Promise.asyncHandler(async (req, res, next) => {
+    postSignUp          = () => this.route('post', '/signup/', async (req, res, next) => {
         return this.redirect(res, '/');
-    }));
+    });
 
     /**
      * @function logout
@@ -118,12 +117,12 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    logout                   = () => this._().post('/logout/', Promise.asyncHandler(async (req, res, next) => {
+    logout                   = () => this.route('post', '/logout/', async (req, res, next) => {
         req.session.destroy((err) => {
             if (err) {
                 console.log(err);
             }
             return this.redirect(res, '/');
         });
-    }));
+    });
 }

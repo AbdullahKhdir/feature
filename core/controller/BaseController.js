@@ -114,11 +114,14 @@ module.exports = class BaseController extends Routes {
      * @return void
      */
     undefinedRoutes(app) {
-        let site_is_found              = false;
-        let is_post_request_successful = false;
-        let _constants                 = new Constants().getConstants();
+        let site_is_found                = false;
+        let is_post_request_successful   = false;
+        let is_put_request_successful    = false;
+        let is_patch_request_successful  = false;
+        let is_delete_request_successful = false;
+        let _constants                   = new Constants().getConstants();
         
-        app.use(this._().get('*', (req, res, next) => {
+        app.use(this.route('get', '*', async (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach((middleware) => {
@@ -192,7 +195,7 @@ module.exports = class BaseController extends Routes {
             }
         }));
 
-        app.use(this._().post('*', (req, res, next) => {
+        app.use(this.route('post', '*', async (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach(function(middleware){
@@ -246,7 +249,7 @@ module.exports = class BaseController extends Routes {
                 return this.render(
                     res,
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support posting requests!'},
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!'},
                     null,
                     _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
                 );
@@ -259,7 +262,229 @@ module.exports = class BaseController extends Routes {
                 return this.render(
                     res,
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support posting requests!'},
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!'},
+                    null,
+                    _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+                );
+            }
+        }));
+
+        app.use(this.route('put', '*', async (req, res, next) => {
+            let route, routes = [];
+            
+            app._router.stack.forEach(function(middleware){
+                if(middleware.route){ // routes registered directly on the app
+                    routes.push(middleware.route);
+                } else if(middleware.name === 'router'){ // router middleware 
+                    middleware.handle.stack.forEach(function(handler){
+                        route = handler.route;
+                        route && routes.push(route);
+                    });
+                }
+            });
+
+            let route_exists = routes.filter(route => {
+                return route.path.toString() === req.path.toString();
+            })
+
+            routes.forEach(route => {
+                let check_path = req.path.toString().slice(1, req.path.toString().length);
+                let direction  = Object.assign(route.path.slice(1, route.path.length));
+                
+                let predefined_direction_from_route = this.__.toLower(direction.toString());
+                let requested_path_in_browser       = this.__.toLower(check_path.toString());
+                
+                /*
+                * "/route" is same as "/route/"
+                */
+                if (this.__.endsWith(requested_path_in_browser, '/') || this.__.endsWith(predefined_direction_from_route, '/')) {
+                    requested_path_in_browser       = this.__.trimEnd(requested_path_in_browser, '/');
+                    predefined_direction_from_route = this.__.trimEnd(predefined_direction_from_route, '/');
+                }
+                
+                if (predefined_direction_from_route.includes(':')) {
+                    const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
+                    const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
+                    if (_predefined_direction_from_route === _requested_path_in_browser) {
+                        if (this.__.isEmpty(route_exists)) {
+                            route_exists = 'dynamic routes';
+                        }
+                        is_put_request_successful = true;
+                    }
+                }
+                
+                if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                    route_exists = 'true';
+                    is_put_request_successful = true;
+                }
+            });
+
+            if (this.__.isEmpty(route_exists)) {
+                return this.render(
+                    res,
+                    '404',
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!'},
+                    null,
+                    _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+                );
+            }
+            
+            if (is_put_request_successful === true) {
+                next();
+                is_put_request_successful = false;
+            } else {
+                return this.render(
+                    res,
+                    '404',
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!'},
+                    null,
+                    _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+                );
+            }
+        }));
+
+        app.use(this.route('patch', '*', async (req, res, next) => {
+            let route, routes = [];
+            
+            app._router.stack.forEach(function(middleware){
+                if(middleware.route){ // routes registered directly on the app
+                    routes.push(middleware.route);
+                } else if(middleware.name === 'router'){ // router middleware 
+                    middleware.handle.stack.forEach(function(handler){
+                        route = handler.route;
+                        route && routes.push(route);
+                    });
+                }
+            });
+
+            let route_exists = routes.filter(route => {
+                return route.path.toString() === req.path.toString();
+            })
+
+            routes.forEach(route => {
+                let check_path = req.path.toString().slice(1, req.path.toString().length);
+                let direction  = Object.assign(route.path.slice(1, route.path.length));
+                
+                let predefined_direction_from_route = this.__.toLower(direction.toString());
+                let requested_path_in_browser       = this.__.toLower(check_path.toString());
+                
+                /*
+                * "/route" is same as "/route/"
+                */
+                if (this.__.endsWith(requested_path_in_browser, '/') || this.__.endsWith(predefined_direction_from_route, '/')) {
+                    requested_path_in_browser       = this.__.trimEnd(requested_path_in_browser, '/');
+                    predefined_direction_from_route = this.__.trimEnd(predefined_direction_from_route, '/');
+                }
+                
+                if (predefined_direction_from_route.includes(':')) {
+                    const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
+                    const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
+                    if (_predefined_direction_from_route === _requested_path_in_browser) {
+                        if (this.__.isEmpty(route_exists)) {
+                            route_exists = 'dynamic routes';
+                        }
+                        is_patch_request_successful = true;
+                    }
+                }
+                
+                if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                    route_exists = 'true';
+                    is_patch_request_successful = true;
+                }
+            });
+
+            if (this.__.isEmpty(route_exists)) {
+                return this.render(
+                    res,
+                    '404',
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!'},
+                    null,
+                    _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+                );
+            }
+            
+            if (is_patch_request_successful === true) {
+                next();
+                is_patch_request_successful = false;
+            } else {
+                return this.render(
+                    res,
+                    '404',
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!'},
+                    null,
+                    _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+                );
+            }
+        }));
+
+        app.use(this.route('delete', '*', async (req, res, next) => {
+            let route, routes = [];
+            
+            app._router.stack.forEach(function(middleware){
+                if(middleware.route){ // routes registered directly on the app
+                    routes.push(middleware.route);
+                } else if(middleware.name === 'router'){ // router middleware 
+                    middleware.handle.stack.forEach(function(handler){
+                        route = handler.route;
+                        route && routes.push(route);
+                    });
+                }
+            });
+
+            let route_exists = routes.filter(route => {
+                return route.path.toString() === req.path.toString();
+            })
+
+            routes.forEach(route => {
+                let check_path = req.path.toString().slice(1, req.path.toString().length);
+                let direction  = Object.assign(route.path.slice(1, route.path.length));
+                
+                let predefined_direction_from_route = this.__.toLower(direction.toString());
+                let requested_path_in_browser       = this.__.toLower(check_path.toString());
+                
+                /*
+                * "/route" is same as "/route/"
+                */
+                if (this.__.endsWith(requested_path_in_browser, '/') || this.__.endsWith(predefined_direction_from_route, '/')) {
+                    requested_path_in_browser       = this.__.trimEnd(requested_path_in_browser, '/');
+                    predefined_direction_from_route = this.__.trimEnd(predefined_direction_from_route, '/');
+                }
+                
+                if (predefined_direction_from_route.includes(':')) {
+                    const _predefined_direction_from_route        = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
+                    const _requested_path_in_browser              = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
+                    if (_predefined_direction_from_route === _requested_path_in_browser) {
+                        if (this.__.isEmpty(route_exists)) {
+                            route_exists = 'dynamic routes';
+                        }
+                        is_delete_request_successful = true;
+                    }
+                }
+                
+                if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                    route_exists = 'true';
+                    is_delete_request_successful = true;
+                }
+            });
+
+            if (this.__.isEmpty(route_exists)) {
+                return this.render(
+                    res,
+                    '404',
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!'},
+                    null,
+                    _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+                );
+            }
+            
+            if (is_delete_request_successful === true) {
+                next();
+                is_delete_request_successful = false;
+            } else {
+                return this.render(
+                    res,
+                    '404',
+                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!'},
                     null,
                     _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
                 );

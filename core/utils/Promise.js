@@ -20,6 +20,7 @@ module.exports = class Promise {
     }
 
     static asyncFunction = (request = Request, response = Response, next = NextFunction) => new Promise();
+    // static callback      = (callback) => { return callback(AsyncHandler.asyncFunction(request = Request, response = Response, next = NextFunction))};
     static asyncHandler  = (execution = AsyncHandler.asyncFunction) => (req = Request, res = Response, next = NextFunction) => {
         /**
          * @function setCookie

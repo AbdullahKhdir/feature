@@ -1,7 +1,6 @@
 'use strict';
 
 const BaseController  = require("../../../core/controller/BaseController");
-const Promise         = require("../../../core/utils/Promise");
 const Cart            = require("../../models/shop/Cart");
 const Order           = require("../../models/shop/Order");
 const CartItem        = require("../../models/shop/CartItem");
@@ -41,18 +40,6 @@ module.exports = class Shop extends BaseController{
         this.cart_items_object  = new CartItem();
         this.order_items_object = new OrderItem();
         this.constants          = Object.assign(new Constants);
-
-        /*
-         ? DEMO OF THE CORS CONFIGURATIONS 
-         */
-        this.corsOptions = {
-            origin:               'http://localhost:8010.com',
-            methods:              ['GET'],
-            preflightContinue:    false,
-            maxAge:               86400,
-            allowedHeaders:       ['Content-Type', 'Authorization'],
-            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-        }
     }
 
     /**
@@ -62,7 +49,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    products           = () => this._().get('/products', Promise.asyncHandler(async (req, res, next) => {
+    products           = () => this.route('get', '/products/', async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
             .then(rows => {
@@ -77,8 +64,8 @@ module.exports = class Shop extends BaseController{
                     }
                 );
             });      
-    }));
-
+    });
+    
     /**
      * @function index
      * @description index route
@@ -86,7 +73,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    index              = () => this._().get('/', this.cors(this.corsOptions), Promise.asyncHandler(async (req, res, next,) => {
+    index              = () => this.route('get', '/', async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
             .then((rows) => {
@@ -102,7 +89,7 @@ module.exports = class Shop extends BaseController{
                 );
             })
             .catch(err => console.log(err)); 
-    }));
+    });
 
     /**
      * @function cart
@@ -111,7 +98,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    cart               = () => this._().get('/cart/', Promise.asyncHandler(async (req, res, next) => {
+    cart               = () => this.route('get', '/cart/', async (req, res, next) => {
         const user_cart = req.session.currentUser.getCart() ?? [];
         if (!user_cart) {
             throw new Error('User is not available');
@@ -183,7 +170,7 @@ module.exports = class Shop extends BaseController{
             }
         })
         .catch(err => console.log(err));
-    }));
+    });
 
     /**
      * @function postCart
@@ -192,7 +179,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postCart           = () => this._().post('/cart/', Promise.asyncHandler(async (req, res, next) => {
+    postCart           = () => this.route('post', '/cart/', async (req, res, next) => {
         const product_id = req.body.product_id ?? '';
         const user_id    = req.session.currentUser.id;
 
@@ -257,7 +244,7 @@ module.exports = class Shop extends BaseController{
                 .catch((err) => { throw err});
             }
         });
-    }));
+    });
 
     /**
      * @function checkout
@@ -266,7 +253,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    checkout           = () => this._().get('/checkout/', Promise.asyncHandler(async (req, res, next) => {
+    checkout           = () => this.route('get', '/checkout/', async (req, res, next) => {
         return this.render(
             res,
             'shop/checkout',
@@ -275,7 +262,7 @@ module.exports = class Shop extends BaseController{
                 path : '/checkout/'
             }
         );
-    }));
+    });
 
     /**
      * @function orders
@@ -284,7 +271,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    orders             = () => this._().get('/orders/', Promise.asyncHandler(async (req, res, next) => {
+    orders             = () => this.route('get', '/orders/', async (req, res, next) => {
         req.session.currentUser.getOrder().then(order => {
             order.getProducts.then(ordered_products => {
                 if (!this.__.isEmpty(ordered_products.getProducts)) {
@@ -335,7 +322,7 @@ module.exports = class Shop extends BaseController{
         .catch(err => {
             console.log(err);
         });
-    }));
+    });
 
     /**
      * @function postOrders
@@ -344,7 +331,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postOrders         = () => this._().post('/create-order/', Promise.asyncHandler(async (req, res, next) => {
+    postOrders         = () => this.route('post', '/create-order/', async (req, res, next) => {
         const user_id    = req.session.currentUser.id;
         
         req.session.currentUser.getCart().then(cart => {
@@ -441,7 +428,7 @@ module.exports = class Shop extends BaseController{
                 });
             }
         });
-    }));
+    });
 
     /**
      * @function dynProductInfo
@@ -450,7 +437,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    dynProductInfo     = () => this._().get('/products/:productId/', Promise.asyncHandler(async (req, res, next) => {
+    dynProductInfo     = () => this.route('get', '/products/:productId/', async (req, res, next) => {
         let product_id = req.params.productId ?? false;
         const user_id = +req.session.currentUser.id ?? false;
         if (!isNaN(product_id)) {
@@ -490,7 +477,7 @@ module.exports = class Shop extends BaseController{
                 this.constants.getConstants().HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
             );
         }
-    }));
+    });
     
     /**
      * @function deleteCartProducts
@@ -499,7 +486,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteCartProducts = () => this._().post('/cart/delete-items/', Promise.asyncHandler(async (req, res, next) => {
+    deleteCartProducts = () => this.route('post', '/cart/delete-items/', async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
@@ -525,7 +512,7 @@ module.exports = class Shop extends BaseController{
                 }
             });
         }
-    }));
+    });
 
     /**
      * @function deleteCartProduct
@@ -534,7 +521,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteCartProduct  = () => this._().post('/cart/delete-item/', Promise.asyncHandler(async (req, res, next) => {
+    deleteCartProduct  = () => this.route('post', '/cart/delete-item/', async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
@@ -559,5 +546,5 @@ module.exports = class Shop extends BaseController{
                 }
             });
         }
-    }));
+    });
 }
