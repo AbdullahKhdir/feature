@@ -8,6 +8,14 @@
    <main>
         <form class="login-form" action="/signup/" method="POST">
             <div class="form-control">
+                <label for="first_name">First Name</label>
+                <input type="text" name="first_name" id="first_name">
+            </div>
+            <div class="form-control">
+                <label for="last_name">Last Name</label>
+                <input type="text" name="last_name" id="last_name">
+            </div>
+            <div class="form-control">
                 <label for="email">E-Mail</label>
                 <input type="email" name="email" id="email">
             </div>
@@ -16,8 +24,8 @@
                 <input type="password" name="password" id="password">
             </div>
             <div class="form-control">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" name="confirmPassword" id="confirmPassword">
+                <label for="confrim_password">Confirm Password</label>
+                <input type="password" name="confrim_password" id="confrim_password">
             </div>
             <button class="btn" type="submit">Sign up</button>
         </form>

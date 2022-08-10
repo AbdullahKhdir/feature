@@ -20,5 +20,5 @@ echo "" >> $FILE_NAME;
 echo "Neue Migration: $FILE_NAME";
 
 if [ -x "$(command -v code)" ]; then
-    code $FILE_NAME;
+   echo code $FILE_NAME;
 fi

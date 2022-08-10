@@ -12,7 +12,7 @@ const BadRequestError = require('../core/error/types/BadRequestError.js');
 const { environment } = require('../core/config');
 const Morgan          = require('morgan');
 const FileSystem      = require('../core/node/FileSystem.js');
-const { _locals } = require('../core/utils/AppLocals.js');
+const { _locals }     = require('../core/utils/AppLocals.js');
 
 /**
  * @class Application
@@ -166,7 +166,7 @@ module.exports = class Application extends BaseController {
             if (this.__.isEmpty(req.session.currentUser) || typeof req.session.currentUser === 'undefined') {
                 const User = require('./models/shop/User');
                 let user_model = new User();
-                user_model.get({name: 'Abdullah'})
+                user_model.get({first_name: 'Abdullah'})
                 .then(rows => {
                     if (!this.__.isEmpty(rows)) {
                         if (typeof rows[0] !== 'undefined') {

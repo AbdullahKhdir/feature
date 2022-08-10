@@ -1,7 +1,10 @@
 'use strict';
 
 const BaseController = require("../../../core/controller/BaseController");
+const User           = require("../../models/shop/User");
+const becrypt        = require('bcryptjs');
 const Lodash         = require("../../utils/Lodash");
+const { isEmpty } = require("lodash");
 
 /**
  * @class Auth
@@ -23,8 +26,8 @@ module.exports = class Auth extends BaseController {
             'postSignUp',
             'logout'
         ];
-        this.__ = new Lodash().__;
-
+        this.__   = new Lodash().__;
+        this.user = new User();
         /*
          ? CORS CONFIGURATIONS 
         */
@@ -49,6 +52,7 @@ module.exports = class Auth extends BaseController {
             }
             callback(null, corsOptions); // callback expects two parameters: error and options
         }
+        // TODO: adjust the middlewares in application to create and save the currentuser object and session id only after the user has logged in (IMPORTANT)
     }
 
     /**
@@ -77,8 +81,37 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     postAuthenticate          = () => this.route('post', '/login/', async (req, res, next) => {
-        req.session.is_authenticated = true;
-        return this.redirect(res, '/');
+        const email    = req.body.email;
+        const password = req.body.password;
+        
+        if (this.__.isEmpty(email) || this.__.isEmpty(password)) {
+            res.send('<h1>Email and password must not be empty!</h1>');
+            return res.end();
+        }
+        
+        this.user.filter({email: email})
+        .then(([rows, fields]) => {
+            if (rows) {
+                becrypt.compare(password, rows.password)
+                .then(do_match => {
+                    if (do_match) {
+                        req.session.is_authenticated = true;
+                        return this.redirect(res, '/');
+                    }
+                    res.send('<h1>Email and password are not correct!</h1><br><p>Please insert a valid data or sign up!</p>');
+                    return res.end();
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            } else {
+                res.send('<h1>Email and password are not correct!</h1><br><p>Please insert a valid data or sign up!</p>');
+                return res.end();
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
     });
 
     /**
@@ -107,7 +140,60 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     postSignUp          = () => this.route('post', '/signup/', async (req, res, next) => {
-        return this.redirect(res, '/');
+        const first_name       = req.body.first_name;
+        const last_name        = req.body.last_name;
+        const email            = req.body.email;
+        const password         = req.body.password;
+        const confrim_password = req.body.confrim_password;
+
+        if (confrim_password !== password) {
+            res.send('<h1>Password do not match!</h1>');
+            return res.end();
+        }
+        
+        this.user.filter({first_name: first_name, last_name: last_name, email: email})
+        .then((rows) => {
+            if (!rows) {
+                return becrypt.hash(password, 12)
+                    .then(hashed_password => {
+                        this.user.create({first_name: first_name, last_name: last_name, email: email, password: hashed_password})
+                        .then(result => {
+                            if (result) {
+                                return this.render(
+                                    res,
+                                    'shop/login',
+                                    {
+                                        page_title: 'Login',
+                                        path : '/login/'
+                                    }
+                                );
+                            }
+                        })
+                        .catch(err => {
+                            if (err) {
+                                console.log(err);
+                            }
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            } else {
+                return this.render(
+                    res,
+                    'shop/login',
+                    {
+                        page_title: 'Login',
+                        path : '/login/'
+                    }
+                );
+            }
+        })
+        .catch(err => {
+            if (err) {
+                console.log(err);
+            }
+        })
     });
 
     /**

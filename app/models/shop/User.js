@@ -32,11 +32,21 @@ module.exports = class User extends BaseModel {
             id: {
                 label: 'id'
             },
-            name: {
-                label: 'name'
+            first_name: {
+                label: 'First Name',
+                required: true
+            },
+            last_name: {
+                label: 'Last Name',
+                required: true
             },
             email: {
-                label: 'email'
+                label: 'email',
+                required: true
+            },
+            password: {
+                label: 'password',
+                required: true
             },
             created_at: {
                 label: 'created_at'
