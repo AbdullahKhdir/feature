@@ -89,17 +89,29 @@ module.exports = class Auth extends BaseController {
             return res.end();
         }
         
-        this.user.filter({email: email})
-        .then(([rows, fields]) => {
+        this.user.get({email: email})
+        .then((rows) => {
+            rows = rows[0];
             if (rows) {
                 becrypt.compare(password, rows.password)
                 .then(do_match => {
                     if (do_match) {
-                        req.session.is_authenticated = true;
-                        return this.redirect(res, '/');
+                        if (typeof rows !== 'undefined') {
+                            req.session.currentUser = rows;
+                            req.session.save((err) => {
+                                if (err) {
+                                    console.log(err)
+                                }
+                                if (!res.headersSent) {
+                                    req.session.is_authenticated = true;
+                                    return this.redirect(res, '/');
+                                }
+                            });
+                        }
+                    } else {
+                        res.send('<h1>Email and password are not correct!</h1><br><p>Please insert a valid data or sign up!</p>');
+                        return res.end();
                     }
-                    res.send('<h1>Email and password are not correct!</h1><br><p>Please insert a valid data or sign up!</p>');
-                    return res.end();
                 })
                 .catch(err => {
                     console.log(err);
@@ -150,11 +162,11 @@ module.exports = class Auth extends BaseController {
             res.send('<h1>Password do not match!</h1>');
             return res.end();
         }
-        
+
         this.user.filter({first_name: first_name, last_name: last_name, email: email})
         .then((rows) => {
             if (!rows) {
-                return becrypt.hash(password, 12)
+                becrypt.hash(password, 12)
                     .then(hashed_password => {
                         this.user.create({first_name: first_name, last_name: last_name, email: email, password: hashed_password})
                         .then(result => {
@@ -204,6 +216,7 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     logout                   = () => this.route('post', '/logout/', async (req, res, next) => {
+        res.onLogOut(req.user_cookie);
         req.session.destroy((err) => {
             if (err) {
                 console.log(err);

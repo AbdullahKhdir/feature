@@ -86,6 +86,9 @@ module.exports = class Promise {
                     res.setHeader('Set-Cookie', _cookie);
                 }
             };
+            res.onLogOut = (name, options = []) => {
+                res.clearCookie(name, options);
+            }
         }
         execution(req, res, next).catch(next);
     };

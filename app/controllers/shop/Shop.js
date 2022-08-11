@@ -268,51 +268,74 @@ module.exports = class Shop extends BaseController{
     */
     orders             = () => this.route('get', '/orders/', async (req, res, next) => {
         req.session.currentUser.getOrder().then(order => {
-            order.getProducts.then(ordered_products => {
-                if (!this.__.isEmpty(ordered_products.getProducts)) {
-                    let where_clause;
-                    ordered_products.getProducts.forEach((product, index) => {
-                        if (index > 0) {
-                            where_clause = where_clause + ' or id = '+ ordered_products.getProducts[index].product_id;
-                        } else {
-                            where_clause = 'id = '+ ordered_products.getProducts[index].product_id;
-                        }
-                    });
-                    this.product.filter(where_clause)
-                    .then(_products => {
-                        ordered_products.getProducts.forEach((element, index) => {
-                            _products.forEach((_product, _index) => {
-                                if (+_product.id === +element.product_id) {
-                                    ordered_products.getProducts[index].title = _products[_index].title 
-                                }
-                            });
+            if (typeof order === 'undefined') {
+                return this.render(
+                    res,
+                    'shop/orders',
+                    {
+                        page_title: 'My Orders',
+                        path : '/orders/',
+                        orders : []
+                    }
+                );
+            }
+            if (order.hasOwnProperty('getProducts')) {
+                order.getProducts.then(ordered_products => {
+                    if (!this.__.isEmpty(ordered_products.getProducts)) {
+                        let where_clause;
+                        ordered_products.getProducts.forEach((product, index) => {
+                            if (index > 0) {
+                                where_clause = where_clause + ' or id = '+ ordered_products.getProducts[index].product_id;
+                            } else {
+                                where_clause = 'id = '+ ordered_products.getProducts[index].product_id;
+                            }
                         });
+                        this.product.filter(where_clause)
+                        .then(_products => {
+                            ordered_products.getProducts.forEach((element, index) => {
+                                _products.forEach((_product, _index) => {
+                                    if (+_product.id === +element.product_id) {
+                                        ordered_products.getProducts[index].title = _products[_index].title 
+                                    }
+                                });
+                            });
+                            return this.render(
+                                res,
+                                'shop/orders',
+                                {
+                                    page_title: 'My Orders',
+                                    path : '/orders/',
+                                    orders : ordered_products.getProducts,
+                                    user_order_id : ordered_products.getProducts[0].order_id
+                                }
+                            );
+                        })
+                        .catch(err => {
+                            console.log(err);
+                        });
+                    } else {
                         return this.render(
                             res,
                             'shop/orders',
                             {
                                 page_title: 'My Orders',
                                 path : '/orders/',
-                                orders : ordered_products.getProducts,
-                                user_order_id : ordered_products.getProducts[0].order_id
+                                orders : []
                             }
                         );
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-                } else {
-                    return this.render(
-                        res,
-                        'shop/orders',
-                        {
-                            page_title: 'My Orders',
-                            path : '/orders/',
-                            orders : []
-                        }
-                    );
-                }
-            });
+                    }
+                });
+            } else {
+                return this.render(
+                    res,
+                    'shop/orders',
+                    {
+                        page_title: 'My Orders',
+                        path : '/orders/',
+                        orders : []
+                    }
+                );
+            }
         })
         .catch(err => {
             console.log(err);

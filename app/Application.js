@@ -13,6 +13,7 @@ const { environment } = require('../core/config');
 const Morgan          = require('morgan');
 const FileSystem      = require('../core/node/FileSystem.js');
 const { _locals }     = require('../core/utils/AppLocals.js');
+const crypto          = require('crypto')
 
 /**
  * @class Application
@@ -143,8 +144,8 @@ module.exports = class Application extends BaseController {
         /*
         * Middleware To Initiate Mysql Session
         */
-        const secret = require('crypto').randomBytes(48).toString('base64');
-        const key    = require('crypto').randomBytes(48).toString('base64');
+        const secret = crypto.randomBytes(48).toString('base64');
+        const key    = crypto.randomBytes(48).toString('base64');
         app.use(this.session({
             key:               key,
             secret:            secret,
@@ -160,68 +161,100 @@ module.exports = class Application extends BaseController {
         }));
 
         /*
-        * Middleware To Get the logged in user
+        * Middleware for saving cookie in the request
         */
         app.use((req, res, next) => {
-            if (this.__.isEmpty(req.session.currentUser) || typeof req.session.currentUser === 'undefined') {
-                const User = require('./models/shop/User');
-                let user_model = new User();
-                user_model.get({first_name: 'Abdullah'})
-                .then(rows => {
-                    if (!this.__.isEmpty(rows)) {
-                        if (typeof rows[0] !== 'undefined') {
-                            req.session.currentUser = rows[0];
-                            req.session.save((err) => {
-                                if (err) {
-                                    console.log(err)
-                                }
-                                if (!res.headersSent) {
-                                    next();
-                                }
-                            });
-                        }
-                    } else {
-                        throw new BadRequestError('User not registered');
-                    }
-                })
-                .catch(err => console.log(err));
-            } else {
-                if (!res.headersSent) {
-                    next();
-                }
-            }            
+            req.user_cookie = key;
+            next();
         });
 
         /*
         * Middleware To check if user has logged in to save the login in data in the session
         */
         app.use((req, res, next) => {
-            if (!this.__.isEmpty(req.session.currentUser) || typeof req.session.currentUser !== 'undefined') {
-                req.session.currentUser = Object.assign(req.session.currentUser, {
-                    getCart: () => {
-                        let Cart = require('../app/models/shop/Cart');
-                        let cart_model = new Cart();
-                        return cart_model.filter({user_id: req.session.currentUser.id});
-                    },
-                    getProducts: () => {
-                        let Product = require('../app/models/shop/Product');
-                        let product_model = new Product();
-                        return product_model.filter({user_id: req.session.currentUser.id});
-                    },
-                    getOrder: () => {
-                        let Order = require('../app/models/shop/Order');
-                        let order_model = new Order();
-                        return order_model.filter({user_id: req.session.currentUser.id});
+            let _next = false;
+            if (req.method === 'GET') {
+                if (req.url === '/login') {
+                    if (typeof req.session.is_authenticated === 'undefined') {
+                        next();
+                    } else {
+                        return this.redirect(res, '/');
                     }
-                });
-                req.session.save((err) => {
-                    if (err) {
-                        console.log(err);
+                } else if (req.url === '/signup/') {
+                    if (typeof req.session.is_authenticated === 'undefined') {
+                        next();
+                    } else {
+                        return this.redirect(res, '/');
                     }
-                    next();
-                });
+                } else {
+                    if (typeof req.session.is_authenticated !== 'undefined') {
+                        if (!this.__.isEmpty(req.session.currentUser) || typeof req.session.currentUser !== 'undefined') {
+                            _next = true;
+                            req.session.currentUser = Object.assign(req.session.currentUser, {
+                                getCart: () => {
+                                    let Cart = require('../app/models/shop/Cart');
+                                    let cart_model = new Cart();
+                                    return cart_model.filter({user_id: req.session.currentUser.id});
+                                },
+                                getProducts: () => {
+                                    let Product = require('../app/models/shop/Product');
+                                    let product_model = new Product();
+                                    return product_model.filter({user_id: req.session.currentUser.id});
+                                },
+                                getOrder: () => {
+                                    let Order = require('../app/models/shop/Order');
+                                    let order_model = new Order();
+                                    return order_model.filter({user_id: req.session.currentUser.id});
+                                }
+                            });
+                            req.session.save((err) => {
+                                if (err) {
+                                    console.log(err);
+                                }
+                            });
+                        } else {
+                            return this.redirect(res, '/login', this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED);
+                        }
+                    }
+                    if (!_next) {
+                        return this.redirect(res, '/login', this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED);
+                    } else {
+                        next()
+                    }
+                }
             } else {
-                return this.redirect(res, '/');
+                if (!this.__.isEmpty(req.session.currentUser) || typeof req.session.currentUser !== 'undefined') {
+                    _next = true;
+                    req.session.currentUser = Object.assign(req.session.currentUser, {
+                        getCart: () => {
+                            let Cart = require('../app/models/shop/Cart');
+                            let cart_model = new Cart();
+                            return cart_model.filter({user_id: req.session.currentUser.id});
+                        },
+                        getProducts: () => {
+                            let Product = require('../app/models/shop/Product');
+                            let product_model = new Product();
+                            return product_model.filter({user_id: req.session.currentUser.id});
+                        },
+                        getOrder: () => {
+                            let Order = require('../app/models/shop/Order');
+                            let order_model = new Order();
+                            return order_model.filter({user_id: req.session.currentUser.id});
+                        }
+                    });
+                    req.session.save((err) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+                    next();
+                } else {
+                    if (req.url !== '/login/' && req.url !== '/signup/' && req.method === 'POST') {
+                        return this.redirect(res, '/login', this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED);   
+                    } else {
+                        next();
+                    }
+                }
             }
         });
         

@@ -76,9 +76,13 @@ module.exports = class ApiResponse extends Db {
     redirect(res, url, status = this.#codes.getConstants().HTTPS_STATUS.SUCCESS.OK) {
         res.type(this.#codes.getConstants().RESPONSE.TYPES.HTML);
         if (typeof this.#status_code === 'undefined') {
-            return res.status(status).redirect(url);
+            res.status(status).redirect(url);
+            res.end();
+            return;
         }
-        return res.status(this.#status_code).redirect(url);
+        res.status(this.#status_code).redirect(url);
+        res.end();
+        return;
     }
 
     /**
