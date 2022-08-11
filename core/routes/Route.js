@@ -79,11 +79,12 @@ module.exports = class Routes extends Express {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {String} method
      * @param {String} url
-     * @param {Function} callback
      * @param {Object} cors
+     * @param {Function} isAuth
+     * @param {Function} callback
      * @return ExpressRoute
      */
-    route(method, url, callback, cors = this.cors(this.corsOptions)) {
+    route(method, url, cors = this.cors(this.corsOptions), isAuth = (req, res, next)=>{next()}, callback) {
         if (typeof method === 'undefined' || method === '' || method == null) {
             method = 'Get';
         }
@@ -96,24 +97,36 @@ module.exports = class Routes extends Express {
             return false;
         }
 
+        if (typeof cors === 'object') {
+            cors = (req, res, next) => {
+                next();
+            }
+        }
+
+        if (typeof isAuth === 'object') {
+            isAuth = (req, res, next) => {
+                next();
+            }
+        }
+
         if (this.__.capitalize(method) === 'Get' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().get(url, cors, _Promise.asyncHandler(callback));
+            return this._().get(url, cors, isAuth, _Promise.asyncHandler(callback));
         }
 
         if (this.__.capitalize(method) === 'Post' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().post(url, cors, _Promise.asyncHandler(callback));
+            return this._().post(url, cors, isAuth, _Promise.asyncHandler(callback));
         }
 
         if (this.__.capitalize(method) === 'Put' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().post(url, cors, _Promise.asyncHandler(callback));
+            return this._().post(url, cors, isAuth, _Promise.asyncHandler(callback));
         }
         
         if (this.__.capitalize(method) === 'Patch' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().post(url, cors, _Promise.asyncHandler(callback));
+            return this._().post(url, cors, isAuth, _Promise.asyncHandler(callback));
         }
         
         if (this.__.capitalize(method) === 'Delete' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().post(url, cors, _Promise.asyncHandler(callback));
+            return this._().post(url, cors, isAuth, _Promise.asyncHandler(callback));
         }
     }
 }

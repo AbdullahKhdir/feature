@@ -3,6 +3,7 @@
 const BaseController = require("../../../core/controller/BaseController");
 const Product        = require("../../models/shop/Product");
 const Lodash         = require("../../utils/Lodash");
+const isAuth          = require("../../middlewares/is_auth");
 
 /**
  * @class Admin
@@ -61,7 +62,7 @@ module.exports = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    product           = () => this.route('get', '/admin/add-product/', async (req, res, next) => {
+    product           = () => this.route('get', '/admin/add-product/', {}, isAuth, async (req, res, next) => {
         return this.render(
             res,
             'admin/add-product',
@@ -79,7 +80,7 @@ module.exports = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    editProduct       = () => this.route('get', '/admin/edit-product/:product_id/', async (req, res, next) => {
+    editProduct       = () => this.route('get', '/admin/edit-product/:product_id/', {}, isAuth, async (req, res, next) => {
         const product_id = +req.params.product_id ?? false;
         const user_id    = +req.session.currentUser.id;
         
@@ -117,7 +118,7 @@ module.exports = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postEditedProduct = () => this.route('post', '/admin/edit-product/', async  (req, res, next) => {
+    postEditedProduct = () => this.route('post', '/admin/edit-product/', {}, isAuth, async  (req, res, next) => {
             const product_id = +req.body.product_id ?? false;
             const title = this.__.capitalize(req.body.title) ?? false;
             const price = req.body.price ?? false;
@@ -149,7 +150,7 @@ module.exports = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    addProduct        = () => this.route('post', '/admin/add-product/', async (req, res, next) => {
+    addProduct        = () => this.route('post', '/admin/add-product/', {}, isAuth, async (req, res, next) => {
             const title       = this.__.capitalize(req.body.title);
             const imageUrl    = req.body.imageUrl;
             const description = this.__.capitalize(req.body.description);
@@ -173,7 +174,7 @@ module.exports = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteProduct     = () => this.route('post', '/admin/delete-product/', async (req, res, next) => {
+    deleteProduct     = () => this.route('post', '/admin/delete-product/', {}, isAuth, async (req, res, next) => {
         const product_id = req.body.product_id ?? false;
         const user_id = +req.session.currentUser.id ?? false;
         
@@ -200,7 +201,7 @@ module.exports = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    products          = () => this.route('get', '/admin/products/', async (req, res, next) => {
+    products          = () => this.route('get', '/admin/products/', this.cors(this.#corsOptionsDelegate), isAuth, async (req, res, next) => {
         const user_products = req.session.currentUser.getProducts();
         user_products
             .then(rows => {
@@ -214,5 +215,5 @@ module.exports = class Admin extends BaseController {
                     }
                 );
             });
-    }, this.cors(this.#corsOptionsDelegate));
+    });
 }

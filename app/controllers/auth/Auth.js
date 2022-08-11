@@ -62,7 +62,7 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getAuthenticate           = () => this.route('get', '/login/', async (req, res, next) => {
+    getAuthenticate           = () => this.route('get', '/login/', {}, {}, async (req, res, next) => {
         return this.render(
             res,
             'shop/login',
@@ -80,7 +80,7 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postAuthenticate          = () => this.route('post', '/login/', async (req, res, next) => {
+    postAuthenticate          = () => this.route('post', '/login/', {}, {}, async (req, res, next) => {
         const email    = req.body.email;
         const password = req.body.password;
         
@@ -133,7 +133,7 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getSignUp           = () => this.route('get', '/signup/', async (req, res, next) => {
+    getSignUp           = () => this.route('get', '/signup/', {}, {}, async (req, res, next) => {
         return this.render(
             res,
             'shop/signup',
@@ -151,7 +151,7 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postSignUp          = () => this.route('post', '/signup/', async (req, res, next) => {
+    postSignUp          = () => this.route('post', '/signup/', {}, {}, async (req, res, next) => {
         const first_name       = req.body.first_name;
         const last_name        = req.body.last_name;
         const email            = req.body.email;
@@ -215,7 +215,7 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    logout                   = () => this.route('post', '/logout/', async (req, res, next) => {
+    logout                   = () => this.route('post', '/logout/', {}, {}, async (req, res, next) => {
         res.onLogOut(req.user_cookie);
         req.session.destroy((err) => {
             if (err) {
