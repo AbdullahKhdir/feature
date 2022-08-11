@@ -38,7 +38,7 @@ module.exports = class ExampleController extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    firstMethod = () => this.route('get', '/get_exmaple', async (req, res, next) => {
+    firstMethod = () => this.route('get', '/get_exmaple', {}, async (req, res, next) => {
         return this.send(res, '<h1>THIS IS AN EXAMPLE OF A GET REQUEST</h1>');
     });
 
@@ -49,7 +49,7 @@ module.exports = class ExampleController extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    secondMethod = () => this.route('post', '/post_example', async (req, res, next) => {
+    secondMethod = () => this.route('post', '/post_example', {}, async (req, res, next) => {
         this.exmaple_model
             .all()
             .then(([rows, fieldData]) => {
@@ -66,7 +66,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     thirdMethod() {
-        return this.route('put', '/put_example', async (req, res, next) => {
+        return this.route('put', '/put_example', {}, async (req, res, next) => {
             this.exmaple_model
                 .all()
                 .then(([rows, fieldData]) => {
@@ -93,7 +93,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     fourthMethod() {
-        return this.route('patch', '/patch_example', async (req, res, next) => {
+        return this.route('patch', '/patch_example', {}, async (req, res, next) => {
             this.exmaple_model
                 .all()
                 .then(([rows, fieldData]) => {
@@ -120,7 +120,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     fifthMethod() {
-        return this.route('delete', '/delete_example', async (req, res, next) => {
+        return this.route('delete', '/delete_example', {}, async (req, res, next) => {
             this.exmaple_model
                 .all()
                 .then(([rows, fieldData]) => {
@@ -147,7 +147,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     firstDynMethod() {
-        return this.route('get', '/dynamic/:dynamicInput', async (req, res, next) => {
+        return this.route('get', '/dynamic/:dynamicInput', {}, async (req, res, next) => {
             const dynamicInput = +req.params.dynamicInput ?? false;
             this.exmaple_model.filter(dynamicInput).then(([rows, fields]) => {
                 if (rows) {
@@ -177,7 +177,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     secondDynMethod() {
-        return this.route('get', '/dynamic_two/:dynamicInput', async (req, res, next) => {
+        return this.route('get', '/dynamic_two/:dynamicInput', {}, async (req, res, next) => {
             const dynamicInput = +req.params.dynamicInput ?? false;
             this.exmaple_model.filter(dynamicInput).then(([rows, fields]) => {
                 if (rows) {
@@ -207,7 +207,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     workerPool() {
-        return this.route('get', '/workerpool/', async (req, res, next) => {
+        return this.route('get', '/workerpool/', {}, async (req, res, next) => {
             /*
             * Workerpool example
             */
@@ -242,7 +242,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     workerEmit() {
-        return this.route('get', '/workeremit/', async (req, res, next) => {
+        return this.route('get', '/workeremit/', {}, async (req, res, next) => {
             /*
              * workerEmit event Exampel 
              */

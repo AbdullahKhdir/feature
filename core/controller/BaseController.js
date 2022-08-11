@@ -121,7 +121,7 @@ module.exports = class BaseController extends Routes {
         let is_delete_request_successful = false;
         let _constants                   = new Constants().getConstants();
         
-        app.use(this.route('get', '*', {}, {}, async (req, res, next) => {
+        app.use(this.route('get', '*', {}, async (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach((middleware) => {
@@ -195,7 +195,7 @@ module.exports = class BaseController extends Routes {
             }
         }));
 
-        app.use(this.route('post', '*', {}, {}, async (req, res, next) => {
+        app.use(this.route('post', '*', {}, async (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach(function(middleware){
@@ -269,7 +269,7 @@ module.exports = class BaseController extends Routes {
             }
         }));
 
-        app.use(this.route('put', '*', {}, {}, async (req, res, next) => {
+        app.use(this.route('put', '*', {}, async (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach(function(middleware){
@@ -343,7 +343,7 @@ module.exports = class BaseController extends Routes {
             }
         }));
 
-        app.use(this.route('patch', '*', {}, {}, async (req, res, next) => {
+        app.use(this.route('patch', '*', {}, async (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach(function(middleware){
@@ -417,7 +417,7 @@ module.exports = class BaseController extends Routes {
             }
         }));
 
-        app.use(this.route('delete', '*', {}, {}, async (req, res, next) => {
+        app.use(this.route('delete', '*', {}, async (req, res, next) => {
             let route, routes = [];
             
             app._router.stack.forEach(function(middleware){

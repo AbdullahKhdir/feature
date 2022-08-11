@@ -13,5 +13,5 @@ module.exports = {
     migration:             process.env.MIGRATION,
     is_worker_pool_active: process.env.WORKER_POOL_ENABLED === 0 ? process.env.NODE_ENV === 'production' ? process.env.WORKER_POOL_ENABLED = "1" : process.env.WORKER_POOL_ENABLED = "0" : process.env.WORKER_POOL_ENABLED,
     os                   : process.platform === 'darwin' ? 'MAC' : process.platform === 'linux' ? 'LINUX' : process.platform === 'win32' ? 'WINDOWS' : process.platform === 'freebsd' || process.platform === 'openbsd' || process.platform === 'sunos' ? 'UNIX' : 'UNKNOWN',
-    socket_path          : mysqlSocket()
+    socket_path          : process.platform !== 'win32' ? mysqlSocket() : ''
 };

@@ -8,6 +8,8 @@ const OrderItem       = require("../../models/shop/OrderItem");
 const Product         = require("../../models/shop/Product");
 const Constants       = require("../../utils/Constants");
 const isAuth          = require("../../middlewares/is_auth");
+const userSession     = require("../../middlewares/init_user_session");
+
 
 /**
  * @class Shop
@@ -50,13 +52,13 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    products           = () => this.route('get', '/products/', {}, {}, async (req, res, next) => {
+    products           = () => this.route('get', '/products/', {userSession}, async (req, res, next) => {
         // TODO: Add public products
         /*
          * User specific products 
          */
-        const user_products = req.session.currentUser ? req.session.currentUser.getProducts() : [];
-        if (!this.__.isEmpty(user_products)) {
+        const user_products = req.session.currentUser ? req.session.currentUser.getProducts() : false;
+        if (typeof user_products === 'object') {
             user_products
                 .then(rows => {
                     return this.render(
@@ -89,16 +91,13 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    // TODO: Object parameter filled with middlewares after prio and passing them to the route method
-    // TODO: IsAuth must not be responsible for getting user's products, cart or orders. New middleware is to be implemented
-    index              = () => this.route('get', '/', {}, {}, async (req, res, next) => {
+    index              = () => this.route('get', '/', {userSession}, async (req, res, next) => {
         // TODO: Add public products
         /*
          * User specific products
          */
-        console.log(req.session.currentUser);
-        const user_products   = req.session.currentUser ? req.session.currentUser.getProducts() : [];
-        if (!this.__.isEmpty(user_products)) {
+        const user_products   = req.session.currentUser ? req.session.currentUser.getProducts() : false;
+        if (typeof user_products === 'object') {
             user_products
                 .then((rows) => {
                     return this.render(
@@ -132,7 +131,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    cart               = () => this.route('get', '/cart/', {}, isAuth, async (req, res, next) => {
+    cart               = () => this.route('get', '/cart/', {isAuth, userSession}, async (req, res, next) => {
         const user_cart = req.session.currentUser.getCart() ?? [];
         if (!user_cart) {
             throw new Error('User is not available');
@@ -160,7 +159,6 @@ module.exports = class Shop extends BaseController{
                                         cart_products[index]['title']      = rows[index].title;
                                         cart_products[index]['product_id'] = rows[index].id;
                                     });
-                                    // console.log(cart_products);
                                     return this.render(
                                         res,
                                         'shop/cart',
@@ -210,7 +208,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postCart           = () => this.route('post', '/cart/', {}, isAuth, async (req, res, next) => {
+    postCart           = () => this.route('post', '/cart/', {isAuth, userSession}, async (req, res, next) => {
         const product_id = req.body.product_id ?? '';
         const user_id    = req.session.currentUser.id;
 
@@ -284,7 +282,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    checkout           = () => this.route('get', '/checkout/', {}, isAuth, async (req, res, next) => {
+    checkout           = () => this.route('get', '/checkout/', {isAuth, userSession}, async (req, res, next) => {
         return this.render(
             res,
             'shop/checkout',
@@ -302,7 +300,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    orders             = () => this.route('get', '/orders/', {}, isAuth, async (req, res, next) => {
+    orders             = () => this.route('get', '/orders/', {isAuth, userSession}, async (req, res, next) => {
         req.session.currentUser.getOrder().then(order => {
             if (typeof order === 'undefined') {
                 return this.render(
@@ -385,7 +383,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postOrders         = () => this.route('post', '/create-order/', {}, isAuth, async (req, res, next) => {
+    postOrders         = () => this.route('post', '/create-order/', {isAuth, userSession}, async (req, res, next) => {
         const user_id    = req.session.currentUser.id;
         
         req.session.currentUser.getCart().then(cart => {
@@ -491,7 +489,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    dynProductInfo     = () => this.route('get', '/products/:productId/', {}, {}, async (req, res, next) => {
+    dynProductInfo     = () => this.route('get', '/products/:productId/', {userSession}, async (req, res, next) => {
         let product_id = req.params.productId ?? false;
         const user_id = +req.session.currentUser.id ?? false;
         if (!isNaN(product_id)) {
@@ -539,7 +537,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteCartProducts = () => this.route('post', '/cart/delete-items/', {}, isAuth, async (req, res, next) => {
+    deleteCartProducts = () => this.route('post', '/cart/delete-items/', {isAuth, userSession}, async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
@@ -574,7 +572,7 @@ module.exports = class Shop extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteCartProduct  = () => this.route('post', '/cart/delete-item/', {}, isAuth, async (req, res, next) => {
+    deleteCartProduct  = () => this.route('post', '/cart/delete-item/', {isAuth, userSession}, async (req, res, next) => {
         const cart_item_product_id = req.body.product_id ?? false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
