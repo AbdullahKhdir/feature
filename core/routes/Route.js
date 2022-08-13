@@ -116,15 +116,15 @@ module.exports = class Routes extends Express {
         }
 
         if (this.__.capitalize(method) === 'Put' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().post(url, _middleware, _Promise.asyncHandler(callback));
+            return this._().put(url, _middleware, _Promise.asyncHandler(callback));
         }
         
         if (this.__.capitalize(method) === 'Patch' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().post(url, _middleware, _Promise.asyncHandler(callback));
+            return this._().patch(url, _middleware, _Promise.asyncHandler(callback));
         }
         
         if (this.__.capitalize(method) === 'Delete' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().post(url, _middleware, _Promise.asyncHandler(callback));
+            return this._().delete(url, _middleware, _Promise.asyncHandler(callback));
         }
     }
 }

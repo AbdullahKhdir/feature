@@ -30,7 +30,6 @@ module.exports = class Application extends BaseController {
     #app;
     constructor(app) {
         super();
-
         if (typeof this.#app !== 'undefined') {
             return this.getApp();
         }
@@ -172,6 +171,9 @@ module.exports = class Application extends BaseController {
         */
         app.use(flash());
 
+        /*
+        * Send csrf token on every request along with the authentication status
+        */
         app.use((req, res, next) => {
             res.locals.csrf = req.csrfToken();
             res.locals.is_authenticated = res.req.session.is_authenticated;

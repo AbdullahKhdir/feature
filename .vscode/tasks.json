@@ -39,6 +39,18 @@
             "type": "shell",
             "command": "node_modules/autocannon/autocannon.js  http://localhost:8010",
             "group": "build"
+        },
+        {
+            "label": "Clean npm cache",
+            "type": "shell",
+            "command": "npm cache clean --force",
+            "group": "build"
+        },
+        {
+            "label": "PM2 List Apps",
+            "type": "shell",
+            "command": "pm2 list",
+            "group": "build"
         }
     ]
 }
