@@ -36,11 +36,11 @@ module.exports = (req, res, next) => {
                 return res.redirect(constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/login');
             }
         }
-        if (!_next) {
-            return res.redirect(constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/login');
-        } else {
-            next()
-        }   
+        // if (!_next) {
+        //     return res.redirect(constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/login');
+        // } else {
+        // }   
+        next()
     } else {
         if (!__.isEmpty(req.session.currentUser) || typeof req.session.currentUser !== 'undefined') {
             _next = true;

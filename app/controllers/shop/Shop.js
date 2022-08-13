@@ -106,7 +106,8 @@ module.exports = class Shop extends BaseController{
                         {
                             products: rows ?? [],
                             page_title: 'Shop',
-                            path: '/'
+                            path: '/',
+                            is_logged_out: req.flash('is_logged_out')
                         }
                     );
                 })

@@ -184,9 +184,34 @@ form
       background: red
       color: white
 
+.user-message 
+  margin: auto
+  width: 90% 
+  border: 1px solid #2A0944
+  padding: .5rem
+  border-radius: 3px
+  background: #ccc
+  text-align: center
+  
+.user-message--error
+  border-color: #2A0944
+  background: #A10035
+  color: #ffffff
+
+.user-message--warning
+  background: #FEC260
+
+.user-message--success
+  border-color: #2A0944
+  background: #3FA796
+  color: #ffffff
+  
 @media (min-width: 768px)
   .main-header__nav
     display: flex
 
   #side-menu-toggle
     display: none
+
+  .user-message
+    width: 30rem

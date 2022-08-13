@@ -40,6 +40,7 @@
             <ul class="main-header__item-list">
                 <li class="main-header__item">
                     <form action="/logout/" method="post">
+                        <input type="hidden" name="_csrf" value="<%= csrf %>">
                         <button type="submit">Logout</button>
                     </form>   
                 </li>
@@ -95,6 +96,7 @@
             <% if (is_authenticated) { %>
                 <li class="mobile-nav__item">
                     <form action="/logout/" method="post">
+                        <input type="hidden" name="_csrf" value="<%= csrf %>">
                         <button type="submit">Logout</button>
                     </form>   
                 </li>

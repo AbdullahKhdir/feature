@@ -55,7 +55,6 @@ module.exports = class ApiResponse extends Db {
      * @returns Response
     */
     render(res, template, options = {}, callback = null, status = this.#codes.getConstants().HTTPS_STATUS.SUCCESS.OK) {
-        options = Object.assign(options, {is_authenticated: res.req.session.is_authenticated});
         res.type(this.#codes.getConstants().RESPONSE.TYPES.HTML);
         if (typeof this.#status_code === 'undefined') {
             return res.status(status).render(template, options, callback);

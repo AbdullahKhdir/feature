@@ -67,7 +67,9 @@ module.exports = class Auth extends BaseController {
             'shop/login',
             {
                 page_title: 'Login',
-                path : '/login/'
+                path : '/login/',
+                invalid_credentials: req.flash('invalid_credentials'),
+                empty_credentials: req.flash('empty_credentials')
             }
         );
     }, this.cors(this.#corsOptionsDelegate));
@@ -84,12 +86,16 @@ module.exports = class Auth extends BaseController {
         const password = req.body.password;
         
         if (this.__.isEmpty(email) || this.__.isEmpty(password)) {
-            res.send('<h1>Email and password must not be empty!</h1>');
-            return res.end();
+            req.flash('empty_credentials', 'Email and password must not be empty!');
+            return this.redirect(res, '/login');
         }
         
         this.user.get({email: email})
         .then((rows) => {
+            if (typeof rows === 'undefined' || rows == null || this.__.isEmpty(rows) || rows.length === 0) {
+                req.flash('invalid_credentials', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                return this.redirect(res, '/login');
+            }
             rows = rows[0];
             if (rows) {
                 becrypt.compare(password, rows.password)
@@ -108,16 +114,13 @@ module.exports = class Auth extends BaseController {
                             });
                         }
                     } else {
-                        res.send('<h1>Email and password are not correct!</h1><br><p>Please insert a valid data or sign up!</p>');
-                        return res.end();
+                        req.flash('invalid_credentials', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                        return this.redirect(res, '/login');
                     }
                 })
                 .catch(err => {
                     console.log(err);
                 });
-            } else {
-                res.send('<h1>Email and password are not correct!</h1><br><p>Please insert a valid data or sign up!</p>');
-                return res.end();
             }
         })
         .catch(err => {
@@ -138,7 +141,8 @@ module.exports = class Auth extends BaseController {
             'shop/signup',
             {
                 page_title: 'Sign up',
-                path : '/signup/'
+                path : '/signup/',
+                invalid_credentials: req.flash('invalid_credentials')
             }
         );
     });
@@ -158,8 +162,8 @@ module.exports = class Auth extends BaseController {
         const confrim_password = req.body.confrim_password;
 
         if (confrim_password !== password) {
-            res.send('<h1>Password do not match!</h1>');
-            return res.end();
+            req.flash('invalid_credentials', 'Password do not match!');
+            return this.redirect(res, '/signup');
         }
 
         this.user.filter({first_name: first_name, last_name: last_name, email: email})
@@ -190,14 +194,8 @@ module.exports = class Auth extends BaseController {
                         console.log(err);
                     });
             } else {
-                return this.render(
-                    res,
-                    'shop/login',
-                    {
-                        page_title: 'Login',
-                        path : '/login/'
-                    }
-                );
+                req.flash('invalid_credentials', 'Email is already registered!');
+                return this.redirect(res, '/login');
             }
         })
         .catch(err => {

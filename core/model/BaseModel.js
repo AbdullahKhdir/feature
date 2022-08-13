@@ -97,7 +97,7 @@ module.exports = class BaseModel extends QueryBuilder {
             let where_clause = '';
             for (const key in sql_query) {
                 if (Object.hasOwnProperty.call(sql_query, key)) {
-                    where_clause = where_clause + key + ' = ' + this.mysql.escape(sql_query[key]) + ' AND ';
+                    where_clause = where_clause + key + ' = ' + this.mysql.escape(sql_query[key]) + ' OR ';
                 }
             }
             if (this.__.isString(where_clause) && !this.__.isEmpty(where_clause)) {

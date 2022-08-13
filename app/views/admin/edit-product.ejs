@@ -7,6 +7,7 @@
     <%- include('../includes/navigation.ejs')  %>
     <main>
         <form class="product-form" action="/admin/edit-product/" method="POST">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
             <div class="form-control">
                 <label for="title"><%= page_title %></label>
                 <input type="text" name="title" id="title" value="<%= lodash.capitalize(product.title) %>">

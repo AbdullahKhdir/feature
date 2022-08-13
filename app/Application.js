@@ -7,13 +7,15 @@ const Path            = require('../core/node/Path.js');
 const BaseController  = require('../core/controller/BaseController.js');
 const Constants       = require('./utils/Constants.js');
 const Lodash          = require('./utils/Lodash.js');
-const Helmet          = require("helmet");
+const Helmet          = require('helmet');
 const BadRequestError = require('../core/error/types/BadRequestError.js');
 const { environment } = require('../core/config');
 const Morgan          = require('morgan');
 const FileSystem      = require('../core/node/FileSystem.js');
 const { _locals }     = require('../core/utils/AppLocals.js');
-const crypto          = require('crypto')
+const crypto          = require('crypto');
+const csrf            = require('csurf')
+const flash           = require('connect-flash');
 
 /**
  * @class Application
@@ -159,6 +161,22 @@ module.exports = class Application extends BaseController {
                 httpOnly:      true,
             }
         }));
+
+        /*
+        * CSRF Enabled
+        */
+        app.use(csrf());
+
+        /*
+         * Registering Flash
+        */
+        app.use(flash());
+
+        app.use((req, res, next) => {
+            res.locals.csrf = req.csrfToken();
+            res.locals.is_authenticated = res.req.session.is_authenticated;
+            next();
+        });
 
         /*
         * Middleware for saving cookie in the request

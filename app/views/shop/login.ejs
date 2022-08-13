@@ -7,7 +7,14 @@
    <%- include('../includes/navigation.ejs') %>
    <% if (!is_authenticated) { %>
         <main>
+            <% if (invalid_credentials.length > 0) { %>
+                <div class="user-message user-message--warning"><%= invalid_credentials %></div>
+            <% } %>
+            <% if (empty_credentials.length > 0) { %>
+                <div class="user-message user-message--warning"><%= empty_credentials %></div>
+            <% } %>
             <form class="login-form" action="/login/" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
                 <div class="form-control">
                     <label for="email">E-Mail</label>
                     <input type="email" name="email" id="email">

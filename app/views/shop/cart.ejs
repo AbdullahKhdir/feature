@@ -13,12 +13,14 @@
                                 <h1><%= lodash.capitalize(product.title) ?? 'Not Found ' %></h1>
                                 <h2>Quantity: (<%= product.quantity %>) </h2> 
                                 <form action="/cart/delete-item/" method="POST">
+                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
                                     <input type="hidden" name="product_id" value="<%= product.product_id  %>">
                                     <button class="btn danger" type="submit">
                                         Delete
                                     </button>
                                 </form>
                                 <form action="/cart/delete-items/" method="POST">
+                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
                                     <input type="hidden" name="product_id" value="<%= product.product_id  %>">
                                     <button class="btn" type="submit">
                                         Delete All
@@ -30,7 +32,8 @@
                 </ul>
                 <hr>
                 <div class="centered">
-                    <form action="/create-order/" method="post">
+                    <form action="/create-order/" method="POST">
+                        <input type="hidden" name="_csrf" value="<%= csrf %>">
                         <button type="submit" class="btn">Order Now!</button>
                     </form>
                 </div>
