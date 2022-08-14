@@ -4,7 +4,6 @@ const BaseController = require("../../../core/controller/BaseController");
 const User           = require("../../models/shop/User");
 const becrypt        = require('bcryptjs');
 const Lodash         = require("../../utils/Lodash");
-const { isEmpty } = require("lodash");
 
 /**
  * @class Auth

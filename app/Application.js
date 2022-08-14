@@ -16,6 +16,7 @@ const { _locals }     = require('../core/utils/AppLocals.js');
 const crypto          = require('crypto');
 const csrf            = require('csurf')
 const flash           = require('connect-flash');
+const compression     = require('compression');
 
 /**
  * @class Application
@@ -47,6 +48,11 @@ module.exports = class Application extends BaseController {
         */
         app = this.express();
         
+        /*
+        * Using package compressor
+        */
+        app.use(compression());
+
         /*
         * Sets the following policies
           ! contentSecurityPolicy
