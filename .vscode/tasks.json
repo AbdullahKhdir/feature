@@ -51,6 +51,78 @@
             "type": "shell",
             "command": "pm2 list",
             "group": "build"
+        },
+        {
+            "label": "PM2 Cluster Max",
+            "type": "shell",
+            "command": "pm2 start Server.js -i max --watch",
+            "group": "build"
+        },
+        {
+            "label": "PM2 cluster one process",
+            "type": "shell",
+            "command": "pm2 start Server.js -i 1 --watch --wait-ready",
+            "group": "build"
+        },
+        {
+            "label": "PM2 delete all process",
+            "type": "shell",
+            "command": "pm2 delete all",
+            "group": "build"
+        },
+        {
+            "label": "PM2 GUI",
+            "type": "shell",
+            "command": "pm2 plus",
+            "group": "build"
+        },
+        {
+            "label": "PM2 describe",
+            "type": "shell",
+            "command": "pm2 describe Server",
+            "group": "build"
+        },
+        {
+            "label": "PM2 monitor all",
+            "type": "shell",
+            "command": "pm2 monit",
+            "group": "build"
+        },
+        {
+            "label": "PM2 logger",
+            "type": "shell",
+            "command": "pm2 logs",
+            "group": "build"
+        },
+        {
+            "label": "PM2 stop all",
+            "type": "shell",
+            "command": "pm2 stop all",
+            "group": "build"
+        },
+        {
+            "label": "PM2 restart all",
+            "type": "shell",
+            "command": "pm2 restart all",
+            "group": "build"
+        },
+        {
+            "label": "PM2 reload all",
+            "type": "shell",
+            "command": "pm2 reload all",
+            "group": "build"
+        },
+        {
+            "label": "PM2 update",
+            "type": "shell",
+            "command": "pm2 updatePM2",
+            "group": "build"
+        },
+        {
+            "label": "PM2 ping",
+            "type": "shell",
+            "command": "pm2 ping",
+            "group": "build"
         }
     ]
 }
