@@ -22,7 +22,7 @@ class Server extends Application{
         let port = Server.init().port();
         this.getApp().listen(port, () => {
             console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');
-            process.send('ready');
+            // process.send('ready');
         });
     }
 

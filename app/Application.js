@@ -17,6 +17,7 @@ const crypto          = require('crypto');
 const csrf            = require('csurf')
 const flash           = require('connect-flash');
 const compression     = require('compression');
+const toast           = require('./middlewares/toast');
 
 /**
  * @class Application
@@ -173,9 +174,16 @@ module.exports = class Application extends BaseController {
         app.use(csrf());
 
         /*
-         * Registering Flash
+        * Registering Flash
         */
         app.use(flash());
+        
+        /*
+        * Registering error, warning and success toaster to every template
+        */
+        app.use((req, res, next) => {
+            toast(req, res, next);
+        });
 
         /*
         * Send csrf token on every request along with the authentication status
@@ -206,6 +214,7 @@ module.exports = class Application extends BaseController {
         ? lasts for the life cycle of the application 
         */
         app.locals = Object.assign(app.locals, _locals);
+
         this.#app = app;
     }
 

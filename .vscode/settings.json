@@ -4,6 +4,7 @@
         "becrypt",
         "confrim",
         "Khdir",
+        "middlewares",
         "workerpool"
     ]
 }

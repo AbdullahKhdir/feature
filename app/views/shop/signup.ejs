@@ -7,8 +7,11 @@
    <%- include('../includes/navigation.ejs') %>
    <main>
         <% if (!is_authenticated) { %>
-            <% if (invalid_credentials.length > 0) { %>
-                <div class="user-message user-message--warning"><%= invalid_credentials %></div>
+            <% if (error) { %>
+                <div class="user-message user-message--warning"><%= error %></div>
+            <% } %>
+            <% if (warning) { %>
+                <div class="user-message user-message--warning"><%= warning %></div>
             <% } %>
             <form class="login-form" action="/signup/" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrf %>">
@@ -29,8 +32,8 @@
                     <input type="password" name="password" id="password">
                 </div>
                 <div class="form-control">
-                    <label for="confrim_password">Confirm Password</label>
-                    <input type="password" name="confrim_password" id="confrim_password">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input type="password" name="confirm_password" id="confirm_password">
                 </div>
                 <button class="btn" type="submit">Sign up</button>
             </form>

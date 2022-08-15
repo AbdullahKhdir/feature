@@ -123,6 +123,12 @@
             "type": "shell",
             "command": "pm2 ping",
             "group": "build"
+        },
+        {
+            "label": "Start dev server",
+            "type": "shell",
+            "command": "npm run start:inspect",
+            "group": "build"
         }
     ]
 }
