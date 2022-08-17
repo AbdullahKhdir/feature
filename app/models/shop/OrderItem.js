@@ -16,7 +16,7 @@ module.exports = class OrderItem extends BaseModel{
     constructor() {
         super();
 
-        this.table = 'node.order_items';
+        this.table = 'node.tbl_order_items';
         this.columns = {
             id: {
                 label: 'Id',
@@ -28,7 +28,7 @@ module.exports = class OrderItem extends BaseModel{
                 label: 'Order Id',
                 references: {
                     name: 'order_items',
-                    table: 'node.orders',
+                    table: 'node.tbl_orders',
                     class: 'shop/Order'
                 }
             },
@@ -36,7 +36,7 @@ module.exports = class OrderItem extends BaseModel{
                 label: 'Product Id',
                 references: {
                     name: 'order_products_items',
-                    table: 'node.products',
+                    table: 'node.tbl_products',
                     class: 'shop/Products'
                 }
             },

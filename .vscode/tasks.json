@@ -49,85 +49,106 @@
         {
             "label": "PM2 List Apps",
             "type": "shell",
-            "command": "pm2 list",
+            "command": "node_modules/pm2/bin/pm2 list",
             "group": "build"
         },
         {
             "label": "PM2 Cluster Max",
             "type": "shell",
-            "command": "pm2 start Server.js -i max --watch",
+            "command": "node_modules/pm2/bin/pm2 start Server.js -i max --watch",
+            "options": {
+                "env": {
+                    "EXECUTION_POINT": "PM2"
+                }
+            },
             "group": "build"
         },
         {
             "label": "PM2 cluster one process",
             "type": "shell",
-            "command": "pm2 start Server.js -i 1 --watch --wait-ready",
+            "command": "node_modules/pm2/bin/pm2 start Server.js -i 1 --watch --wait-ready",
+            "options": {
+                "env": {
+                    "EXECUTION_POINT": "PM2"
+                }
+            },
             "group": "build"
         },
         {
             "label": "PM2 delete all process",
             "type": "shell",
-            "command": "pm2 delete all",
+            "command": "node_modules/pm2/bin/pm2 delete all",
             "group": "build"
         },
         {
             "label": "PM2 GUI",
             "type": "shell",
-            "command": "pm2 plus",
+            "command": "node_modules/pm2/bin/pm2 plus",
             "group": "build"
         },
         {
             "label": "PM2 describe",
             "type": "shell",
-            "command": "pm2 describe Server",
+            "command": "node_modules/pm2/bin/pm2 describe Server",
             "group": "build"
         },
         {
             "label": "PM2 monitor all",
             "type": "shell",
-            "command": "pm2 monit",
+            "command": "node_modules/pm2/bin/pm2 monit",
             "group": "build"
         },
         {
             "label": "PM2 logger",
             "type": "shell",
-            "command": "pm2 logs",
+            "command": "node_modules/pm2/bin/pm2 logs",
             "group": "build"
         },
         {
             "label": "PM2 stop all",
             "type": "shell",
-            "command": "pm2 stop all",
+            "command": "node_modules/pm2/bin/pm2 stop all",
             "group": "build"
         },
         {
             "label": "PM2 restart all",
             "type": "shell",
-            "command": "pm2 restart all",
+            "command": "node_modules/pm2/bin/pm2 restart all",
             "group": "build"
         },
         {
             "label": "PM2 reload all",
             "type": "shell",
-            "command": "pm2 reload all",
+            "command": "node_modules/pm2/bin/pm2 reload all",
             "group": "build"
         },
         {
             "label": "PM2 update",
             "type": "shell",
-            "command": "pm2 updatePM2",
+            "command": "node_modules/pm2/bin/pm2 updatePM2",
             "group": "build"
         },
         {
             "label": "PM2 ping",
             "type": "shell",
-            "command": "pm2 ping",
+            "command": "node_modules/pm2/bin/pm2 ping",
             "group": "build"
         },
         {
             "label": "Start dev server",
             "type": "shell",
             "command": "npm run start:inspect",
+            "options": {
+                "env": {
+                    "EXECUTION_POINT": "NPM"
+                }
+            },
+            "group": "build"
+        },
+        {
+            "label": "Clear all logs",
+            "type": "shell",
+            "command": "node_modules/pm2/bin/pm2 flush",
             "group": "build"
         }
     ]

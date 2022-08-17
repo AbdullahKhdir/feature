@@ -27,7 +27,9 @@ module.exports = class Auth extends BaseController {
             'postSignUp',
             'logout',
             'postReset',
-            'getReset'
+            'getReset',
+            'getSecurityQuestions',
+            'postSecurityQuestions'
         ];
         this.__   = new Lodash().__;
         this.user = new User();
@@ -90,9 +92,9 @@ module.exports = class Auth extends BaseController {
             req.flash('warning', 'Email and password must not be empty!');
             return this.redirect(res, '/login');
         }
-        
         this.user.get({email: email})
         .then((rows) => {
+            console.log(rows);
             if (typeof rows === 'undefined' || rows == null || this.__.isEmpty(rows) || rows.length === 0) {
                 req.flash('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
                 return this.redirect(res, '/login');
@@ -122,6 +124,9 @@ module.exports = class Auth extends BaseController {
                 .catch(err => {
                     console.log(err);
                 });
+            } else {
+                req.flash('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                return this.redirect(res, '/login');
             }
         })
         .catch(err => {
@@ -181,14 +186,8 @@ module.exports = class Auth extends BaseController {
                         this.user.create({first_name: first_name, last_name: last_name, email: email, password: hashed_password})
                         .then(result => {
                             if (result) {
-                                return this.render(
-                                    res,
-                                    'shop/login',
-                                    {
-                                        page_title: 'Login',
-                                        path : '/login/'
-                                    }
-                                );
+                                req.flash('warning', 'Security questions are not provided yet!, please set two security questions!');
+                                return this.redirect(res, '/login');
                             }
                         })
                         .catch(err => {
@@ -273,4 +272,37 @@ module.exports = class Auth extends BaseController {
             }
         );
     });
+
+
+    /**
+     * @function getSecurityQuestions
+     * @description Lets the user choose security questions
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    getSecurityQuestions = () => this.route('get', '/security/', {isAuth, userSession}, async (req, res, next) => {
+        return this.render(
+            res,
+            'shop/security',
+            {
+                page_title: 'Security Questions',
+                path : '/security/'
+            }
+        );
+    });
+
+
+    /**
+     * @function postSecurityQuestions
+     * @description Lets the user sets security questions
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    postSecurityQuestions = () => this.route('post', '/security/', {isAuth, userSession}, async (req, res, next) => {
+        
+    });
+
+
 }

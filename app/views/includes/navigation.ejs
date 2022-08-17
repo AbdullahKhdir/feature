@@ -110,3 +110,15 @@
             <% } %>
     </ul>
 </nav>
+
+<main>
+    <% if (error) { %>
+        <div class="user-message user-message--error"><%= error %></div>
+    <% } %>
+    <% if (warning) { %>
+        <div class="user-message user-message--warning"><%= warning %></div>
+    <% } %>
+    <% if (success) { %>
+        <div class="user-message user-message--success"><%= success %></div>
+    <% } %>
+</main>

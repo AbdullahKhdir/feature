@@ -2,7 +2,7 @@
 -- @author Abdullah Khdir <abdullahkhder77@gmail.com>
 -- @branch 
 
-CREATE TABLE IF NOT EXISTS `node`.`cart_items` (
+CREATE TABLE IF NOT EXISTS `node`.`tbl_cart_items` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `quantity` INT UNSIGNED NOT NULL,
   `cart_id` INT UNSIGNED NOT NULL,
@@ -10,6 +10,6 @@ CREATE TABLE IF NOT EXISTS `node`.`cart_items` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`cart_id`) REFERENCES `carts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (`cart_id`) REFERENCES `tbl_carts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`product_id`) REFERENCES `tbl_products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

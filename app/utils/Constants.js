@@ -244,7 +244,9 @@ module.exports = class Constants {
                 DB_CONNECTION_SESSION_ID:                         'session_id',
                 DB_CONNECTION_SESSION_EXPIRATION:                 'expires',
                 DB_CONNECTION_SESSION_DATA:                       'data'
-            }
+            },
+            NPM: 'NPM',
+            PM2: 'PM2'
         }
         this.#constants = Object.assign(constants);
     }

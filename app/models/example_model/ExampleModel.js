@@ -26,12 +26,12 @@ module.exports = class ExampleModel extends BaseModel{
          */
         // this.reverse_references = {
         //     getProducts: {
-        //         table: 'node.cart_items',
+        //         table: 'node.tbl_cart_items',
         //         class: 'shop/CartItem',
         //         column: 'product_id',
         //         setting: {
         //             where_column: 'user_id',
-        //             where_table: 'node.products'
+        //             where_table: 'node.tbl_products'
         //         }
         //     }
         // };
@@ -49,12 +49,12 @@ module.exports = class ExampleModel extends BaseModel{
                  *        you will see "user_cart" function as promise ready to be used as pre fetched data between the two tables.
                  *        IMPORTANT: the name must be giving, think of it like a variable initialization or definition,
                  *        that has pre fetched data, which are under your disposal by any BaseModel function's call.
-                 * table: Constraint's relation between this model's table and node.users table
+                 * table: Constraint's relation between this model's table and node.tbl_users table
                  * class: The Class name of the target table
                  */
                 // references: {
                 //     name: 'user_cart',
-                //     table: 'node.users',
+                //     table: 'node.tbl_users',
                 //     class: 'shop/User'
                 // }
             },

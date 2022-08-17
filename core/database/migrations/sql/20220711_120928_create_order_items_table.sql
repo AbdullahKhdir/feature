@@ -2,7 +2,7 @@
 -- @author Abdullah Khdir <abdullahkhder77@gmail.com>
 -- @branch develop
 
-CREATE TABLE IF NOT EXISTS `node`.`order_items` (
+CREATE TABLE IF NOT EXISTS `node`.`tbl_order_items` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `quantity` INT UNSIGNED NOT NULL,
   `order_id` INT UNSIGNED NOT NULL,
@@ -10,6 +10,6 @@ CREATE TABLE IF NOT EXISTS `node`.`order_items` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (`order_id`) REFERENCES `tbl_orders` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`product_id`) REFERENCES `tbl_products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

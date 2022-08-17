@@ -2,7 +2,7 @@
 -- @author Abdullah Khdir <abdullahkhder77@gmail.com>
 -- @branch 
 
-CREATE TABLE IF NOT EXISTS `node`.`products` (
+CREATE TABLE IF NOT EXISTS `node`.`tbl_products` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NOT NULL,
@@ -12,6 +12,6 @@ CREATE TABLE IF NOT EXISTS `node`.`products` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`user_id`) REFERENCES `tbl_users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   INDEX `product_id_idx` (`id` ASC) INVISIBLE,
   FULLTEXT INDEX `product_title_idx` (`title`) VISIBLE) ENGINE=InnoDB DEFAULT CHARSET=utf8;

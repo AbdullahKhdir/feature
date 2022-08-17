@@ -16,7 +16,7 @@ module.exports = class CartItem extends BaseModel{
     constructor() {
         super();
 
-        this.table = 'node.cart_items';
+        this.table = 'node.tbl_cart_items';
         this.columns = {
             id: {
                 label: 'Id',
@@ -28,7 +28,7 @@ module.exports = class CartItem extends BaseModel{
                 label: 'Cart Id',
                 references: {
                     name: 'items_cart',
-                    table: 'node.carts',
+                    table: 'node.tbl_carts',
                     class: 'shop/Cart'          
                 }
             },
@@ -36,7 +36,7 @@ module.exports = class CartItem extends BaseModel{
                 label: 'Product Id',
                 references: {
                     name: 'items_cart_products',
-                    table: 'node.products',
+                    table: 'node.tbl_products',
                     class: 'shop/Products'
                 }
             },

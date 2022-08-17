@@ -2,7 +2,7 @@
 -- @author Abdullah Khdir <abdullahkhder77@gmail.com>
 -- @branch 
 
-CREATE TABLE IF NOT EXISTS `node`.`users` (
+CREATE TABLE IF NOT EXISTS `node`.`tbl_users` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
   `email` VARCHAR(255) NOT NULL,

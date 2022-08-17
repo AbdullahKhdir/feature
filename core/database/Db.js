@@ -52,7 +52,7 @@ module.exports = class Db extends ExpressMysqlSession {
         return this.mysql;
     }
 
-     /**
+    /**
      * @function readMigrations
      * @description  
        reads all generated migrations and writes them to the db.
@@ -60,7 +60,7 @@ module.exports = class Db extends ExpressMysqlSession {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @return {void}
-     */
+    */
     readMigrations() {
         let _path            = Object.assign(new Path().path);
         let _file_system     = Object.assign(new FileSystem().fs);
@@ -70,15 +70,17 @@ module.exports = class Db extends ExpressMysqlSession {
         const _create_sql       = `CREATE DATABASE IF NOT EXISTS ${database};`;
         const _check_migrations = `SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '${migration}'`;
         
-        return (async () => {
-            return await this.executeSql(_sql)
-            .then(([rows, fields]) => {
+        (async () => {
+            await this.executeSql(_sql)
+            .then((rows) => {
+                rows = rows[0];
                 if (rows) {
                     const _db = Object.values(rows[0])[0];
                     console.log('\u001b[' + 94 + 'm' + 'Database: "' + _db + '" is loading, please wait! ' + '\u001b[0m');
-                    return (async () => {
-                        return await this.executeSql(_check_migrations)
-                        .then(([rows, fields]) => {
+                    (async () => {
+                        await this.executeSql(_check_migrations)
+                        .then((rows) => {
+                            rows = rows[0];
                             if (this.__.isEmpty(rows)) {
                                 console.log('\r');
                                 console.log('\u001b[' + 31 + 'm' + 'Table Migration: "'+ migration.toString() +'" does not exist!' + '\u001b[0m');
@@ -93,18 +95,19 @@ module.exports = class Db extends ExpressMysqlSession {
                                     if (this.__.isEmpty(answer) || this.__.isEqual(answer, 'Y') || this.__.isEqual(answer, 'y')) {
                                         console.log('\r');
                                         console.log('\u001b[' + 21 + 'm' + 'Creating db_migration table '+ migration.toString() +', please wait!' + '\u001b[0m');
-                                        return (async () => {
-                                            return await this.executeSql(
+                                        (async () => {
+                                            await this.executeSql(
                                                 "CREATE TABLE IF NOT EXISTS "+database+"."+migration+" ("+
                                                 "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"+
                                                 "migrations_file_name VARCHAR(255) NOT NULL,"+
                                                 "migrations_sql LONGTEXT NOT NULL,"+
                                                 "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
                                             )
-                                            .then(([rows, fields]) => {
+                                            .then((rows) => {
+                                                rows = rows[0];
                                                 if (rows) {
                                                     console.log('\r');
-                                                    return setTimeout(() => {
+                                                    setTimeout(() => {
                                                         _file_system.readdir(directory_routes, { withFileTypes: true }, (err, files) => {
                                                             if (err) {
                                                                 return console.log('Unable to scan directory: ' + err);
@@ -115,20 +118,22 @@ module.exports = class Db extends ExpressMysqlSession {
                                                                     const migrations_name = file.name.toString().substr(0,file.name.toString().length - 4);
                                                                     const sql_migration_path = directory_routes + '/' + file.name;                    
                                                                     let sql_content = _file_system.readFileSync(sql_migration_path).toString();
-                                                                    return (async () => {
-                                                                        return await this.executeSql(
-                                                                            `SELECT migrations_file_name FROM node.db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
+                                                                    (async () => {
+                                                                        await this.executeSql(
+                                                                            `SELECT migrations_file_name FROM node.tbl_db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
                                                                         )
-                                                                        .then(([rows, fields]) => {
+                                                                        .then((rows) => {
+                                                                            rows = rows[0];
                                                                             if (this.__.isEmpty(rows)) {
-                                                                                return (async () => {
-                                                                                    return await this.executeSql(sql_content)
+                                                                                (async () => {
+                                                                                    await this.executeSql(sql_content)
                                                                                     .then(() => {
-                                                                                        return (async () => {
-                                                                                            return await this.executeSql(
+                                                                                        (async () => {
+                                                                                            await this.executeSql(
                                                                                                 `INSERT INTO ${database}.${migration} (migrations_file_name, migrations_sql) VALUES ("${migrations_name}", "${this.mysql.escape(sql_content)}");`
                                                                                             )
-                                                                                            .then(([rows, fields]) => {
+                                                                                            .then((rows) => {
+                                                                                                rows = rows[0];
                                                                                                 if (rows) {
                                                                                                     console.log('\r');
                                                                                                     console.log('\u001b[' + 92 + 'm' + 'SQL-FIle ' + file.name + ' is successfully written in the database' + '\u001b[0m');
@@ -150,7 +155,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                                                                         if (err) {
                                                                                             console.log('\r');
                                                                                             console.log(
-                                                                                                '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while reading the sql file: ' + err + ' ' +'\u00D7' + '\u00D7' + '\u001b[0m'
+                                                                                                '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while reading the sql file: ' + migrations_name + ' ' +'\u00D7' + '\u00D7' + '\u001b[0m'
                                                                                             );
                                                                                             console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
                                                                                             process.exit(0);
@@ -194,14 +199,15 @@ module.exports = class Db extends ExpressMysqlSession {
                                         files.map((file) => {
                                             let is_file = file.isFile(); 
                                             if (is_file) {
-                                                const migrations_name = file.name.toString().substr(0,file.name.toString().length - 4);
+                                                const migrations_name = file.name.toString().substr(0, file.name.toString().length - 4);
                                                 const sql_migration_path = directory_routes + '/' + file.name;                    
                                                 let sql_content = _file_system.readFileSync(sql_migration_path).toString();
                                                 (async () => {
                                                     await this.executeSql(
-                                                        `SELECT migrations_file_name FROM node.db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
+                                                        `SELECT migrations_file_name FROM node.tbl_db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
                                                     )
-                                                    .then(([rows, fields]) => {
+                                                    .then((rows) => {
+                                                        rows = rows[0];
                                                         if (this.__.isEmpty(rows)) {
                                                             (async () => {
                                                                 await this.executeSql(sql_content)
@@ -210,7 +216,8 @@ module.exports = class Db extends ExpressMysqlSession {
                                                                         await this.executeSql(
                                                                             `INSERT INTO ${database}.${migration} (migrations_file_name, migrations_sql) VALUES ("${migrations_name}", "${this.mysql.escape(sql_content)}");`
                                                                         )
-                                                                        .then(([rows, fields]) => {
+                                                                        .then((rows) => {
+                                                                            rows = rows[0];
                                                                             if (rows) {
                                                                                 console.log('\r');
                                                                                 console.log('\u001b[' + 92 + 'm' + 'SQL-FIle ' + file.name + ' is successfully written in the database' + '\u001b[0m');
@@ -232,7 +239,7 @@ module.exports = class Db extends ExpressMysqlSession {
                                                                     if (err) {
                                                                         console.log('\r');
                                                                         console.log(
-                                                                            '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while reading the sql file: ' + err + ' ' +'\u00D7' + '\u00D7' + '\u001b[0m'
+                                                                            '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while reading the sql file: ' + migrations_name + ' ' +'\u00D7' + '\u00D7' + '\u001b[0m'
                                                                         );
                                                                         console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
                                                                         process.exit(0);
@@ -318,175 +325,227 @@ module.exports = class Db extends ExpressMysqlSession {
                             prompt_user.close();
                         }
                     });
-                    prompt_user.on('close', () => {
-                        return (async () => {
-                            await this.executeSql(_check_migrations)
-                            .then(([rows, fields]) => {
-                                if (this.__.isEmpty(rows)) {
-                                    console.log('\r');
-                                    console.log('\u001b[' + 31 + 'm' + 'Table Migration: "'+ migration.toString() +'" does not exist!' + '\u001b[0m');
-                                    const readline = require('readline');
-                                    const prompt_user = readline.createInterface({
-                                        input:  process.stdin,
-                                        output: process.stdout
-                                    });
-                                    const _question = '\u001b[' + 33 + 'm' + 'Would you like to create the table "' + migration.toString() + '"? (Y / N)  ' + '\u001b[0m';
-                                    console.log('\r');
-                                    prompt_user.question(_question, (answer) => {
-                                        if (this.__.isEmpty(answer) || this.__.isEqual(answer, 'Y') || this.__.isEqual(answer, 'y')) {
-                                            console.log('\r');
-                                            console.log('\u001b[' + 21 + 'm' + 'Creating db_migration table '+ migration.toString() +', please wait!' + '\u001b[0m');
-                                            return (async () => {
-                                                return await this.executeSql(
-                                                    "CREATE TABLE IF NOT EXISTS "+database+"."+migration+" ("+
-                                                    "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"+
-                                                    "migrations_file_name VARCHAR(255) NOT NULL,"+
-                                                    "migrations_sql LONGTEXT NOT NULL,"+
-                                                    "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
-                                                )
-                                                .then(([rows, fields]) => {
-                                                    if (rows) {
-                                                        console.log('\r');
-                                                        return setTimeout(() => {
-                                                            _file_system.readdir(directory_routes, { withFileTypes: true }, (err, files) => {
-                                                                if (err) {
-                                                                    return console.log('Unable to scan directory: ' + err);
-                                                                } 
-                                                                files.map((file) => {
-                                                                    let is_file = file.isFile(); 
-                                                                    if (is_file) {
-                                                                        const migrations_name = file.name.toString().substr(0,file.name.toString().length - 4);
-                                                                        const sql_migration_path = directory_routes + '/' + file.name;                    
-                                                                        let sql_content = _file_system.readFileSync(sql_migration_path).toString();
-                                                                        return (async () => {
-                                                                            return await this.executeSql(
-                                                                                `SELECT migrations_file_name FROM node.db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
-                                                                            )
-                                                                            .then(([rows, fields]) => {
-                                                                                if (this.__.isEmpty(rows)) {
-                                                                                    return (async () => {
-                                                                                        return await this.executeSql(sql_content)
-                                                                                        .then(() => {
-                                                                                            return (async () => {
-                                                                                                return await this.executeSql(
-                                                                                                    `INSERT INTO ${database}.${migration} (migrations_file_name, migrations_sql) VALUES ("${migrations_name}", "${this.mysql.escape(sql_content)}");`
-                                                                                                )
-                                                                                                .then(([rows, fields]) => {
-                                                                                                    if (rows) {
-                                                                                                        console.log('\r');
-                                                                                                        console.log('\u001b[' + 92 + 'm' + 'SQL-FIle ' + file.name + ' is successfully written in the database' + '\u001b[0m');
-                                                                                                        console.log(
-                                                                                                            '\u001b[' + 93 + 'm' + '\u221A' + '\u221A' +  ' Migration: "'+ file.name +'" has been read successfully ' + '\u221A' + '\u221A' +  '\u001b[0m'
-                                                                                                        );
-                                                                                                    }
-                                                                                                })
-                                                                                                .catch((err) => {
-                                                                                                    console.log('\r');
-                                                                                                    console.log(
-                                                                                                        '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while inserting the migration file:'+ migrations_name +' in the database! ' +'\u00D7' + '\u00D7' + '\u001b[0m'
-                                                                                                    );
-                                                                                                    console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');                                                                                                                            
-                                                                                                })
-                                                                                            })();
-                                                                                        })
-                                                                                        .catch((err) => {
-                                                                                            if (err) {
-                                                                                                console.log('\r');
-                                                                                                console.log(
-                                                                                                    '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while reading the sql file: ' + err + ' ' +'\u00D7' + '\u00D7' + '\u001b[0m'
-                                                                                                );
-                                                                                                console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
-                                                                                                process.exit(0);
-                                                                                            }
-                                                                                        })
-                                                                                    })()
-                                                                                }
-                                                                            })
-                                                                            .catch(err => {
-                                                                                console.log('\r');
-                                                                                console.log('\u001b[' + 31 + 'm' + 'Error checking migration: "'+ migrations_name.toString() +'".' + '\u001b[0m');
-                                                                                console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
-                                                                                process.exit(0);
-                                                                            });
-                                                                        })();                                                                    
-                                                                    }
-                                                                });
-                                                            });
-                                                        }, 3000);
+                    return prompt_user.on('close', () => {
+                        return this.executeSql(_check_migrations)
+                        .then((rows) => {
+                            rows = rows[0];
+                            if (this.__.isEmpty(rows)) {
+                                console.log('\r');
+                                console.log('\u001b[' + 31 + 'm' + 'Table Migration: "'+ migration.toString() +'" does not exist!' + '\u001b[0m');
+                                const readline = require('readline');
+                                const prompt_user = readline.createInterface({
+                                    input:  process.stdin,
+                                    output: process.stdout
+                                });
+                                const _question = '\u001b[' + 33 + 'm' + 'Would you like to create the table "' + migration.toString() + '"? (Y / N)  ' + '\u001b[0m';
+                                console.log('\r');
+                                return prompt_user.question(_question, (answer) => {
+                                    if (this.__.isEmpty(answer) || this.__.isEqual(answer, 'Y') || this.__.isEqual(answer, 'y')) {
+                                        console.log('\r');
+                                        console.log('\u001b[' + 21 + 'm' + 'Creating db_migration table '+ migration.toString() +', please wait!' + '\u001b[0m');
+                                        return this.executeSql(
+                                            "CREATE TABLE IF NOT EXISTS "+database+"."+migration+" ("+
+                                            "id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,"+
+                                            "migrations_file_name VARCHAR(255) NOT NULL,"+
+                                            "migrations_sql LONGTEXT NOT NULL,"+
+                                            "created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+                                        )
+                                        .then((rows) => {
+                                            rows = rows[0];
+                                            if (rows) {
+                                                console.log('\r');
+                                                return _file_system.readdir(directory_routes, { withFileTypes: true }, (err, files) => {
+                                                    if (err) {
+                                                        return console.log('Unable to scan directory: ' + err);
                                                     }
-                                                })
-                                                .catch(err => {
-                                                    console.log('\r');
-                                                    console.log('\u001b[' + 31 + 'm' + 'Table Migration: "'+ migration.toString() +'" could not be created!' + '\u001b[0m');
-                                                    console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
-                                                    process.exit(0);
-                                                });
-                                            })();
-                                        } else {
-                                            process.exit(0);
-                                        }
-                                    });
-                                } else {
-                                    console.log('\r');
-                                    console.log('\u001b[' + 94 + 'm' + 'Table Migration: "' + migration.toString() + '" is loading, please wait! ' + '\u001b[0m');
-                                    setTimeout(() => {
-                                        _file_system.readdir(directory_routes, { withFileTypes: true }, (err, files) => {
-                                            if (err) {
-                                                return console.log('Unable to scan directory: ' + err);
-                                            } 
-                                            files.map((file) => {
-                                                let is_file = file.isFile(); 
-                                                if (is_file) {
-                                                    const migrations_name = file.name.toString().substr(0,file.name.toString().length - 4);
-                                                    const sql_migration_path = directory_routes + '/' + file.name;                    
-                                                    let sql_content = _file_system.readFileSync(sql_migration_path).toString();
-                                                    (async () => {
-                                                        await this.executeSql(
-                                                            `SELECT migrations_file_name FROM node.db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
-                                                        )
-                                                        .then(([rows, fields]) => {
-                                                            if (this.__.isEmpty(rows)) {
-                                                                (async () => {
-                                                                    await this.executeSql(sql_content)
-                                                                    .then(() => {
-                                                                        (async () => {
-                                                                            await this.executeSql(
-                                                                                `INSERT INTO ${database}.${migration} (migrations_file_name, migrations_sql) VALUES ("${migrations_name}", "${this.mysql.escape(sql_content)}");`
-                                                                            )
-                                                                            .then(([rows, fields]) => {
-                                                                                if (rows) {
-                                                                                    console.log('\r');
-                                                                                    console.log('\u001b[' + 92 + 'm' + 'SQL-FIle ' + file.name + ' is successfully written in the database' + '\u001b[0m');
-                                                                                    console.log(
-                                                                                        '\u001b[' + 93 + 'm' + '\u221A' + '\u221A' +  ' Migration: "'+ file.name +'" has been read successfully ' + '\u221A' + '\u221A' +  '\u001b[0m'
-                                                                                    );
-                                                                                }
-                                                                            })
-                                                                            .catch((err) => {
-                                                                                console.log('\r');
-                                                                                console.log(
-                                                                                    '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while inserting the migration file:'+ migrations_name +' in the database! ' +'\u00D7' + '\u00D7' + '\u001b[0m'
-                                                                                );
-                                                                                console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');                                                                                                                            
-                                                                            })
-                                                                        })();
-                                                                    })
-                                                                    .catch((err) => {
-                                                                        if (err) {
+                                                    
+                                                    if (typeof promises === 'undefined') {
+                                                        var promises_identifier = {};
+                                                    }
+                                                    setTimeout(() => {
+                                                        files.map(file => {
+                                                            const file_name = file.name;
+                                                            const sql_migration_path = directory_routes + '/' + file_name;                    
+                                                            let sql_content = _file_system.readFileSync(sql_migration_path).toString();
+                                                            promises_identifier[file_name] = sql_content;
+                                                        });
+                                                        promises_identifier['onExit'] = true;
+    
+                                                        return _helper(promises_identifier, this);
+                                                        function _helper(promises_identifier, _this) {
+                                                            if (Object.keys(promises_identifier).length >= 0 && Object.keys(promises_identifier)[0] !== 'onExit') {
+                                                                for (const key in promises_identifier) {
+                                                                    if (Object.hasOwnProperty.call(promises_identifier, key)) {
+                                                                        const file_name = key;
+                                                                        const migrations_name = file_name.toString().substr(0, file_name.toString().length - 4);
+                                                                        const sql_content = promises_identifier[key];
+                                                                        return _this.executeSql(
+                                                                            `SELECT migrations_file_name FROM node.tbl_db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
+                                                                        )
+                                                                        .then((rows) => {
+                                                                            rows = rows[0];
+                                                                            if (_this.__.isEmpty(rows)) {
+                                                                                return true
+                                                                            }
+                                                                        })
+                                                                        .then(is_empty => {
+                                                                            if (is_empty) {
+                                                                                _this.executeSql(sql_content)
+                                                                                .then(() => {
+                                                                                    _this.executeSql(
+                                                                                        `INSERT INTO ${database}.${migration} (migrations_file_name, migrations_sql) VALUES ("${migrations_name}", "${_this.mysql.escape(sql_content)}");`
+                                                                                    )
+                                                                                    .then((rows) => {
+                                                                                        rows = rows[0];
+                                                                                        if (rows) {
+                                                                                            console.log('\r');
+                                                                                            console.log('\u001b[' + 92 + 'm' + 'SQL-FIle ' + file_name + ' is successfully written in the database' + '\u001b[0m');
+                                                                                            console.log(
+                                                                                                '\u001b[' + 93 + 'm' + '\u221A' + '\u221A' +  ' Migration: "'+ file_name +'" has been read successfully ' + '\u221A' + '\u221A' +  '\u001b[0m'
+                                                                                            );
+                                                                                            return true;
+                                                                                        }
+                                                                                        return false;
+                                                                                    })
+                                                                                    .then((is_success) => {
+                                                                                        if (is_success) {
+                                                                                            if (Object.keys(promises_identifier).length > 0) {
+                                                                                                delete promises_identifier[Object.keys(promises_identifier)[0]];
+                                                                                                setTimeout(() => {
+                                                                                                    return _helper(promises_identifier, _this)
+                                                                                                }, 500);
+                                                                                            }
+                                                                                        } else {
+                                                                                            process.exit(0);
+                                                                                        }
+                                                                                    })
+                                                                                    .catch((err) => {
+                                                                                        console.log('\r');
+                                                                                        console.log(
+                                                                                            '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while inserting the migration file:'+ migrations_name +' in the database! ' +'\u00D7' + '\u00D7' + '\u001b[0m'
+                                                                                        );
+                                                                                        console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');            
+                                                                                        return false;                                                                                                                
+                                                                                    })
+                                                                                })
+                                                                                .catch((err) => {
+                                                                                    if (err) {
+                                                                                        console.log('\r');
+                                                                                        console.log(
+                                                                                            '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while reading the sql file: ' + migrations_name + ' ' +'\u00D7' + '\u00D7' + '\u001b[0m'
+                                                                                        );
+                                                                                        console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
+                                                                                        process.exit(0);
+                                                                                    }
+                                                                                })
+                                                                            }
+                                                                        })
+                                                                        .catch(err => {
                                                                             console.log('\r');
-                                                                            console.log(
-                                                                                '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while reading the sql file: ' + err + ' ' +'\u00D7' + '\u00D7' + '\u001b[0m'
-                                                                            );
+                                                                            console.log('\u001b[' + 31 + 'm' + 'Error checking migration: "'+ migrations_name.toString() +'".' + '\u001b[0m');
                                                                             console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
                                                                             process.exit(0);
-                                                                        }
-                                                                    });
-                                                                })()
+                                                                        })
+                                                                    }
+                                                                }
                                                             } else {
-                                                                console.log('\r');
-                                                                console.log(
-                                                                    '\u001b[' + 95 + 'm' + '\u00D7' + '\u00D7' + ' Migration file : ' + sql_migration_path + ' has been already inserted ' +'\u00D7' + '\u00D7' + '\u001b[0m'
-                                                                );
+                                                                process.exit(0);
+                                                            }
+                                                        }
+                                                    }, 2000);
+                                                });
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.log('\r');
+                                            console.log('\u001b[' + 31 + 'm' + 'Table Migration: "'+ migration.toString() +'" could not be created!' + '\u001b[0m');
+                                            console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
+                                            process.exit(0);
+                                        });
+                                    } else {
+                                        process.exit(0);
+                                    }
+                                });
+                            } else {
+                                console.log('\r');
+                                console.log('\u001b[' + 94 + 'm' + 'Table Migration: "' + migration.toString() + '" is loading, please wait! ' + '\u001b[0m');
+                                setTimeout(() => {
+                                    _file_system.readdir(directory_routes, { withFileTypes: true }, (err, files) => {
+                                        if (err) {
+                                            return console.log('Unable to scan directory: ' + err);
+                                        } 
+                                        if (typeof promises === 'undefined') {
+                                            var promises_identifier = {};
+                                        }
+                                        files.map(file => {
+                                            const file_name = file.name;
+                                            const sql_migration_path = directory_routes + '/' + file_name;                    
+                                            let sql_content = _file_system.readFileSync(sql_migration_path).toString();
+                                            promises_identifier[file_name] = sql_content;
+                                        });
+                                        
+                                        return _helper(promises_identifier, this);
+                                        function _helper(promises_identifier, _this) {
+                                            if (Object.keys(promises_identifier).length >= 0) {
+                                                for (const key in promises_identifier) {
+                                                    if (Object.hasOwnProperty.call(promises_identifier, key)) {
+                                                        const file_name = key;
+                                                        const migrations_name = file_name.toString().substr(0, file_name.toString().length - 4);
+                                                        const sql_content = promises_identifier[key];
+                                                        return _this.executeSql(
+                                                            `SELECT migrations_file_name FROM node.tbl_db_migrations where migrations_file_name='${migrations_name}' LIMIT 1;`
+                                                        )
+                                                        .then((rows) => {
+                                                            rows = rows[0];
+                                                            if (_this.__.isEmpty(rows)) {
+                                                                return true
+                                                            }
+                                                        })
+                                                        .then(is_empty => {
+                                                            if (is_empty) {
+                                                                _this.executeSql(sql_content)
+                                                                .then(() => {
+                                                                    _this.executeSql(
+                                                                        `INSERT INTO ${database}.${migration} (migrations_file_name, migrations_sql) VALUES ("${migrations_name}", "${_this.mysql.escape(sql_content)}");`
+                                                                    )
+                                                                    .then((rows) => {
+                                                                        rows = rows[0];
+                                                                        if (rows) {
+                                                                            console.log('\r');
+                                                                            console.log('\u001b[' + 92 + 'm' + 'SQL-FIle ' + file_name + ' is successfully written in the database' + '\u001b[0m');
+                                                                            console.log(
+                                                                                '\u001b[' + 93 + 'm' + '\u221A' + '\u221A' +  ' Migration: "'+ file_name +'" has been read successfully ' + '\u221A' + '\u221A' +  '\u001b[0m'
+                                                                            );
+                                                                            return true;
+                                                                        }
+                                                                    })
+                                                                    .then((is_success) => {
+                                                                        if (is_success) {
+                                                                            if (Object.keys(promises_identifier).length > 0) {
+                                                                                delete promises_identifier[Object.keys(promises_identifier)[0]];
+                                                                                return _helper(promises_identifier, _this)
+                                                                            }
+                                                                        }
+                                                                    })
+                                                                    .catch((err) => {
+                                                                        console.log('\r');
+                                                                        console.log(
+                                                                            '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while inserting the migration file:'+ migrations_name +' in the database! ' +'\u00D7' + '\u00D7' + '\u001b[0m'
+                                                                        );
+                                                                        console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');            
+                                                                        return false;                                                                                                                
+                                                                    })
+                                                                })
+                                                                .catch((err) => {
+                                                                    if (err) {
+                                                                        console.log('\r');
+                                                                        console.log(
+                                                                            '\u001b[' + 31 + 'm' + '\u00D7' + '\u00D7' + ' Error occurred while reading the sql file: ' + migrations_name + ' ' +'\u00D7' + '\u00D7' + '\u001b[0m'
+                                                                        );
+                                                                        console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
+                                                                        process.exit(0);
+                                                                    }
+                                                                })
                                                             }
                                                         })
                                                         .catch(err => {
@@ -494,20 +553,20 @@ module.exports = class Db extends ExpressMysqlSession {
                                                             console.log('\u001b[' + 31 + 'm' + 'Error checking migration: "'+ migrations_name.toString() +'".' + '\u001b[0m');
                                                             console.log('\u001b[' + 31 + 'm' + 'Error: "'+ err +'". ' + '\u001b[0m');
                                                             process.exit(0);
-                                                        });
-                                                    })();
+                                                        })
+                                                    }
                                                 }
-                                            });
-                                        });
-                                    }, 3000);
-                                }
-                            })
-                            .catch((err) => {
-                                console.log('\r');
-                                console.log('\u001b[' + 30 + 'm' + 'Process exiting...' + '\u001b[0m');
-                                process.exit(0);
-                            });
-                        })();
+                                            }
+                                        }
+                                    });
+                                }, 3000);
+                            }
+                        })
+                        .catch((err) => {
+                            console.log('\r');
+                            console.log('\u001b[' + 30 + 'm' + 'Process exiting...' + '\u001b[0m');
+                            process.exit(0);
+                        });
                     });
                 }
             });

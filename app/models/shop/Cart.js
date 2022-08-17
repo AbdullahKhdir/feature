@@ -16,15 +16,15 @@ module.exports = class Cart extends BaseModel{
     constructor() {
         super();
 
-        this.table = 'node.carts';
+        this.table = 'node.tbl_carts';
         this.reverse_references = {
             getProducts: {
-                table: 'node.cart_items',
+                table: 'node.tbl_cart_items',
                 class: 'shop/CartItem',
                 column: 'product_id',
                 setting: {
                     where_column: 'user_id',
-                    where_table: 'node.products'
+                    where_table: 'node.tbl_products'
                 }
             }
         };
@@ -36,7 +36,7 @@ module.exports = class Cart extends BaseModel{
                 label: 'user_id',
                 references: {
                     name: 'user_cart',
-                    table: 'node.users',
+                    table: 'node.tbl_users',
                     class: 'shop/User'
                 }
             },

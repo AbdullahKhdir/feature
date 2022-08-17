@@ -15,15 +15,15 @@ module.exports = class User extends BaseModel {
     constructor() {
         super();
 
-        this.table = 'node.users';
+        this.table = 'node.tbl_users';
         this.reverse_references = {
             product_user_id: {
-                table: 'node.products',
+                table: 'node.tbl_products',
                 class: 'shop/Products',
                 column: 'user_id'
             },
             cart_user_id: {
-                table: 'node.carts',
+                table: 'node.tbl_carts',
                 class: 'shop/Cart',
                 column: 'user_id'
             }

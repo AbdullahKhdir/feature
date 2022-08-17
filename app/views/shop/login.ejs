@@ -7,12 +7,6 @@
    <%- include('../includes/navigation.ejs') %>
    <% if (!is_authenticated) { %>
         <main>
-            <% if (error) { %>
-                <div class="user-message user-message--warning"><%= error %></div>
-            <% } %>
-            <% if (warning) { %>
-                <div class="user-message user-message--warning"><%= warning %></div>
-            <% } %>
             <form class="login-form" action="/login/" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrf %>">
                 <div class="form-control">

@@ -2,6 +2,7 @@
 
 const Application   = require('./app/Application');
 const OS            = require('os');
+const { execution_point } = require('./core/config');
 
 /**
  * @class Server
@@ -21,8 +22,15 @@ class Server extends Application{
     run() {
         let port = Server.init().port();
         this.getApp().listen(port, () => {
-            console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');
-            // process.send('ready');
+            if (execution_point === this.constants.NPM) {
+                console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');
+            } else if (execution_point === this.constants.PM2) {
+                console.log('\u001b[' + 94 + 'm' + 'Running PM2..!' + '\u001b[0m');
+                console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');
+                process.send('ready');
+            } else {
+                console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');
+            }
         });
     }
 
