@@ -6,6 +6,8 @@ const becrypt        = require('bcryptjs');
 const Lodash         = require("../../utils/Lodash");
 const isAuth          = require("../../middlewares/is_auth");
 const userSession     = require("../../middlewares/init_user_session");
+const SecurityQuestion = require("../../models/shop/SecurityQuestion");
+const { forEach } = require("lodash");
 
 /**
  * @class Auth
@@ -33,6 +35,7 @@ module.exports = class Auth extends BaseController {
         ];
         this.__   = new Lodash().__;
         this.user = new User();
+        this.security_questions = new SecurityQuestion() 
         /*
          ? CORS CONFIGURATIONS 
         */
@@ -94,7 +97,6 @@ module.exports = class Auth extends BaseController {
         }
         this.user.get({email: email})
         .then((rows) => {
-            console.log(rows);
             if (typeof rows === 'undefined' || rows == null || this.__.isEmpty(rows) || rows.length === 0) {
                 req.flash('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
                 return this.redirect(res, '/login');
@@ -282,14 +284,29 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     getSecurityQuestions = () => this.route('get', '/security/', {isAuth, userSession}, async (req, res, next) => {
-        return this.render(
-            res,
-            'shop/security',
-            {
-                page_title: 'Security Questions',
-                path : '/security/'
+        res.setCookie('post_data={test: 1}');
+        res.setCookie({get_data:  {test: 2}});
+        console.log(req.cookies);
+        // console.log(res.getPostFormData(req, res, next));
+        this.security_questions
+        .filter()
+        .then(questions => {
+            if (typeof questions !== 'undefined') {
+                return questions
             }
-        );
+        })
+        .then(questions => {
+            return this.render(
+                res,
+                'shop/security',
+                {
+                    page_title: 'Security Questions',
+                    path : '/security/',
+                    questions
+                }
+            );
+        })
+        .catch(err => console.log(err));
     });
 
 
@@ -301,8 +318,16 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     postSecurityQuestions = () => this.route('post', '/security/', {isAuth, userSession}, async (req, res, next) => {
-        
+        if (typeof req.body.security_questions !== 'object' 
+           || this.__.isEmpty(req.body.first_answer) 
+           || this.__.isEmpty(req.body.second_answer)) {
+            req.flash('error', 'Please choose and answer two security questions!');
+            return this.redirect(res, '/security', 307);
+        }
+        // TODO: Return form's data
+        const [first_question, second_question] = req.body.security_questions;
+        const first_answer                      = req.body.first_answer;
+        const second_answer                     = req.body.second_answer;
+
     });
-
-
 }

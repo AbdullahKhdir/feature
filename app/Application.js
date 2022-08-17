@@ -18,6 +18,7 @@ const csrf            = require('csurf')
 const flash           = require('connect-flash');
 const compression     = require('compression');
 const toast           = require('./middlewares/toast');
+const cookieParser    = require('cookie-parser');
 
 /**
  * @class Application
@@ -116,6 +117,11 @@ module.exports = class Application extends BaseController {
         app.set('json escape', true);
        
         /*
+        * REGISTER COOKIE PARSER
+        */
+        app.use(cookieParser());
+        
+        /*
         * USE EJS TEMPLATE ENGINE (NODE SUPPORTS TWIG)
         */
         app.set('view engine', 'ejs');
@@ -209,6 +215,20 @@ module.exports = class Application extends BaseController {
         app.set('strict routing', false);
         this.sub_controller.deployRoutes(app);
         
+        /* 
+         * 
+        */
+        // app.use((req, res, next) => {
+        //     Object.assign(res, res.getPostFormData = (req, res, next) => {
+        //         req.post_data = req.body;
+        //         return req.post_data;
+        //     });
+        //     Object.assign(res, res.getFormData = (req, res, next) => {
+        //         req.get_data = req.body;
+        //         return req.get_data;
+        //     });
+        //     next();
+        // });
         /*
         * Passing default and helpful properties to all templates
         ? lasts for the life cycle of the application 

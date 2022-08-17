@@ -92,6 +92,10 @@ module.exports = class BaseModel extends QueryBuilder {
         if (this.__.isEmpty(table)) {
             return [];
         }
+
+        if (this.__.isEmpty(sql_query) || sql_query == null || typeof sql_query === 'undefined') {
+            return this.all(table);
+        }
         
         if (this.__.isObject(sql_query) && this.__.isEmpty(table) === false) {
             let where_clause = '';
@@ -368,10 +372,6 @@ module.exports = class BaseModel extends QueryBuilder {
                 })
                 .catch(error => error)
             })()
-        }
-
-        if ((this.__.isEmpty(sql_query) && !this.__.isNaN(sql_query)) || sql_query == null) {
-            return this.all(table);
         }
     }
 

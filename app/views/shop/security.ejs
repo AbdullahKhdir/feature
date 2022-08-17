@@ -7,30 +7,24 @@
     <%- include('../includes/navigation.ejs') %>
    <% if (is_authenticated) { %>
         <main>
-            <form class="security-questions-form" action="/post/" method="POST">
+            <form class="security-questions-form" action="/security/" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrf %>">
                 <div class="row">
                     <div class="input-field col s12 m6">
                         <select aria-label="Security Questions" name="security_questions" id="security_questions">
                             <option value="" disabled selected>Choose your option</option>
-                            <option value="">In what city were you born?</option>
-                            <option value="">What is the name of your favorite pet?</option>
-                            <option value="">What is your mother's maiden name?</option>
-                            <option value="">What high school did you attend?</option>
-                            <option value="">What was the name of your elementary school?</option>
-                            <option value="">What was the make of your first car?</option>
-                            <option value="">What was your favorite food as a child?</option>
-                            <option value="">What is your oldest sibling’s middle name?</option>
-                            <option value="">Where did you meet your spouse?</option>
-                            <option value="">What was the first concert you attended?</option>
-                            <option value="">What was model of your last car?</option>
-                            <option value="">What year was your father (or mother) born?</option>
-                            <option value="">In what city or town did your parents meet?</option>
+                            <% if (typeof questions !== 'undefined') { %>
+                                <% questions.forEach(question => { %>
+                                    <% if (question.hasOwnProperty('question')) { %>
+                                        <option value="<%= question.id %>"><%= question.question %></option>
+                                    <% } %>
+                                <% }); %>
+                            <% } %>
                         </select>
                         <label>Security Questions</label>
                     </div>
                     <div class="input-field col s12 m6">
-                        <input id="id_first_answer" type="text" id="id_first_answer">
+                        <input id="id_first_answer" type="text" name="first_answer" id="id_first_answer">
                         <label for="id_first_answer">Answer</label>
                     </div>
                 </div>
@@ -38,30 +32,23 @@
                     <div class="input-field col s12 m6">
                         <select aria-label="Security Questions" name="security_questions" id="security_questions">
                             <option value="" disabled selected>Choose your option</option>
-                            <option value="">In what city were you born?</option>
-                            <option value="">What is the name of your favorite pet?</option>
-                            <option value="">What is your mother's maiden name?</option>
-                            <option value="">What high school did you attend?</option>
-                            <option value="">What was the name of your elementary school?</option>
-                            <option value="">What was the make of your first car?</option>
-                            <option value="">What was your favorite food as a child?</option>
-                            <option value="">What is your oldest sibling’s middle name?</option>
-                            <option value="">Where did you meet your spouse?</option>
-                            <option value="">What was the first concert you attended?</option>
-                            <option value="">What was model of your last car?</option>
-                            <option value="">What year was your father (or mother) born?</option>
-                            <option value="">In what city or town did your parents meet?</option>
+                            <% if (typeof questions !== 'undefined') { %>
+                                <% questions.forEach(question => { %>
+                                    <% if (question.hasOwnProperty('question')) { %>
+                                        <option value="<%= question.id %>"><%= question.question %></option>
+                                    <% } %>
+                                <% }); %>
+                            <% } %>
                         </select>
                         <label>Security Questions</label>
                         <button class="btn" type="submit">Submit</button>
                     </div>
                     <div class="input-field col s12 m6">
-                        <input id="id_second_answer" type="text" id="id_second_answer">
+                        <input id="id_second_answer" type="text" name="second_answer" id="id_second_answer">
                         <label for="id_second_answer">Answer</label>
                     </div>
                 </div>
             </form>
-
         </main>
    <% } else { %>
         <h1>User must be logged in</h1>

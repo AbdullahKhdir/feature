@@ -57,38 +57,74 @@ module.exports = class Promise {
                 same_site = environment === 'production' ? 'Strict' : null,
             ) => {
                 let _cookie = '';
+                let options = {};
+                options.expires = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now());
                 if (!expires) {
-                    expires = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now()).toUTCString();
+                    expires  = expires;
                 }
                 if (typeof object === 'string') {
+                    const _key   = object.substr(0, object.indexOf('='));
+                    const _value = object.substr(_key.length + 1);
                     _cookie = object + '; ' + 'Expires=' + expires + '; ';
-    
-                    domain       ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
-                    path         ? _cookie = _cookie + 'Path='+path+'; '          : _cookie;
-                    secure       ? _cookie = _cookie + 'secure; '                 : _cookie;
-                    http_only    ? _cookie = _cookie + 'http_only; '              : _cookie;
-                    same_site    ? _cookie = _cookie + 'SameSite='+same_site+'; ' : _cookie;
-    
+
+                    
+                    domain      ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
+                    domain      ? options.domain = domain                        : options.domain  = '';
+
+                    path        ? _cookie = _cookie + 'Path='+path+'; '          : _cookie;
+                    path        ? options.path = path                            : options.path    = '';
+                    
+                    secure      ? _cookie = _cookie + 'secure; '                 : _cookie;
+                    secure      ? options.secure = true                          : options.secure  = null;
+                    
+                    http_only   ? _cookie = _cookie + 'http_only; '              : _cookie;
+                    http_only   ? options.HttpOnly = true                       : options.HttpOnly = false;
+                    
+                    same_site   ? _cookie = _cookie + 'SameSite='+same_site+'; ' : _cookie;
+                    same_site   ? options.SameSite = same_site                  : options.SameSite = 'null';
+                    
                     res.setHeader('Set-Cookie', _cookie);
+                    res.cookie(_key, _value, options);
                 } else if (typeof object === 'object') {
+                    var _key   = '';
+                    var _value = '';
                     for (const key in object) {
                         if (Object.hasOwnProperty.call(object, key)) {
+                            _key   = key;
+                            _value = object[key];
                             _cookie = key + '=' + object[key]+ '; ' + 'Expires=' + expires + '; '; 
                         }
                     }
-    
-                    domain       ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
-                    path         ? _cookie = _cookie + 'Path='+path+'; '          : _cookie;
-                    secure       ? _cookie = _cookie + 'Secure; '                 : _cookie;
-                    http_only    ? _cookie = _cookie + 'HttpOnly; '              : _cookie;
-                    same_site    ? _cookie = _cookie + 'SameSite='+same_site+'; ' : _cookie;
+                    domain      ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
+                    domain      ? options.domain = domain                        : options.domain  = '';
+
+                    path        ? _cookie = _cookie + 'Path='+path+'; '          : _cookie;
+                    path        ? options.path = path                            : options.path    = '';
+                    
+                    secure      ? _cookie = _cookie + 'secure; '                 : _cookie;
+                    secure      ? options.secure = true                          : options.secure  = null;
+                    
+                    http_only   ? _cookie = _cookie + 'http_only; '              : _cookie;
+                    http_only   ? options.HttpOnly = true                        : options.HttpOnly = false;
+                    
+                    same_site   ? _cookie = _cookie + 'SameSite='+same_site+'; ' : _cookie;
+                    same_site   ? options.SameSite = same_site                   : options.SameSite = 'null';
     
                     res.setHeader('Set-Cookie', _cookie);
+                    res.cookie(_key, _value, options);
                 }
             };
             res.onLogOut = (name, options = []) => {
                 res.clearCookie(name, options);
             }
+            // res.setFormPostedData = (req, res, next) => {
+            //     res.clearCookie('post_body');
+            //     res.setCookie('post_body', req.body);
+            // },
+            // res.getFormPostedData = (req, res, next) => {
+                
+            //     return 
+            // }
         }
         execution(req, res, next).catch(next);
     };
