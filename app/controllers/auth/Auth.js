@@ -6,8 +6,9 @@ const becrypt        = require('bcryptjs');
 const Lodash         = require("../../utils/Lodash");
 const isAuth          = require("../../middlewares/is_auth");
 const userSession     = require("../../middlewares/init_user_session");
-const SecurityQuestion = require("../../models/shop/SecurityQuestion");
-const { forEach } = require("lodash");
+const SecurityQuestion     = require("../../models/shop/SecurityQuestion");
+const UserSecurityQuestion = require("../../models/shop/UserSecurityQuestion");
+const { encrypt, decrypt } = require("../../../core/utils/cryptr");
 
 /**
  * @class Auth
@@ -35,7 +36,8 @@ module.exports = class Auth extends BaseController {
         ];
         this.__   = new Lodash().__;
         this.user = new User();
-        this.security_questions = new SecurityQuestion() 
+        this.security_questions      = new SecurityQuestion();
+        this.user_security_questions = new UserSecurityQuestion();
         /*
          ? CORS CONFIGURATIONS 
         */
@@ -114,7 +116,21 @@ module.exports = class Auth extends BaseController {
                                 }
                                 if (!res.headersSent) {
                                     req.session.is_authenticated = true;
-                                    return this.redirect(res, '/');
+                                    this.user_security_questions.filter({user_id: req.session.currentUser.id})
+                                    .then(result => {
+                                        if (typeof result !== 'undefined') {
+                                            if (result) {
+                                                return this.redirect(res, '/');    
+                                            }
+                                        } else {
+                                            req.flash(
+                                                'warning',
+                                                'You have not submitted any security questions, Please choose and answer two security questions!'
+                                            );
+                                            return this.redirect(res, '/security');
+                                        }
+                                    })
+                                    .catch();
                                 }
                             });
                         }
@@ -189,7 +205,7 @@ module.exports = class Auth extends BaseController {
                         .then(result => {
                             if (result) {
                                 req.flash('warning', 'Security questions are not provided yet!, please set two security questions!');
-                                return this.redirect(res, '/login');
+                                return this.redirect(res, '/security');
                             }
                         })
                         .catch(err => {
@@ -284,10 +300,44 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     getSecurityQuestions = () => this.route('get', '/security/', {isAuth, userSession}, async (req, res, next) => {
-        res.setCookie('post_data={test: 1}');
-        res.setCookie({get_data:  {test: 2}});
-        console.log(req.cookies);
-        // console.log(res.getPostFormData(req, res, next));
+        const params = res.globalPostFormData();
+        let first_question  = null;
+        let second_question = null;
+        let first_answer    = null;
+        let second_answer   = null;
+        if (Object.keys(params).length > 0) {
+            first_question  = params.security_questions[0] ? params.security_questions[0] : '';
+            second_question = params.security_questions[1] ? params.security_questions[1] : '';
+            first_answer    = params.first_answer  ? params.first_answer  : '';
+            second_answer   = params.second_answer ? params.second_answer : '';
+        } else {
+            this.user_security_questions.filter({user_id: req.session.currentUser.id})
+            .then(result => {
+                if (result) {
+                    first_question = result[0].question;
+                    first_answer   = decrypt(result[0].answer);
+                    second_question  = result[1].question;
+                    second_answer    = decrypt(result[1].answer);
+                    let questions = [];
+                    return this.render(
+                        res,
+                        'shop/security',
+                        {
+                            page_title: 'Security Questions',
+                            path : '/security/',
+                            questions,
+                            first_question: first_question      ? questions[first_question - 1].question  : '',
+                            first_question_id: first_question   ? questions[first_question - 1].id : '',
+                            second_question: second_question    ? questions[second_question - 1].question : '',
+                            second_question_id: second_question ? questions[second_question - 1].id       : '',
+                            first_answer: first_answer ?? '',
+                            second_answer: second_answer ?? ''
+                        }
+                    );
+                }
+            });
+        }
+        
         this.security_questions
         .filter()
         .then(questions => {
@@ -302,7 +352,13 @@ module.exports = class Auth extends BaseController {
                 {
                     page_title: 'Security Questions',
                     path : '/security/',
-                    questions
+                    questions,
+                    first_question: first_question      ? questions[first_question - 1].question  : '',
+                    first_question_id: first_question   ? questions[first_question - 1].id        : '',
+                    second_question: second_question    ? questions[second_question - 1].question : '',
+                    second_question_id: second_question ? questions[second_question - 1].id       : '',
+                    first_answer: first_answer ?? '',
+                    second_answer: second_answer ?? ''
                 }
             );
         })
@@ -321,13 +377,35 @@ module.exports = class Auth extends BaseController {
         if (typeof req.body.security_questions !== 'object' 
            || this.__.isEmpty(req.body.first_answer) 
            || this.__.isEmpty(req.body.second_answer)) {
-            req.flash('error', 'Please choose and answer two security questions!');
-            return this.redirect(res, '/security', 307);
+            req.flash('warning', 'Please choose and answer two security questions!');
+            req.flash('post_data', req.body);
+            return this.redirect(res, '/security');
         }
-        // TODO: Return form's data
+        
         const [first_question, second_question] = req.body.security_questions;
         const first_answer                      = req.body.first_answer;
         const second_answer                     = req.body.second_answer;
 
+        this.user_security_questions.create({
+            user_id: req.session.currentUser.id,
+            question: first_question,
+            answer: encrypt(first_answer)
+        }).then(result => {
+            if (result) {
+                this.user_security_questions.create({
+                    user_id: req.session.currentUser.id,
+                    question: second_question,
+                    answer: encrypt(second_answer)
+                }).then(_result => {
+                    if (_result) {
+                        req.flash(
+                            'Success',
+                            'Your account is not secured, you may proceed!'
+                        );
+                        return this.redirect(res, '/');
+                    }
+                });
+            }
+        });
     });
 }

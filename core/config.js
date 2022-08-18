@@ -8,6 +8,7 @@ module.exports = {
     password:              process.env.TEST_PASSWORD ?? process.env.PRODUCTION_PASSWORD ?? process.env.DEVELOPMENT_PASSWORD,
     database:              process.env.DATABASE,
     connectionLimit:       process.env.CONNECTION_LIMIT,
+    encryption_key:        '$2a$12$CAVyfpGSo.AbWgby9JNCXOf4rt7GFbxxSimczOqKvzrdCOAK5CT9u',
     environment:           process.env.NODE_ENV,
     server_port:           process.env.PORT,
     migration:             process.env.MIGRATION,

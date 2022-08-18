@@ -207,6 +207,24 @@ module.exports = class Application extends BaseController {
             req.user_cookie = key;
             next();
         });
+
+
+        /*
+        * Middleware for editing and wrapping 
+        * query params, 
+        * post data and 
+        * getting data to templates after getting or posting
+        */
+       app.use((req, res, next) => {
+            res.globalPostFormData   = () => res.locals.post_data ? res.locals.post_data[0] : {};
+            res.globalGetFormData    = () => res.locals.get_data  ? res.locals.get_data[0]  : {};
+
+            req.getAllFormPostedData = () => req.body ? req.body : {};
+            req.getFormPostedData    = (param) => req.body ? req.body[param] ? req.body[param] : {} : {};
+            req.getQueryParams       = () => res.query ? res.query : {};
+            req.getQueryParam        = (param) => req.query ? req.query[param] ? req.query[param] : {} : {};
+            next();
+        });
         
         /*
         * Routes 

@@ -58,15 +58,15 @@ module.exports = class Promise {
             ) => {
                 let _cookie = '';
                 let options = {};
-                options.expires = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now());
+                options.expires = expires;
                 if (!expires) {
                     expires  = expires;
+                    options.expires = new Date((1000 * 60 * 60 * 24 * 1 * 1 * 1) + Date.now());
                 }
                 if (typeof object === 'string') {
                     const _key   = object.substr(0, object.indexOf('='));
                     const _value = object.substr(_key.length + 1);
                     _cookie = object + '; ' + 'Expires=' + expires + '; ';
-
                     
                     domain      ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
                     domain      ? options.domain = domain                        : options.domain  = '';
@@ -95,6 +95,7 @@ module.exports = class Promise {
                             _cookie = key + '=' + object[key]+ '; ' + 'Expires=' + expires + '; '; 
                         }
                     }
+                    console.log(_cookie);
                     domain      ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
                     domain      ? options.domain = domain                        : options.domain  = '';
 
@@ -113,18 +114,10 @@ module.exports = class Promise {
                     res.setHeader('Set-Cookie', _cookie);
                     res.cookie(_key, _value, options);
                 }
-            };
+            },
             res.onLogOut = (name, options = []) => {
                 res.clearCookie(name, options);
             }
-            // res.setFormPostedData = (req, res, next) => {
-            //     res.clearCookie('post_body');
-            //     res.setCookie('post_body', req.body);
-            // },
-            // res.getFormPostedData = (req, res, next) => {
-                
-            //     return 
-            // }
         }
         execution(req, res, next).catch(next);
     };
