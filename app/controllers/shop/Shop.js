@@ -10,7 +10,6 @@ const Constants       = require("../../utils/Constants");
 const isAuth          = require("../../middlewares/is_auth");
 const userSession     = require("../../middlewares/init_user_session");
 
-
 /**
  * @class Shop
  * @constructor
@@ -53,11 +52,15 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     products           = () => this.route('get', '/products/', {userSession}, async (req, res, next) => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
         // TODO: Add public products
         /*
          * User specific products 
          */
-        const user_products = req.session.currentUser ? req.session.currentUser.getProducts() : false;
+        const user_products = req.getCurrentUser() ? req.getCurrentUser().getProducts() : false;
         if (typeof user_products === 'object') {
             user_products
                 .then(rows => {
@@ -92,11 +95,15 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     index              = () => this.route('get', '/', {userSession}, async (req, res, next) => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+        
         // TODO: Add public products
         /*
-         * User specific products
-         */
-        const user_products   = req.session.currentUser ? req.session.currentUser.getProducts() : false;
+        * User specific products
+        */
+        const user_products   = req.getCurrentUser() ? req.getCurrentUser().getProducts() : false;
         if (typeof user_products === 'object') {
             user_products
                 .then((rows) => {
@@ -133,7 +140,11 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     cart               = () => this.route('get', '/cart/', {isAuth, userSession}, async (req, res, next) => {
-        const user_cart = req.session.currentUser.getCart() ?? [];
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
+        const user_cart = req.getCurrentUser().getCart() ?? [];
         if (!user_cart) {
             throw new Error('User is not available');
         }
@@ -210,8 +221,11 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     postCart           = () => this.route('post', '/cart/', {isAuth, userSession}, async (req, res, next) => {
-        const product_id = req.body.product_id ?? '';
-        const user_id    = req.session.currentUser.id;
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+        const product_id = req.getFormPostedData('product_id') ?? '';
+        const user_id    = req.getCurrentUser().id;
 
         this.cart_object.get({user_id: user_id}).then((rows) => {
             if (!this.__.isEmpty(rows)) {
@@ -284,14 +298,17 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     checkout           = () => this.route('get', '/checkout/', {isAuth, userSession}, async (req, res, next) => {
-        return this.render(
-            res,
-            'shop/checkout',
-            {
-                page_title: 'Checkout',
-                path : '/checkout/'
-            }
-        );
+        if (req.isGet()) {
+            return this.render(
+                res,
+                'shop/checkout',
+                {
+                    page_title: 'Checkout',
+                    path : '/checkout/'
+                }
+            );
+        }
+        return this.siteNotFound(res);
     });
 
     /**
@@ -302,7 +319,11 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     orders             = () => this.route('get', '/orders/', {isAuth, userSession}, async (req, res, next) => {
-        req.session.currentUser.getOrder().then(order => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
+        req.getCurrentUser().getOrder().then(order => {
             if (typeof order === 'undefined') {
                 return this.render(
                     res,
@@ -385,9 +406,12 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     postOrders         = () => this.route('post', '/create-order/', {isAuth, userSession}, async (req, res, next) => {
-        const user_id    = req.session.currentUser.id;
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+        const user_id    = req.getCurrentUser().id;
         
-        req.session.currentUser.getCart().then(cart => {
+        req.getCurrentUser().getCart().then(cart => {
             if (cart) {
                 if (cart['getProducts']) {
                     return cart['getProducts'].then(product => {
@@ -406,7 +430,8 @@ module.exports = class Shop extends BaseController{
                         products.forEach(product => {
                             if (product) {
                                 this.cart_items_object.delete(product.id);
-                                this.order_items_object.filter({order_id: order_id, product_id: product.product_id}).then((order_items_rows) => {
+                                this.order_items_object.filter({order_id: order_id, product_id: product.product_id})
+                                .then((order_items_rows) => {
                                     if (typeof order_items_rows === 'undefined') {
                                         const order_item_params = {
                                             order_id: +order_id,
@@ -429,7 +454,8 @@ module.exports = class Shop extends BaseController{
                                                     product_id: +product.product_id,
                                                     quantity: product.quantity
                                                 };
-                                                this.order_items_object.update(order_item_params, order_item_id).then((order_item_element) => {
+                                                this.order_items_object.update(order_item_params, order_item_id)
+                                                .then((order_item_element) => {
                                                     if (order_item_element) {
                                                         if (!res.headersSent) {
                                                             return this.redirect(res, '/orders/');
@@ -453,14 +479,16 @@ module.exports = class Shop extends BaseController{
                                 products.forEach(product => {
                                     if (product) {
                                         this.cart_items_object.delete(product.id);
-                                        this.order_items_object.filter({order_id: id, product_id: product.product_id}).then((order_items_rows) => {
+                                        this.order_items_object.filter({order_id: id, product_id: product.product_id})
+                                        .then((order_items_rows) => {
                                             if (typeof order_items_rows === 'undefined') {
                                                 const order_item_params = {
                                                     order_id:   +id,
                                                     product_id: +product.product_id,
                                                     quantity:   product.quantity
                                                 };
-                                                this.order_items_object.create(order_item_params).then((order_item_element) => {
+                                                this.order_items_object.create(order_item_params)
+                                                .then((order_item_element) => {
                                                     if (order_item_element) {
                                                         if (!res.headersSent) {
                                                             return this.redirect(res, '/orders/');
@@ -491,8 +519,12 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     dynProductInfo     = () => this.route('get', '/products/:productId/', {userSession}, async (req, res, next) => {
-        let product_id = req.params.productId ?? false;
-        const user_id = +req.session.currentUser.id ?? false;
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
+        let product_id = req.getDynamicParam('productId') ?? false;
+        const user_id = +req.getCurrentUser().id ?? false;
         if (!isNaN(product_id)) {
             product_id = +product_id;
             this.product.get({id: product_id, user_id: user_id}).then(rows => {
@@ -508,13 +540,7 @@ module.exports = class Shop extends BaseController{
                         }
                     );
                 } else {
-                    return this.render(
-                        res,
-                        '404',
-                        {page_title: 'Page not found', path: '/404/'},
-                        null,
-                        this.constants.getConstants().HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
-                    );
+                    return this.siteNotFound(res);
                 }
             })
             .catch((err) => {
@@ -539,7 +565,10 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     deleteCartProducts = () => this.route('post', '/cart/delete-items/', {isAuth, userSession}, async (req, res, next) => {
-        const cart_item_product_id = req.body.product_id ?? false;
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+        const cart_item_product_id = req.getFormPostedData('product_id') ?? false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
                 if (result) {
@@ -574,7 +603,10 @@ module.exports = class Shop extends BaseController{
      * @returns Response
     */
     deleteCartProduct  = () => this.route('post', '/cart/delete-item/', {isAuth, userSession}, async (req, res, next) => {
-        const cart_item_product_id = req.body.product_id ?? false;
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+        const cart_item_product_id = req.getFormPostedData('product_id') ?? false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result) => {
                 if (result) {

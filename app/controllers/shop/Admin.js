@@ -64,14 +64,17 @@ module.exports = class Admin extends BaseController {
      * @returns Response
     */
     product           = () => this.route('get', '/admin/add-product/', {isAuth, userSession} , async (req, res, next) => {
-        return this.render(
-            res,
-            'admin/add-product',
-            {
-                page_title: 'Add Product',
-                path : '/admin/add-product/'
-            }
-        );
+        if (req.isGet()) {
+            return this.render(
+                res,
+                'admin/add-product',
+                {
+                    page_title: 'Add Product',
+                    path : '/admin/add-product/'
+                }
+            );
+        }
+        return this.siteNotFound(res);
     });
 
     /**
@@ -82,8 +85,12 @@ module.exports = class Admin extends BaseController {
      * @returns Response
     */
     editProduct       = () => this.route('get', '/admin/edit-product/:product_id/', {isAuth, userSession}, async (req, res, next) => {
-        const product_id = +req.params.product_id ?? false;
-        const user_id    = +req.session.currentUser.id;
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
+        const product_id = +req.getDynamicParam('product_id') ?? false;
+        const user_id    = +req.getCurrentUser().id;
         
         if (this.__.isNumber(user_id) && this.__.isNumber(product_id)) {
             this.product_object.filter({id: product_id, user_id: user_id})
@@ -120,11 +127,15 @@ module.exports = class Admin extends BaseController {
      * @returns Response
     */
     postEditedProduct = () => this.route('post', '/admin/edit-product/', {isAuth, userSession}, async  (req, res, next) => {
-            const product_id = +req.body.product_id ?? false;
-            const title = this.__.capitalize(req.body.title) ?? false;
-            const price = req.body.price ?? false;
-            const description = this.__.capitalize(req.body.description) ?? false;
-            const image = req.body.imageUrl ?? false;
+            if (!req.isPost()) {
+                return this.siteNotFound(res);
+            }    
+
+            const product_id  = +req.getFormPostedData(product_id) ?? false;
+            const title       = this.__.capitalize(req.getFormPostedData('title')) ?? false;
+            const price       = req.getFormPostedData('price') ?? false;
+            const description = this.__.capitalize(req.getFormPostedData('description')) ?? false;
+            const image       = req.getFormPostedData('imageUrl') ?? false;
 
             const values = {
                 title: title,
@@ -152,11 +163,15 @@ module.exports = class Admin extends BaseController {
      * @returns Response
     */
     addProduct        = () => this.route('post', '/admin/add-product/', {isAuth, userSession}, async (req, res, next) => {
-            const title       = this.__.capitalize(req.body.title);
-            const imageUrl    = req.body.imageUrl;
-            const description = this.__.capitalize(req.body.description);
-            const price       = req.body.price;
-            const user_id     = req.session.currentUser.id;
+            if (!req.isPost()) {
+                return this.siteNotFound(res);
+            }
+
+            const title       = this.__.capitalize(req.getFormPostedData('title'));
+            const imageUrl    = req.getFormPostedData('imageUrl');
+            const description = this.__.capitalize(req.getFormPostedData('description'));
+            const price       = req.getFormPostedData('price');
+            const user_id     = req.getCurrentUser().id;
 
             this.product_object.create({title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id}).then((results) => {
                 const primary_key = results[0].insertId
@@ -176,8 +191,12 @@ module.exports = class Admin extends BaseController {
      * @returns Response
     */
     deleteProduct     = () => this.route('post', '/admin/delete-product/', {isAuth, userSession}, async (req, res, next) => {
-        const product_id = req.body.product_id ?? false;
-        const user_id = +req.session.currentUser.id ?? false;
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+
+        const product_id = req.getFormPostedData('product_id') ?? false;
+        const user_id = +req.getCurrentUser().id ?? false;
         
         if (product_id && user_id) {
             this.product_object.get({id: product_id, user_id: user_id})
@@ -203,8 +222,9 @@ module.exports = class Admin extends BaseController {
      * @returns Response
     */
     products          = () => this.route('get', '/admin/products/', {cors: this.cors(this.#corsOptionsDelegate), isAuth, userSession}, async (req, res, next) => {
-        const user_products = req.session.currentUser.getProducts();
-        user_products
+        if (req.isGet()) {
+            const user_products = req.getCurrentUser().getProducts();
+            user_products
             .then(rows => {
                 return this.render(
                     res,
@@ -216,5 +236,7 @@ module.exports = class Admin extends BaseController {
                     }
                 );
             });
+        }
+        return this.siteNotFound(res);
     });
 }

@@ -1,4 +1,7 @@
+const Lodash = require("../utils/Lodash");
+
 module.exports = (req, res, next) => {
+    const __ = new Lodash().__;
     const _flash_array = req.flash();
     let error     = null;
     let warning   = null;
@@ -20,11 +23,17 @@ module.exports = (req, res, next) => {
     if (typeof _flash_array['get_data'] !== 'undefined') {
         get_data  = _flash_array['get_data'];
     }
-    
     res.locals.error     = error;
     res.locals.warning   = warning;
     res.locals.success   = success;
     res.locals.post_data = post_data;
     res.locals.get_data  = get_data;
-    next();
+    req.props            = () => _flash_array;
+    req.setProp          = (key, value) => { 
+        if (__.isEmpty(key) || __.isEmpty(value)) {
+            return false;
+        }
+        req.flash(key, value);
+        return true;
+    }
 }

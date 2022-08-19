@@ -245,6 +245,134 @@ module.exports = class Constants {
                 DB_CONNECTION_SESSION_EXPIRATION:                 'expires',
                 DB_CONNECTION_SESSION_DATA:                       'data'
             },
+            REQUEST: {
+                TYPE: {
+                    GET:    'GET',
+                    POST:   'POST',
+                    PATCH:  'PATCH',
+                    PUT:    'PUT',
+                    DELETE: 'DELETE'
+                }
+            },
+            HTTP_VERSION: {
+              V1: 'HTTP/1.1',
+              V2: 'HTTP/2',
+              V3: 'HTTP/3'
+            },
+            PROCESS: {
+                EXIT_CODES: {
+                    /*
+                    * It will let the Node.js know to terminate the process when no async operations are performing. 
+                    * Without mentioning, it will take the default value of 0.
+                    */
+                    EXIT_CODE_0 : '0',
+    
+                    /*
+                    * It is useful in case of fatal exceptions not handled by the domain. It is an efficient method to terminate the process. 
+                    */
+                    EXIT_CODE_1 : '1',
+    
+                    /*
+                    * Bash uses it for misuse. 
+                    */
+                    EXIT_CODE_2 : '2',
+    
+                    /*
+                    * You can use this exit code for the development where internal code cannot be parsed properly. 
+                    */
+                    EXIT_CODE_3 : '3',
+    
+                    /*
+                    * It is also used in the case of development where the JavaScript code fails to return the function value. 
+                    */
+                    EXIT_CODE_4 : '4',
+    
+                    /*
+                    * It is useful for fatal errors, such as the V8 engine cannot recover.
+                    */
+                    EXIT_CODE_5 : '5',
+    
+                    /*
+                    * It is useful when an internal fatal exception handler function is set to a non-function and cannot be called. 
+                    */
+                    EXIT_CODE_6 : '6',
+    
+                    /*
+                    * Useful when an error is thrown while handling an uncaught expectation. 
+                    */
+                    EXIT_CODE_7 : '7',
+    
+                    /*
+                    * Unused, in easier versions, it specifies the uncaught exceptions.
+                    */
+                    EXIT_CODE_8 : '8',
+    
+                    /*
+                    * It is when an extra value is provided for a non-required parameter, or we do not provide the value for a required parameter.
+                    */
+                    EXIT_CODE_9 : '9',
+    
+                    /*
+                    * The JavaScript code in bootstrapping of Node.js throws an error while calling the bootstrap.
+                    */
+                    EXIT_CODE_10 : '10',
+    
+                    /*
+                    * When you chose the wrong port number within the process.
+                    */
+                    EXIT_CODE_12 : '12',
+    
+                    /*
+                    * It is useful when await is outside the function in the top-level code, but the passed Promise was never resolved.
+                    */
+                    EXIT_CODE_13 : '13',
+    
+                    /*
+                    * >128 Used for fatal signals such as SIGKILL or SIGHU.P 
+                    */
+                },
+                KILL_CODES: {
+                    /*
+                    * To close the parent terminal. (is Handleable)
+                    */
+                    SIGHUP: '1',
+                    
+                    /*
+                    * To interrupt a terminal, Ctrl + C (is Handleable)
+                    */
+                    SIGINT: '2',
+                    
+                    /*
+                    * To make the terminal quit, Ctrl + D (is Handleable)
+                    */
+                    SIGQUIT: '3',
+                    
+                    /*
+                    * To forceful kill the process (is NOT Handleable)
+                    */
+                    SIGKILL: '9',
+                    
+                    /*
+                    * User-defined signal 1 (is Handleable)
+                    */
+                    SIGUSR1: '10',
+                    
+                    /*
+                    * User-defined signal 2 (is Handleable)
+                    */
+                    SIGUSR2: '12',
+                    
+                    /*
+                    * Represents a smooth process termination (is Handleable)
+                    */
+                    SIGTERM: '12',
+                    
+                    /*
+                    * (is NOT Handleable) 
+                    */
+                    SIGSTOP: '19'
+                }
+            },
             NPM: 'NPM',
             PM2: 'PM2'
         }

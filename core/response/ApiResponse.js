@@ -72,16 +72,52 @@ module.exports = class ApiResponse extends Db {
      * @param Number status
      * @returns Response
     */
-    redirect(res, url, status = this.#codes.getConstants().HTTPS_STATUS.SUCCESS.OK) {
+    redirect(res, url, status = this.#codes.getConstants().HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY) {
         res.type(this.#codes.getConstants().RESPONSE.TYPES.HTML);
         if (typeof this.#status_code === 'undefined') {
-            res.status(status).redirect(url);
+            res.redirect(status, url);
             res.end();
             return;
         }
-        res.status(this.#status_code).redirect(url);
+        res.redirect(this.#status_code, url);
         res.end();
         return;
+    }
+
+    /**
+     * @function toSameSite
+     * @description redirect response to html page
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param Response res
+     * @param String url
+     * @param Number status
+     * @returns Response
+    */
+    toSameSite(res, status = this.#codes.getConstants().HTTPS_STATUS.REDIRECTION.PERMANENT_REDIRECT) {
+        res.type(this.#codes.getConstants().RESPONSE.TYPES.HTML);
+        res.redirect(status, res.req.route.path);
+        res.end();
+        return;
+    }
+
+
+    /**
+     * @function siteNotFound
+     * @description 404 html page
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param Response res
+     * @returns Response
+    */
+    siteNotFound(res) {
+        return this.render(
+            res,
+            '404',
+            {page_title: 'Page not found', path: '/404/'},
+            null,
+            this.#codes.getConstants().HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
+        );
     }
 
     /**

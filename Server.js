@@ -1,8 +1,8 @@
 'use strict';
 
-const Application   = require('./app/Application');
-const OS            = require('os');
-const { execution_point } = require('./core/config');
+const Application               = require('./app/Application');
+const OS                        = require('os');
+const { execution_point, PORT } = require('./core/config');
 
 /**
  * @class Server
@@ -35,7 +35,7 @@ class Server extends Application{
     }
 
     port() {
-        return this.constants.PORTS.SERVER_PORT;
+        return PORT || this.constants.PORTS.SERVER_PORT;
     }
 
     static init() {
@@ -44,6 +44,4 @@ class Server extends Application{
     }
 }
 
-
-let system = new Server();
-system.run()
+Server.init().run();

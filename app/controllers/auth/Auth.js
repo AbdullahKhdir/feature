@@ -32,7 +32,9 @@ module.exports = class Auth extends BaseController {
             'postReset',
             'getReset',
             'getSecurityQuestions',
-            'postSecurityQuestions'
+            'postSecurityQuestions',
+            'getRecoverPassword',
+            'postRecoverPassword'
         ];
         this.__   = new Lodash().__;
         this.user = new User();
@@ -72,6 +74,10 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     getAuthenticate           = () => this.route('get', '/login/', {}, async (req, res, next) => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
         return this.render(
             res,
             'shop/login',
@@ -90,13 +96,19 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     postAuthenticate          = () => this.route('post', '/login/', {}, async (req, res, next) => {
-        const email    = req.body.email;
-        const password = req.body.password;
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+        
+        const email           = req.getFormPostedData('email');
+        const password        = req.getFormPostedData('password');
+        const forgot_password = req.getFormPostedData('forgot_password')
         
         if (this.__.isEmpty(email) || this.__.isEmpty(password)) {
             req.flash('warning', 'Email and password must not be empty!');
             return this.redirect(res, '/login');
         }
+
         this.user.get({email: email})
         .then((rows) => {
             if (typeof rows === 'undefined' || rows == null || this.__.isEmpty(rows) || rows.length === 0) {
@@ -160,6 +172,10 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     getSignUp           = () => this.route('get', '/signup/', {}, async (req, res, next) => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
         return this.render(
             res,
             'shop/signup',
@@ -177,12 +193,16 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postSignUp          = () => this.route('post', '/signup/', {}, async (req, res, next) => {
-        const first_name       = req.body.first_name;
-        const last_name        = req.body.last_name;
-        const email            = req.body.email;
-        const password         = req.body.password;
-        const confirm_password = req.body.confirm_password;
+    postSignUp          = () => this.route('post', '/signup/', {}, async (req, res, next) => {    
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+
+        const first_name       = req.getFormPostedData('first_name');
+        const last_name        = req.getFormPostedData('last_name');
+        const email            = req.getFormPostedData('email');
+        const password         = req.getFormPostedData('password');
+        const confirm_password = req.getFormPostedData('confirm_password');
 
         if (confirm_password !== password) {
             req.flash('error', 'Password do not match!');
@@ -237,6 +257,9 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     logout                   = () => this.route('post', '/logout/', {}, async (req, res, next) => {
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
         res.onLogOut(req.user_cookie);
         req.session.destroy((err) => {
             if (err) {
@@ -253,18 +276,24 @@ module.exports = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postReset                   = () => this.route('post', '/reset/', {}, async (req, res, next) => {
-        const email = req.body.email;
+    postReset                   = () => this.route('post', '/reset/', {}, async (req, res, next) => {   
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+
+        const email = req.getFormPostedData('email');
+        
         if (this.__.isEmpty(email)) {
             req.flash('warning', 'Please insert your email!');
         }
+        
         this.user.get({email: email})
         .then(result => {
             if (typeof result !== 'undefined') {
                 if (result) {
-                    let row = result[0];
-                    console.log(row)
-                    // TODO: implement reset functionality
+                    req.flash('recover_email', email.toString());
+                    req.flash('warning', 'Please choose and answer the questions that you have submitted in order to recover your email!')
+                    return this.redirect(res, '/password_recovery/');
                 }
             } else {
                 return this.redirect(res, '/reset')
@@ -281,14 +310,17 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     getReset                   = () => this.route('get', '/reset/', {}, async (req, res, next) => {
-        return this.render(
-            res,
-            'shop/reset',
-            {
-                page_title: 'Reset Password',
-                path : '/reset/'
-            }
-        );
+        if (req.isGet()) {
+            return this.render(
+                res,
+                'shop/reset',
+                {
+                    page_title: 'Reset Password',
+                    path : '/reset/'
+                }
+            );
+        }
+        return this.siteNotFound(res);
     });
 
 
@@ -300,6 +332,9 @@ module.exports = class Auth extends BaseController {
      * @returns Response
     */
     getSecurityQuestions = () => this.route('get', '/security/', {isAuth, userSession}, async (req, res, next) => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
         const params = res.globalPostFormData();
         let first_question  = null;
         let second_question = null;
@@ -310,8 +345,33 @@ module.exports = class Auth extends BaseController {
             second_question = params.security_questions[1] ? params.security_questions[1] : '';
             first_answer    = params.first_answer  ? params.first_answer  : '';
             second_answer   = params.second_answer ? params.second_answer : '';
+            this.security_questions
+                    .filter()
+                    .then(questions => {
+                        if (typeof questions !== 'undefined') {
+                            return questions
+                        }
+                    })
+                    .then(questions => {
+                        return this.render(
+                            res,
+                            'shop/security',
+                            {
+                                page_title: 'Security Questions',
+                                path : '/security/',
+                                questions,
+                                first_question: first_question      ? questions[first_question - 1].question  : '',
+                                first_question_id: first_question   ? questions[first_question - 1].id        : '',
+                                second_question: second_question    ? questions[second_question - 1].question : '',
+                                second_question_id: second_question ? questions[second_question - 1].id       : '',
+                                first_answer: first_answer ?? '',
+                                second_answer: second_answer ?? ''
+                            }
+                        );
+                    })
+                    .catch(err => console.log(err));
         } else {
-            this.user_security_questions.filter({user_id: req.session.currentUser.id})
+            this.user_security_questions.filter({user_id: req.getCurrentUser().id})
             .then(result => {
                 if (result) {
                     first_question = result[0].question;
@@ -319,25 +379,140 @@ module.exports = class Auth extends BaseController {
                     second_question  = result[1].question;
                     second_answer    = decrypt(result[1].answer);
                     let questions = [];
-                    return this.render(
-                        res,
-                        'shop/security',
-                        {
-                            page_title: 'Security Questions',
-                            path : '/security/',
-                            questions,
-                            first_question: first_question      ? questions[first_question - 1].question  : '',
-                            first_question_id: first_question   ? questions[first_question - 1].id : '',
-                            second_question: second_question    ? questions[second_question - 1].question : '',
-                            second_question_id: second_question ? questions[second_question - 1].id       : '',
-                            first_answer: first_answer ?? '',
-                            second_answer: second_answer ?? ''
+                    this.security_questions
+                    .filter()
+                    .then(questions => {
+                        if (typeof questions !== 'undefined') {
+                            return this.render(
+                                res,
+                                'shop/security',
+                                {
+                                    page_title: 'Security Questions',
+                                    path : '/security/',
+                                    questions,
+                                    first_question: first_question      ? questions[first_question - 1].question  : '',
+                                    first_question_id: first_question   ? questions[first_question - 1].id : '',
+                                    second_question: second_question    ? questions[second_question - 1].question : '',
+                                    second_question_id: second_question ? questions[second_question - 1].id       : '',
+                                    first_answer: first_answer ?? '',
+                                    second_answer: second_answer ?? ''
+                                }
+                            );
                         }
-                    );
+                    }).catch(err => console.log(err));
+                } else {
+                    this.security_questions
+                    .filter()
+                    .then(questions => {
+                        if (typeof questions !== 'undefined') {
+                            return questions
+                        }
+                    })
+                    .then(questions => {
+                        return this.render(
+                            res,
+                            'shop/security',
+                            {
+                                page_title: 'Security Questions',
+                                path : '/security/',
+                                questions,
+                                first_question: first_question      ? questions[first_question - 1].question  : '',
+                                first_question_id: first_question   ? questions[first_question - 1].id        : '',
+                                second_question: second_question    ? questions[second_question - 1].question : '',
+                                second_question_id: second_question ? questions[second_question - 1].id       : '',
+                                first_answer: first_answer ?? '',
+                                second_answer: second_answer ?? ''
+                            }
+                        );
+                    })
+                    .catch(err => console.log(err));
                 }
-            });
+            })
+            .catch(err => console.log(err));
+        }
+    });
+
+
+    /**
+     * @function postSecurityQuestions
+     * @description Lets the user sets security questions
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    postSecurityQuestions = () => this.route('post', '/security/', {isAuth, userSession}, async (req, res, next) => {
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
         }
         
+        if (typeof req.getFormPostedData('security_questions') !== 'object' 
+           || this.__.isEmpty(req.getFormPostedData('first_answer')) 
+           || this.__.isEmpty(req.getFormPostedData('second_answer'))) {
+            req.flash('warning', 'Please choose and answer two security questions!');
+            req.flash('post_data', req.getAllFormPostedData());
+            return this.redirect(res, '/security');
+        }
+        
+        const [first_question, second_question] = req.getFormPostedData('security_questions');
+        const first_answer                      = req.getFormPostedData('first_answer');
+        const second_answer                     = req.getFormPostedData('second_answer');
+
+        this.user_security_questions.create({
+            user_id: req.getCurrentUser().id,
+            question: first_question,
+            answer: encrypt(first_answer)
+        }).then(result => {
+            if (result) {
+                this.user_security_questions.create({
+                    user_id: req.getCurrentUser().id,
+                    question: second_question,
+                    answer: encrypt(second_answer)
+                }).then(_result => {
+                    if (_result) {
+                        req.flash(
+                            'Success',
+                            'Your account is not secured, you may proceed!'
+                        );
+                        return this.redirect(res, '/');
+                    }
+                });
+            }
+        });
+    });
+
+    /**
+     * @function getRecoverPassword
+     * @description Lets the user choose security questions
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    getRecoverPassword = () => this.route('get', '/password_recovery/', {}, async (req, res, next) => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
+        let email = req.props()['recover_email'];
+        
+        if (typeof email === 'undefined') {
+            return this.redirect(res, '/reset')   
+        }
+        email = email[0];
+        req.setProp('email_to_recover', email);
+        
+        const params = res.globalPostFormData();
+        let first_question  = null;
+        let second_question = null;
+        let first_answer    = null;
+        let second_answer   = null;
+
+        if (Object.keys(params).length > 0) {
+            first_question  = params.security_questions[0] ? params.security_questions[0] : '';
+            second_question = params.security_questions[1] ? params.security_questions[1] : '';
+            first_answer    = params.first_answer  ? params.first_answer  : '';
+            second_answer   = params.second_answer ? params.second_answer : '';
+        }
+
         this.security_questions
         .filter()
         .then(questions => {
@@ -348,7 +523,7 @@ module.exports = class Auth extends BaseController {
         .then(questions => {
             return this.render(
                 res,
-                'shop/security',
+                'shop/password_recovery',
                 {
                     page_title: 'Security Questions',
                     path : '/security/',
@@ -367,45 +542,81 @@ module.exports = class Auth extends BaseController {
 
 
     /**
-     * @function postSecurityQuestions
-     * @description Lets the user sets security questions
+     * @function getRecoverPassword
+     * @description Lets the user choose security questions
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postSecurityQuestions = () => this.route('post', '/security/', {isAuth, userSession}, async (req, res, next) => {
-        if (typeof req.body.security_questions !== 'object' 
-           || this.__.isEmpty(req.body.first_answer) 
-           || this.__.isEmpty(req.body.second_answer)) {
-            req.flash('warning', 'Please choose and answer two security questions!');
-            req.flash('post_data', req.body);
-            return this.redirect(res, '/security');
+    postRecoverPassword = () => this.route('post', '/password_recovery/', {}, async (req, res, next) => {
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
         }
         
-        const [first_question, second_question] = req.body.security_questions;
-        const first_answer                      = req.body.first_answer;
-        const second_answer                     = req.body.second_answer;
+        let email = req.props()['email_to_recover'];
+        
+        if (typeof email === 'undefined') {
+            return this.redirect(res, '/reset')   
+        }
 
-        this.user_security_questions.create({
-            user_id: req.session.currentUser.id,
-            question: first_question,
-            answer: encrypt(first_answer)
-        }).then(result => {
-            if (result) {
-                this.user_security_questions.create({
-                    user_id: req.session.currentUser.id,
-                    question: second_question,
-                    answer: encrypt(second_answer)
-                }).then(_result => {
-                    if (_result) {
-                        req.flash(
-                            'Success',
-                            'Your account is not secured, you may proceed!'
-                        );
-                        return this.redirect(res, '/');
-                    }
-                });
+        email = email[0];
+
+        if (typeof req.getFormPostedData('security_questions') !== 'object' 
+            || this.__.isEmpty(req.getFormPostedData('first_answer')) 
+            || this.__.isEmpty(req.getFormPostedData('second_answer'))) {
+            req.setProp('warning', 'Please choose and answer the questions that you have submitted in order to recover your email!');
+            req.setProp('post_data', req.getAllFormPostedData());
+            req.setProp('recover_email', email)
+            return this.toSameSite(res, this.constants.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY);
+        }
+        
+        const [first_question, second_question] = req.getFormPostedData('security_questions');
+        const first_answer                      = req.getFormPostedData('first_answer');
+        const second_answer                     = req.getFormPostedData('second_answer');
+
+        this.security_questions
+        .filter()
+        .then(questions => {
+            if (typeof questions !== 'undefined') {
+                return questions
             }
-        });
+        })
+        .then(questions => {
+            this.user.filter({email: email})
+            .then(result => {
+                if (result) {
+                    result = result[0];
+                    this.user_security_questions.filter({user_id: result.id})
+                    .then(result => {
+                        if (result) {
+                            result = result[0];
+                            let _first_answer = decrypt(result.answer);
+                            
+                            result = result[1];
+                            let _second_answer = decrypt(result.answer);
+
+                            if (_first_answer === first_answer 
+                                && _second_answer === second_answer) {
+                                req.setProp('new_password', 'Please enter your new password');
+                                // TODO: create password_reset get and post route 
+                                return this.redirect(res, '/password_reset')
+                            } else {
+                                req.setProp('warning', 'You habe choose or answered the wrong question!, please try again or contact us!');
+                                req.setProp('post_data', req.getAllFormPostedData());
+                                req.setProp('recover_email', email)
+                                return this.toSameSite(res, this.constants.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY);
+                            }
+                        } else {
+                            return this.redirect(res, '/signup');
+                        }
+                    })
+                    .catch(err => console.log(err));
+                } else {
+                    return this.redirect(res, '/signup');
+                }
+            })
+            .catch(err => consol.log(err));
+        })
+        .catch(err => console.log(err));
     });
 }

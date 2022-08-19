@@ -8,7 +8,6 @@ const BaseController  = require('../core/controller/BaseController.js');
 const Constants       = require('./utils/Constants.js');
 const Lodash          = require('./utils/Lodash.js');
 const Helmet          = require('helmet');
-const BadRequestError = require('../core/error/types/BadRequestError.js');
 const { environment } = require('../core/config');
 const Morgan          = require('morgan');
 const FileSystem      = require('../core/node/FileSystem.js');
@@ -18,6 +17,7 @@ const csrf            = require('csurf')
 const flash           = require('connect-flash');
 const compression     = require('compression');
 const toast           = require('./middlewares/toast');
+const reqUtil         = require('./middlewares/request_utilities');
 const cookieParser    = require('cookie-parser');
 
 /**
@@ -29,7 +29,6 @@ const cookieParser    = require('cookie-parser');
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 module.exports = class Application extends BaseController {
-
     #app;
     constructor(app) {
         super();
@@ -189,6 +188,18 @@ module.exports = class Application extends BaseController {
         */
         app.use((req, res, next) => {
             toast(req, res, next);
+            next();
+        });
+
+        /*
+        * Middleware for editing and wrapping 
+        * query params, 
+        * post data and 
+        * getting data to templates after getting or posting
+        */
+        app.use((req, res, next) => {
+            reqUtil(req, res, next);
+            next();
         });
 
         /*
@@ -207,24 +218,6 @@ module.exports = class Application extends BaseController {
             req.user_cookie = key;
             next();
         });
-
-
-        /*
-        * Middleware for editing and wrapping 
-        * query params, 
-        * post data and 
-        * getting data to templates after getting or posting
-        */
-       app.use((req, res, next) => {
-            res.globalPostFormData   = () => res.locals.post_data ? res.locals.post_data[0] : {};
-            res.globalGetFormData    = () => res.locals.get_data  ? res.locals.get_data[0]  : {};
-
-            req.getAllFormPostedData = () => req.body ? req.body : {};
-            req.getFormPostedData    = (param) => req.body ? req.body[param] ? req.body[param] : {} : {};
-            req.getQueryParams       = () => res.query ? res.query : {};
-            req.getQueryParam        = (param) => req.query ? req.query[param] ? req.query[param] : {} : {};
-            next();
-        });
         
         /*
         * Routes 
@@ -233,26 +226,11 @@ module.exports = class Application extends BaseController {
         app.set('strict routing', false);
         this.sub_controller.deployRoutes(app);
         
-        /* 
-         * 
-        */
-        // app.use((req, res, next) => {
-        //     Object.assign(res, res.getPostFormData = (req, res, next) => {
-        //         req.post_data = req.body;
-        //         return req.post_data;
-        //     });
-        //     Object.assign(res, res.getFormData = (req, res, next) => {
-        //         req.get_data = req.body;
-        //         return req.get_data;
-        //     });
-        //     next();
-        // });
         /*
         * Passing default and helpful properties to all templates
         ? lasts for the life cycle of the application 
         */
         app.locals = Object.assign(app.locals, _locals);
-
         this.#app = app;
     }
 

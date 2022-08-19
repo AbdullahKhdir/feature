@@ -23,6 +23,7 @@ module.exports = class BaseController extends Routes {
         this.path        = Object.assign(new Path().path);
         this.file_system = Object.assign(new FileSystem().fs);
         this.__          = Object.assign(new Lodash().__);
+        this.constants      = Object.assign(new Constants().getConstants());
     }
 
     /**

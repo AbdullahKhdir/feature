@@ -148,7 +148,7 @@ module.exports = class ExampleController extends BaseController{
     */
     firstDynMethod() {
         return this.route('get', '/dynamic/:dynamicInput', {}, async (req, res, next) => {
-            const dynamicInput = +req.params.dynamicInput ?? false;
+            const dynamicInput = +req.getDynamicParam('dynamicInput') ?? false;
             this.exmaple_model.filter(dynamicInput).then(([rows, fields]) => {
                 if (rows) {
                     const rows = rows[0];
@@ -178,7 +178,7 @@ module.exports = class ExampleController extends BaseController{
     */
     secondDynMethod() {
         return this.route('get', '/dynamic_two/:dynamicInput', {}, async (req, res, next) => {
-            const dynamicInput = +req.params.dynamicInput ?? false;
+            const dynamicInput = +req.getDynamicParam('dynamicInput') ?? false;
             this.exmaple_model.filter(dynamicInput).then(([rows, fields]) => {
                 if (rows) {
                     const rows = rows[0];
