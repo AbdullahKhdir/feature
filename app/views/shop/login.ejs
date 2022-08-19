@@ -9,15 +9,16 @@
         <main>
             <form class="login-form" action="/login/" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrf %>">
-                <div class="form-control">
+                <div class="input-field col s12 m6">
                     <label for="email">E-Mail</label>
                     <input type="email" name="email" id="email">
                 </div>
-                <div class="form-control">
+                <div class="input-field col s12 m6">
                     <label for="password">Password</label>
                     <input type="password" name="password" id="password">
                 </div>
                 <button class="btn" type="submit">Login</button>
+                <button class="btn" type="submit" name="password_reset" value="reset">Forgot Passowrd ?</button>
             </form>
         </main>
    <% } else { %>

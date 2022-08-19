@@ -101,6 +101,22 @@ module.exports = class ApiResponse extends Db {
         return;
     }
 
+    /**
+     * @function postToSameSite
+     * @description redirect response to html page
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param Response res
+     * @param String url
+     * @param Number status
+     * @returns Response
+    */
+    postToSameSite(res, status = this.#codes.getConstants().HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY) {
+        res.type(this.#codes.getConstants().RESPONSE.TYPES.HTML);
+        res.redirect(status, res.req.route.path);
+        res.end();
+        return;
+    }
 
     /**
      * @function siteNotFound

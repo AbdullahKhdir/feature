@@ -366,9 +366,7 @@ module.exports = class Shop extends BaseController{
                                 }
                             );
                         })
-                        .catch(err => {
-                            console.log(err);
-                        });
+                        .catch(err => console.log(err));
                     } else {
                         return this.render(
                             res,
@@ -393,9 +391,7 @@ module.exports = class Shop extends BaseController{
                 );
             }
         })
-        .catch(err => {
-            console.log(err);
-        });
+        .catch(err => console.log(err));
     });
 
     /**
@@ -543,9 +539,7 @@ module.exports = class Shop extends BaseController{
                     return this.siteNotFound(res);
                 }
             })
-            .catch((err) => {
-                throw err
-            });
+            .catch(err => console.log(err));
         } else {
             return this.render(
                 res,

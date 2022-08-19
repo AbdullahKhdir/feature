@@ -55,7 +55,7 @@ module.exports = class ExampleController extends BaseController{
             .then(([rows, fieldData]) => {
                 return this.send(res, '<h1>DATA FETCHED FROM EXAMPLE MODEL SUCCESSFULY</h1>');
             })
-            .catch(err => console.log(err)); 
+            .catch(err => console.log(err));
     });
 
     /**
@@ -163,9 +163,7 @@ module.exports = class ExampleController extends BaseController{
                     );
                 }
             })
-            .catch((err) => {
-                throw err
-            });
+            .catch(err => console.log(err));
         });
     }
 
@@ -193,9 +191,7 @@ module.exports = class ExampleController extends BaseController{
                     );
                 }
             })
-            .catch((err) => {
-                throw err
-            });
+            .catch(err => console.log(err));
         });
     }
 
@@ -219,9 +215,7 @@ module.exports = class ExampleController extends BaseController{
                     console.log(result)
                     return result;
                 })
-                .catch(err => {
-                    console.error(err);
-                })
+                .catch(err => console.log(err))
                 .then((result) => {
                     res.status(200).send('<h1>Worker Pool In Progress</h1><br><p>'+result+'</p>');
                     res.end();
@@ -258,9 +252,8 @@ module.exports = class ExampleController extends BaseController{
             }).then(result => {
                 console.log(result);
                 return result
-            }).catch(err => {
-                console.log(err)
-            }).then(result => {
+            }).catch(err => console.log(err))
+            .then(result => {
                 res.status(200).send('<h1>Worker Emit In Progress</h1><br><p>'+result+'</p>');
                 res.end();
                 console.log('Terminating');

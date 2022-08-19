@@ -8,19 +8,19 @@
     <main>
         <form class="product-form" action="/admin/edit-product/" method="POST">
             <input type="hidden" name="_csrf" value="<%= csrf %>">
-            <div class="form-control">
+            <div class="input-field col s12 m6">
                 <label for="title"><%= page_title %></label>
                 <input type="text" name="title" id="title" value="<%= lodash.capitalize(product.title) %>">
             </div>
-            <div class="form-control">
+            <div class="input-field col s12 m6">
                 <label for="imageUrl"><%= 'Image url' %></label>
                 <input type="text" name="imageUrl" id="imageUrl" value="<%= product.imageUrl %>">
             </div>
-            <div class="form-control">
+            <div class="input-field col s12 m6">
                 <label for="price"><%= 'Price' %></label>
                 <input type="number" name="price" id="price" step="0.01" value="<%= product.price %>">
             </div>
-            <div class="form-control">
+            <div class="input-field col s12 m6">
                 <label for="description"><%= 'Description' %></label>
                 <textarea name="description" id="description" rows="5" ><%= lodash.capitalize(product.description) %></textarea>
             </div>

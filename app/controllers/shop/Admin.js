@@ -111,9 +111,7 @@ module.exports = class Admin extends BaseController {
                     return this.redirect(res, '/products/');
                 }
             })
-            .catch((err) => {
-                throw err;
-            });
+            .catch(err => console.log(err));
         } else {
             return this.redirect(res, '/');
         }
@@ -149,9 +147,7 @@ module.exports = class Admin extends BaseController {
                     if (result[0].affectedRows) {
                         return res.redirect('/admin/products/');
                     }
-                }).catch((err) => {
-                    throw err;
-                });
+                }).catch(err => console.log(err));
             }
     });
 
@@ -178,9 +174,7 @@ module.exports = class Admin extends BaseController {
                 if (primary_key) {
                     return this.redirect(res, '/');
                 }
-            }).catch((err) => {
-                throw err;
-            });
+            }).catch(err => console.log(err));
     });
 
     /**
@@ -205,9 +199,7 @@ module.exports = class Admin extends BaseController {
                         const id = rows[0].id;
                         this.product_object.delete(id).then((result) => {
                             return this.redirect(res, '/admin/products/');
-                        }).catch((err) => {
-                            throw err
-                        });                
+                        }).catch(err => console.log(err));               
                     }
                 })
                 .catch(err => console.log(err));

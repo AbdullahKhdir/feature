@@ -29,7 +29,7 @@ module.exports = class Response extends ApiResponse {
      * @param Function callback
      * @returns Response
     */
-    render(res, template, options = {}, callback = null) {
-       return super.render(res, template, options, callback);
+    render(res, template, options = {}, callback = null, status = _constants.getConstants().HTTPS_STATUS.SUCCESS.OK) {
+       return super.render(res, template, options, callback, status);
     }
  }

@@ -126,7 +126,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         return {
                                             [is_constraint.name]: await this.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
                                                                 .then(([rows, fields]) => rows)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                         }
                                     })()
                                 });
@@ -163,7 +163,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                         return {
                                                             [reverse_name]: await this.executeModelQuery(_statement) 
                                                                         .then(([results, fields]) => results)
-                                                                        .catch(err => err)
+                                                                        .catch(err => console.log(err))
                                                         }
                                                     })()
                                                 });
@@ -173,7 +173,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                 return {
                                                     [reverse_name]: await this.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
                                                                 .then(([results, fields]) => results)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                                 }
                                             })()
                                         }
@@ -186,7 +186,7 @@ module.exports = class BaseModel extends QueryBuilder {
                     }
                     return rows;
                 })
-                .catch(error => error)
+                .catch(err => console.log(err))
             })()
         }
 
@@ -216,7 +216,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         return {
                                             [is_constraint.name]: await this.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
                                                                 .then(([rows, fields]) => rows)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                         }
                                     })()
                                 });
@@ -253,7 +253,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                         return {
                                                             [reverse_name]: await this.executeModelQuery(_statement) 
                                                                         .then(([results, fields]) => results)
-                                                                        .catch(err => err)
+                                                                        .catch(err => console.log(err))
                                                         }
                                                     })()
                                                 });
@@ -263,7 +263,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                 return {
                                                     [reverse_name]: await this.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
                                                                 .then(([results, fields]) => results)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                                 }
                                             })()
                                         }
@@ -276,7 +276,7 @@ module.exports = class BaseModel extends QueryBuilder {
                     }
                     return rows;
                 })
-                .catch(error => error)
+                .catch(err => console.log(err))
             })()
         }
 
@@ -310,7 +310,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         return {
                                             [is_constraint.name]: await this.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
                                                                 .then(([rows, fields]) => rows)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                         }
                                     })()
                                 });
@@ -347,7 +347,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                         return {
                                                             [reverse_name]: await this.executeModelQuery(_statement) 
                                                                         .then(([results, fields]) => results)
-                                                                        .catch(err => err)
+                                                                        .catch(err => console.log(err))
                                                         }
                                                     })()
                                                 });
@@ -357,7 +357,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                 return {
                                                     [reverse_name]: await this.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
                                                                 .then(([results, fields]) => results)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                                 }
                                             })()
                                         }
@@ -370,7 +370,7 @@ module.exports = class BaseModel extends QueryBuilder {
                     }
                     return rows;
                 })
-                .catch(error => error)
+                .catch(err => console.log(err))
             })()
         }
     }
@@ -419,7 +419,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         return {
                                             [is_constraint.name]: await this.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
                                                                 .then(([rows, fields]) => rows)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                         }
                                     })()
                                 });
@@ -456,7 +456,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                                 return {
                                                                     [reverse_name]: await this.executeModelQuery(_statement) 
                                                                                 .then(([results, fields]) => results)
-                                                                                .catch(err => err)
+                                                                                .catch(err => console.log(err))
                                                                 }
                                                             })()
                                                         });
@@ -466,7 +466,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                         return {
                                                             [reverse_name]: await this.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
                                                                         .then(([results, fields]) => results)
-                                                                        .catch(err => err)
+                                                                        .catch(err => console.log(err))
                                                         }
                                                     })()
                                                 }
@@ -479,7 +479,7 @@ module.exports = class BaseModel extends QueryBuilder {
                             }
                             return rows;
                 })
-                .catch(error => error)   
+                .catch(err => console.log(err))
             })()
         }
 
@@ -509,7 +509,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         return {
                                             [is_constraint.name]: await this.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
                                                                 .then(([rows, fields]) => rows)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                         }
                                     })()
                                 });
@@ -546,7 +546,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                                 return {
                                                                     [reverse_name]: await this.executeModelQuery(_statement) 
                                                                                 .then(([results, fields]) => results)
-                                                                                .catch(err => err)
+                                                                                .catch(err => console.log(err))
                                                                 }
                                                             })()
                                                         });
@@ -556,7 +556,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                         return {
                                                             [reverse_name]: await this.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
                                                                         .then(([results, fields]) => results)
-                                                                        .catch(err => err)
+                                                                        .catch(err => console.log(err))
                                                         }
                                                     })()
                                                 }
@@ -569,7 +569,7 @@ module.exports = class BaseModel extends QueryBuilder {
                             }
                             return rows;
                 })
-                .catch(error => error)   
+                .catch(err => console.log(err))
             })()
         }
 
@@ -603,7 +603,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                         return {
                                             [is_constraint.name]: await this.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
                                                                 .then(([rows, fields]) => rows)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                         }
                                     })()
                                 });
@@ -640,7 +640,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                                 return {
                                                                     [reverse_name]: await this.executeModelQuery(_statement) 
                                                                                 .then(([results, fields]) => results)
-                                                                                .catch(err => err)
+                                                                                .catch(err => console.log(err))
                                                                 }
                                                             })()
                                                         });
@@ -650,7 +650,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                         return {
                                                             [reverse_name]: await this.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
                                                                         .then(([results, fields]) => results)
-                                                                        .catch(err => err)
+                                                                        .catch(err => console.log(err))
                                                         }
                                                     })()
                                                 }
@@ -663,7 +663,7 @@ module.exports = class BaseModel extends QueryBuilder {
                             }
                             return rows;
                 })
-                .catch(error => error)   
+                .catch(err => console.log(err))
             })()
 
         }
@@ -704,7 +704,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                     return {
                                         [is_constraint.name]: await this.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
                                                                 .then(([rows, fields]) => rows)
-                                                                .catch(err => err)
+                                                                .catch(err => console.log(err))
                                     };
                                 })()
                             });
@@ -741,7 +741,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                                     return {
                                                         [reverse_name]: await this.executeModelQuery(_statement) 
                                                                     .then(([results, fields]) => results)
-                                                                    .catch(err => err)
+                                                                    .catch(err => console.log(err))
                                                     }
                                                 })()
                                             });
@@ -751,7 +751,7 @@ module.exports = class BaseModel extends QueryBuilder {
                                             return {
                                                 [reverse_name]: await this.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
                                                             .then(([results, fields]) => results)
-                                                            .catch(err => err)
+                                                            .catch(err => console.log(err))
                                             }
                                         })()
                                     }
@@ -764,7 +764,7 @@ module.exports = class BaseModel extends QueryBuilder {
                 }
                 return rows;
             })
-            .catch(error => error);
+            .catch(err => console.log(err));
         })();
     }
 
@@ -857,7 +857,7 @@ module.exports = class BaseModel extends QueryBuilder {
                 "where CONSTRAINT_NAME='PRIMARY' AND TABLE_NAME='"+table_name+"' "+
                 "AND TABLE_SCHEMA='"+database+"'"
             ).then(([rows, fields]) => rows[0].COLUMN_NAME)
-            .catch(err => err)
+            .catch(err => console.log(err));
         })();
     }
 }

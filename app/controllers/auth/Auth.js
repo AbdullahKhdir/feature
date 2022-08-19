@@ -34,7 +34,9 @@ module.exports = class Auth extends BaseController {
             'getSecurityQuestions',
             'postSecurityQuestions',
             'getRecoverPassword',
-            'postRecoverPassword'
+            'postRecoverPassword',
+            'getPasswordReset',
+            'postPasswordReset'
         ];
         this.__   = new Lodash().__;
         this.user = new User();
@@ -102,17 +104,21 @@ module.exports = class Auth extends BaseController {
         
         const email           = req.getFormPostedData('email');
         const password        = req.getFormPostedData('password');
-        const forgot_password = req.getFormPostedData('forgot_password')
+        const forgot_password = req.getFormPostedData('password_reset')
         
+        if (!this.__.isEmpty(forgot_password)) {
+            return this.redirect(res, '/reset');
+        }
+
         if (this.__.isEmpty(email) || this.__.isEmpty(password)) {
-            req.flash('warning', 'Email and password must not be empty!');
+            req.setProp('warning', 'Email and password must not be empty!');
             return this.redirect(res, '/login');
         }
 
         this.user.get({email: email})
         .then((rows) => {
             if (typeof rows === 'undefined' || rows == null || this.__.isEmpty(rows) || rows.length === 0) {
-                req.flash('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
                 return this.redirect(res, '/login');
             }
             rows = rows[0];
@@ -135,33 +141,29 @@ module.exports = class Auth extends BaseController {
                                                 return this.redirect(res, '/');    
                                             }
                                         } else {
-                                            req.flash(
+                                            req.setProp(
                                                 'warning',
                                                 'You have not submitted any security questions, Please choose and answer two security questions!'
                                             );
                                             return this.redirect(res, '/security');
                                         }
                                     })
-                                    .catch();
+                                    .catch(err => console.log(err))
                                 }
                             });
                         }
                     } else {
-                        req.flash('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                        req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
                         return this.redirect(res, '/login');
                     }
                 })
-                .catch(err => {
-                    console.log(err);
-                });
+                .catch(err => console.log(err))
             } else {
-                req.flash('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
                 return this.redirect(res, '/login');
             }
         })
-        .catch(err => {
-            console.log(err);
-        });
+        .catch(err => console.log(err))
     });
 
     /**
@@ -205,14 +207,14 @@ module.exports = class Auth extends BaseController {
         const confirm_password = req.getFormPostedData('confirm_password');
 
         if (confirm_password !== password) {
-            req.flash('error', 'Password do not match!');
+            req.setProp('error', 'Passwords do not match!');
             return this.redirect(res, '/signup');
         }
 
         if (this.__.isEmpty(email) || this.__.isEmpty(password) 
            || this.__.isEmpty(first_name) || this.__.isEmpty(last_name) 
            || this.__.isEmpty(confirm_password)) {
-            req.flash('warning', 'Please fill out all the fields!');
+            req.setProp('warning', 'Please fill out all the fields!');
             return this.redirect(res, '/signup');
         }
 
@@ -224,29 +226,19 @@ module.exports = class Auth extends BaseController {
                         this.user.create({first_name: first_name, last_name: last_name, email: email, password: hashed_password})
                         .then(result => {
                             if (result) {
-                                req.flash('warning', 'Security questions are not provided yet!, please set two security questions!');
+                                req.setProp('warning', 'Security questions are not provided yet!, please set two security questions!');
                                 return this.redirect(res, '/security');
                             }
                         })
-                        .catch(err => {
-                            if (err) {
-                                console.log(err);
-                            }
-                        })
+                        .catch(err => console.log(err));
                     })
-                    .catch(err => {
-                        console.log(err);
-                    });
+                    .catch(err => console.log(err));
             } else {
-                req.flash('error', 'Email is already registered!');
+                req.setProp('error', 'Email is already registered!');
                 return this.redirect(res, '/login');
             }
         })
-        .catch(err => {
-            if (err) {
-                console.log(err);
-            }
-        })
+        .catch(err => console.log(err))
     });
 
     /**
@@ -284,15 +276,15 @@ module.exports = class Auth extends BaseController {
         const email = req.getFormPostedData('email');
         
         if (this.__.isEmpty(email)) {
-            req.flash('warning', 'Please insert your email!');
+            req.setProp('warning', 'Please insert your email!');
         }
         
         this.user.get({email: email})
         .then(result => {
             if (typeof result !== 'undefined') {
                 if (result) {
-                    req.flash('recover_email', email.toString());
-                    req.flash('warning', 'Please choose and answer the questions that you have submitted in order to recover your email!')
+                    req.setProp('recover_email', email.toString());
+                    req.setProp('warning', 'Please choose and answer the questions that you have submitted in order to recover your email!')
                     return this.redirect(res, '/password_recovery/');
                 }
             } else {
@@ -448,8 +440,8 @@ module.exports = class Auth extends BaseController {
         if (typeof req.getFormPostedData('security_questions') !== 'object' 
            || this.__.isEmpty(req.getFormPostedData('first_answer')) 
            || this.__.isEmpty(req.getFormPostedData('second_answer'))) {
-            req.flash('warning', 'Please choose and answer two security questions!');
-            req.flash('post_data', req.getAllFormPostedData());
+            req.setProp('warning', 'Please choose and answer two security questions!');
+            req.setProp('post_data', req.getAllFormPostedData());
             return this.redirect(res, '/security');
         }
         
@@ -469,7 +461,7 @@ module.exports = class Auth extends BaseController {
                     answer: encrypt(second_answer)
                 }).then(_result => {
                     if (_result) {
-                        req.flash(
+                        req.setProp(
                             'Success',
                             'Your account is not secured, you may proceed!'
                         );
@@ -567,7 +559,7 @@ module.exports = class Auth extends BaseController {
             req.setProp('warning', 'Please choose and answer the questions that you have submitted in order to recover your email!');
             req.setProp('post_data', req.getAllFormPostedData());
             req.setProp('recover_email', email)
-            return this.toSameSite(res, this.constants.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY);
+            return this.postToSameSite(res);
         }
         
         const [first_question, second_question] = req.getFormPostedData('security_questions');
@@ -589,22 +581,23 @@ module.exports = class Auth extends BaseController {
                     this.user_security_questions.filter({user_id: result.id})
                     .then(result => {
                         if (result) {
-                            result = result[0];
-                            let _first_answer = decrypt(result.answer);
-                            
-                            result = result[1];
-                            let _second_answer = decrypt(result.answer);
+                            let _first_result = result[0];
+                            let _first_answer = decrypt(_first_result.answer);
+
+                            let _second_result = result[1];
+                            let _second_answer = decrypt(_second_result.answer);
 
                             if (_first_answer === first_answer 
                                 && _second_answer === second_answer) {
-                                req.setProp('new_password', 'Please enter your new password');
-                                // TODO: create password_reset get and post route 
+                                req.setProp('password_reset_acces', 'granted');
+                                req.setProp('warning', 'Please enter and confirm your new password');
+                                req.setProp('email', email);
                                 return this.redirect(res, '/password_reset')
                             } else {
-                                req.setProp('warning', 'You habe choose or answered the wrong question!, please try again or contact us!');
+                                req.setProp('warning', 'You have choose or answered the wrong question!, please try again or contact us!');
                                 req.setProp('post_data', req.getAllFormPostedData());
                                 req.setProp('recover_email', email)
-                                return this.toSameSite(res, this.constants.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY);
+                                return this.postToSameSite(res);
                             }
                         } else {
                             return this.redirect(res, '/signup');
@@ -618,5 +611,102 @@ module.exports = class Auth extends BaseController {
             .catch(err => consol.log(err));
         })
         .catch(err => console.log(err));
+    });
+
+    /**
+     * @function getPasswordReset
+     * @description Allows the user to reset the password
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    getPasswordReset           = () => this.route('get', '/password_reset/', {}, async (req, res, next) => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+
+        const is_allowed = req.props()['password_reset_acces'];
+        const email      = req.props()['email'];
+
+        req.setProp('is_password_reseting_allowed', 'true');
+
+        if (typeof is_allowed === 'undefined' || typeof email === 'undefined') {
+            return this.redirect(res, '/reset');
+        }
+        if (is_allowed[0] !== 'granted') {
+            return this.redirect(res, '/reset');
+        }
+
+        const is_set = req.setProp('email', email);
+        if (is_set) {
+            return this.render(
+                res,
+                'shop/password_reset',
+                {
+                    page_title: 'Reset Password',
+                    path : '/password_reset/'
+                }
+            );
+        }
+    });
+
+    /**
+     * @function getPasswordReset
+     * @description Allows the user to reset the password
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    postPasswordReset           = () => this.route('post', '/password_reset/', {}, async (req, res, next) => {
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+
+        const is_allowed = req.props()['is_password_reseting_allowed'];
+        let   email      = req.props()['email'];
+
+        if (typeof is_allowed === 'undefined' || typeof email === 'undefined') {
+            return this.redirect(res, '/reset');
+        }
+        if (is_allowed[0] !== 'true') {
+            return this.redirect(res, '/reset');
+        }
+
+        const password         = req.getFormPostedData('password');
+        const confirm_password = req.getFormPostedData('confirm_password');
+
+        if (this.__.isEmpty(password) || this.__.isEmpty(confirm_password)) {
+            req.setProp('warning', 'Please enter and confirm your password!');
+            req.setProp('password_reset_acces', 'granted');
+            req.setProp('email', email);
+            return this.postToSameSite(res);
+        }
+
+        if (confirm_password !== password) {
+            req.setProp('error', 'Passwords do not match!');
+            req.setProp('password_reset_acces', 'granted');
+            req.setProp('email', email);
+            return this.postToSameSite(res);
+        }
+
+        this.user.filter({email: email[0]})
+        .then((rows) => {
+            if (rows) {
+                rows = rows[0];
+                becrypt.hash(password, 12)
+                    .then(hashed_password => {
+                        this.user.update({password: hashed_password}, {id: rows.id})
+                        .then(result => {
+                            if (result) {
+                                req.setProp('success', 'Your password has been updated!');
+                                return this.redirect(res, '/login');
+                            }
+                        })
+                        .catch(err => console.log(err))
+                    })
+                    .catch(err => console.log(err))
+            }
+        })
+        .catch(err => console.log(err))
     });
 }
