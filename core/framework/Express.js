@@ -1,20 +1,30 @@
 'use strict';
 
-const ApiResponse = require('../response/ApiResponse');
-const SharePoint  = require('../share_point/SharePoint');
+
+const Workerpool = require("../worker_pool/workerpool");
 
 /**
  * @class Express
  * @constructor
- * @extends ApiResponse
  * @description Class Express to define and initiate the express framework 
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class Express extends SharePoint {
+module.exports = class Express {
     constructor(framework = require('express')) {
-        super();
+        // return framework;
         this.framework = framework;
         this.cors      = require('cors');
+    }
+
+    /**
+     * @function getWorkerPool
+     * @description Returns an instance of the workerpool
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Workerpool
+    */
+    getWorkerPool() {
+        return new Workerpool();
     }
 }

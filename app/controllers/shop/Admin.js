@@ -213,7 +213,8 @@ module.exports = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    products          = () => this.route('get', '/admin/products/', {cors: this.cors(this.#corsOptionsDelegate), isAuth, userSession}, async (req, res, next) => {
+    // products          = () => this.route('get', '/admin/products/', {cors: this.cors(this.#corsOptionsDelegate), isAuth, userSession}, async (req, res, next) => {
+    products          = () => this.route('get', '/admin/products/', {isAuth, userSession}, async (req, res, next) => {
         if (req.isGet()) {
             const user_products = req.getCurrentUser().getProducts();
             user_products

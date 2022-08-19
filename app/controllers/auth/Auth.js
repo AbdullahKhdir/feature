@@ -88,7 +88,8 @@ module.exports = class Auth extends BaseController {
                 path : '/login/'
             }
         );
-    }, this.cors(this.#corsOptionsDelegate));
+    });
+    // }, this.cors(this.#corsOptionsDelegate));
 
     /**
      * @function postAuthenticate

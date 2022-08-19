@@ -1,7 +1,7 @@
 'use strict';
 
 const Constants = require("../../app/utils/Constants");
-const Db = require("../database/Db");
+const ExpressResponse = require("../framework/ExpressResponse");
 
 /**
  * @class ApiResponse
@@ -10,7 +10,7 @@ const Db = require("../database/Db");
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class ApiResponse extends Db {
+module.exports = class ApiResponse extends ExpressResponse {
 
     #status_code;
     #response_status;

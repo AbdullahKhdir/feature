@@ -1,26 +1,24 @@
 'use strict';
 
-const Lodash = require('../../app/utils/Lodash');
-const Express = require('../framework/Express');
+const Lodash   = require('../../app/utils/Lodash');
+const Db       = require('../database/Db');
 const _Promise = require('../utils/Promise');
 
 /**
  * @class Routes
  * @constructor
- * @extends Express
+ * @extends Db
  * @description Class Routes is used to define the routes Object and set the configurations
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class Routes extends Express {
+module.exports = class Routes extends Db {
     
     constructor() {
         super();
-
         if (typeof this.router !== 'undefined') {
             return this._();
         }
-        this.framework = new Express().framework
         
         /*
         * This line of code is responsible for the 

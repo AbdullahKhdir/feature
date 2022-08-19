@@ -119,8 +119,7 @@ module.exports = class Shop extends BaseController{
                 })
                 .catch(err => console.log(err)); 
         } else {
-            return this.render(
-                res,
+            return res.render(
                 'shop/index',
                 {
                     products: [],
@@ -171,8 +170,7 @@ module.exports = class Shop extends BaseController{
                                         cart_products[index]['title']      = rows[index].title;
                                         cart_products[index]['product_id'] = rows[index].id;
                                     });
-                                    return this.render(
-                                        res,
+                                    return res.render(
                                         'shop/cart',
                                         {
                                             page_title: 'My Cart',
