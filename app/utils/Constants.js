@@ -236,7 +236,7 @@ module.exports = class Constants {
                 DB_CONNECTION_SESSION_TIME_OUT:                   environment === 'production' ? 1000 * 60 * 60 * 1 : 1000 * 60 * 60 * 6, //? Every six hours (4 times a day)
                 DB_CONNECTION_SESSION_EXPIRATION_INTERVAL:        environment === 'production' ? 1000 * 60 * 60 * 1 : 1000 * 60 * 60 * 6,  //? Every six hours (4 times a day)
                 DB_CONNECTION_SESSION_CLEAR_EXPIRED:              true,
-                DB_CONNECTION_CREATE_SESSION_TABLE_IF_NOT_EXISTS: environment === 'production' ? false : true ,
+                DB_CONNECTION_CREATE_SESSION_TABLE_IF_NOT_EXISTS: environment === 'production' ? false : true,
                 DB_SESSION_MAX_CONNECTIONS:                       environment === 'production' ? 10 : 1,
                 DB_SESSION_END_CONNECTION_ON_CLOSE:               true,
                 DB_CONNECTION_SESSION_CHARSET:                    'utf8mb4_bin',

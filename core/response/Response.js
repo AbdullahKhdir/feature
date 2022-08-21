@@ -17,7 +17,7 @@ module.exports = class Response extends Express {
     #message;
     #codes;
     #res;
-    constructor(status_code = Object.assign(new Constants()).getConstants().HTTPS_STATUS.SUCCESS.OK, response_status, message = '') {
+    constructor(status_code, response_status, message = '') {
         super();
         this.#message         = message;
         this.#status_code     = status_code;

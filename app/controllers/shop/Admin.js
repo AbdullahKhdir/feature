@@ -129,7 +129,7 @@ module.exports = class Admin extends BaseController {
                 return this.siteNotFound(res);
             }    
 
-            const product_id  = +req.getFormPostedData(product_id) ?? false;
+            const product_id  = +req.getFormPostedData('product_id') ?? false;
             const title       = this.__.capitalize(req.getFormPostedData('title')) ?? false;
             const price       = req.getFormPostedData('price') ?? false;
             const description = this.__.capitalize(req.getFormPostedData('description')) ?? false;
@@ -230,6 +230,6 @@ module.exports = class Admin extends BaseController {
                 );
             });
         }
-        return this.siteNotFound(res);
+        // return this.siteNotFound(res);
     });
 }

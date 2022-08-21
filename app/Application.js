@@ -169,7 +169,7 @@ module.exports = class Application extends BaseController {
                 _expires:      this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
                 maxAge:        this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
                 secure:        environment === 'production' ? true : false,
-                httpOnly:      true,
+                httpOnly:      true
             }
         }));
 
