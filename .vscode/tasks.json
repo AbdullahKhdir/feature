@@ -137,7 +137,7 @@
         {
             "label": "Start dev server",
             "type": "shell",
-            "command": "npm run start:inspect",
+            "command": "npm install && npm update && npm run start:inspect",
             "options": {
                 "env": {
                     "EXECUTION_POINT": "NPM"

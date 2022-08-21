@@ -159,22 +159,22 @@ module.exports = class Admin extends BaseController {
      * @returns Response
     */
     addProduct        = () => this.route('post', '/admin/add-product/', {isAuth, userSession}, async (req, res, next) => {
-            if (!req.isPost()) {
-                return this.siteNotFound(res);
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }
+
+        const title       = this.__.capitalize(req.getFormPostedData('title'));
+        const imageUrl    = req.getFormPostedData('imageUrl');
+        const description = this.__.capitalize(req.getFormPostedData('description'));
+        const price       = req.getFormPostedData('price');
+        const user_id     = req.getCurrentUser().id;
+
+        this.product_object.create({title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id}).then((results) => {
+            const primary_key = results[0].insertId
+            if (primary_key) {
+                return this.redirect(res, '/');
             }
-
-            const title       = this.__.capitalize(req.getFormPostedData('title'));
-            const imageUrl    = req.getFormPostedData('imageUrl');
-            const description = this.__.capitalize(req.getFormPostedData('description'));
-            const price       = req.getFormPostedData('price');
-            const user_id     = req.getCurrentUser().id;
-
-            this.product_object.create({title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id}).then((results) => {
-                const primary_key = results[0].insertId
-                if (primary_key) {
-                    return this.redirect(res, '/');
-                }
-            }).catch(err => console.log(err));
+        }).catch(err => console.log(err));
     });
 
     /**
@@ -213,23 +213,22 @@ module.exports = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    // products          = () => this.route('get', '/admin/products/', {cors: this.cors(this.#corsOptionsDelegate), isAuth, userSession}, async (req, res, next) => {
-    products          = () => this.route('get', '/admin/products/', {isAuth, userSession}, async (req, res, next) => {
-        if (req.isGet()) {
-            const user_products = req.getCurrentUser().getProducts();
-            user_products
-            .then(rows => {
-                return this.render(
-                    res,
-                    'admin/products',
-                    {
-                        products: rows ?? [],
-                        page_title: 'Admin Products',
-                        path : '/admin/products/'
-                    }
-                );
-            });
+    products          = () => this.route('get', '/admin/products/', {cors: this.cors(this.#corsOptionsDelegate), isAuth, userSession}, async (req, res, next) => {
+        if (!req.isGet()) {
+            return this.siteNotFound(res);
         }
-        // return this.siteNotFound(res);
+        const user_products = req.getCurrentUser().getProducts();
+        user_products
+        .then(rows => {
+            return this.render(
+                res,
+                'admin/products',
+                {
+                    products: rows ?? [],
+                    page_title: 'Admin Products',
+                    path : '/admin/products/'
+                }
+            );
+        });
     });
 }

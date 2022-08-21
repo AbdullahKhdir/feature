@@ -108,7 +108,7 @@ module.exports = class Application extends BaseController {
             origin: false,
         }
 
-        // app.use(this.cors(corsOptions));
+        app.use(this.cors(corsOptions));
 
         /*
         * AUTO ESCAPE JSON
