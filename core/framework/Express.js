@@ -1,6 +1,5 @@
 'use strict';
 
-
 const Workerpool = require("../worker_pool/workerpool");
 
 /**
@@ -11,8 +10,8 @@ const Workerpool = require("../worker_pool/workerpool");
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 module.exports = class Express {
+
     constructor(framework = require('express')) {
-        // return framework;
         this.framework = framework;
         this.cors      = require('cors');
     }

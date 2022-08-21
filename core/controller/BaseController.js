@@ -173,8 +173,7 @@ module.exports = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Page not found', path: '/404/'},
                     null,
@@ -186,8 +185,7 @@ module.exports = class BaseController extends Routes {
                 next();
                 site_is_found = false;
             } else {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Page not found', path: '/404/'},
                     null,
@@ -247,8 +245,7 @@ module.exports = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!'},
                     null,
@@ -260,8 +257,7 @@ module.exports = class BaseController extends Routes {
                 next();
                 is_post_request_successful = false;
             } else {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!'},
                     null,
@@ -321,8 +317,7 @@ module.exports = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!'},
                     null,
@@ -334,8 +329,7 @@ module.exports = class BaseController extends Routes {
                 next();
                 is_put_request_successful = false;
             } else {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!'},
                     null,
@@ -395,8 +389,7 @@ module.exports = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!'},
                     null,
@@ -408,8 +401,7 @@ module.exports = class BaseController extends Routes {
                 next();
                 is_patch_request_successful = false;
             } else {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!'},
                     null,
@@ -469,8 +461,7 @@ module.exports = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!'},
                     null,
@@ -482,8 +473,7 @@ module.exports = class BaseController extends Routes {
                 next();
                 is_delete_request_successful = false;
             } else {
-                return this.render(
-                    res,
+                return res.render(
                     '404',
                     {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!'},
                     null,

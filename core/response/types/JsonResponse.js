@@ -1,17 +1,17 @@
 'use strict';
 
 const Constants   = require("../../../app/utils/Constants");
-const ApiResponse = require("../ApiResponse");
+const Response = require("../Response");
 
 /**
  * @class JsonResponse
  * @constructor
- * @extends ApiResponse
+ * @extends Response
  * @description Class JsonResponse is used to send the response as json object
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports =  class JsonResponse extends ApiResponse {
+module.exports =  class JsonResponse extends Response {
 
     #data;
     #message;
@@ -42,6 +42,7 @@ module.exports =  class JsonResponse extends ApiResponse {
      * @returns Object
     */
     getData() {
+        console.log(this.#data)
         return this.#data;
     }
 

@@ -9,6 +9,8 @@ const Product         = require("../../models/shop/Product");
 const Constants       = require("../../utils/Constants");
 const isAuth          = require("../../middlewares/is_auth");
 const userSession     = require("../../middlewares/init_user_session");
+const JsonResponse = require("../../../core/response/types/JsonResponse");
+
 
 /**
  * @class Shop
@@ -18,7 +20,7 @@ const userSession     = require("../../middlewares/init_user_session");
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class Shop extends BaseController{
+module.exports = class Shop extends BaseController {
     constructor() {
         super();
         /**
@@ -119,7 +121,8 @@ module.exports = class Shop extends BaseController{
                 })
                 .catch(err => console.log(err)); 
         } else {
-            return res.render(
+            return this.render(
+                res,
                 'shop/index',
                 {
                     products: [],

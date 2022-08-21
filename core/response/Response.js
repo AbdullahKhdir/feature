@@ -1,31 +1,30 @@
 'use strict';
 
-const Constants = require('../../app/utils/Constants');
-const Express = require('./Express');
+const Constants = require("../../app/utils/Constants");
+const Express   = require("../framework/Express");
 
 /**
- * @class ExpressResponse
+ * @class Response
  * @constructor
- * @extends Express
- * @description Class ExpressResponse to define and initiate the response object
+ * @description Class Response is used to define the Response Objects 
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class ExpressResponse extends Express {
-    
+module.exports = class Response extends Express {
+
     #status_code;
+    #response_status;
+    #message;
     #codes;
-    constructor(status_code, { Response } = super()) {
+    #res;
+    constructor(status_code = Object.assign(new Constants()).getConstants().HTTPS_STATUS.SUCCESS.OK, response_status, message = '') {
         super();
-        // TODO: work on the response object and add the edited functionality and return an instance of the class
-        this.response         = Response;
+        this.#message         = message;
         this.#status_code     = status_code;
-        this.#codes           = Object.assign(new Constants());
+        this.#response_status = response_status;
+        this.#codes           = Object.assign(new Constants());        
     }
 
-    test = () => {
-        return 'test';
-    }
     /**
      * @function renderAsJson
      * @description Sends a json response
@@ -39,9 +38,9 @@ module.exports = class ExpressResponse extends Express {
     renderAsJson(res, data, status = this.#codes.getConstants().HTTPS_STATUS.SUCCESS.OK) {
         res.type(this.#codes.getConstants().RESPONSE.TYPES.JSON);
         if (typeof this.#status_code === 'undefined') {
-            return res.status(status).json(ApiResponse.sanitize(data));
+            return res.status(status).json(Response.sanitize(data));
         }
-        return res.status(this.#status_code).json(ApiResponse.sanitize(data));
+        return res.status(this.#status_code).json(Response.sanitize(data));
     }
 
     /**

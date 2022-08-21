@@ -1,9 +1,6 @@
 'use strict';
 
-// const { Request, Response, NextFunction } = require('express');
-const Request  = require('../framework/ExpressRequest').request;
-const Response = require('../framework/ExpressResponse').response;
-const Next     = require('../framework/Next').next;
+const { Request, Response, NextFunction } = require('express');
 const { environment } = require('../config');
  
 /**
@@ -22,9 +19,8 @@ module.exports = class Promise {
     constructor() {
     }
 
-    static asyncFunction = (request = Request, response = Response, next = Next) => new Promise();
-    // static callback      = (callback) => { return callback(AsyncHandler.asyncFunction(request = Request, response = Response, next = Next))};
-    static asyncHandler  = (execution = AsyncHandler.asyncFunction) => (req = Request, res = Response, next = Next) => {
+    static asyncFunction = (request = Request, response = Response, next = NextFunction) => new Promise();
+    static asyncHandler  = (execution = Promise.asyncFunction) => (req = Request, res = Response, next = NextFunction) => {
         /**
          * @function setCookie
          * @description sets a simple cookie

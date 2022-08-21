@@ -1,16 +1,16 @@
 'use strict';
 
-const Express = require('./Express');
+const Response = require('../response/Response');
 
 /**
  * @class ExpressSession
  * @constructor
- * @extends ExpressSession
+ * @extends Response
  * @description Class ExpressSession to define and initiate the express session 
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-module.exports = class ExpressSession extends Express {
+module.exports = class ExpressSession extends Response {
     
     constructor(express_session = require('express-session')) {
         super();
