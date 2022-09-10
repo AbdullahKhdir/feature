@@ -1,0 +1,104 @@
+<%- include('../includes/updated/head.ejs') %>
+<script type="text/javascript" src="/js/main.js" defer></script>
+<script type="text/javascript" src="../materialize/js/init.js" defer></script>
+</head>
+    <%- include('../includes/updated/header.ejs') %>
+    <% if (!is_authenticated) { %>
+        <nav class="navbar nav-extended no-padding">
+            <div class="nav-wrapper"><a href="#" class="brand-logo grey-text text-lighten-4"><%= nav_title %></a><a href="#" data-target="sidenav-left"
+                    class="sidenav-trigger"><i class="material-icons white-text">menu</i></a>
+            </div>
+            <div class="nav-content">
+                <div class="nav-metrics row">
+                    <div class="col s4 no-padding">
+                        <div class="card horizontal">
+                            <div class="card-stacked">
+                                <div class="card-metrics card-metrics-static">
+                                    <div class="card-metric active">
+                                        <div class="card-metric-title">Revenue</div>
+                                        <div class="card-metric-value">$12,476.00</div>
+                                        <div class="card-metric-change increase">12%<i
+                                                class="material-icons left">keyboard_arrow_up</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <canvas id="mini-line-chart" width="100%" height="100%"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s4 no-padding">
+                        <div class="card horizontal">
+                            <div class="card-stacked">
+                                <div class="card-metrics card-metrics-static">
+                                    <div class="card-metric active">
+                                        <div class="card-metric-title">Revenue</div>
+                                        <div class="card-metric-value">$12,476.00</div>
+                                        <div class="card-metric-change decrease">12%<i
+                                                class="material-icons left">keyboard_arrow_up</i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <canvas id="mini-stacked-bar-chart" width="100%" height="100%"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s4 no-padding">
+                        <div class="card horizontal">
+                            <div class="card-stacked">
+                                <div class="card-metrics card-metrics-static">
+                                    <div class="card-metric active">
+                                        <div class="card-metric-title">Revenue</div>
+                                        <div class="card-metric-value">$12,476.00</div>
+                                        <div class="card-metric-change">12%<i class="material-icons left">keyboard_arrow_up</i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-content">
+                                <canvas id="mini-doughnut-chart" width="100%" height="100%"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <%- include('../includes/updated/toaster.ejs') %>
+        <main>
+            <div class="container">
+                <div class="row">
+                    <div class="col s8 offset-s2">
+        
+                        <div class="card card-login">
+                            <div class="card-login-splash">
+                                <div class="wrapper">
+                                    <h3 id="encrypt_effect" data-effect="Account">Account</h3>
+                                </div>
+                                <img src="../materialize/img/geometric-cave.jpg" alt="">
+                            </div>
+                            <div class="card-content">
+                                <span class="card-title">Log In</span>
+                                <form action="/login/" method="POST" class="cube-loader">
+                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                    <div class="input-field">
+                                        <label for="username">Email</label>
+                                        <input class="validate" type="email" name="email" id="email">
+                                    </div>
+                                    <div class="input-field">
+                                        <label for="password">Password</label>
+                                        <input id="password" type="password" name="password" id="password" class="validate">
+                                    </div>
+                                    <button class="btn waves-effect waves-light" type="submit">Login</button>
+                                    <button class="btn waves-effect waves-light" type="submit" name="password_reset" value="reset">Forgot Passowrd ?</button>        
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    <% } %>
+    <%- include('../includes/updated/footer.ejs') %>
+    <%- include('../includes/updated/script.ejs') %>
+</html>

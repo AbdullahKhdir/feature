@@ -1,0 +1,22 @@
+<main>
+    <% if (error) { %>
+        <div style="display:none" class="user-message user-message--error"><%= error %></div>
+    <% } %>
+    <% if (warning) { %>
+        <div style="display:none" class="user-message user-message--warning"><%= warning %></div>
+    <% } %>
+    <% if (success) { %>
+            <div style="display:none" class="user-message user-message--success"><%= success %></div>
+    <% } %>
+    <% if (typeof validation_errors !== 'undefined') { %>
+        <% if (validation_errors) {%>
+            <div style="display:none" class="user-message user-message--validation_errors">
+                <% if (Object.keys(validation_errors).length > 0) {%>
+                    <% for(key in validation_errors) {%>
+                        <p style="display:none" class="err--on_validate">-<%= validation_errors[key] %></p>
+                    <% } %>
+                <% } %>
+            </div>
+        <% } %>
+    <% } %>
+</main>

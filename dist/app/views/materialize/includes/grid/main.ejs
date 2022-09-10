@@ -1,0 +1,244 @@
+<main>
+    <div class="container">
+        <div class="row equal-height-grid">
+
+            <div class="col l9 s12">
+
+                <div class="card">
+                    <div class="card-metrics card-metrics-toggle card-metrics-centered">
+                        <div class="card-metric waves-effect active" data-metric="revenue">
+                            <div class="card-metric-title">Revenue</div>
+                            <div class="card-metric-value">$12,476.00</div>
+                            <div class="card-metric-change">
+                                <i class="material-icons">keyboard_arrow_up</i>
+                                12%
+                            </div>
+                        </div>
+                        <div class="card-metric waves-effect" data-metric="users">
+                            <div class="card-metric-title">Users</div>
+                            <div class="card-metric-value">2024</div>
+                            <div class="card-metric-change">
+                                <i class="material-icons">keyboard_arrow_up</i>
+                                9%
+                            </div>
+                        </div>
+                        <div class="card-metric waves-effect" data-metric="ctr">
+                            <div class="card-metric-title">CTR</div>
+                            <div class="card-metric-value">0.20%</div>
+                            <div class="card-metric-change">
+                                <i class="material-icons">keyboard_arrow_up</i>
+                                4%
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <canvas class="card-chart" id="main-toggle-line-chart" height="300"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col l3 s12">
+
+                <div class="card">
+                    <div class="card-toolbar">
+                        <div class="card-toolbar-title">Devices</div>
+                        <div class="card-toolbar-actions">
+                            <div class="dropdown-trigger" data-target="devices-dropdown">
+                                <i class="material-icons">more_vert</i>
+                            </div>
+                        </div>
+                        <ul id="devices-dropdown" class="dropdown-content">
+                            <li><a href="#!">Hide this Card</a></li>
+                            <li><a href="#!">Learn More</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-content">
+                        <div class="row row-vertical-center no-margin">
+                            <div class="col s12 m6 l12">
+                                <canvas id="doughnut-chart"></canvas>
+                            </div>
+                            <div class="col s12 m6 l12">
+                                <div class="chart-legend-wrapper"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col l3 m6 s12">
+
+                <div class="card">
+                    <div class="card-stacked">
+                        <div class="card-metrics card-metrics-static">
+                            <div class="card-metric">
+                                <div class="card-metric-title">Revenue</div>
+                                <div class="card-metric-value">$12,476.00</div>
+                                <div class="card-metric-change increase">
+                                    <i class="material-icons left">keyboard_arrow_up</i>
+                                    12%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-chart">
+                        <canvas id="flush-area-chart-blue" height="100px"></canvas>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col l3 m6 s12">
+
+                <div class="card">
+                    <div class="card-stacked">
+                        <div class="card-metrics card-metrics-static">
+                            <div class="card-metric">
+                                <div class="card-metric-title">Clicks</div>
+                                <div class="card-metric-value">11,893</div>
+                                <div class="card-metric-change increase">
+                                    <i class="material-icons left">keyboard_arrow_up</i>
+                                    8%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-chart">
+                        <canvas id="flush-area-chart-yellow" height="100px"></canvas>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col l3 m6 s12">
+
+                <div class="card">
+                    <div class="card-stacked">
+                        <div class="card-metrics card-metrics-static">
+                            <div class="card-metric">
+                                <div class="card-metric-title">Users</div>
+                                <div class="card-metric-value">230,648</div>
+                                <div class="card-metric-change decrease">
+                                    <i class="material-icons left">keyboard_arrow_down</i>
+                                    2%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-chart">
+                        <canvas id="flush-area-chart-pink" height="100"></canvas>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col l3 m6 s12">
+
+                <div class="card">
+                    <div class="card-stacked">
+                        <div class="card-metrics card-metrics-static">
+                            <div class="card-metric">
+                                <div class="card-metric-title">Conversion Rate</div>
+                                <div class="card-metric-value">0.24%</div>
+                                <div class="card-metric-change decrease">
+                                    <i class="material-icons left">keyboard_arrow_down</i>
+                                    9%
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-chart">
+                        <canvas id="flush-area-chart-green" height="100"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col l3 m6 s12">
+                <div class="card admin-blue white-text">
+                    <div class="card-toolbar">
+                        <div class="card-toolbar-title"><i class="material-icons left">show_chart</i>Revenue</div>
+                        <div class="card-toolbar-actions">
+                            <div class="dropdown-trigger" data-target="admin-blue-dropdown">
+                                <i class="material-icons">more_vert</i>
+                            </div>
+                        </div>
+                        <ul id="admin-blue-dropdown" class="dropdown-content">
+                            <li><a href="#!">Hide this Card</a></li>
+                            <li><a href="#!">Learn More</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-content card-align-bottom">
+                        <span class="card-title">Revenue has Increased</span>
+                        <p class="white-text">Revenue has increased 12% this month compared to last month.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l3 m6 s12">
+                <div class="card admin-yellow white-text">
+                    <div class="card-toolbar">
+                        <div class="card-toolbar-title"><i class="material-icons left">touch_app</i>Clicks</div>
+                        <div class="card-toolbar-actions">
+                            <div class="dropdown-trigger" data-target="admin-yellow-dropdown">
+                                <i class="material-icons">more_vert</i>
+                            </div>
+                        </div>
+                        <ul id="admin-yellow-dropdown" class="dropdown-content">
+                            <li><a href="#!">Hide this Card</a></li>
+                            <li><a href="#!">Learn More</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-content card-align-bottom">
+                        <span class="card-title">Clicks has Increased</span>
+                        <p class="white-text">Clicks has increased 8% this month compared to last month.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l3 m6 s12">
+                <div class="card admin-pink white-text">
+                    <div class="card-toolbar">
+                        <div class="card-toolbar-title"><i class="material-icons left">people</i>Users</div>
+                        <div class="card-toolbar-actions">
+                            <div class="dropdown-trigger" data-target="admin-pink-dropdown">
+                                <i class="material-icons">more_vert</i>
+                            </div>
+                        </div>
+                        <ul id="admin-pink-dropdown" class="dropdown-content">
+                            <li><a href="#!">Hide this Card</a></li>
+                            <li><a href="#!">Learn More</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-content card-align-bottom">
+                        <span class="card-title">Users has Decreased</span>
+                        <p class="white-text">Users has decreased 2% this month compared to last month.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col l3 m6 s12">
+                <div class="card admin-green white-text">
+                    <div class="card-toolbar">
+                        <div class="card-toolbar-title"><i class="material-icons left">whatshot</i>Conversion Rate
+                        </div>
+                        <div class="card-toolbar-actions">
+                            <div class="dropdown-trigger" data-target="admin-green-dropdown">
+                                <i class="material-icons">more_vert</i>
+                            </div>
+                        </div>
+                        <ul id="admin-green-dropdown" class="dropdown-content">
+                            <li><a href="#!">Hide this Card</a></li>
+                            <li><a href="#!">Learn More</a></li>
+                        </ul>
+                    </div>
+                    <div class="card-content card-align-bottom">
+                        <span class="card-title">Conversion Rate has Decreased</span>
+                        <p class="white-text">Conversion Rate has decreased 9% this month compared to last month.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</main>

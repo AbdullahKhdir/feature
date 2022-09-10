@@ -1,0 +1,21 @@
+#Certificate Signing Request#
+[req]
+distinguished_name = req_distinguished_name
+x509_extensions = v3_req
+prompt = no
+[req_distinguished_name]
+C = DE
+ST = Bavaria
+L = Nuremberg
+O = Node School
+OU = IT-Department 
+CN = localhost
+[v3_req]
+keyUsage = critical, digitalSignature, keyAgreement
+extendedKeyUsage = serverAuth
+subjectAltName = @other_names
+[other_names]
+DNS.1 = www.localhost.com
+DNS.2 = localhost.com
+DNS.3 = localhost
+DNS.4 = localhost:8010

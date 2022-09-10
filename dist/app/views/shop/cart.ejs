@@ -1,0 +1,55 @@
+<%- include('../includes/updated/head.ejs') %>
+<script type="text/javascript" src="/js/main.js" defer></script>
+<script type="text/javascript" src="../materialize/js/init.js" defer></script>
+</head>
+<body>
+    <%- include('../includes/updated/header.ejs') %>
+    <%- include('../includes/updated/toaster.ejs') %>
+    <main>
+        <div class="container">
+            <% if (typeof products !== 'undefined') { %>
+                <% if (products.length > 0) { %>
+                    <% let count = 0; %>
+                    <% products.forEach((product, index) => { %>
+                        <% count = count + 1; %>
+                        <% if (index === 0) { %>
+                            <div class="row equal-height-grid">
+                        <% } %>
+                        <% if (index % 3 === 0) { %>
+                            </div>
+                            <div class="row equal-height-grid">
+                        <% } %>
+                            <div class="menu-col col s12 m6  card-width">
+                                <div class="card">
+                                    <div class="card-image">
+                                        <div class="quantity-icon btn-floating  waves-effect waves-darken white black-text">x<%= product.quantity %></div>
+                                        <form id="remove_products" action="/cart/delete-items/" method="POST">
+                                            <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                            <input type="hidden" name="product_id" value="<%= product.product_id  %>">
+                                            <a id="clear_all" class="close-icon btn-floating waves-effect waves-darken white" title="Remove from cart"><i class="material-icons black-text">clear</i></a>
+                                        </form>
+                                        <img src="<%= product.imageUrl %>" alt="<%= lodash.capitalize(product.title) %>">
+                                        <form id="remove_one_product" action="/cart/delete-item/" method="POST">
+                                            <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                            <input type="hidden" name="product_id" value="<%= product.product_id  %>">
+                                            <a id="clear_one" class="btn-floating halfway-fab waves-effect waves-darken white black-text" title="Remove one product">
+                                                <i class="material-icons black-text">delete</i>
+                                            </a>
+                                        </form>
+                                    </div>
+                                    <span class="span-card-title card-title"><%= lodash.capitalize(product.title) %></span>
+                                    <div class="card-content card-content-cart" style="overflow-y: scroll;overflow-x: hidden;">
+                                        <p class="break-words"><%= lodash.capitalize(product.description) %></p>
+                                    </div>
+                                </div>
+                            </div>
+                    <% }) %>
+                <% } %>
+            <% } %>
+        </div>
+    </main>
+    <%- include('../includes/updated/footer.ejs') %>
+    <%- include('../includes/updated/script.ejs') %>
+</body>
+</html>
+        

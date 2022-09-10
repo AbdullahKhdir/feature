@@ -1,0 +1,115 @@
+.card {
+  // Metrics for charts
+  .card-metrics {
+    &.card-metrics-centered {
+      .card-metric {
+        flex: 1;
+        text-align: center;
+      }
+    }
+
+    &.card-metrics-toggle {
+      .card-metric {
+        &.active {
+          border-top: 3px solid #000;
+        }
+
+        border-top: 3px solid transparent;
+      }
+    }
+
+    &.card-metrics-static .card-metric {
+      &:hover {
+        background-color: transparent;
+      }
+      cursor: default;
+    }
+
+    display: flex;
+
+    .card-metric {
+      &:hover {
+        background-color: rgba(0,0,0,.05);
+      }
+
+      &.active {
+        .card-metric-title,
+        .card-metric-value {
+          font-weight: 500;
+        }
+      }
+
+      &.colored {
+        &.active {
+          color: #fff;
+          border-color: transparent;
+        }
+
+        &:not(.active) {
+          background-color: transparent !important;
+        }
+
+        border-right: 1px solid $border-color-light-black;
+        border-bottom: 1px solid $border-color-light-black;
+
+        .card-metric-title,
+        .card-metric-value {
+          font-weight: normal;
+        }
+      }
+
+      cursor: pointer;
+      padding: $card-padding;
+
+      .card-metric-title {
+      }
+
+      .card-metric-value {
+        font-size: 26px;
+        font-weight: 300;
+      }
+
+      .card-metric-change {
+        &.increase {
+          color: color('green', 'base');
+        }
+        &.decrease {
+          color: color('red', 'base');
+        }
+
+        font-size: 12px;
+        line-height: 24px;
+
+        i.material-icons {
+          height: 24px;
+          line-height: 24px;
+          margin-right: 0;
+          vertical-align: bottom;
+        }
+      }
+    }
+  }
+
+  // Toolbar for interactive elements in chart cards
+  .card-toolbar {
+    display: flex;
+    padding: $card-padding;
+    justify-content: space-between;
+    align-items: center;
+
+    .card-toolbar-title {
+      line-height: 24px;
+    }
+
+    .card-toolbar-actions {
+
+      .dropdown-trigger .material-icons {
+        display: block;
+      }
+
+      .select-dropdown {
+        margin: 0;
+      }
+    }
+  }
+}

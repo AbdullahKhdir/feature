@@ -1,0 +1,55 @@
+<main style="background-color: gray;">
+    <% if (error) { %>
+        <div class="user-message user-message--error"><%= error %></div>
+    <% } %>
+    <% if (warning) { %>
+        <div class="user-message user-message--warning"><%= warning %></div>
+    <% } %>
+    <% if (success) { %>
+        <div class="user-message user-message--success"><%= success %></div>
+    <% } %>
+    <% if (typeof validation_errors !== 'undefined') { %>
+        <% if (validation_errors) {%>
+            <div class="user-message user-message--validation_errors">
+                <% if (Object.keys(validation_errors).length > 0) {%>
+                    <% for(key in validation_errors) {%>
+                        <p class="err--on_validate">-<%= validation_errors[key] %></p>
+                    <% } %>
+                <% } %>
+            </div>
+        <% } %>
+    <% } %>
+    <div class="container">
+        <div class="row">
+            <div class="col s12">
+                <!-- <div class="card card-login">
+                    <div class="card-login-splash">
+                    </div>
+                    <div class="card-content">
+                        <span class="card-title">Log In</span>
+                        
+                    </div>
+                </div> -->
+                <div class="card-content" style="text-align: center;">
+                    <img style="height: 311px; width: 800px; object-fit: cover;" src="../images/lol/login_heimer.jpg" alt="Login">
+                    <form method="POST" action="/league-connect/">
+                        <div class="wrapper">
+                            <input type="hidden" id="start_live_events" name="start_live_events" value="start">
+                            <button class="btn blue lighten-2" name="submit_auth_league" value="processing">Go Live</button>
+                        </div>
+                        <textarea style="height: 350px;line-height: 20px; background-color: #000; border: 1px solid black; border-radius: 12px; color: #00d617; font-size: 22px; font-family: Calibri;"
+                                  name="game_events" 
+                                  id="game_events" 
+                                  cols="100" 
+                                  rows="100"
+                        ></textarea>
+                        <input type="hidden" name="_csrf" value="<%= csrf %>">
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</main>

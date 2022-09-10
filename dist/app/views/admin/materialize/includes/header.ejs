@@ -1,0 +1,154 @@
+<header>
+    <% if (root !== 'headers' && root !== 'account') { %>
+      <div class="navbar-fixed">
+        <nav class="navbar white">
+          <div class="nav-wrapper"><a href="#!" class="brand-logo grey-text text-darken-4"><%= nav_title %></a>
+            <ul id="nav-mobile" class="right">
+              <!-- <li class="hide-on-med-and-down"><a href="https://themes.materializecss.com/products/admin">Buy Now!</a></li> -->
+              <li class="hide-on-med-and-down"><a href="#!" data-target="dropdown1" class="dropdown-trigger waves-effect"><i class="material-icons">notifications</i></a></li>
+              <li><a href="#!" data-target="chat-dropdown" class="dropdown-trigger waves-effect"><i class="material-icons">settings</i></a></li>
+            </ul><a href="#!" data-target="sidenav-left" class="sidenav-trigger left"><i class="material-icons black-text">menu</i></a>
+          </div>
+        </nav>
+      </div>
+    <% } %>
+    <ul id="sidenav-left" class="sidenav <%= path ? path !== 'grid' && path !== 'log-in' ? 'sidenav-fixed' : '' : '' %>">
+      <li>
+            <a href="/dashboard" class="logo-container">Admin<i class="material-icons left">spa</i></a>
+      </li>
+      <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+          <li class="bold waves-effect <%= root ? root === 'pages' ? 'active' : '' : '' %>">
+            <a class="collapsible-header">Pages<i class="material-icons chevron">chevron_left</i></a>
+            <div class="collapsible-body">
+              <ul>
+                <li>
+                    <a href="/dashboard" class="waves-effect <%= path ? path === 'dashboard' ? 'active' : '' : '' %>">
+                      Dashboard<i class="material-icons">web</i>
+                    </a>
+                </li>
+                <li>
+                  <a href="/fixed-chart" class="waves-effect <%= path ? path === 'fixed-chart' ? 'active' : '' : '' %>">
+                      Fixed Chart<i class="material-icons">list</i>
+                  </a>
+                </li>
+                <li>
+                  <a href="/grid" class="waves-effect <%= path ? path === 'grid' ? 'active' : '' : '' %>">
+                    Grid<i class="material-icons">dashboard</i>
+                  </a>
+                </li>
+                <li>
+                  <a href="/chat" class="waves-effect <%= path ? path === 'chat' ? 'active' : '' : '' %>">
+                    Chat<i class="material-icons">chat</i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+          <li class="bold waves-effect <%= root ? root === 'charts' ? 'active' : '' : '' %>"><a class="collapsible-header">Charts<i class="material-icons chevron">chevron_left</i></a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/line-charts" class="waves-effect <%= path ? path === 'line-charts' ? 'active' : '' : '' %>">Line Charts<i class="material-icons">show_chart</i></a></li>
+                <li><a href="/bar-charts" class="waves-effect <%= path ? path === 'bar-charts' ? 'active' : '' : '' %>">Bar Charts<i class="material-icons">equalizer</i></a></li>
+                <li><a href="/area-charts" class="waves-effect <%= path ? path === 'area-charts' ? 'active' : '' : '' %>">Area Charts<i class="material-icons">multiline_chart</i></a></li>
+                <li><a href="/doughnut-charts" class="waves-effect <%= path ? path === 'doughnut-charts' ? 'active' : '' : '' %>">Doughnut Charts<i class="material-icons">pie_chart</i></a></li>
+                <li><a href="/financial-charts" class="waves-effect <%= path ? path === 'financial-charts' ? 'active' : '' : '' %>">Financial Charts<i class="material-icons">euro_symbol</i></a></li>
+                <li><a href="/interactive-charts" class="waves-effect <%= path ? path === 'interactive-charts' ? 'active' : '' : '' %>">Interactive Charts<i class="material-icons">touch_app</i></a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="bold waves-effect <%= root ? root === 'tables' ? 'active' : '' : '' %>"><a class="collapsible-header">Tables<i class="material-icons chevron">chevron_left</i></a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/fullscreen-table" class="waves-effect <%= path ? path === 'fullscreen-table' ? 'active' : '' : '' %>">Fullscreen with Chart<i class="material-icons">show_chart</i></a></li>
+                <li><a href="/custom-table" class="waves-effect <%= path ? path === 'custom-table' ? 'active' : '' : '' %>">Table with Custom Elements<i class="material-icons">settings</i></a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="bold waves-effect <%= root ? root === 'calendar' ? 'active' : '' : '' %>"><a class="collapsible-header">Calendar<i class="material-icons chevron">chevron_left</i></a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/calendar" class="waves-effect <%= path ? path === 'calendar' ? 'active' : '' : '' %>">Calendar<i class="material-icons">cloud</i></a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="bold waves-effect <%= root ? root === 'headers' ? 'active' : '' : '' %>"><a class="collapsible-header">Headers<i class="material-icons chevron">chevron_left</i></a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/header-tabbed" class="waves-effect <%= path ? path === 'header-tabbed' ? 'active' : '' : '' %>">Tabbed<i class="material-icons">tab</i></a></li>
+                <li><a href="/header-metrics" class="waves-effect <%= path ? path === 'header-metrics' ? 'active' : '' : '' %>">Metrics<i class="material-icons">web</i></a></li>
+                <li><a href="/header-search" class="waves-effect <%= path ? path === 'header-search' ? 'active' : '' : '' %>">Search<i class="material-icons">search</i></a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="bold waves-effect <%= root ? root === 'account' ? 'active' : '' : '' %>"><a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
+            <div class="collapsible-body">
+              <ul>
+                <li><a href="/log-in" class="waves-effect <%= path ? path === 'log-in' ? 'active' : '' : '' %>">Log In<i class="material-icons">person</i></a></li>
+                <li><a href="/settings" class="waves-effect <%= path ? path === 'settings' ? 'active' : '' : '' %>">Settings<i class="material-icons">settings</i></a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    <div id="dropdown1" class="dropdown-content notifications">
+      <div class="notifications-title">notifications</div>
+      <div class="card">
+        <div class="card-content"><span class="card-title">Joe Smith made a purchase</span>
+          <p>Content</p>
+        </div>
+        <div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
+      </div>
+      <div class="card">
+        <div class="card-content"><span class="card-title">Daily Traffic Update</span>
+          <p>Content</p>
+        </div>
+        <div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
+      </div>
+      <div class="card">
+        <div class="card-content"><span class="card-title">New User Joined</span>
+          <p>Content</p>
+        </div>
+        <div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
+      </div>
+    </div>
+    <div id="chat-dropdown" class="dropdown-content dropdown-tabbed">
+      <ul class="tabs tabs-fixed-width">
+        <li class="tab col s3"><a href="#settings">Settings</a></li>
+        <li class="tab col s3"><a href="#friends" class="active">Friends</a></li>
+      </ul>
+      <div id="settings" class="col s12">
+        <div class="settings-group">
+          <div class="setting">Night Mode
+            <div class="switch right">
+              <label>
+                <input type="checkbox"><span class="lever"></span>
+              </label>
+            </div>
+          </div>
+          <div class="setting">Beta Testing
+            <label class="right">
+              <input type="checkbox"><span></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div id="friends" class="col s12">
+        <ul class="collection flush">
+          <li class="collection-item avatar">
+            <div class="badged-circle online"><img src="materialize/img/portrait1.jpg" alt="avatar" class="circle"></div><span class="title">Jane Doe</span>
+            <p class="truncate">Lo-fi you probably haven't heard of them</p>
+          </li>
+          <li class="collection-item avatar">
+            <div class="badged-circle"><img src="materialize/img/portrait2.jpg" alt="avatar" class="circle"></div><span class="title">John Chang</span>
+            <p class="truncate">etsy leggings raclette kickstarter four dollar toast</p>
+          </li>
+          <li class="collection-item avatar">
+            <div class="badged-circle"><img src="materialize/img/portrait3.jpg" alt="avatar" class="circle"></div><span class="title">Lisa Simpson</span>
+            <p class="truncate">Raw denim fingerstache food truck chia health goth synth</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+</header>

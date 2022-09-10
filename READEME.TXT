@@ -1,0 +1,3 @@
+PULL THE BRANCH AND NAVIGATE TO THE FOLDER AND RUN THE FOLLOWING COMMAND:
+
+npm update && npm run start:inspect

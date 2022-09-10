@@ -1,0 +1,31 @@
+.card.card-login {
+  display: flex;
+
+  .card-login-splash {
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex: 1;
+
+    h1, h2, h3, h4, h5 {
+      margin-top: 0;
+    }
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      min-width: 100%;
+      display: block;
+      z-index: -1;
+    }
+  }
+
+  .card-content {
+    flex: 1;
+  }
+}

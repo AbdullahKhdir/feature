@@ -1,0 +1,106 @@
+<main>
+    <div class="container">
+      <div class="row">
+        <div class="col s12">
+
+          <div class="card">
+            <div class="card-metrics card-metrics-toggle card-metrics-centered">
+              <div class="card-metric waves-effect active" data-metric="revenue">
+                <div class="card-metric-title">Revenue</div>
+                <div class="card-metric-value">$12,476.00</div>
+                <div class="card-metric-change">
+                  <i class="material-icons">keyboard_arrow_up</i>
+                  12%
+                </div>
+              </div>
+              <div class="card-metric waves-effect" data-metric="users">
+                <div class="card-metric-title">Users</div>
+                <div class="card-metric-value">2024</div>
+                <div class="card-metric-change">
+                  <i class="material-icons">keyboard_arrow_up</i>
+                  9%
+                </div>
+              </div>
+              <div class="card-metric waves-effect" data-metric="ctr">
+                <div class="card-metric-title">CTR</div>
+                <div class="card-metric-value">0.20%</div>
+                <div class="card-metric-change">
+                  <i class="material-icons">keyboard_arrow_up</i>
+                  4%
+                </div>
+              </div>
+            </div>
+            <div class="card-content">
+              <canvas class="card-chart" id="main-toggle-line-chart" width="400" height="400"></canvas>
+            </div>
+          </div>
+
+        </div>
+        <div class="col s12 m6">
+
+          <div class="card horizontal">
+            <div class="card-stacked">
+              <div class="card-metrics">
+                <div class="card-metric waves-effect active">
+                  <div class="card-metric-title">Revenue</div>
+                  <div class="card-metric-value">$12,476.00</div>
+                  <div class="card-metric-change">
+                    <i class="material-icons left">keyboard_arrow_up</i>
+                    12%
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-content">
+              <canvas id="mini-line-chart" width="100%" height="100%"></canvas>
+            </div>
+          </div>
+
+        </div>
+        <div class="col m6 s12">
+          <div id="tab-legend-chart-card" class="card primary-color">
+            <div class="card-content">
+              <p class="white-text">I am a very simple card. I am good at containing small bits of information. I am
+                convenient because I require little markup to use effectively.</p>
+            </div>
+            <div class="card-content">
+              <canvas class="card-chart" id="tab-legend-line-chart" width="400" height="400"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 m6">
+
+          <h4>Custom Metrics</h4>
+          <div id="compare-chart-card" class="card">
+            <div class="card-metrics">
+              <div class="card-metric colored red waves-effect waves-light active">
+                <div class="card-metric-title">Revenue</div>
+                <div class="card-metric-value">$12,476.00</div>
+              </div>
+              <div class="card-metric colored blue waves-effect waves-light">
+                <div class="card-metric-title">Revenue</div>
+                <div class="card-metric-value">$12,476.00</div>
+              </div>
+            </div>
+            <div class="card-content">
+              <canvas class="card-chart" id="compare-line-chart" width="400" height="400"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col s12 m6">
+
+          <h4>Generated Metrics</h4>
+          <div class="card">
+            <div class="card-content">
+              <canvas class="card-chart" id="card-legend-line-chart" width="400" height="400"></canvas>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>

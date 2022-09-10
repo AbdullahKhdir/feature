@@ -1,0 +1,22 @@
+<%- include('../includes/header.ejs')  %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+   <%- include('../includes/navigation.ejs') %>
+   <% if (!is_authenticated) { %>
+        <main>
+            <form class="login-form" action="/reset/" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <div class="input-field col s12 m6">
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" id="email">
+                </div>
+                <button class="btn" type="submit">Reset Password</button>
+            </form>
+        </main>
+   <% } else { %>
+        <h1>User is logged in</h1>
+   <% } %>
+<%- include('../includes/end.ejs') %>

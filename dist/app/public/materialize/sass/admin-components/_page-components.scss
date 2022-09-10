@@ -1,0 +1,39 @@
+$fixed-chart-padding: 40px;
+
+.fixed-chart-wrapper {
+  height: 568px;
+  padding: $fixed-chart-padding 0;
+  box-sizing: content-box;
+
+  .fixed-chart {
+    height: inherit;
+    left: 0;
+    right: 0;
+    position: fixed;
+
+    .card {
+      box-shadow: none;
+      background-color: transparent;
+    }
+  }
+
+  & + .section {
+    overflow: initial;
+    border-top: 1px solid rgba(0,0,0,.1);
+    box-shadow: 0 -10px 20px -10px rgba(0,0,0, .1);
+  }
+}
+
+.fixed-chart-overlap {
+  margin-top: -$section-padding - $fixed-chart-padding;
+}
+
+.has-fixed-sidenav .fixed-chart {
+  left: $sidenav-width;
+}
+
+@media only screen and (max-width : 992px) {
+  .has-fixed-sidenav .fixed-chart {
+    left: 0;
+  }
+}

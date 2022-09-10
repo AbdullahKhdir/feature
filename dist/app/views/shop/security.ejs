@@ -1,0 +1,82 @@
+<%- include('../includes/header.ejs')  %>
+    <link rel="stylesheet" href="/css/forms.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+
+<body>
+    <%- include('../includes/navigation.ejs') %>
+   <% if (is_authenticated) { %>
+        <main>
+            <form class="security-questions-form" action="/security/" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <select aria-label="Security Questions" name="security_questions" id="security_questions">
+                            <% if (typeof questions !== 'undefined') { %>
+                                <% if (first_question) { %>
+                                    <option value="<%= first_question_id %>" selected="true"><%= first_question %></option>
+                                    <% questions.forEach(question => { %>
+                                        <% if (question.hasOwnProperty('id')) { %>
+                                            <option value="<%= question.id %>"><%= question.question %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% }  else {%>
+                                    <option value="" disabled selected>Choose your option</option>
+                                    <% questions.forEach(question => { %>
+                                        <% if (question.hasOwnProperty('question')) { %>
+                                                <option value="<%= question.id %>"><%= question.question %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                            <% } %>
+                        </select>
+                        <label>Security Questions</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <% if (first_answer) { %>
+                            <input id="id_first_answer" type="text" name="first_answer" id="id_first_answer" value="<%= first_answer %>">
+                        <% } else {%>
+                            <input id="id_first_answer" type="text" name="first_answer" id="id_first_answer">
+                        <% } %>
+                        <label for="id_first_answer">Answer</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <select aria-label="Security Questions" name="security_questions" id="security_questions">
+                            <% if (typeof questions !== 'undefined') { %>
+                                <% if (second_question) { %>
+                                    <option value="<%= second_question_id %>" selected="true"><%= second_question %></option>
+                                    <% questions.forEach(question => { %>
+                                        <% if (question.hasOwnProperty('id')) { %>
+                                            <option value="<%= question.id %>"><%= question.question %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% }  else {%>
+                                    <option value="" disabled selected>Choose your option</option>
+                                    <% questions.forEach(question => { %>
+                                        <% if (question.hasOwnProperty('question')) { %>
+                                                <option value="<%= question.id %>"><%= question.question %></option>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                            <% } %>
+                        </select>
+                        <label>Security Questions</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <% if (second_answer) { %>
+                            <input id="id_second_answer" type="text" name="second_answer" id="id_second_answer" value="<%= second_answer %>"> 
+                        <% } else {%>
+                            <input id="id_second_answer" type="text" name="second_answer" id="id_second_answer""> 
+                        <% } %>
+                        <label for="id_second_answer">Answer</label>
+                    </div>
+                </div>
+                <button class="btn" type="submit">Submit</button>
+            </form>
+        </main>
+   <% } else { %>
+        <h1>User must be logged in</h1>
+   <% } %>
+<%- include('../includes/end.ejs') %>

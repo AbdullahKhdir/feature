@@ -1,0 +1,200 @@
+$light-grey-image-background: #f1f1f1
+$light-blue-btn-color: #e6e6e6
+$light-white-footer-color: #fff
+$light-white-font-color: #818181
+
+//Colorhunt
+$dark-blue-sidenav-color: #112b3c
+$orange-navbar-color: #f66b0e
+$dark-blue-color: #205375
+$silver-white-color: #efefef
+
+$black: #000
+$white: #fff
+
+$success: #42855b
+$error: #ec7272
+$warning: #ffde00
+$information: #89CFFD
+
+body
+  background-image: url('/images/background.png')
+
+.container
+  .menu
+    margin-left: 100px
+    position: relative
+    width: 110%
+
+  .no-menu
+    position: relative
+    width: 110%
+
+.row
+  .menu-col
+    margin-left: 0 !important // sass-lint:disable-line no-important
+
+.inline-block-item
+  display: inline-block !important // sass-lint:disable-line no-important
+
+.inline-item
+  display: inline !important // sass-lint:disable-line no-important
+
+.card-content
+  .align-items
+    width: 80%
+
+.adjust-width-height
+  height: 163px
+  position: relative
+  width: 315px
+
+.card-image
+  background-color: $light-grey-image-background
+
+.icon-btn,
+.icon-btn-large,
+.icon-btn-small
+  background-color: $light-blue-btn-color !important // sass-lint:disable-line no-important
+
+  .material-icons
+    color: $black
+// sass-lint:disable-all
+.page-footer
+  background-color: $dark-blue-color !important // sass-lint:disable-line no-important
+  color: $silver-white-color !important // sass-lint:disable-line no-important
+
+  ul li a,
+  p
+    color: #d5d5d5
+    font-size: .8rem
+    font-weight: 300
+    margin: 5px 0
+
+
+nav
+  a
+    .material-icons
+      color: $black
+
+
+.nav-wrapper
+  background-color: $orange-navbar-color !important // sass-lint:disable-line no-important
+
+  .brand-logo
+    img
+      margin: 0
+      padding: 5px
+      width: 60px
+
+.sidenav
+  background-color: $dark-blue-sidenav-color !important // sass-lint:disable-line no-important
+
+  li > a
+    color: $white !important // sass-lint:disable-line no-important
+
+.sidenav li > a
+  > i, [class^="mdi-"],
+  li > a > [class*="mdi-"], > i.material-icons
+    color: $silver-white-color !important // sass-lint:disable-line no-important
+
+
+.sidenav .collapsible .collapsible-body li > a
+  &:hover, &.active
+    background-color: #fafafa4d !important // sass-lint:disable-line no-important
+// sass-lint:enable-all
+
+.navbar-color
+  background-color: $orange-navbar-color !important // sass-lint:disable-line no-important
+
+.footer-logo
+  margin: 0
+  padding: 5px
+  width: 97px
+
+.nav-content
+  background-color: $silver-white-color !important // sass-lint:disable-line no-important
+
+.sidenav-logo
+  float: left
+  padding-right: 5px
+  padding-top: 7px
+  position: relative
+  width: 50px
+
+.close-icon
+  bottom: 0
+  float: right
+  left: 15px
+  margin-bottom: -45px
+  position: relative
+  right: 0
+  top: -15px
+
+.quantity-icon
+  bottom: 0 !important // sass-lint:disable-line no-important
+  float: left !important // sass-lint:disable-line no-important
+  left: 0 !important // sass-lint:disable-line no-important
+  margin-bottom: -45px !important // sass-lint:disable-line no-important
+  position: relative !important // sass-lint:disable-line no-important
+  right: 0 !important // sass-lint:disable-line no-important
+  top: 0 !important // sass-lint:disable-line no-important
+  text-align: center !important // sass-lint:disable-line no-important
+  border-bottom-right-radius: 500px !important // sass-lint:disable-line no-important
+  padding-right: 6px !important // sass-lint:disable-line no-important
+  cursor: default  !important // sass-lint:disable-line no-important
+
+// sass-lint:disable-all
+.card-content-cart
+  -ms-overflow-style: none !important // Internet Explorer 10+
+  border-radius: 0 0 2px 2px !important // sass-lint:disable-line no-important
+  max-height: 150px !important // sass-lint:disable-line no-important
+  padding-bottom: 24px !important // sass-lint:disable-line no-important
+  padding-left: 24px !important // sass-lint:disable-line no-important
+  padding-right: 24px !important // sass-lint:disable-line no-important
+  padding-top: 0 !important // sass-lint:disable-line no-important
+  scrollbar-width: none  !important// Firefox
+
+  &::-webkit-scrollbar
+    display: none !important // CHROME, SAFARI, OPERA, EDGE
+
+// sass-lint:enable-all
+
+.break-words
+  word-break: break-all !important // sass-lint:disable-line no-important
+
+// sass-lint:disable-all
+.span-card-title
+  -ms-overflow-style: none !important // Internet Explorer 10+
+  display: block !important // sass-lint:disable-line no-important
+  margin-left: 23px !important // sass-lint:disable-line no-important
+  max-height: 30px !important // sass-lint:disable-line no-important
+  overflow-x: hidden !important // sass-lint:disable-line no-important
+  overflow-y: scroll !important // sass-lint:disable-line no-important
+  position: relative !important // sass-lint:disable-line no-important
+  width: auto !important // sass-lint:disable-line no-important
+    scrollbar-width: none  !important// Firefox
+
+  &::-webkit-scrollbar
+    display: none !important // CHROME, SAFARI, OPERA, EDGE
+// sass-lint:enable-all
+
+.card-width
+  width: 33.33% !important // sass-lint:disable-line no-important
+
+._warning
+  color: $dark-blue-sidenav-color !important // sass-lint:disable-line no-important
+  background-color: $warning !important // sass-lint:disable-line no-important
+
+._error
+  color: $silver-white-color !important // sass-lint:disable-line no-important
+  background-color: $error !important // sass-lint:disable-line no-important
+
+._success
+  color: $silver-white-color !important // sass-lint:disable-line no-important
+  background-color: $success !important // sass-lint:disable-line no-important
+
+._information
+  color: $dark-blue-sidenav-color !important // sass-lint:disable-line no-important
+  background-color: $information !important // sass-lint:disable-line no-important
+

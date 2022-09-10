@@ -1,0 +1,20 @@
+Important factors to consider while building an API or a project:
+
+Important factors to make the application runs fast and efficient.  
+
+1-How many requests can an application handle on a per second basis?
+2-What are the specs of the machine that the node application is running on?
+3-Is the application running on a single process on a single thread with one event loop?
+4-Is the application clustered?
+5-What middleware is the application running for the application's http server?
+6-What kind of security and authentication is implemented?
+7-How heavy is the business logic?
+8-How much blocking code (synchronic code) is running inside the application?
+9-Is the application heavily connected to third parties environments?
+10-How long does it take to load all those environments (libs), to get data in and out?
+11-How fast can the application process a transaction?
+12-How many requests per second can an application handle at a bare metal minimum?
+
+
+Recommended benchmarking tool to test many requests per second: autocannon 
+
