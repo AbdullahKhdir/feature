@@ -32,6 +32,7 @@ var Singleton_js_1 = require("../core/Singleton/Singleton.js");
 var AppLocals_js_1 = __importDefault(require("../core/utils/AppLocals.js"));
 var request_utilities_1 = require("./middlewares/request_utilities");
 var toast_1 = require("./middlewares/toast");
+var helmet_1 = __importDefault(require("helmet"));
 module.exports = /** @class */ (function (_super) {
     __extends(Application, _super);
     function Application() {
@@ -67,27 +68,27 @@ module.exports = /** @class */ (function (_super) {
           ! xssFilter
         */
         // TODO: add exception for leage events emitter filename: init_ws.js
-        // this.app.use(Helmet.contentSecurityPolicy({
-        //     directives: {
-        //         frameAncestors: ["'none'"]
-        //     }
-        // }));
-        // this.app.use(Helmet.crossOriginEmbedderPolicy());
-        // this.app.use(Helmet.crossOriginOpenerPolicy());
-        // this.app.use(Helmet.crossOriginResourcePolicy());
-        // this.app.use(Helmet.dnsPrefetchControl());
-        // this.app.use(Helmet.expectCt());
-        // this.app.use(Helmet.frameguard({
-        //     action: "deny"
-        // }));
-        // this.app.use(Helmet.hidePoweredBy());
-        // this.app.use(Helmet.hsts());
-        // this.app.use(Helmet.ieNoOpen());
-        // this.app.use(Helmet.noSniff());
-        // this.app.use(Helmet.originAgentCluster());
-        // this.app.use(Helmet.permittedCrossDomainPolicies());
-        // this.app.use(Helmet.referrerPolicy());
-        // this.app.use(Helmet.xssFilter());
+        _this.app.use(helmet_1.default.contentSecurityPolicy({
+            directives: {
+                frameAncestors: ["'none'"]
+            }
+        }));
+        _this.app.use(helmet_1.default.crossOriginEmbedderPolicy());
+        _this.app.use(helmet_1.default.crossOriginOpenerPolicy());
+        _this.app.use(helmet_1.default.crossOriginResourcePolicy());
+        _this.app.use(helmet_1.default.dnsPrefetchControl());
+        _this.app.use(helmet_1.default.expectCt());
+        _this.app.use(helmet_1.default.frameguard({
+            action: "deny"
+        }));
+        _this.app.use(helmet_1.default.hidePoweredBy());
+        _this.app.use(helmet_1.default.hsts());
+        _this.app.use(helmet_1.default.ieNoOpen());
+        _this.app.use(helmet_1.default.noSniff());
+        _this.app.use(helmet_1.default.originAgentCluster());
+        _this.app.use(helmet_1.default.permittedCrossDomainPolicies());
+        _this.app.use(helmet_1.default.referrerPolicy());
+        _this.app.use(helmet_1.default.xssFilter());
         /*
         * Setting Cache-Control Header
         */
@@ -118,8 +119,6 @@ module.exports = /** @class */ (function (_super) {
         /*
         * CORS Configurations
         */
-        // Add a list of allowed origins.
-        // If you have more origins you would like to add, you can add them to the array below.
         var allowedOrigins = ['https://localhost:8010'];
         var cors_options = {
             origin: allowedOrigins,

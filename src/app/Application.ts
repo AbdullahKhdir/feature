@@ -16,6 +16,7 @@ import { Singleton } from '../core/Singleton/Singleton.js';
 import Locals from '../core/utils/AppLocals.js';
 import { reqUtil } from './middlewares/request_utilities';
 import { toast } from './middlewares/toast';
+import Helmet from 'helmet';
 
 /**
  * @class Application
@@ -68,27 +69,27 @@ export = class Application extends BaseController {
           ! xssFilter
         */
         // TODO: add exception for leage events emitter filename: init_ws.js
-        // this.app.use(Helmet.contentSecurityPolicy({
-        //     directives: {
-        //         frameAncestors: ["'none'"]
-        //     }
-        // }));
-        // this.app.use(Helmet.crossOriginEmbedderPolicy());
-        // this.app.use(Helmet.crossOriginOpenerPolicy());
-        // this.app.use(Helmet.crossOriginResourcePolicy());
-        // this.app.use(Helmet.dnsPrefetchControl());
-        // this.app.use(Helmet.expectCt());
-        // this.app.use(Helmet.frameguard({
-        //     action: "deny"
-        // }));
-        // this.app.use(Helmet.hidePoweredBy());
-        // this.app.use(Helmet.hsts());
-        // this.app.use(Helmet.ieNoOpen());
-        // this.app.use(Helmet.noSniff());
-        // this.app.use(Helmet.originAgentCluster());
-        // this.app.use(Helmet.permittedCrossDomainPolicies());
-        // this.app.use(Helmet.referrerPolicy());
-        // this.app.use(Helmet.xssFilter());
+        this.app.use(Helmet.contentSecurityPolicy({
+            directives: {
+                frameAncestors: ["'none'"]
+            }
+        }));
+        this.app.use(Helmet.crossOriginEmbedderPolicy());
+        this.app.use(Helmet.crossOriginOpenerPolicy());
+        this.app.use(Helmet.crossOriginResourcePolicy());
+        this.app.use(Helmet.dnsPrefetchControl());
+        this.app.use(Helmet.expectCt());
+        this.app.use(Helmet.frameguard({
+            action: "deny"
+        }));
+        this.app.use(Helmet.hidePoweredBy());
+        this.app.use(Helmet.hsts());
+        this.app.use(Helmet.ieNoOpen());
+        this.app.use(Helmet.noSniff());
+        this.app.use(Helmet.originAgentCluster());
+        this.app.use(Helmet.permittedCrossDomainPolicies());
+        this.app.use(Helmet.referrerPolicy());
+        this.app.use(Helmet.xssFilter());
         /*
         * Setting Cache-Control Header
         */
@@ -125,8 +126,6 @@ export = class Application extends BaseController {
         /*
         * CORS Configurations
         */
-        // Add a list of allowed origins.
-        // If you have more origins you would like to add, you can add them to the array below.
         const allowedOrigins = ['https://localhost:8010'];
 
         const cors_options: Cors.CorsOptions = {
