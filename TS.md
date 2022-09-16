@@ -511,4 +511,61 @@ add = (n1: number, n2: number) : number => {
  //protected property is an accessible property in all inherited classes and cannot be edited outside the class or by the inherited classes.
  //private property is an accessible property ONLY the class where it is created and cannot be edited outside an by the inherited classes
 //***********************************************************************************************************************\\
+// Intersection types
+
+type Admin = {
+    name: string;
+    privileges: string[];
+};
+
+type Employee = {
+    name: string;
+    start_date: Date;
+}
+
+type Elevated_employee = Admin & Employee;
+
+const e1: Elevated_employee = {
+    name: 'User',
+    privileges: ['Admin'],
+    start_date: new Date()
+}
+//***********************************************************************************************************************\\
+//Type guards
+
+if (typeof new String('') === 'string') {
+
+}
+
+if ('property' in object) {
+
+}
+
+if (new Car() instanceof Car) {
+
+}
+
+//***********************************************************************************************************************\\
+// Indexed properties
+
+interface ErrorsTypes {
+    id: string;
+    [prop: string]: string;
+}
+
+//***********************************************************************************************************************\\
+// Functions overload
+
+function add(n1: number, n2: number): number;
+function add(n1: number, n2: number) {
+    if (typeof n1 === 'string' && typeof n2 === 'string') {
+        return n1.toString() + n2.toString();
+    }
+    return n1 + n2;
+}
+
+add(2, 2);
+add('2', '2');
+
+//***********************************************************************************************************************\\
 ```

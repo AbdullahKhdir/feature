@@ -10,6 +10,7 @@ import CartItem from "../../models/shop/CartItem";
 import Order from "../../models/shop/Order";
 import OrderItem from "../../models/shop/OrderItem";
 import Product from "../../models/shop/Product";
+import {RequestHandler} from 'express';
 
 /**
  * @class Shop
