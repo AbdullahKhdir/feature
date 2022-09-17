@@ -10,7 +10,6 @@ import CartItem from "../../models/shop/CartItem";
 import Order from "../../models/shop/Order";
 import OrderItem from "../../models/shop/OrderItem";
 import Product from "../../models/shop/Product";
-import {RequestHandler} from 'express';
 
 /**
  * @class Shop
@@ -112,6 +111,7 @@ export = class Shop extends BaseController {
             return this.siteNotFound(res);
         }
         res.noCacheNeeded();
+        // Todo: adding breadcrumbs and importing of .js and .css files to a template after the route name (routeName() === template_name.ejs)
         // TODO: Add public products
         
         /*
