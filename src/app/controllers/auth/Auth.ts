@@ -96,7 +96,9 @@ export = class Auth extends BaseController {
                 {
                     nav_title: 'Login',
                     path : '/login/',
-                    root : 'account'
+                    root : 'account',
+                    js: ['js/main.js'],
+                    css: ['css/main.css']
                 }
             );
         } else {
@@ -200,7 +202,9 @@ export = class Auth extends BaseController {
                 {
                     nav_title: 'Sign up',
                     path : '/signup/',
-                    root: 'account'
+                    root: 'account',
+                    js: ['js/main.js'],
+                    css: ['css/main.css'],
                 }
             );
         } else {

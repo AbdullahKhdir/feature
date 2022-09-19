@@ -92,7 +92,19 @@ module.exports = /** @class */ (function (_super) {
                             products: rows,
                             nav_title: 'Products',
                             path: '/products/',
-                            root: 'shop'
+                            root: 'shop',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                },
+                                {
+                                    title: 'Products',
+                                    url: '/products/'
+                                }
+                            ]
                         });
                     })
                         .catch(function (err) { return _this.onError(err); });
@@ -102,7 +114,19 @@ module.exports = /** @class */ (function (_super) {
                             products: [],
                             nav_title: 'Products',
                             path: '/products/',
-                            root: 'shop'
+                            root: 'shop',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                },
+                                {
+                                    title: 'Products',
+                                    url: '/products/'
+                                }
+                            ]
                         })];
                 }
                 return [2 /*return*/];
@@ -132,6 +156,14 @@ module.exports = /** @class */ (function (_super) {
                             nav_title: 'shop',
                             path: '/',
                             root: 'shop',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                }
+                            ]
                         });
                     })
                         .catch(function (err) { return _this.onError(err); });
@@ -143,6 +175,14 @@ module.exports = /** @class */ (function (_super) {
                             path: '/',
                             success: res.locals['success'],
                             root: 'shop',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                }
+                            ]
                         })];
                 }
                 return [2 /*return*/];
@@ -198,7 +238,19 @@ module.exports = /** @class */ (function (_super) {
                                                 nav_title: 'My Cart',
                                                 path: '/cart/',
                                                 products: cart_products,
-                                                root: 'pages'
+                                                root: 'shop',
+                                                js: ['js/main.js'],
+                                                css: ['css/main.css'],
+                                                breadcrumbs: [
+                                                    {
+                                                        title: 'Shop',
+                                                        url: '/'
+                                                    },
+                                                    {
+                                                        title: 'Cart',
+                                                        url: ''
+                                                    }
+                                                ]
                                             });
                                         })
                                             .catch(function (err) { return _this.onError(err); });
@@ -215,7 +267,19 @@ module.exports = /** @class */ (function (_super) {
                                 nav_title: 'My Cart',
                                 path: '/cart/',
                                 products: [],
-                                root: 'pages'
+                                root: 'shop',
+                                js: ['js/main.js'],
+                                css: ['css/main.css'],
+                                breadcrumbs: [
+                                    {
+                                        title: 'Shop',
+                                        url: '/'
+                                    },
+                                    {
+                                        title: 'Cart',
+                                        url: ''
+                                    }
+                                ]
                             });
                         }
                     }
@@ -224,7 +288,19 @@ module.exports = /** @class */ (function (_super) {
                             nav_title: 'My Cart',
                             path: '/cart/',
                             products: [],
-                            root: 'pages'
+                            root: 'shop',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                },
+                                {
+                                    title: 'Cart',
+                                    url: ''
+                                }
+                            ]
                         });
                     }
                 })

@@ -82,7 +82,9 @@ module.exports = /** @class */ (function (_super) {
                     return [2 /*return*/, this.render(res, 'shop/login', {
                             nav_title: 'Login',
                             path: '/login/',
-                            root: 'account'
+                            root: 'account',
+                            js: ['js/main.js'],
+                            css: ['css/main.css']
                         })];
                 }
                 else {
@@ -185,7 +187,9 @@ module.exports = /** @class */ (function (_super) {
                     return [2 /*return*/, this.render(res, 'shop/signup', {
                             nav_title: 'Sign up',
                             path: '/signup/',
-                            root: 'account'
+                            root: 'account',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
                         })];
                 }
                 else {

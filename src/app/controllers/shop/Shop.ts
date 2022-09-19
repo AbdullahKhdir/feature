@@ -81,7 +81,19 @@ export = class Shop extends BaseController {
                             products: rows,
                             nav_title: 'Products',
                             path: '/products/',
-                            root: 'shop'
+                            root: 'shop',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                },
+                                {
+                                    title: 'Products',
+                                    url: '/products/'
+                                }
+                            ]
                         }
                     );
                 })
@@ -93,7 +105,19 @@ export = class Shop extends BaseController {
                     products: [],
                     nav_title: 'Products',
                     path: '/products/',
-                    root: 'shop'
+                    root: 'shop',
+                    js: ['js/main.js'],
+                    css: ['css/main.css'],
+                    breadcrumbs: [
+                        {
+                            title: 'Shop',
+                            url: '/'
+                        },
+                        {
+                            title: 'Products',
+                            url: '/products/'
+                        }
+                    ]
                 }
             );
         }
@@ -129,6 +153,14 @@ export = class Shop extends BaseController {
                             nav_title: 'shop',
                             path: '/',
                             root: 'shop',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                }
+                            ]
                         }
                     );
                 })
@@ -143,6 +175,14 @@ export = class Shop extends BaseController {
                     path: '/',
                     success: res.locals['success'],
                     root: 'shop',
+                    js: ['js/main.js'],
+                    css: ['css/main.css'],
+                    breadcrumbs: [
+                        {
+                            title: 'Shop',
+                            url: '/'
+                        }
+                    ]
                 }
             );
         }
@@ -196,7 +236,19 @@ export = class Shop extends BaseController {
                                             nav_title: 'My Cart',
                                             path : '/cart/',
                                             products: cart_products,
-                                            root: 'pages'
+                                            root: 'shop',
+                                            js: ['js/main.js'],
+                                            css: ['css/main.css'],
+                                            breadcrumbs: [
+                                                {
+                                                    title: 'Shop',
+                                                    url: '/'
+                                                },
+                                                {
+                                                    title: 'Cart',
+                                                    url: ''
+                                                }
+                                            ]
                                         }
                                     );
                                 })
@@ -215,7 +267,19 @@ export = class Shop extends BaseController {
                             nav_title: 'My Cart',
                             path : '/cart/',
                             products: [],
-                            root: 'pages'
+                            root: 'shop',
+                            js: ['js/main.js'],
+                            css: ['css/main.css'],
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                },
+                                {
+                                    title: 'Cart',
+                                    url: ''
+                                }
+                            ]
                         }
                     );
                 }
@@ -227,7 +291,19 @@ export = class Shop extends BaseController {
                         nav_title: 'My Cart',
                         path : '/cart/',
                         products: [],
-                        root: 'pages'
+                        root: 'shop',
+                        js: ['js/main.js'],
+                        css: ['css/main.css'],
+                        breadcrumbs: [
+                            {
+                                title: 'Shop',
+                                url: '/'
+                            },
+                            {
+                                title: 'Cart',
+                                url: ''
+                            }
+                        ]
                     }
                 );
             }

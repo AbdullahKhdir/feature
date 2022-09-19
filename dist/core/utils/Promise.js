@@ -219,8 +219,7 @@ function default_1(execution) {
                     return;
                 },
                 /**
-                * @method cacheLandingPage
-                * @description Caches a response for 180 seconds for a page that changes frequently
+                 @description Caches a response for 180 seconds for a page that changes frequently
                 * @version 1.0.0
                 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
                 * @return void

@@ -21,7 +21,20 @@
     <!-- Material Icons-->
     <link href="../materialize/material_icons.css" rel="stylesheet">
     <!-- ####################################################################### -->
-    <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/cube.css">
     <link rel="stylesheet" href="../plugins/materialize/css/materialize.css"> 
     <!-- ####################################################################### -->
+    <% if (typeof js !== 'undefined') { %>
+      <% if (js.length > 0) { %>
+          <% js.forEach(file => { %>
+              <script type="text/javascript" src="/<%= file.toString() %>" defer></script>
+          <% }) %>
+      <% } %>
+  <% } %>
+  <% if (typeof css !== 'undefined') { %>
+      <% if (css.length > 0) { %>
+          <% css.forEach(file => { %>
+            <link rel="stylesheet" href="../<%= file.toString() %>"> 
+          <% }) %>
+      <% } %>
+  <% } %>

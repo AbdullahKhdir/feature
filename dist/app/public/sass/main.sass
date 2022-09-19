@@ -17,6 +17,8 @@ $error: #ec7272
 $warning: #ffde00
 $information: #89CFFD
 
+$dark-blue-sidenav-color-whitish: #666b6e
+
 body
   background-image: url('/images/background.png')
 
@@ -198,3 +200,25 @@ nav
   color: $dark-blue-sidenav-color !important // sass-lint:disable-line no-important
   background-color: $information !important // sass-lint:disable-line no-important
 
+.breadcrumb
+  font-size: 15px !important // sass-lint:disable-line no-important
+  color: $dark-blue-sidenav-color-whitish !important // sass-lint:disable-line no-important
+
+.adjust-text-padding
+  position: relative
+  padding-left: 20px !important // sass-lint:disable-line no-important
+  top: -10px
+
+.breadcrumb-div
+  position: relative !important // sass-lint:disable-line no-important
+  display: block !important // sass-lint:disable-line no-important
+  background-color: #efefef !important // sass-lint:disable-line no-important
+
+.breadcrumb-nav
+  height: 40px !important // sass-lint:disable-line no-important
+
+.breadcrumb:before
+  color: $dark-blue-sidenav-color-whitish !important // sass-lint:disable-line no-important
+
+.breadcrumb:last-child
+  color: $dark-blue-sidenav-color !important // sass-lint:disable-line no-important
