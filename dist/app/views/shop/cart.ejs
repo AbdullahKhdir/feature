@@ -24,16 +24,16 @@
                                         <div class="quantity-icon btn-floating  waves-effect waves-darken white black-text">x<%= product.quantity %></div>
                                         <form id="remove_products" action="/cart/delete-items/" method="POST">
                                             <input type="hidden" name="_csrf" value="<%= csrf %>">
-                                            <input type="hidden" name="product_id" value="<%= product.product_id  %>">
-                                            <a id="clear_all" class="close-icon btn-floating waves-effect waves-darken white" title="Remove from cart"><i class="material-icons black-text">clear</i></a>
+                                            <input type="hidden" name="product_items_id" value="<%= product.product_id %>">
+                                            <button type="submit" class="close-icon btn-floating waves-effect waves-darken white" title="Remove from cart"><i class="material-icons black-text">clear</i></button>
                                         </form>
                                         <img src="<%= product.imageUrl %>" alt="<%= lodash.capitalize(product.title) %>">
                                         <form id="remove_one_product" action="/cart/delete-item/" method="POST">
                                             <input type="hidden" name="_csrf" value="<%= csrf %>">
-                                            <input type="hidden" name="product_id" value="<%= product.product_id  %>">
-                                            <a id="clear_one" class="btn-floating halfway-fab waves-effect waves-darken white black-text" title="Remove one product">
+                                            <input type="hidden" name="product_id" value="<%= product.product_id %>">
+                                            <button type="submit" class="btn-floating halfway-fab waves-effect waves-darken white black-text" title="Remove one product">
                                                 <i class="material-icons black-text">delete</i>
-                                            </a>
+                                            </button>
                                         </form>
                                     </div>
                                     <span class="span-card-title card-title"><%= lodash.capitalize(product.title) %></span>

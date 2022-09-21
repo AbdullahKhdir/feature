@@ -229,10 +229,14 @@ module.exports = /** @class */ (function (_super) {
                                         _this.product.filter(where_clause_1)
                                             .then(function (rows) {
                                             cart_products.forEach(function (cart_product, index) {
-                                                cart_products[index]['title'] = rows[index].title;
-                                                cart_products[index]['description'] = rows[index].description;
-                                                cart_products[index]['imageUrl'] = rows[index].imageUrl;
-                                                cart_products[index]['product_id'] = rows[index].id;
+                                                rows.forEach(function (_row, row_index) {
+                                                    if (_row.id === cart_product.product_id) {
+                                                        cart_product['title'] = _row.title;
+                                                        cart_product['description'] = _row.description;
+                                                        cart_product['imageUrl'] = _row.imageUrl;
+                                                        cart_product['product_id'] = _row.id;
+                                                    }
+                                                });
                                             });
                                             return _this.render(res, 'shop/cart', {
                                                 nav_title: 'My Cart',
@@ -253,14 +257,14 @@ module.exports = /** @class */ (function (_super) {
                                                 ]
                                             });
                                         })
-                                            .catch(function (err) { return _this.onError(err); });
+                                            .catch(function (err) { return _this.onError(res, err); });
                                     }
                                 }
                                 else {
                                     return _this.redirect(res, '/', _this.constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER);
                                 }
                             })
-                                .catch(function (err) { return _this.onError(err); });
+                                .catch(function (err) { return _this.onError(res, err); });
                         }
                         else {
                             return _this.render(res, 'shop/cart', {
@@ -320,7 +324,6 @@ module.exports = /** @class */ (function (_super) {
             var _this = this;
             var _a;
             return __generator(this, function (_b) {
-                // TODO: issue add to cart: adds always the same product
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
@@ -344,7 +347,7 @@ module.exports = /** @class */ (function (_super) {
                                             return _this.redirect(res, '/cart/');
                                         }
                                     }))
-                                        .catch(function (err) { return _this.onError(err); });
+                                        .catch(function (err) { return _this.onError(res, err); });
                                 }
                                 else {
                                     var cart_item_params = {
@@ -707,35 +710,31 @@ module.exports = /** @class */ (function (_super) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
-                cart_item_product_id = (_a = req.getFormPostedData('product_id')) !== null && _a !== void 0 ? _a : false;
+                cart_item_product_id = (_a = req.getFormPostedData('product_items_id')) !== null && _a !== void 0 ? _a : false;
                 if (cart_item_product_id) {
-                    // @ts-ignore 
                     this.cart_items_object.get({ product_id: cart_item_product_id }).then(function (result) {
                         if (result) {
                             _this.cart_items_object.delete({ product_id: cart_item_product_id })
-                                // @ts-ignore 
                                 .then(function (result) {
                                 if (result[0].affectedRows > 0) {
-                                    // @ts-ignore 
                                     _this.order_items_object.filter({ product_id: cart_item_product_id }).then(function (item) {
                                         if (typeof item !== 'undefined') {
                                             _this.order_items_object.delete({ product_id: cart_item_product_id })
-                                                // @ts-ignore 
                                                 .then(function (_result) {
                                                 if (_result[0].affectedRows > 0) {
                                                     return _this.redirect(res, '/cart/');
                                                 }
                                             })
-                                                .catch(function (err) { return _this.onError(err); });
+                                                .catch(function (err) { return _this.onError(res, err); });
                                         }
                                         else {
                                             return _this.redirect(res, '/cart/');
                                         }
                                     })
-                                        .catch(function (err) { return _this.onError(err); });
+                                        .catch(function (err) { return _this.onError(res, err); });
                                 }
                             })
-                                .catch(function (err) { return _this.onError(err); });
+                                .catch(function (err) { return _this.onError(res, err); });
                         }
                     });
                 }
@@ -759,12 +758,10 @@ module.exports = /** @class */ (function (_super) {
                 }
                 cart_item_product_id = (_a = req.getFormPostedData('product_id')) !== null && _a !== void 0 ? _a : false;
                 if (cart_item_product_id) {
-                    // @ts-ignore 
                     this.cart_items_object.get({ product_id: cart_item_product_id }).then(function (result) {
                         if (result) {
                             if (+result[0].product_id === +cart_item_product_id && result[0].quantity > 1) {
                                 _this.cart_items_object.update({ quantity: result[0].quantity - 1 }, result[0].id)
-                                    // @ts-ignore 
                                     .then(function (result) {
                                     if (result) {
                                         return _this.redirect(res, '/cart/');
@@ -774,7 +771,6 @@ module.exports = /** @class */ (function (_super) {
                             }
                             else {
                                 _this.cart_items_object.delete({ product_id: cart_item_product_id })
-                                    // @ts-ignore 
                                     .then(function (result) {
                                     if (result[0].affectedRows > 0) {
                                         return _this.redirect(res, '/cart/');

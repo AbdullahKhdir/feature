@@ -102,12 +102,3 @@ $(document).on('mouseover', '#encrypt_effect', function () {
     data = _data;
   }, 400);
 });
-
-
-$(document).on('click', '#clear_all', function () {
-  $('#remove_products').submit();
-});
-
-$(document).on('click', '#clear_one', function () {
-  $('#remove_one_product').submit();
-});

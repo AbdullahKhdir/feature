@@ -493,6 +493,20 @@ export = class BaseModel extends QueryBuilder {
                         return Promise.reject(new SQLException(`The Table ${table} does not exist in the database!`));
                     }
                     if (this.__.isObject(id)) {
+                        let where_clause: any = '';
+                        for (const key in id) {
+                            if (Object.hasOwnProperty.call(id, key)) {
+                                // @ts-ignore
+                                where_clause = where_clause + key + ' = ' + this._mysql.escape(id[key]) + ' AND ';
+                            }
+                        }
+                        if (this.__.isString(where_clause) && !this.__.isEmpty(where_clause)) {
+                            const where_clause_length = where_clause.length;
+                            where_clause = where_clause.substring(0, where_clause_length - 4);
+                        }
+                        where_clause = this._mysql.escape(where_clause)
+                        where_clause =  where_clause.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
+                        
                         return (async () => {
                             return await this.db.executeModelQuery(`DELETE FROM ${table} WHERE ?;`, id);
                         })()
@@ -583,7 +597,7 @@ export = class BaseModel extends QueryBuilder {
                         for (const key in sql_query) {
                             if (Object.hasOwnProperty.call(sql_query, key)) {
                                 // @ts-ignore
-                                where_clause = where_clause + key + ' = ' + this._mysql.escape(sql_query[key]) + ' OR ';
+                                where_clause = where_clause + key + ' = ' + this._mysql.escape(sql_query[key]) + ' AND ';
                             }
                         }
                         if (this.__.isString(where_clause) && !this.__.isEmpty(where_clause)) {

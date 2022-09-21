@@ -454,6 +454,19 @@ module.exports = /** @class */ (function (_super) {
                         return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")));
                     }
                     if (_this.__.isObject(id)) {
+                        var where_clause = '';
+                        for (var key in id) {
+                            if (Object.hasOwnProperty.call(id, key)) {
+                                // @ts-ignore
+                                where_clause = where_clause + key + ' = ' + _this._mysql.escape(id[key]) + ' AND ';
+                            }
+                        }
+                        if (_this.__.isString(where_clause) && !_this.__.isEmpty(where_clause)) {
+                            var where_clause_length = where_clause.length;
+                            where_clause = where_clause.substring(0, where_clause_length - 4);
+                        }
+                        where_clause = _this._mysql.escape(where_clause);
+                        where_clause = where_clause.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
                         return (function () { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
@@ -559,7 +572,7 @@ module.exports = /** @class */ (function (_super) {
                     for (var key in sql_query) {
                         if (Object.hasOwnProperty.call(sql_query, key)) {
                             // @ts-ignore
-                            where_clause_1 = where_clause_1 + key + ' = ' + _this._mysql.escape(sql_query[key]) + ' OR ';
+                            where_clause_1 = where_clause_1 + key + ' = ' + _this._mysql.escape(sql_query[key]) + ' AND ';
                         }
                     }
                     if (_this.__.isString(where_clause_1) && !_this.__.isEmpty(where_clause_1)) {

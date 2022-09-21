@@ -224,10 +224,14 @@ export = class Shop extends BaseController {
                                 this.product.filter(where_clause)
                                 .then((rows: any) => {
                                     cart_products.forEach((cart_product: any, index: any) => {
-                                        cart_products[index]['title']       = rows[index].title;
-                                        cart_products[index]['description'] = rows[index].description;
-                                        cart_products[index]['imageUrl']    = rows[index].imageUrl;
-                                        cart_products[index]['product_id']  = rows[index].id;
+                                        rows.forEach((_row: any, row_index: any) => {
+                                            if (_row.id === cart_product.product_id) {
+                                                cart_product['title']       = _row.title;
+                                                cart_product['description'] = _row.description;
+                                                cart_product['imageUrl']    = _row.imageUrl;
+                                                cart_product['product_id']  = _row.id;
+                                            }
+                                        });
                                     });
                                     return this.render(
                                         res,
@@ -252,13 +256,13 @@ export = class Shop extends BaseController {
                                         }
                                     );
                                 })
-                                .catch((err: any) => this.onError(err));
+                                .catch((err: any) => this.onError(res, err));
                             }
                         } else {
                             return this.redirect(res, '/', this.constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER);
                         }
                     })
-                    .catch((err: any) => this.onError(err));
+                    .catch((err: any) => this.onError(res, err));
                 } else {
                     return this.render(
                         res,
@@ -319,7 +323,6 @@ export = class Shop extends BaseController {
      * @returns Response
     */
     postCart = (): Router => this.route('post', '/cart/', this.cartMiddlewares(), async (req: Request, res: Response, next: NextFunction) => {
-        // TODO: issue add to cart: adds always the same product
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
@@ -332,20 +335,20 @@ export = class Shop extends BaseController {
             // @ts-ignore 
             this.cart_object.get({user_id: user_id}).then((rows: any) => {
                 if (!this.__.isEmpty(rows)) {
-                    const cart_id = rows[0].id;  
+                    const cart_id = rows[0].id;
                     this.cart_items_object.filter({cart_id: cart_id, product_id: product_id})
                     // @ts-ignore 
                     .then((cart_items_rows: any) => {
                         if (typeof cart_items_rows !== 'undefined') {
                             const quantity = cart_items_rows[0].quantity + 1;
-                            const id       = cart_items_rows[0].id; 
+                            const id       = cart_items_rows[0].id;
                             // @ts-ignore 
                             this.cart_items_object.update({quantity: quantity}, id).then(((check: any) => {
                                 if (check) {
                                     return this.redirect(res, '/cart/');
                                 }
                             }))
-                            .catch((err: any) => this.onError(err));
+                            .catch((err: any) => this.onError(res, err));
                         } else {
                             const cart_item_params = {
                                 cart_id: +cart_id,
@@ -698,7 +701,7 @@ export = class Shop extends BaseController {
             );
         }
     });
-    
+
     /**
      * @function deleteCartProducts
      * @description deleteCartProducts route
@@ -710,34 +713,31 @@ export = class Shop extends BaseController {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
-        const cart_item_product_id = req.getFormPostedData('product_id') ?? false;
+        const cart_item_product_id = req.getFormPostedData('product_items_id') ?? false;
+        
         if (cart_item_product_id) {
-            // @ts-ignore 
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result: any) => {
                 if (result) {
                     this.cart_items_object.delete({product_id: cart_item_product_id})
-                        // @ts-ignore 
                         .then((result: any) => {
                             if (result[0].affectedRows > 0) {
-                                // @ts-ignore 
                                 this.order_items_object.filter({product_id: cart_item_product_id}).then((item: any) => {
                                     if (typeof item !== 'undefined') {
                                         this.order_items_object.delete({product_id: cart_item_product_id})
-                                        // @ts-ignore 
                                         .then((_result: any) => {
                                             if (_result[0].affectedRows > 0) {
                                                 return this.redirect(res, '/cart/');
                                             }
                                         })
-                                        .catch((err: any) => this.onError(err));
+                                        .catch((err: any) => this.onError(res, err));
                                     } else {
                                         return this.redirect(res, '/cart/');
                                     }
                                 })
-                                .catch((err: any) => this.onError(err));
+                                .catch((err: any) => this.onError(res, err));
                             }
                         })
-                        .catch((err: any) => this.onError(err));
+                        .catch((err: any) => this.onError(res, err));
                 }
             });
         }
@@ -756,12 +756,10 @@ export = class Shop extends BaseController {
         }
         const cart_item_product_id = req.getFormPostedData('product_id') ?? false;
         if (cart_item_product_id) {
-            // @ts-ignore 
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result: any) => {
                 if (result) {
                     if (+result[0].product_id === +cart_item_product_id && result[0].quantity > 1) {
                         this.cart_items_object.update({quantity: result[0].quantity - 1}, result[0].id)
-                            // @ts-ignore 
                             .then((result: any) => {
                                 if (result) {
                                     return this.redirect(res, '/cart/');
@@ -770,7 +768,6 @@ export = class Shop extends BaseController {
                             .catch((err: any) => this.onError(err));
                     } else {
                         this.cart_items_object.delete({product_id: cart_item_product_id})
-                            // @ts-ignore 
                             .then((result: any) => {
                                 if (result[0].affectedRows > 0) {
                                     return this.redirect(res, '/cart/');

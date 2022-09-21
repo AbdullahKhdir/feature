@@ -9,6 +9,7 @@ import Cors from "cors";
 import Crypto from 'crypto';
 import Csrf from 'csurf';
 import { Express, NextFunction, Request, Response } from 'express';
+import Helmet from 'helmet';
 import Morgan from 'morgan';
 import BaseController from '../core/controller/BaseController.js';
 import ExpressSession from '../core/framework/ExpressSession.js';
@@ -16,7 +17,6 @@ import { Singleton } from '../core/Singleton/Singleton.js';
 import Locals from '../core/utils/AppLocals.js';
 import { reqUtil } from './middlewares/request_utilities';
 import { toast } from './middlewares/toast';
-import Helmet from 'helmet';
 
 /**
  * @class Application
@@ -68,7 +68,6 @@ export = class Application extends BaseController {
           ! referrerPolicy
           ! xssFilter
         */
-        // TODO: add exception for leage events emitter filename: init_ws.js
         this.app.use(Helmet.contentSecurityPolicy({
             directives: {
                 frameAncestors: ["'none'"]

@@ -25,6 +25,7 @@ var connect_flash_1 = __importDefault(require("connect-flash"));
 var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var crypto_1 = __importDefault(require("crypto"));
 var csurf_1 = __importDefault(require("csurf"));
+var helmet_1 = __importDefault(require("helmet"));
 var morgan_1 = __importDefault(require("morgan"));
 var BaseController_js_1 = __importDefault(require("../core/controller/BaseController.js"));
 var ExpressSession_js_1 = __importDefault(require("../core/framework/ExpressSession.js"));
@@ -32,7 +33,6 @@ var Singleton_js_1 = require("../core/Singleton/Singleton.js");
 var AppLocals_js_1 = __importDefault(require("../core/utils/AppLocals.js"));
 var request_utilities_1 = require("./middlewares/request_utilities");
 var toast_1 = require("./middlewares/toast");
-var helmet_1 = __importDefault(require("helmet"));
 module.exports = /** @class */ (function (_super) {
     __extends(Application, _super);
     function Application() {
@@ -67,7 +67,6 @@ module.exports = /** @class */ (function (_super) {
           ! referrerPolicy
           ! xssFilter
         */
-        // TODO: add exception for leage events emitter filename: init_ws.js
         _this.app.use(helmet_1.default.contentSecurityPolicy({
             directives: {
                 frameAncestors: ["'none'"]
