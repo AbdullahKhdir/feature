@@ -4,9 +4,10 @@ import { Singleton } from '../../core/Singleton/Singleton';
 export function reqUtil(req: Request, res: Response, next: NextFunction) {
     const constants = Singleton.getConstants();
     
-    res.globalPostFormData   = () => res.locals['post_data'] ? res.locals['post_data'][0] : '';
-    res.globalGetFormData    = () => res.locals['get_data']  ? res.locals['get_data'][0]  : '';
+    res.globalPostFormData   = () => res.locals['post_data'] ? res.locals['post_data'] : '';
+    res.globalGetFormData    = () => res.locals['get_data']  ? res.locals['get_data']  : '';
     
+    req.sendFormPostedData   = () => req.setProp('post_data', req.getAllFormPostedData());
     req.getAllFormPostedData = () => req.body ? req.body : '';
     req.getFormPostedData    = (param: string) => req.body ? req.body[param] ? req.body[param].toString() : '' : '';
     req.getQueryParams       = () => req.query ? req.query : '';

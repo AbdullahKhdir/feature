@@ -53,6 +53,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var express_validator_1 = require("express-validator");
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
 var init_user_session_1 = __importDefault(require("../../middlewares/init_user_session"));
 var is_auth_1 = __importDefault(require("../../middlewares/is_auth"));
@@ -72,8 +73,19 @@ module.exports = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 if (req.isGet()) {
                     return [2 /*return*/, this.render(res, 'admin/add-product', {
-                            page_title: 'Add Product',
-                            path: '/admin/add-product/'
+                            nav_title: 'Add Product',
+                            path: '/admin/add-product/',
+                            root: 'shop',
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                },
+                                {
+                                    title: 'Add Product',
+                                    url: '/admin/add-product/'
+                                }
+                            ]
                         })];
                 }
                 return [2 /*return*/, this.siteNotFound(res)];
@@ -136,6 +148,7 @@ module.exports = /** @class */ (function (_super) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
+                req.sendFormPostedData();
                 product_id = (_a = +req.getFormPostedData('product_id')) !== null && _a !== void 0 ? _a : false;
                 title = (_b = this.__.capitalize(req.getFormPostedData('title'))) !== null && _b !== void 0 ? _b : false;
                 price = (_c = req.getFormPostedData('price')) !== null && _c !== void 0 ? _c : false;
@@ -158,6 +171,20 @@ module.exports = /** @class */ (function (_super) {
                 return [2 /*return*/];
             });
         }); }); };
+        //******************************\\
+        //* Add Product middleware     *\\
+        //******************************\\
+        _this.validatedNewProduct = function () { return ({
+            is_authenticated: is_auth_1.default,
+            user_session: init_user_session_1.default,
+            validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
+            validate_imageUrl: (0, express_validator_1.check)('imageUrl').not().isEmpty().isURL().withMessage("Please enter products's image url!").bail(),
+            validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
+            validate_price: (0, express_validator_1.check)('price')
+                .isNumeric()
+                .withMessage("Please enter product's price!")
+                .bail()
+        }); };
         /**
          * @function addProduct
          * @description addProduct route
@@ -165,29 +192,43 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.addProduct = function () { return _this.route('post', '/admin/add-product/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var title, imageUrl, description, price, user_id;
+        _this.addProduct = function () { return _this.route('post', '/admin/add-product/', _this.validatedNewProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var title, imageUrl, description, price, user_id, errors;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
+                req.sendFormPostedData();
                 title = this.__.capitalize(req.getFormPostedData('title'));
                 imageUrl = req.getFormPostedData('imageUrl');
                 description = this.__.capitalize(req.getFormPostedData('description'));
                 price = req.getFormPostedData('price');
                 user_id = req.getCurrentUser().id;
-                this.product_object.create({ title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id })
-                    // @ts-ignore 
-                    .then(function (results) {
-                    var primary_key = results[0].insertId;
-                    if (primary_key) {
-                        return _this.redirect(res, '/');
-                    }
-                }).catch(function (err) { return _this.onError(err); });
+                errors = (0, express_validator_1.validationResult)(req);
+                if (errors.isEmpty()) {
+                    this.product_object.create({ title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id })
+                        .then(function (results) {
+                        var primary_key = results[0].insertId;
+                        if (primary_key) {
+                            return _this.redirect(res, '/');
+                        }
+                    }).catch(function (err) { return _this.onError(err); });
+                }
+                else {
+                    return [2 /*return*/, this.onErrorValidation(res, errors.array())];
+                }
                 return [2 /*return*/];
             });
         }); }); };
+        //******************************\\
+        //* Add Product middleware     *\\
+        //******************************\\
+        _this.validatedDeleteProduct = function () { return ({
+            is_authenticated: is_auth_1.default,
+            user_session: init_user_session_1.default,
+            validate_title: (0, express_validator_1.check)('product_id').not().isEmpty().isNumeric().withMessage("Product could not be deleted, please talk to the technical team!").bail()
+        }); };
         /**
          * @function deleteProduct
          * @description deleteProduct route
@@ -195,29 +236,34 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.deleteProduct = function () { return _this.route('post', '/admin/delete-product/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var product_id, user_id;
+        _this.deleteProduct = function () { return _this.route('post', '/admin/delete-product/', _this.validatedDeleteProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var product_id, user_id, errors;
             var _this = this;
-            var _a, _b;
-            return __generator(this, function (_c) {
+            return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
-                product_id = (_a = req.getFormPostedData('product_id')) !== null && _a !== void 0 ? _a : false;
-                user_id = (_b = +req.getCurrentUser().id) !== null && _b !== void 0 ? _b : false;
-                if (product_id && user_id) {
-                    this.product_object.get({ id: product_id, user_id: user_id })
-                        // @ts-ignore 
-                        .then(function (rows) {
-                        if (!_this.__.isEmpty(rows)) {
-                            var id = rows[0].id;
-                            // @ts-ignore 
-                            _this.product_object.delete(id).then(function (result) {
-                                return _this.redirect(res, '/admin/products/');
-                            }).catch(function (err) { return _this.onError(err); });
-                        }
-                    })
-                        .catch(function (err) { return _this.onError(err); });
+                res.noCacheNeeded();
+                product_id = req.getFormPostedData('product_id');
+                user_id = +req.getCurrentUser().id;
+                errors = (0, express_validator_1.validationResult)(req);
+                console.log(product_id);
+                if (errors.isEmpty()) {
+                    if (product_id && user_id) {
+                        this.product_object.get({ id: product_id, user_id: user_id })
+                            .then(function (rows) {
+                            if (!_this.__.isEmpty(rows)) {
+                                var id = rows[0].id;
+                                _this.product_object.delete(id).then(function (result) {
+                                    return _this.redirect(res, '/admin/products/');
+                                }).catch(function (err) { return _this.onError(res, err); });
+                            }
+                        })
+                            .catch(function (err) { return _this.onError(res, err); });
+                    }
+                }
+                else {
+                    return [2 /*return*/, this.onErrorValidation(res, errors.array())];
                 }
                 return [2 /*return*/];
             });
@@ -242,8 +288,19 @@ module.exports = /** @class */ (function (_super) {
                     .then(function (rows) {
                     return _this.render(res, 'admin/products', {
                         products: rows !== null && rows !== void 0 ? rows : [],
-                        page_title: 'Admin Products',
-                        path: '/admin/products/'
+                        nav_title: 'Admin Products',
+                        path: '/admin/products/',
+                        root: 'shop',
+                        breadcrumbs: [
+                            {
+                                title: 'Shop',
+                                url: '/'
+                            },
+                            {
+                                title: 'Admin Product',
+                                url: '/admin/products/'
+                            }
+                        ]
                     });
                 })
                     .catch(function (err) { return _this.onError(err); });

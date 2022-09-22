@@ -54,6 +54,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
+var express_validator_1 = require("express-validator");
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
 var cryptr_1 = require("../../../core/utils/cryptr");
 var init_user_session_1 = __importDefault(require("../../middlewares/init_user_session"));
@@ -78,13 +79,12 @@ module.exports = /** @class */ (function (_super) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.noCacheNeeded();
+                res.globalPostFormData();
                 if (!req.session.is_authenticated) {
                     return [2 /*return*/, this.render(res, 'shop/login', {
                             nav_title: 'Login',
                             path: '/login/',
-                            root: 'account',
-                            js: ['js/main.js'],
-                            css: ['css/main.css']
+                            root: 'account'
                         })];
                 }
                 else {
@@ -100,73 +100,76 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.postAuthenticate = function () { return _this.route('post', '/login/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var email, password, forgot_password;
+        _this.postAuthenticate = function () { return _this.route('post', '/login/', _this.validatedLogin(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var errors, email, password, forgot_password;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
+                req.sendFormPostedData();
+                errors = (0, express_validator_1.validationResult)(req);
                 email = req.getFormPostedData('email');
                 password = req.getFormPostedData('password');
                 forgot_password = req.getFormPostedData('password_reset');
                 if (!this.__.isEmpty(forgot_password)) {
                     return [2 /*return*/, this.redirect(res, '/reset')];
                 }
-                if (this.__.isEmpty(email) || this.__.isEmpty(password)) {
-                    req.setProp('warning', 'Email and password must not be empty!');
-                    return [2 /*return*/, this.redirect(res, '/login')];
-                }
-                this.user.get({ email: email })
-                    .then(function (rows) {
-                    if (typeof rows === 'undefined' || rows == null || _this.__.isEmpty(rows) || rows.length === 0) {
-                        req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
-                        return _this.redirect(res, '/login');
-                    }
-                    rows = rows[0];
-                    if (rows) {
-                        bcryptjs_1.default.compare(password, rows.password)
-                            .then(function (do_match) {
-                            if (do_match) {
-                                if (typeof rows !== 'undefined') {
-                                    req.session.currentUser = rows;
-                                    req.session.save(function (err) {
-                                        if (err) {
-                                            return _this.onError(res, err);
-                                        }
-                                        if (!res.headersSent) {
-                                            req.session.is_authenticated = true;
-                                            _this.user_security_questions.filter({ user_id: req.session.currentUser.id })
-                                                // @ts-ignore 
-                                                .then(function (result) {
-                                                if (typeof result !== 'undefined') {
-                                                    if (result) {
-                                                        return _this.redirect(res, '/');
+                if (errors.isEmpty()) {
+                    this.user.get({ email: email })
+                        .then(function (rows) {
+                        if (typeof rows === 'undefined' || rows == null || _this.__.isEmpty(rows) || rows.length === 0) {
+                            req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                            return _this.redirect(res, '/login');
+                        }
+                        rows = rows[0];
+                        if (rows) {
+                            bcryptjs_1.default.compare(password, rows.password)
+                                .then(function (do_match) {
+                                if (do_match) {
+                                    if (typeof rows !== 'undefined') {
+                                        req.session.currentUser = rows;
+                                        req.session.save(function (err) {
+                                            if (err) {
+                                                return _this.onError(res, err);
+                                            }
+                                            if (!res.headersSent) {
+                                                req.session.is_authenticated = true;
+                                                _this.user_security_questions.filter({ user_id: req.session.currentUser.id })
+                                                    // @ts-ignore 
+                                                    .then(function (result) {
+                                                    if (typeof result !== 'undefined') {
+                                                        if (result) {
+                                                            return _this.redirect(res, '/');
+                                                        }
                                                     }
-                                                }
-                                                else {
-                                                    req.setProp('warning', 'You have not submitted any security questions, Please choose and answer two security questions!');
-                                                    return _this.redirect(res, '/security');
-                                                }
-                                            })
-                                                .catch(function (err) { return _this.onError(res, err); });
-                                        }
-                                    });
+                                                    else {
+                                                        req.setProp('warning', 'You have not submitted any security questions, Please choose and answer two security questions!');
+                                                        return _this.redirect(res, '/security');
+                                                    }
+                                                })
+                                                    .catch(function (err) { return _this.onError(res, err); });
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                            else {
-                                req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
-                                return _this.redirect(res, '/login');
-                            }
-                        })
-                            .catch(function (err) { return _this.onError(res, err); });
-                    }
-                    else {
-                        req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
-                        return _this.redirect(res, '/login');
-                    }
-                })
-                    .catch(function (err) { return _this.onError(res, err); });
+                                else {
+                                    req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                                    return _this.redirect(res, '/login');
+                                }
+                            })
+                                .catch(function (err) { return _this.onError(res, err); });
+                        }
+                        else {
+                            req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                            return _this.redirect(res, '/login');
+                        }
+                    })
+                        .catch(function (err) { return _this.onError(res, err); });
+                }
+                else {
+                    return [2 /*return*/, this.onErrorValidation(res, errors.array())];
+                }
                 return [2 /*return*/];
             });
         }); }); };
@@ -187,9 +190,7 @@ module.exports = /** @class */ (function (_super) {
                     return [2 /*return*/, this.render(res, 'shop/signup', {
                             nav_title: 'Sign up',
                             path: '/signup/',
-                            root: 'account',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
+                            root: 'account'
                         })];
                 }
                 else {
@@ -205,52 +206,46 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.postSignUp = function () { return _this.route('post', '/signup/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var first_name, last_name, email, password, confirm_password;
+        _this.postSignUp = function () { return _this.route('post', '/signup/', _this.validatedSignUp(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var first_name, last_name, email, password, errors;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
+                req.sendFormPostedData();
                 first_name = req.getFormPostedData('first_name');
                 last_name = req.getFormPostedData('last_name');
                 email = req.getFormPostedData('email');
                 password = req.getFormPostedData('password');
-                confirm_password = req.getFormPostedData('confirm_password');
-                if (confirm_password !== password) {
-                    req.setProp('error', 'Passwords do not match!');
-                    return [2 /*return*/, this.redirect(res, '/signup')];
-                }
-                if (this.__.isEmpty(email) || this.__.isEmpty(password)
-                    || this.__.isEmpty(first_name) || this.__.isEmpty(last_name)
-                    || this.__.isEmpty(confirm_password)) {
-                    req.setProp('warning', 'Please fill out all the fields!');
-                    return [2 /*return*/, this.redirect(res, '/signup')];
-                }
-                this.user.filter({ first_name: first_name, last_name: last_name, email: email })
-                    // @ts-ignore 
-                    .then(function (rows) {
-                    if (!rows) {
-                        bcryptjs_1.default.hash(password, 12)
-                            .then(function (hashed_password) {
-                            _this.user.create({ first_name: first_name, last_name: last_name, email: email, password: hashed_password })
-                                // @ts-ignore 
-                                .then(function (result) {
-                                if (result) {
-                                    req.setProp('warning', 'Security questions are not provided yet!, please set two security questions!');
-                                    return _this.redirect(res, '/security');
-                                }
+                errors = (0, express_validator_1.validationResult)(req);
+                if (errors.isEmpty()) {
+                    this.user.filter({ first_name: first_name, last_name: last_name, email: email })
+                        .then(function (rows) {
+                        if (!rows) {
+                            bcryptjs_1.default.hash(password, 12)
+                                .then(function (hashed_password) {
+                                _this.user.create({ first_name: first_name, last_name: last_name, email: email, password: hashed_password })
+                                    .then(function (result) {
+                                    if (result) {
+                                        req.setProp('warning', 'Security questions are not provided yet!, please set two security questions!');
+                                        return _this.redirect(res, '/security');
+                                    }
+                                })
+                                    .catch(function (err) { return _this.onError(res, err); });
                             })
                                 .catch(function (err) { return _this.onError(res, err); });
-                        })
-                            .catch(function (err) { return _this.onError(res, err); });
-                    }
-                    else {
-                        req.setProp('error', 'Email is already registered!');
-                        return _this.redirect(res, '/login');
-                    }
-                })
-                    .catch(function (err) { return _this.onError(res, err); });
+                        }
+                        else {
+                            req.setProp('error', 'Email is already registered!');
+                            return _this.redirect(res, '/login');
+                        }
+                    })
+                        .catch(function (err) { return _this.onError(res, err); });
+                }
+                else {
+                    return [2 /*return*/, this.onErrorValidation(res, errors.array())];
+                }
                 return [2 /*return*/];
             });
         }); }); };
@@ -421,21 +416,17 @@ module.exports = /** @class */ (function (_super) {
                 second_answer = req.getFormPostedData('second_answer');
                 this.security_questions
                     .filter()
-                    // @ts-ignore 
                     .then(function (questions) {
                     if (typeof questions !== 'undefined') {
                         return questions;
                     }
                 })
-                    // @ts-ignore 
                     .then(function (questions) {
                     _this.user.filter({ email: email })
-                        // @ts-ignore 
                         .then(function (result) {
                         if (result) {
                             result = result[0];
                             _this.user_security_questions.filter({ user_id: result.id })
-                                // @ts-ignore 
                                 .then(function (result) {
                                 if (result) {
                                     var _first_result = result[0];
@@ -493,13 +484,12 @@ module.exports = /** @class */ (function (_super) {
                 first_answer = null;
                 second_answer = null;
                 if (Object.keys(params).length > 0) {
-                    first_question = params.security_questions[0] ? params.security_questions[0] : '';
-                    second_question = params.security_questions[1] ? params.security_questions[1] : '';
-                    first_answer = params.first_answer ? params.first_answer : '';
-                    second_answer = params.second_answer ? params.second_answer : '';
+                    first_question = params['security_questions'] ? params.security_questions[0] ? params.security_questions[0] : '' : '';
+                    second_question = params['security_questions'] ? params.security_questions[1] ? params.security_questions[1] : '' : '';
+                    first_answer = params['first_answer'] ? params.first_answer ? params.first_answer : '' : '';
+                    second_answer = params['second_answer'] ? params.second_answer ? params.second_answer : '' : '';
                     this.security_questions
                         .filter()
-                        // @ts-ignore 
                         .then(function (questions) {
                         if (typeof questions !== 'undefined') {
                             return questions;
@@ -522,7 +512,6 @@ module.exports = /** @class */ (function (_super) {
                 }
                 else {
                     this.user_security_questions.filter({ user_id: req.getCurrentUser().id })
-                        // @ts-ignore 
                         .then(function (result) {
                         if (result) {
                             first_question = result[0].question;
@@ -532,7 +521,6 @@ module.exports = /** @class */ (function (_super) {
                             var questions = [];
                             _this.security_questions
                                 .filter()
-                                // @ts-ignore 
                                 .then(function (questions) {
                                 if (typeof questions !== 'undefined') {
                                     return _this.render(res, 'shop/security', {
@@ -552,13 +540,11 @@ module.exports = /** @class */ (function (_super) {
                         else {
                             _this.security_questions
                                 .filter()
-                                // @ts-ignore 
                                 .then(function (questions) {
                                 if (typeof questions !== 'undefined') {
                                     return questions;
                                 }
                             })
-                                // @ts-ignore 
                                 .then(function (questions) {
                                 return _this.render(res, 'shop/security', {
                                     page_title: 'Security Questions',
@@ -572,11 +558,9 @@ module.exports = /** @class */ (function (_super) {
                                     second_answer: second_answer !== null && second_answer !== void 0 ? second_answer : ''
                                 });
                             })
-                                // @ts-ignore 
                                 .catch(function (err) { return _this.onError(res, err); });
                         }
                     })
-                        // @ts-ignore 
                         .catch(function (err) { return _this.onError(res, err); });
                 }
                 return [2 /*return*/];
@@ -600,7 +584,9 @@ module.exports = /** @class */ (function (_super) {
                     || this.__.isEmpty(req.getFormPostedData('first_answer'))
                     || this.__.isEmpty(req.getFormPostedData('second_answer'))) {
                     req.setProp('warning', 'Please choose and answer two security questions!');
-                    req.setProp('post_data', req.getAllFormPostedData());
+                    // will be triggered through the following function call
+                    req.sendFormPostedData();
+                    // req.setProp('post_data', req.getAllFormPostedData());
                     return [2 /*return*/, this.redirect(res, '/security')];
                 }
                 _a = req.getFormPostedData('security_questions'), first_question = _a[0], second_question = _a[1];
@@ -610,7 +596,6 @@ module.exports = /** @class */ (function (_super) {
                     user_id: req.getCurrentUser().id,
                     question: first_question,
                     answer: (0, cryptr_1.encrypt)(first_answer)
-                    // @ts-ignore 
                 }).then(function (result) {
                     if (result) {
                         _this.user_security_questions.create({
@@ -722,10 +707,42 @@ module.exports = /** @class */ (function (_super) {
         //* Process protected functions
         //**************************************************************************
         //******************************\\
-        //* Auth            middleware *\\
+        //* Auth middleware            *\\
         //******************************\\
         _this.getAuthLoginMiddleware = function () { return ({
             cors: _this.express.express_cors(_this.corsOptionsDelegate)
+        }); };
+        //******************************\\
+        //* Sign up middleware         *\\
+        //******************************\\
+        _this.validatedSignUp = function () { return ({
+            validate_first_name: (0, express_validator_1.check)('first_name').not().isEmpty().withMessage('Please enter your firstname!').bail(),
+            validate_last_name: (0, express_validator_1.check)('last_name').not().isEmpty().withMessage('Please enter your lastname!').bail(),
+            validate_email: (0, express_validator_1.check)('email').isEmail().withMessage('Please enter a valid email!').bail(),
+            validate_password: (0, express_validator_1.check)('password')
+                .isStrongPassword({
+                minLength: 8,
+                minLowercase: 1,
+                minNumbers: 1,
+                minUppercase: 1,
+                minSymbols: 1
+            })
+                .withMessage("Please enter a password with minimum length of 8\n                                        , one lower case character\n                                        , one upper case character\n                                        , one symbol\n                                        and one number")
+                .bail(),
+            validate_confirm_password: (0, express_validator_1.check)('confirm_password').custom(function (value, _a) {
+                var req = _a.req;
+                if (value !== req.body.password) {
+                    throw new Error('Password confirmation does not match password!');
+                }
+                return true;
+            }).withMessage('Password confirmation does not match password!').bail()
+        }); };
+        //******************************\\
+        //* Sign in middleware         *\\
+        //******************************\\
+        _this.validatedLogin = function () { return ({
+            validate_email: (0, express_validator_1.check)('email').isEmail().withMessage('Please enter a valid email!').bail(),
+            validate_password: (0, express_validator_1.check)('password').not().isEmpty().withMessage('Please enter your password!').bail()
         }); };
         _this.methods = [
             'getAuthenticate',

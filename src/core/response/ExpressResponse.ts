@@ -143,10 +143,13 @@ export abstract class ExpressResponse {
         if (typeof errors !== 'undefined') {
             if (errors.length >= 0) {
                 let obj_warnings = {};
+                let errored_params = {};
                 errors.forEach((error: any, index: any) => {
                     Object.assign(obj_warnings, {[index]:`${error.msg}`});
+                    Object.assign(errored_params, {[index]:`${error.param}`});
                 });
                 res.req.flash('validation_errors', JSON.stringify(obj_warnings));
+                res.req.flash('errored_inputs', JSON.stringify(errored_params));
             }
         }
         if (res.req.method === this.codes.REQUEST.TYPE.GET) {

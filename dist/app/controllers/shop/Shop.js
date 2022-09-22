@@ -93,8 +93,6 @@ module.exports = /** @class */ (function (_super) {
                             nav_title: 'Products',
                             path: '/products/',
                             root: 'shop',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -115,8 +113,6 @@ module.exports = /** @class */ (function (_super) {
                             nav_title: 'Products',
                             path: '/products/',
                             root: 'shop',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -156,8 +152,6 @@ module.exports = /** @class */ (function (_super) {
                             nav_title: 'shop',
                             path: '/',
                             root: 'shop',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -175,8 +169,6 @@ module.exports = /** @class */ (function (_super) {
                             path: '/',
                             success: res.locals['success'],
                             root: 'shop',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -243,8 +235,6 @@ module.exports = /** @class */ (function (_super) {
                                                 path: '/cart/',
                                                 products: cart_products,
                                                 root: 'shop',
-                                                js: ['js/main.js'],
-                                                css: ['css/main.css'],
                                                 breadcrumbs: [
                                                     {
                                                         title: 'Shop',
@@ -272,8 +262,6 @@ module.exports = /** @class */ (function (_super) {
                                 path: '/cart/',
                                 products: [],
                                 root: 'shop',
-                                js: ['js/main.js'],
-                                css: ['css/main.css'],
                                 breadcrumbs: [
                                     {
                                         title: 'Shop',
@@ -293,8 +281,6 @@ module.exports = /** @class */ (function (_super) {
                             path: '/cart/',
                             products: [],
                             root: 'shop',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',

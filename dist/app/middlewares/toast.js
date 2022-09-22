@@ -6,6 +6,7 @@ function toast(req, res, next, app) {
     var __ = Singleton_1.Singleton.getLodash();
     var _flash_array = req.flash();
     var validation_errors = null;
+    var errored_inputs = null;
     var error = null;
     var warning = null;
     var success = null;
@@ -21,7 +22,7 @@ function toast(req, res, next, app) {
         success = _flash_array['success'];
     }
     if (typeof _flash_array['post_data'] !== 'undefined') {
-        post_data = _flash_array['post_data'];
+        post_data = _flash_array['post_data'][0];
     }
     if (typeof _flash_array['get_data'] !== 'undefined') {
         get_data = _flash_array['get_data'];
@@ -29,16 +30,19 @@ function toast(req, res, next, app) {
     if (typeof _flash_array['validation_errors'] !== 'undefined') {
         validation_errors = JSON.parse(_flash_array['validation_errors']);
     }
+    if (typeof _flash_array['errored_inputs'] !== 'undefined') {
+        errored_inputs = JSON.parse(_flash_array['errored_inputs']);
+    }
     res.locals['error'] = error;
     res.locals['warning'] = warning;
     res.locals['success'] = success;
     res.locals['validation_errors'] = validation_errors;
-    res.locals['post_data'] = post_data;
+    res.locals['errored_inputs'] = errored_inputs;
+    res.locals['post_data'] = post_data !== null && post_data !== void 0 ? post_data : {};
     res.locals['get_data'] = get_data;
     app.locals.error = error;
     app.locals.warning = warning;
     app.locals.success = success;
-    res.locals['validation_errors'] = validation_errors;
     app.locals.post_data = post_data;
     app.locals.get_data = get_data;
     req.props = function () { return _flash_array; };

@@ -154,11 +154,14 @@ var ExpressResponse = /** @class */ (function () {
         if (typeof errors !== 'undefined') {
             if (errors.length >= 0) {
                 var obj_warnings_1 = {};
+                var errored_params_1 = {};
                 errors.forEach(function (error, index) {
-                    var _a;
+                    var _a, _b;
                     Object.assign(obj_warnings_1, (_a = {}, _a[index] = "".concat(error.msg), _a));
+                    Object.assign(errored_params_1, (_b = {}, _b[index] = "".concat(error.param), _b));
                 });
                 res.req.flash('validation_errors', JSON.stringify(obj_warnings_1));
+                res.req.flash('errored_inputs', JSON.stringify(errored_params_1));
             }
         }
         if (res.req.method === this.codes.REQUEST.TYPE.GET) {

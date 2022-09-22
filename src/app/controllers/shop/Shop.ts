@@ -82,8 +82,6 @@ export = class Shop extends BaseController {
                             nav_title: 'Products',
                             path: '/products/',
                             root: 'shop',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -106,8 +104,6 @@ export = class Shop extends BaseController {
                     nav_title: 'Products',
                     path: '/products/',
                     root: 'shop',
-                    js: ['js/main.js'],
-                    css: ['css/main.css'],
                     breadcrumbs: [
                         {
                             title: 'Shop',
@@ -153,8 +149,6 @@ export = class Shop extends BaseController {
                             nav_title: 'shop',
                             path: '/',
                             root: 'shop',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -175,8 +169,6 @@ export = class Shop extends BaseController {
                     path: '/',
                     success: res.locals['success'],
                     root: 'shop',
-                    js: ['js/main.js'],
-                    css: ['css/main.css'],
                     breadcrumbs: [
                         {
                             title: 'Shop',
@@ -241,8 +233,6 @@ export = class Shop extends BaseController {
                                             path : '/cart/',
                                             products: cart_products,
                                             root: 'shop',
-                                            js: ['js/main.js'],
-                                            css: ['css/main.css'],
                                             breadcrumbs: [
                                                 {
                                                     title: 'Shop',
@@ -272,8 +262,6 @@ export = class Shop extends BaseController {
                             path : '/cart/',
                             products: [],
                             root: 'shop',
-                            js: ['js/main.js'],
-                            css: ['css/main.css'],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -296,8 +284,6 @@ export = class Shop extends BaseController {
                         path : '/cart/',
                         products: [],
                         root: 'shop',
-                        js: ['js/main.js'],
-                        css: ['css/main.css'],
                         breadcrumbs: [
                             {
                                 title: 'Shop',

@@ -2,6 +2,7 @@
 
 import becrypt from 'bcryptjs';
 import { NextFunction, Request, Response } from 'express';
+import { check, validationResult } from 'express-validator';
 import BaseController from "../../../core/controller/BaseController";
 import { decrypt, encrypt } from "../../../core/utils/cryptr";
 import userSession from "../../middlewares/init_user_session";
@@ -80,15 +81,13 @@ export = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getAuthenticate           = () => this.route(
-        'get', 
-        '/login/', 
-        this.getAuthLoginMiddleware(), 
-        async (req: Request, res: Response, next: NextFunction) => {
+    getAuthenticate           = () => this.route('get', '/login/', this.getAuthLoginMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
         res.noCacheNeeded();
+        res.globalPostFormData();
+        
         if (!req.session.is_authenticated) {
             return this.render(
                 res,
@@ -96,9 +95,7 @@ export = class Auth extends BaseController {
                 {
                     nav_title: 'Login',
                     path : '/login/',
-                    root : 'account',
-                    js: ['js/main.js'],
-                    css: ['css/main.css']
+                    root : 'account'
                 }
             );
         } else {
@@ -113,11 +110,12 @@ export = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postAuthenticate          = () => this.route('post', '/login/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    postAuthenticate          = () => this.route('post', '/login/', this.validatedLogin(), async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
-        
+        req.sendFormPostedData();
+        const errors = validationResult(req);
         const email           = req.getFormPostedData('email');
         const password        = req.getFormPostedData('password');
         const forgot_password = req.getFormPostedData('password_reset')
@@ -126,61 +124,60 @@ export = class Auth extends BaseController {
             return this.redirect(res, '/reset');
         }
 
-        if (this.__.isEmpty(email) || this.__.isEmpty(password)) {
-            req.setProp('warning', 'Email and password must not be empty!');
-            return this.redirect(res, '/login');
-        }
-
-        this.user.get({email: email})
-        .then((rows) => {
-            if (typeof rows === 'undefined' || rows == null || this.__.isEmpty(rows) || rows.length === 0) {
-                req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
-                return this.redirect(res, '/login');
-            }
-            rows = rows[0];
-            if (rows) {
-                becrypt.compare(password, rows.password)
-                .then(do_match => {
-                    if (do_match) {
-                        if (typeof rows !== 'undefined') {
-                            req.session.currentUser = rows;
-                            req.session.save((err: any) => {
-                                if (err) {
-                                    return this.onError(res, err)
-                                }
-                                if (!res.headersSent) {
-                                    req.session.is_authenticated = true;
-                                    this.user_security_questions.filter({user_id: req.session.currentUser.id})
-                                    // @ts-ignore 
-                                    .then((result: any) => {
-                                        if (typeof result !== 'undefined') {
-                                            if (result) {
-                                                return this.redirect(res, '/');    
+        if (errors.isEmpty()) {
+            this.user.get({email: email})
+            .then((rows) => {
+                if (typeof rows === 'undefined' || rows == null || this.__.isEmpty(rows) || rows.length === 0) {
+                    req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                    return this.redirect(res, '/login');
+                }
+                rows = rows[0];
+                if (rows) {
+                    becrypt.compare(password, rows.password)
+                    .then(do_match => {
+                        if (do_match) {
+                            if (typeof rows !== 'undefined') {
+                                req.session.currentUser = rows;
+                                req.session.save((err: any) => {
+                                    if (err) {
+                                        return this.onError(res, err)
+                                    }
+                                    if (!res.headersSent) {
+                                        req.session.is_authenticated = true;
+                                        this.user_security_questions.filter({user_id: req.session.currentUser.id})
+                                        // @ts-ignore 
+                                        .then((result: any) => {
+                                            if (typeof result !== 'undefined') {
+                                                if (result) {
+                                                    return this.redirect(res, '/');    
+                                                }
+                                            } else {
+                                                req.setProp(
+                                                    'warning',
+                                                    'You have not submitted any security questions, Please choose and answer two security questions!'
+                                                );
+                                                return this.redirect(res, '/security');
                                             }
-                                        } else {
-                                            req.setProp(
-                                                'warning',
-                                                'You have not submitted any security questions, Please choose and answer two security questions!'
-                                            );
-                                            return this.redirect(res, '/security');
-                                        }
-                                    })
-                                    .catch((err: any) => this.onError(res, err))
-                                }
-                            });
+                                        })
+                                        .catch((err: any) => this.onError(res, err))
+                                    }
+                                });
+                            }
+                        } else {
+                            req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                            return this.redirect(res, '/login');
                         }
-                    } else {
-                        req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
-                        return this.redirect(res, '/login');
-                    }
-                })
-                .catch(err => this.onError(res, err))
-            } else {
-                req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
-                return this.redirect(res, '/login');
-            }
-        })
-        .catch((err: any) => this.onError(res, err))
+                    })
+                    .catch(err => this.onError(res, err))
+                } else {
+                    req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
+                    return this.redirect(res, '/login');
+                }
+            })
+            .catch((err: any) => this.onError(res, err))
+        } else {
+            return this.onErrorValidation(res, errors.array())
+        }
     });
 
     /**
@@ -202,9 +199,7 @@ export = class Auth extends BaseController {
                 {
                     nav_title: 'Sign up',
                     path : '/signup/',
-                    root: 'account',
-                    js: ['js/main.js'],
-                    css: ['css/main.css'],
+                    root: 'account'
                 }
             );
         } else {
@@ -219,52 +214,43 @@ export = class Auth extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postSignUp          = () => this.route('post', '/signup/', {}, async (req: Request, res: Response, next: NextFunction) => {    
+    postSignUp = () => this.route('post', '/signup/', this.validatedSignUp(), async (req: Request, res: Response, next: NextFunction) => {    
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
+        req.sendFormPostedData();
 
         const first_name       = req.getFormPostedData('first_name');
         const last_name        = req.getFormPostedData('last_name');
         const email            = req.getFormPostedData('email');
         const password         = req.getFormPostedData('password');
-        const confirm_password = req.getFormPostedData('confirm_password');
 
-        if (confirm_password !== password) {
-            req.setProp('error', 'Passwords do not match!');
-            return this.redirect(res, '/signup');
-        }
-
-        if (this.__.isEmpty(email) || this.__.isEmpty(password) 
-           || this.__.isEmpty(first_name) || this.__.isEmpty(last_name) 
-           || this.__.isEmpty(confirm_password)) {
-            req.setProp('warning', 'Please fill out all the fields!');
-            return this.redirect(res, '/signup');
-        }
-
-        this.user.filter({first_name: first_name, last_name: last_name, email: email})
-        // @ts-ignore 
-        .then((rows) => {
-            if (!rows) {
-                becrypt.hash(password, 12)
-                    .then(hashed_password => {
-                        this.user.create({first_name: first_name, last_name: last_name, email: email, password: hashed_password})
-                        // @ts-ignore 
-                        .then(result => {
-                            if (result) {
-                                req.setProp('warning', 'Security questions are not provided yet!, please set two security questions!');
-                                return this.redirect(res, '/security');
-                            }
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
+            this.user.filter({first_name: first_name, last_name: last_name, email: email})
+            .then((rows) => {
+                if (!rows) {
+                    becrypt.hash(password, 12)
+                        .then(hashed_password => {
+                            this.user.create({first_name: first_name, last_name: last_name, email: email, password: hashed_password})
+                            .then(result => {
+                                if (result) {
+                                    req.setProp('warning', 'Security questions are not provided yet!, please set two security questions!');
+                                    return this.redirect(res, '/security');
+                                }
+                            })
+                            .catch((err: any) => this.onError(res, err));
                         })
-                        .catch((err: any) => this.onError(res, err));
-                    })
-                    .catch(err => this.onError(res, err));
-            } else {
-                req.setProp('error', 'Email is already registered!');
-                return this.redirect(res, '/login');
-            }
-        })
-        .catch((err: any) => this.onError(res, err))
+                        .catch(err => this.onError(res, err));
+                } else {
+                    req.setProp('error', 'Email is already registered!');
+                    return this.redirect(res, '/login');
+                }
+            })
+            .catch((err: any) => this.onError(res, err))
+        } else {
+            return this.onErrorValidation(res, errors.array())
+        }
     });
 
     /**
@@ -406,7 +392,6 @@ export = class Auth extends BaseController {
         .catch((err: any) => this.onError(res, err));
     });
 
-
     /**
      * @function getRecoverPassword
      * @description Lets the user choose security questions
@@ -440,21 +425,17 @@ export = class Auth extends BaseController {
 
         this.security_questions
         .filter()
-        // @ts-ignore 
         .then((questions: any) => {
             if (typeof questions !== 'undefined') {
                 return questions
             }
         })
-        // @ts-ignore 
         .then((questions: any) => {
             this.user.filter({email: email})
-            // @ts-ignore 
             .then(result => {
                 if (result) {
                     result = result[0];
                     this.user_security_questions.filter({user_id: result.id})
-                    // @ts-ignore 
                     .then(result => {
                         if (result) {
                             let _first_result = result[0];
@@ -489,7 +470,6 @@ export = class Auth extends BaseController {
         .catch((err: any) => this.onError(res, err));
     });
 
-
     /**
      * @function getSecurityQuestions
      * @description Lets the user choose security questions
@@ -507,14 +487,14 @@ export = class Auth extends BaseController {
         let second_question: any = null;
         let first_answer: any    = null;
         let second_answer: any   = null;
+        
         if (Object.keys(params).length > 0) {
-            first_question  = params.security_questions[0] ? params.security_questions[0] : '';
-            second_question = params.security_questions[1] ? params.security_questions[1] : '';
-            first_answer    = params.first_answer  ? params.first_answer  : '';
-            second_answer   = params.second_answer ? params.second_answer : '';
+            first_question  = params['security_questions'] ? params.security_questions[0] ? params.security_questions[0] : '' : '';
+            second_question = params['security_questions'] ? params.security_questions[1] ? params.security_questions[1] : '' : '';
+            first_answer    = params['first_answer'] ? params.first_answer  ? params.first_answer  : '' : '';
+            second_answer   = params['second_answer'] ? params.second_answer ? params.second_answer : '' : '';
             this.security_questions
                     .filter()
-                    // @ts-ignore 
                     .then(questions => {
                         if (typeof questions !== 'undefined') {
                             return questions
@@ -540,7 +520,6 @@ export = class Auth extends BaseController {
                     .catch((err: any) => this.onError(res, err));
         } else {
             this.user_security_questions.filter({user_id: req.getCurrentUser().id})
-            // @ts-ignore 
             .then(result => {
                 if (result) {
                     first_question = result[0].question;
@@ -550,7 +529,6 @@ export = class Auth extends BaseController {
                     let questions: any = [];
                     this.security_questions
                     .filter()
-                    // @ts-ignore 
                     .then((questions: any) => {
                         if (typeof questions !== 'undefined') {
                             return this.render(
@@ -573,13 +551,11 @@ export = class Auth extends BaseController {
                 } else {
                     this.security_questions
                     .filter()
-                    // @ts-ignore 
                     .then((questions: any) => {
                         if (typeof questions !== 'undefined') {
                             return questions
                         }
                     })
-                    // @ts-ignore 
                     .then((questions: any) => {
                         return this.render(
                             res,
@@ -597,15 +573,12 @@ export = class Auth extends BaseController {
                             }
                         );
                     })
-                    // @ts-ignore 
                     .catch((err: any) => this.onError(res, err));
                 }
             })
-            // @ts-ignore 
             .catch((err: any) => this.onError(res, err));
         }
     });
-
 
     /**
      * @function postSecurityQuestions
@@ -618,12 +591,13 @@ export = class Auth extends BaseController {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
-        
         if (typeof req.getFormPostedData('security_questions') !== 'object' 
-           || this.__.isEmpty(req.getFormPostedData('first_answer')) 
-           || this.__.isEmpty(req.getFormPostedData('second_answer'))) {
+        || this.__.isEmpty(req.getFormPostedData('first_answer')) 
+        || this.__.isEmpty(req.getFormPostedData('second_answer'))) {
             req.setProp('warning', 'Please choose and answer two security questions!');
-            req.setProp('post_data', req.getAllFormPostedData());
+            // will be triggered through the following function call
+            req.sendFormPostedData();
+            // req.setProp('post_data', req.getAllFormPostedData());
             return this.redirect(res, '/security');
         }
         
@@ -635,7 +609,6 @@ export = class Auth extends BaseController {
             user_id: req.getCurrentUser().id,
             question: first_question,
             answer: encrypt(first_answer)
-            // @ts-ignore 
         }).then((result: any) => {
             if (result) {
                 this.user_security_questions.create({
@@ -755,9 +728,50 @@ export = class Auth extends BaseController {
     //**************************************************************************
 
     //******************************\\
-    //* Auth            middleware *\\
+    //* Auth middleware            *\\
     //******************************\\
     protected getAuthLoginMiddleware  = () => ({
         cors: this.express.express_cors(this.corsOptionsDelegate)
+    })
+
+    //******************************\\
+    //* Sign up middleware         *\\
+    //******************************\\
+    protected validatedSignUp  = () => ({
+        validate_first_name:       check('first_name').not().isEmpty().withMessage('Please enter your firstname!').bail(),
+        validate_last_name:        check('last_name').not().isEmpty().withMessage('Please enter your lastname!').bail(),
+        validate_email:            check('email').isEmail().withMessage('Please enter a valid email!').bail(),
+        validate_password:         check('password')
+                                   .isStrongPassword(
+                                       {
+                                           minLength: 8, 
+                                           minLowercase: 1, 
+                                           minNumbers: 1, 
+                                           minUppercase: 1, 
+                                           minSymbols: 1
+                                        }
+                                    )
+                                    .withMessage(
+                                        `Please enter a password with minimum length of 8
+                                        , one lower case character
+                                        , one upper case character
+                                        , one symbol
+                                        and one number`
+                                    )
+                                    .bail(),
+        validate_confirm_password: check('confirm_password').custom((value, { req }) => {
+            if (value !== req.body.password) {
+              throw new Error('Password confirmation does not match password!');
+            }
+            return true;
+          }).withMessage('Password confirmation does not match password!').bail()
+    });
+
+    //******************************\\
+    //* Sign in middleware         *\\
+    //******************************\\
+    protected validatedLogin  = () => ({
+        validate_email: check('email').isEmail().withMessage('Please enter a valid email!').bail(),
+        validate_password: check('password').not().isEmpty().withMessage('Please enter your password!').bail()
     })
 }
