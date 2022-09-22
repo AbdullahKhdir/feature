@@ -512,6 +512,7 @@ module.exports = /** @class */ (function (_super) {
             var user_id;
             var _this = this;
             return __generator(this, function (_a) {
+                // Todo attach post form to cart to order the products
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
@@ -524,13 +525,12 @@ module.exports = /** @class */ (function (_super) {
                                     return product.getProducts;
                                 }
                             })
-                                .catch(function (err) { return _this.onError(err); });
+                                .catch(function (err) { return _this.onError(res, err); });
                         }
                     }
                 })
                     .then(function (products) {
                     if (products) {
-                        // @ts-ignore 
                         _this.order_object.get({ user_id: user_id }).then(function (rows) {
                             if (!_this.__.isEmpty(rows)) {
                                 var order_id_1 = rows[0].id;
@@ -538,7 +538,6 @@ module.exports = /** @class */ (function (_super) {
                                     if (product) {
                                         _this.cart_items_object.delete(product.id);
                                         _this.order_items_object.filter({ order_id: order_id_1, product_id: product.product_id })
-                                            // @ts-ignore 
                                             .then(function (order_items_rows) {
                                             if (typeof order_items_rows === 'undefined') {
                                                 var order_item_params = {
@@ -546,7 +545,6 @@ module.exports = /** @class */ (function (_super) {
                                                     product_id: +product.product_id,
                                                     quantity: product.quantity
                                                 };
-                                                // @ts-ignore 
                                                 _this.order_items_object.create(order_item_params).then(function (order_item_element) {
                                                     if (order_item_element) {
                                                         if (!res.headersSent) {
@@ -559,7 +557,6 @@ module.exports = /** @class */ (function (_super) {
                                             else if (typeof order_items_rows !== 'undefined') {
                                                 order_items_rows.forEach(function (order_items_row) {
                                                     _this.order_items_object.filter({ id: order_items_row.id })
-                                                        // @ts-ignore 
                                                         .then(function (item) {
                                                         var order_item_id = item[0].id;
                                                         var order_item_params = {
@@ -568,7 +565,6 @@ module.exports = /** @class */ (function (_super) {
                                                             quantity: product.quantity
                                                         };
                                                         _this.order_items_object.update(order_item_params, order_item_id)
-                                                            // @ts-ignore 
                                                             .then(function (order_item_element) {
                                                             if (order_item_element) {
                                                                 if (!res.headersSent) {
@@ -576,13 +572,13 @@ module.exports = /** @class */ (function (_super) {
                                                                 }
                                                             }
                                                         })
-                                                            .catch(function (err) { return _this.onError(err); });
+                                                            .catch(function (err) { return _this.onError(res, err); });
                                                     })
-                                                        .catch(function (err) { return _this.onError(err); });
+                                                        .catch(function (err) { return _this.onError(res, err); });
                                                 });
                                             }
                                         })
-                                            .catch(function (err) { return _this.onError(err); });
+                                            .catch(function (err) { return _this.onError(res, err); });
                                     }
                                 });
                             }
@@ -591,7 +587,6 @@ module.exports = /** @class */ (function (_super) {
                                     user_id: user_id
                                 };
                                 _this.order_object.create(order_params)
-                                    // @ts-ignore 
                                     .then(function (order_element) {
                                     var id = order_element[0].insertId;
                                     if (id) {
@@ -599,7 +594,6 @@ module.exports = /** @class */ (function (_super) {
                                             if (product) {
                                                 _this.cart_items_object.delete(product.id);
                                                 _this.order_items_object.filter({ order_id: id, product_id: product.product_id })
-                                                    // @ts-ignore 
                                                     .then(function (order_items_rows) {
                                                     if (typeof order_items_rows === 'undefined') {
                                                         var order_item_params = {
@@ -608,7 +602,6 @@ module.exports = /** @class */ (function (_super) {
                                                             quantity: product.quantity
                                                         };
                                                         _this.order_items_object.create(order_item_params)
-                                                            // @ts-ignore 
                                                             .then(function (order_item_element) {
                                                             if (order_item_element) {
                                                                 if (!res.headersSent) {
@@ -616,13 +609,13 @@ module.exports = /** @class */ (function (_super) {
                                                                 }
                                                             }
                                                         })
-                                                            .catch(function (err) { return _this.onError(err); });
+                                                            .catch(function (err) { return _this.onError(res, err); });
                                                     }
                                                     if (!res.headersSent) {
                                                         return _this.redirect(res, '/orders/');
                                                     }
                                                 })
-                                                    .catch(function (err) { return _this.onError(err); });
+                                                    .catch(function (err) { return _this.onError(res, err); });
                                             }
                                         });
                                     }

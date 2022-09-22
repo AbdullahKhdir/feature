@@ -519,6 +519,7 @@ export = class Shop extends BaseController {
      * @returns Response
     */
     postOrders = (): Router => this.route('post', '/create-order/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+        // Todo attach post form to cart to order the products
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
@@ -532,13 +533,12 @@ export = class Shop extends BaseController {
                             return product.getProducts;
                         }
                     })
-                    .catch((err: any) => this.onError(err));
+                    .catch((err: any) => this.onError(res, err));
                 }
             }
         })
         .then((products: any) => {
             if (products) {
-                // @ts-ignore 
                 this.order_object.get({user_id: user_id}).then((rows: any) => {
                     if (!this.__.isEmpty(rows)) {
                         const order_id = rows[0].id;
@@ -546,7 +546,6 @@ export = class Shop extends BaseController {
                             if (product) {
                                 this.cart_items_object.delete(product.id);
                                 this.order_items_object.filter({order_id: order_id, product_id: product.product_id})
-                                // @ts-ignore 
                                 .then((order_items_rows: any) => {
                                     if (typeof order_items_rows === 'undefined') {
                                         const order_item_params = {
@@ -554,7 +553,6 @@ export = class Shop extends BaseController {
                                             product_id: +product.product_id,
                                             quantity: product.quantity
                                         };
-                                        // @ts-ignore 
                                         this.order_items_object.create(order_item_params).then((order_item_element: any) => {
                                             if (order_item_element) {
                                                 if (!res.headersSent) {
@@ -566,7 +564,6 @@ export = class Shop extends BaseController {
                                     } else if (typeof order_items_rows !== 'undefined') {
                                         order_items_rows.forEach((order_items_row: any) => {
                                             this.order_items_object.filter({id: order_items_row.id})
-                                            // @ts-ignore 
                                             .then((item: any) => {
                                                 let order_item_id = item[0].id;
                                                 let order_item_params = {
@@ -575,7 +572,6 @@ export = class Shop extends BaseController {
                                                     quantity: product.quantity
                                                 };
                                                 this.order_items_object.update(order_item_params, order_item_id)
-                                                // @ts-ignore 
                                                 .then((order_item_element: any) => {
                                                     if (order_item_element) {
                                                         if (!res.headersSent) {
@@ -583,13 +579,13 @@ export = class Shop extends BaseController {
                                                         }
                                                     }
                                                 })
-                                                .catch((err: any) => this.onError(err));
+                                                .catch((err: any) => this.onError(res, err));
                                             })
-                                            .catch((err: any) => this.onError(err));
+                                            .catch((err: any) => this.onError(res, err));
                                         });
                                     }
                                 })
-                                .catch((err: any) => this.onError(err)); 
+                                .catch((err: any) => this.onError(res, err)); 
                             }
                         });
                     } else {
@@ -597,7 +593,6 @@ export = class Shop extends BaseController {
                             user_id: user_id
                         };
                         this.order_object.create(order_params)
-                        // @ts-ignore 
                         .then((order_element: any) => {
                             const id = order_element[0].insertId;
                             if (id) {
@@ -605,7 +600,6 @@ export = class Shop extends BaseController {
                                     if (product) {
                                         this.cart_items_object.delete(product.id);
                                         this.order_items_object.filter({order_id: id, product_id: product.product_id})
-                                        // @ts-ignore 
                                         .then((order_items_rows: any) => {
                                             if (typeof order_items_rows === 'undefined') {
                                                 const order_item_params = {
@@ -614,7 +608,6 @@ export = class Shop extends BaseController {
                                                     quantity:   product.quantity
                                                 };
                                                 this.order_items_object.create(order_item_params)
-                                                // @ts-ignore 
                                                 .then((order_item_element: any) => {
                                                     if (order_item_element) {
                                                         if (!res.headersSent) {
@@ -622,13 +615,13 @@ export = class Shop extends BaseController {
                                                         }
                                                     }
                                                 })
-                                                .catch((err: any) => this.onError(err));
+                                                .catch((err: any) => this.onError(res, err));
                                             }
                                             if (!res.headersSent) {
                                                 return this.redirect(res, '/orders/');
                                             }
                                         })
-                                        .catch((err: any) => this.onError(err));  
+                                        .catch((err: any) => this.onError(res, err));  
                                     }
                                 });
                             }
