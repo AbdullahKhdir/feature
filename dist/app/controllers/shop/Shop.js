@@ -497,6 +497,10 @@ module.exports = /** @class */ (function (_super) {
                                                 url: '/'
                                             },
                                             {
+                                                title: 'Cart',
+                                                url: '/cart/'
+                                            },
+                                            {
                                                 title: 'My Orders',
                                                 url: "/orders/"
                                             }

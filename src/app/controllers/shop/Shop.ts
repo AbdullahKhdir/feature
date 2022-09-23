@@ -501,6 +501,10 @@ export = class Shop extends BaseController {
                                             url: '/'
                                         },
                                         {
+                                            title: 'Cart',
+                                            url: '/cart/'
+                                        },
+                                        {
                                             title: 'My Orders',
                                             url: `/orders/`
                                         }
