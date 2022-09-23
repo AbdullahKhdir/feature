@@ -1,29 +1,43 @@
-<%- include('../includes/header.ejs')  %> 
-
+<%- include('../includes/updated/head.ejs') %>
+<script type="text/javascript" src="../materialize/js/init.js" defer></script>
 </head>
-
 <body>
-    <%- include('../includes/navigation.ejs')  %> 
+    <%- include('../includes/updated/header.ejs') %>
+    <%- include('../includes/updated/toaster.ejs') %>
     <main>
-        <% if (typeof orders !== 'undefined') { %>
-            <% if (orders.length > 0) { %>
-                <ul>
-                    <li>
-                        <h1># <%= user_order_id %></h1>
-                    </li>
-                    <ul>
-                        <% orders.forEach(order => { %> 
-                            <li>
-                                <p><%= order.title %> (<%= order.quantity %>)</p>
-                            </li>
-                        <% }); %>
-                    </ul> 
-                </ul>
-            <% } else { %>
-                <h1>Nothing there!</h1>
-            <% } %>%>
-        <% } else { %>
-            <h1>Nothing there!</h1>
-        <% } %>
+        <div class="container">
+            <% if (typeof orders !== 'undefined') { %>
+                <% if (orders.length > 0) { %>
+                    <% let count = 0; %>
+                    <% orders.forEach((order, index) => { %>
+                        <% count = count + 1; %>
+                        <% if (index === 0) { %>
+                            <div class="row equal-height-grid">
+                        <% } %>
+                        <% if (index % 3 === 0) { %>
+                            </div>
+                            <div class="row equal-height-grid">
+                        <% } %>
+                            <div class="menu-col col s12 m6  card-width">
+                                <div class="card">
+                                    <div class="card-image">
+                                        <div class="quantity-icon btn-floating  waves-effect waves-darken white black-text">x<%= order.quantity %></div>
+                                        <img src="<%= order.imageUrl %>" alt="<%= lodash.capitalize(order.title) %>">
+                                    </div>
+                                    <p class="user-order-id">#<%= order.id %></p>
+                                    <span class="span-card-title card-title"><%= lodash.capitalize(order.title) %></span>
+                                    <div class="card-content card-content-cart" style="overflow-y: scroll;overflow-x: hidden;">
+                                        <p class="break-words"><%= lodash.capitalize(order.description) %></p>
+                                    </div>
+                                </div>
+                            </div>
+                    <% }) %>
+                <% } %>
+            <% } %>
+        </div>
     </main>
-    <%- include('../includes/end.ejs')  %> 
+    <%- include('../includes/updated/footer.ejs') %>
+    <%- include('../includes/updated/script.ejs') %>
+</body>
+</html>
+        

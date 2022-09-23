@@ -133,6 +133,52 @@ nav
   right: 0
   top: -15px
 
+.cart-item-margin
+  margin-bottom: 20px !important // sass-lint:disable-line no-important
+
+.cart-item-cursor-default
+  cursor: default !important // sass-lint:disable-line no-important
+
+.cart-item-line-height
+  line-height: 70px
+
+.cart-item-price-height
+  transform: translateY(0%)
+
+.cart-item-quantity-z-index
+  z-index: 10
+
+.cart-item-total-price-alignment
+  position: relative
+  font-size: 16px !important // sass-lint:disable-line no-important
+  float: right
+  font-weight: 600
+  color: #444
+
+.edit-admin-product
+  position: relative
+  display: inline-block
+  float: right
+  margin-top: 5px !important // sass-lint:disable-line no-important
+
+.cart-item-subtotal
+  color: #444
+  font-size: 14px
+  font-weight: 600
+
+.user-order-id
+  position: relative
+  display: block
+  padding: 0px
+  margin: 0px
+  margin-left: 23px !important
+  margin-top: 0px !important
+
+.cart-item-ship-note
+  margin-bottom: 10px
+  text-align: left
+  font-size: 14px
+
 .quantity-icon
   bottom: 0 !important // sass-lint:disable-line no-important
   float: left !important // sass-lint:disable-line no-important
@@ -222,3 +268,63 @@ nav
 
 .breadcrumb:last-child
   color: $dark-blue-sidenav-color !important // sass-lint:disable-line no-important
+
+.align-forms
+  position: relative !important // sass-lint:disable-line no-important
+  display: inline-block !important // sass-lint:disable-line no-important
+
+
+.btn, .btn-large
+  background-color: $dark-blue-color !important // sass-lint:disable-line no-important
+
+.btn:hover, .btn-large:hover
+  background-color: #8f4dca
+
+.btn:focus, .btn-large:focus
+  background-color: #692e9d
+
+span.badge.new
+  background-color: $dark-blue-color !important // sass-lint:disable-line no-important
+
+input
+  &:not([type]):focus:not([readonly]), &[type=text]:focus:not([readonly]), &[type=password]:focus:not([readonly]), &[type=email]:focus:not([readonly]), &[type=url]:focus:not([readonly]), &[type=time]:focus:not([readonly]), &[type=date]:focus:not([readonly]), &[type=datetime]:focus:not([readonly]), &[type=datetime-local]:focus:not([readonly]), &[type=tel]:focus:not([readonly]), &[type=number]:focus:not([readonly]), &[type=search]:focus:not([readonly])
+    border-bottom: 1px solid $dark-blue-color !important // sass-lint:disable-line no-important
+    box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+
+textarea.materialize-textarea:focus:not([readonly])
+  border-bottom: 1px solid $dark-blue-color !important // sass-lint:disable-line no-important
+  box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+
+input
+  &:not([type]):focus:not([readonly]) + label, &[type=text]:focus:not([readonly]) + label, &[type=password]:focus:not([readonly]) + label, &[type=email]:focus:not([readonly]) + label, &[type=url]:focus:not([readonly]) + label, &[type=time]:focus:not([readonly]) + label, &[type=date]:focus:not([readonly]) + label, &[type=datetime]:focus:not([readonly]) + label, &[type=datetime-local]:focus:not([readonly]) + label, &[type=tel]:focus:not([readonly]) + label, &[type=number]:focus:not([readonly]) + label, &[type=search]:focus:not([readonly]) + label
+    color: $dark-blue-color !important // sass-lint:disable-line no-important
+
+textarea.materialize-textarea:focus:not([readonly]) + label
+  color: $dark-blue-color !important // sass-lint:disable-line no-important
+
+
+input.valid
+  &:not([type]), &[type=text]:not(.browser-default), &[type=password]:not(.browser-default), &[type=email]:not(.browser-default), &[type=url]:not(.browser-default), &[type=time]:not(.browser-default), &[type=date]:not(.browser-default), &[type=datetime]:not(.browser-default), &[type=datetime-local]:not(.browser-default), &[type=tel]:not(.browser-default), &[type=number]:not(.browser-default), &[type=search]:not(.browser-default)
+    border-bottom: 1px solid $dark-blue-color !important // sass-lint:disable-line no-important
+    -webkit-box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+    box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+
+    &:focus
+      border-bottom: 1px solid $dark-blue-color !important // sass-lint:disable-line no-important
+      -webkit-box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+      box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+
+textarea.materialize-textarea.valid
+  border-bottom: 1px solid $dark-blue-color !important // sass-lint:disable-line no-important
+  -webkit-box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+  box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+
+  &:focus
+    border-bottom: 1px solid $dark-blue-color !important // sass-lint:disable-line no-important
+    -webkit-box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+    box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+
+.select-wrapper.valid > input.select-dropdown
+  border-bottom: 1px solid $dark-blue-color !important // sass-lint:disable-line no-important
+  -webkit-box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+  box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important

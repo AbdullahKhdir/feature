@@ -267,7 +267,7 @@ module.exports = /** @class */ (function (_super) {
                     if (err) {
                         return _this.onError(res, err);
                     }
-                    return _this.redirect(res, '/');
+                    return _this.redirect(res, '/login');
                 });
                 return [2 /*return*/];
             });

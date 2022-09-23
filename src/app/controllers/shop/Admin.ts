@@ -108,7 +108,6 @@ export = class Admin extends BaseController {
         
         if (this.__.isNumber(user_id) && this.__.isNumber(product_id)) {
             this.product_object.get({id: product_id, user_id: user_id})
-            // @ts-ignore 
             .then(rows => {
                 if (!this.__.isEmpty(rows)) {
                     const product = rows[0];
@@ -116,22 +115,45 @@ export = class Admin extends BaseController {
                         res,
                         'admin/edit-product',
                         {
-                            page_title: 'Edit Product',
+                            nav_title: 'Edit Product',
                             path : '/admin/edit-product/',
                             product_id: product_id,
-                            product: product
+                            product: product,
+                            root: 'shop',
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                },
+                                {
+                                    title: 'Edit Product',
+                                    url: `/admin/edit-product/${product_id}`
+                                }
+                            ]
                         }
                     );
                 } else {
                     return this.redirect(res, '/products/');
                 }
             })
-            .catch((err: any) => this.onError(err));
+            .catch((err: any) => this.onError(res, err));
         } else {
             return this.redirect(res, '/');
         }
     });
 
+    protected validatedEditProduct  = () => ({
+        is_authenticated:     isAuth,
+        user_session:         userSession,
+        validate_product_id:  check('product_id').not().isEmpty().withMessage("Product could not be edited, plase contact the support team!").bail(),
+        validate_title:       check('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
+        validate_imageUrl:    check('imageUrl').isURL().withMessage("Please enter products's image url!").bail(),
+        validate_description: check('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
+        validate_price:       check('price')
+                              .isNumeric()
+                              .withMessage("Please enter product's price!")
+                              .bail()
+    });
     /**
      * @function postEditedProduct
      * @description postEditedProduct route
@@ -139,24 +161,25 @@ export = class Admin extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postEditedProduct = () => this.route('post', '/admin/edit-product/', {isAuth, userSession}, async  (req: Request, res: Response, next: NextFunction) => {
-            if (!req.isPost()) {
-                return this.siteNotFound(res);
-            }    
-            req.sendFormPostedData();
-            const product_id  = +req.getFormPostedData('product_id') ?? false;
-            const title       = this.__.capitalize(req.getFormPostedData('title')) ?? false;
-            const price       = req.getFormPostedData('price') ?? false;
-            const description = this.__.capitalize(req.getFormPostedData('description')) ?? false;
-            const image       = req.getFormPostedData('imageUrl') ?? false;
+    postEditedProduct = () => this.route('post', '/admin/edit-product/:product_id/', this.validatedEditProduct(), async  (req: Request, res: Response, next: NextFunction) => {
+        if (!req.isPost()) {
+            return this.siteNotFound(res);
+        }    
+        req.sendFormPostedData();
+        const product_id  = +req.getFormPostedData('product_id') ?? false;
+        const title       = this.__.capitalize(req.getFormPostedData('title')) ?? false;
+        const price       = req.getFormPostedData('price') ?? false;
+        const description = this.__.capitalize(req.getFormPostedData('description')) ?? false;
+        const image       = req.getFormPostedData('imageUrl') ?? false;
 
-            const values = {
-                title: title,
-                price: price,
-                description: description,
-                imageUrl: image
-            };
-
+        const values = {
+            title: title,
+            price: price,
+            description: description,
+            imageUrl: image
+        };
+        const errors = validationResult(req);
+        if (errors.isEmpty()) {
             if (product_id) {
                 // @ts-ignore 
                 this.product_object.update(values, product_id).then((result) => {
@@ -165,6 +188,9 @@ export = class Admin extends BaseController {
                     }
                 }).catch((err: any) => this.onError(err));
             }
+        } else {
+            return this.onErrorValidation(res, errors.array());
+        }
     });
 
     //******************************\\
@@ -174,7 +200,7 @@ export = class Admin extends BaseController {
         is_authenticated:     isAuth,
         user_session:         userSession,
         validate_title:       check('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
-        validate_imageUrl:    check('imageUrl').not().isEmpty().isURL().withMessage("Please enter products's image url!").bail(),
+        validate_imageUrl:    check('imageUrl').isURL().withMessage("Please enter products's image url!").bail(),
         validate_description: check('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
         validate_price:       check('price')
                               .isNumeric()
@@ -238,7 +264,7 @@ export = class Admin extends BaseController {
         const user_id = +req.getCurrentUser().id;
         
         const errors = validationResult(req);
-        console.log(product_id)
+        
         if (errors.isEmpty()) {
             if (product_id && user_id) {
                 this.product_object.get({id: product_id, user_id: user_id})

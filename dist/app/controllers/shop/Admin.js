@@ -110,22 +110,32 @@ module.exports = /** @class */ (function (_super) {
                 user_id = +req.getCurrentUser().id;
                 if (this.__.isNumber(user_id) && this.__.isNumber(product_id)) {
                     this.product_object.get({ id: product_id, user_id: user_id })
-                        // @ts-ignore 
                         .then(function (rows) {
                         if (!_this.__.isEmpty(rows)) {
                             var product = rows[0];
                             return _this.render(res, 'admin/edit-product', {
-                                page_title: 'Edit Product',
+                                nav_title: 'Edit Product',
                                 path: '/admin/edit-product/',
                                 product_id: product_id,
-                                product: product
+                                product: product,
+                                root: 'shop',
+                                breadcrumbs: [
+                                    {
+                                        title: 'Shop',
+                                        url: '/'
+                                    },
+                                    {
+                                        title: 'Edit Product',
+                                        url: "/admin/edit-product/".concat(product_id)
+                                    }
+                                ]
                             });
                         }
                         else {
                             return _this.redirect(res, '/products/');
                         }
                     })
-                        .catch(function (err) { return _this.onError(err); });
+                        .catch(function (err) { return _this.onError(res, err); });
                 }
                 else {
                     return [2 /*return*/, this.redirect(res, '/')];
@@ -133,6 +143,18 @@ module.exports = /** @class */ (function (_super) {
                 return [2 /*return*/];
             });
         }); }); };
+        _this.validatedEditProduct = function () { return ({
+            is_authenticated: is_auth_1.default,
+            user_session: init_user_session_1.default,
+            validate_product_id: (0, express_validator_1.check)('product_id').not().isEmpty().withMessage("Product could not be edited, plase contact the support team!").bail(),
+            validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
+            validate_imageUrl: (0, express_validator_1.check)('imageUrl').isURL().withMessage("Please enter products's image url!").bail(),
+            validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
+            validate_price: (0, express_validator_1.check)('price')
+                .isNumeric()
+                .withMessage("Please enter product's price!")
+                .bail()
+        }); };
         /**
          * @function postEditedProduct
          * @description postEditedProduct route
@@ -140,8 +162,8 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.postEditedProduct = function () { return _this.route('post', '/admin/edit-product/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var product_id, title, price, description, image, values;
+        _this.postEditedProduct = function () { return _this.route('post', '/admin/edit-product/:product_id/', _this.validatedEditProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var product_id, title, price, description, image, values, errors;
             var _this = this;
             var _a, _b, _c, _d, _e;
             return __generator(this, function (_f) {
@@ -160,13 +182,19 @@ module.exports = /** @class */ (function (_super) {
                     description: description,
                     imageUrl: image
                 };
-                if (product_id) {
-                    // @ts-ignore 
-                    this.product_object.update(values, product_id).then(function (result) {
-                        if (result[0].affectedRows) {
-                            return res.redirect('/admin/products/');
-                        }
-                    }).catch(function (err) { return _this.onError(err); });
+                errors = (0, express_validator_1.validationResult)(req);
+                if (errors.isEmpty()) {
+                    if (product_id) {
+                        // @ts-ignore 
+                        this.product_object.update(values, product_id).then(function (result) {
+                            if (result[0].affectedRows) {
+                                return res.redirect('/admin/products/');
+                            }
+                        }).catch(function (err) { return _this.onError(err); });
+                    }
+                }
+                else {
+                    return [2 /*return*/, this.onErrorValidation(res, errors.array())];
                 }
                 return [2 /*return*/];
             });
@@ -178,7 +206,7 @@ module.exports = /** @class */ (function (_super) {
             is_authenticated: is_auth_1.default,
             user_session: init_user_session_1.default,
             validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
-            validate_imageUrl: (0, express_validator_1.check)('imageUrl').not().isEmpty().isURL().withMessage("Please enter products's image url!").bail(),
+            validate_imageUrl: (0, express_validator_1.check)('imageUrl').isURL().withMessage("Please enter products's image url!").bail(),
             validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
             validate_price: (0, express_validator_1.check)('price')
                 .isNumeric()
@@ -247,7 +275,6 @@ module.exports = /** @class */ (function (_super) {
                 product_id = req.getFormPostedData('product_id');
                 user_id = +req.getCurrentUser().id;
                 errors = (0, express_validator_1.validationResult)(req);
-                console.log(product_id);
                 if (errors.isEmpty()) {
                     if (product_id && user_id) {
                         this.product_object.get({ id: product_id, user_id: user_id })

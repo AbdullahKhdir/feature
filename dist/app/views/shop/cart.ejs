@@ -1,49 +1,107 @@
 <%- include('../includes/updated/head.ejs') %>
-<script type="text/javascript" src="../materialize/js/init.js" defer></script>
+<script type="text/javascript" src="/materialize/js/init.js" defer></script>
 </head>
 <body>
     <%- include('../includes/updated/header.ejs') %>
     <%- include('../includes/updated/toaster.ejs') %>
     <main>
-        <div class="container">
-            <% if (typeof products !== 'undefined') { %>
-                <% if (products.length > 0) { %>
-                    <% let count = 0; %>
-                    <% products.forEach((product, index) => { %>
-                        <% count = count + 1; %>
-                        <% if (index === 0) { %>
-                            <div class="row equal-height-grid">
-                        <% } %>
-                        <% if (index % 3 === 0) { %>
-                            </div>
-                            <div class="row equal-height-grid">
-                        <% } %>
-                            <div class="menu-col col s12 m6  card-width">
-                                <div class="card">
-                                    <div class="card-image">
-                                        <div class="quantity-icon btn-floating  waves-effect waves-darken white black-text">x<%= product.quantity %></div>
-                                        <form id="remove_products" action="/cart/delete-items/" method="POST">
-                                            <input type="hidden" name="_csrf" value="<%= csrf %>">
-                                            <input type="hidden" name="product_items_id" value="<%= product.product_id %>">
-                                            <button type="submit" class="close-icon btn-floating waves-effect waves-darken white" title="Remove from cart"><i class="material-icons black-text">clear</i></button>
-                                        </form>
-                                        <img src="<%= product.imageUrl %>" alt="<%= lodash.capitalize(product.title) %>">
-                                        <form id="remove_one_product" action="/cart/delete-item/" method="POST">
-                                            <input type="hidden" name="_csrf" value="<%= csrf %>">
-                                            <input type="hidden" name="product_id" value="<%= product.product_id %>">
-                                            <button type="submit" class="btn-floating halfway-fab waves-effect waves-darken white black-text" title="Remove one product">
-                                                <i class="material-icons black-text">delete</i>
-                                            </button>
-                                        </form>
+        <div class="cart-container container">
+            <div class="row">
+                <div class="col s12 l8">
+                    <div class="gallery gallery-collection row">
+                        <% let total_price = 0 %> 
+                        <% if (typeof products !== 'undefined') { %>
+                            <% if (products.length > 0) { %>
+                                <% products.forEach((product, index) => { %>
+                                    <div class="col s12 gallery-item gallery-expand gallery-horizontal cart-item-margin" data-item-id="<%= product.product_id %>">
+                                        <div class="placeholder">
+                                            <div class="gallery-curve-wrapper cart-item-cursor-default">
+                                                <img style="max-width: 50%;" src="<%= product.imageUrl %>" alt="<%= lodash.capitalize(product.title) %>">
+                                                <div class="gallery-header" data-stop-propagation="true">
+                                                    <h4><%= lodash.capitalize(product.title) %></h4>
+                                                    <div class="price-quantity-wrapper cart-item-line-height">
+                                                        <div class="price-wrapper" data-price-wrapper>
+                                                            <label class="cart-item-price-height">price</label>
+                                                            <span class="price" data-product-price>
+                                                                $<%= product.price %>
+                                                            </span>
+                                                        </div>
+                                
+                                                        <div class="input-field quantity-counter">
+                                                            <% total_price = total_price + (product.quantity * product.price) %> 
+                                                            <% total_price = +total_price.toFixed(2) %> 
+                                                            <label class="cart-item-price-height cart-item-quantity-z-index" for="updates_<%= product.product_id %>">quantity</label>
+                                                            <div>
+                                                                <form class="align-forms" action="/cart/delete-item/" method="POST" novalidate>
+                                                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                                                    <input type="hidden" name="product_id" value="<%= product.product_id %>">
+                                                                    <button type="submit" class="white black-text" title="Remove one product">
+                                                                        <i class="material-icons remove">remove_circle_outline</i>
+                                                                    </button>
+                                                                </form>
+                                                                <input readonly
+                                                                type="number"
+                                                                name="updates[]"
+                                                                id="updates_<%= product.product_id %>"
+                                                                value="<%= product.quantity %>"
+                                                                min="0">
+                                                                <form class="align-forms" action="/cart/" method="POST" novalidate>
+                                                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                                                    <input type="hidden" name="product_id" value="<%= product.product_id %>">
+                                                                    <button type="submit" class="white black-text" title="Add one product">
+                                                                        <i class="material-icons add">add_circle_outline</i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                
+                                                    <div class="variant-remove-item-wrapper">
+                                                        <form id="remove_products" action="/cart/delete-items/" method="POST">
+                                                            <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                                            <input type="hidden" name="product_items_id" value="<%= product.product_id %>">
+                                                            <button type="submit" class="btn remove-item-from-cart waves-effect waves-light" title="Remove from cart">
+                                                                <i class="material-icons">delete</i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span class="span-card-title card-title"><%= lodash.capitalize(product.title) %></span>
-                                    <div class="card-content card-content-cart" style="overflow-y: scroll;overflow-x: hidden;">
-                                        <p class="break-words"><%= lodash.capitalize(product.description) %></p>
-                                    </div>
-                                </div>
+                                <% }) %>
+                            <% } %>
+                        <% } %>
+                    </div>
+                </div>
+                <% if (typeof products !== 'undefined') { %>
+                    <% if (products.length > 0) { %>
+                        <div class="col s12 l4 cart-summary">
+                            <h4>Summary</h4>
+                            <div class="input-field cart-notes">
+                                <textarea class="materialize-textarea" name="note" id="CartSpecialInstructions"></textarea>
+                                <label for="CartSpecialInstructions">Special instructions for seller</label>
                             </div>
-                    <% }) %>
+                            <div>
+                                <span class="cart-item-subtotal">Subtotal</span>
+                                <div class="cart-item-total-price-alignment">$<%= total_price %></div>
+                            </div>
+                            <p class="cart-item-ship-note">Shipping & taxes calculated at checkout</p>
+                            <form action="/create-order/" method="POST">
+                                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                <button type="submit" name="checkout" class="btn-large waves-effect waves-light">Order</button>
+                            </form>
+                        </div>                 
+                    <% } %>
                 <% } %>
+            </div>
+            <% if (typeof products === 'undefined' ) { %>
+                <div class="empty-container">
+                    <div class="supports-cookies center">
+                      <h3>Your cart is currently empty.</h3>
+                      <a class="btn-large waves-effect waves-light" href="/">Continue Browsing</a>
+                    </div>                
+                </div>
             <% } %>
         </div>
     </main>
@@ -51,4 +109,3 @@
     <%- include('../includes/updated/script.ejs') %>
 </body>
 </html>
-        

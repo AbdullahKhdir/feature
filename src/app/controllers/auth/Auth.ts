@@ -269,7 +269,7 @@ export = class Auth extends BaseController {
             if (err) {
                 return this.onError(res, err);
             }
-            return this.redirect(res, '/');
+            return this.redirect(res, '/login');
         });
     });
 

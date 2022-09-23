@@ -227,6 +227,7 @@ module.exports = /** @class */ (function (_super) {
                                                         cart_product['description'] = _row.description;
                                                         cart_product['imageUrl'] = _row.imageUrl;
                                                         cart_product['product_id'] = _row.id;
+                                                        cart_product['price'] = _row.price;
                                                     }
                                                 });
                                             });
@@ -235,6 +236,10 @@ module.exports = /** @class */ (function (_super) {
                                                 path: '/cart/',
                                                 products: cart_products,
                                                 root: 'shop',
+                                                css: [
+                                                    'materialize/gallery_materialized.css',
+                                                    'materialize/theme.min.css',
+                                                ],
                                                 breadcrumbs: [
                                                     {
                                                         title: 'Shop',
@@ -251,7 +256,22 @@ module.exports = /** @class */ (function (_super) {
                                     }
                                 }
                                 else {
-                                    return _this.redirect(res, '/', _this.constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER);
+                                    // return this.redirect(res, '/', this.constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER);
+                                    return _this.render(res, 'shop/cart', {
+                                        nav_title: 'My Cart',
+                                        path: '/cart/',
+                                        root: 'shop',
+                                        breadcrumbs: [
+                                            {
+                                                title: 'Shop',
+                                                url: '/'
+                                            },
+                                            {
+                                                title: 'Cart',
+                                                url: ''
+                                            }
+                                        ]
+                                    });
                                 }
                             })
                                 .catch(function (err) { return _this.onError(res, err); });
@@ -260,7 +280,6 @@ module.exports = /** @class */ (function (_super) {
                             return _this.render(res, 'shop/cart', {
                                 nav_title: 'My Cart',
                                 path: '/cart/',
-                                products: [],
                                 root: 'shop',
                                 breadcrumbs: [
                                     {
@@ -279,7 +298,6 @@ module.exports = /** @class */ (function (_super) {
                         return _this.render(res, 'shop/cart', {
                             nav_title: 'My Cart',
                             path: '/cart/',
-                            products: [],
                             root: 'shop',
                             breadcrumbs: [
                                 {
@@ -441,11 +459,7 @@ module.exports = /** @class */ (function (_super) {
                 res.updatedContentAlways();
                 req.getCurrentUser().getOrder().then(function (order) {
                     if (typeof order === 'undefined') {
-                        return _this.render(res, 'shop/orders', {
-                            page_title: 'My Orders',
-                            path: '/orders/',
-                            orders: []
-                        });
+                        return _this.redirect(res, '/cart');
                     }
                     if (order.hasOwnProperty('getProducts')) {
                         order.getProducts
@@ -461,40 +475,44 @@ module.exports = /** @class */ (function (_super) {
                                     }
                                 });
                                 _this.product.filter(where_clause_2)
-                                    // @ts-ignore 
                                     .then(function (_products) {
                                     ordered_products.getProducts.forEach(function (element, index) {
                                         _products.forEach(function (_product, _index) {
                                             if (+_product.id === +element.product_id) {
                                                 ordered_products.getProducts[index].title = _products[_index].title;
+                                                ordered_products.getProducts[index].description = _products[_index].description;
+                                                ordered_products.getProducts[index].price = _products[_index].price;
+                                                ordered_products.getProducts[index].imageUrl = _products[_index].imageUrl;
                                             }
                                         });
                                     });
                                     return _this.render(res, 'shop/orders', {
-                                        page_title: 'My Orders',
+                                        nav_title: 'My Orders',
                                         path: '/orders/',
                                         orders: ordered_products.getProducts,
-                                        user_order_id: ordered_products.getProducts[0].order_id
+                                        root: 'shop',
+                                        breadcrumbs: [
+                                            {
+                                                title: 'Shop',
+                                                url: '/'
+                                            },
+                                            {
+                                                title: 'My Orders',
+                                                url: "/orders/"
+                                            }
+                                        ]
                                     });
                                 })
                                     .catch(function (err) { return _this.onError(err); });
                             }
                             else {
-                                return _this.render(res, 'shop/orders', {
-                                    page_title: 'My Orders',
-                                    path: '/orders/',
-                                    orders: []
-                                });
+                                return _this.redirect(res, '/cart');
                             }
                         })
                             .catch(function (err) { return _this.onError(err); });
                     }
                     else {
-                        return _this.render(res, 'shop/orders', {
-                            page_title: 'My Orders',
-                            path: '/orders/',
-                            orders: []
-                        });
+                        return _this.redirect(res, '/cart');
                     }
                 })
                     .catch(function (err) { return _this.onError(err); });
@@ -512,7 +530,6 @@ module.exports = /** @class */ (function (_super) {
             var user_id;
             var _this = this;
             return __generator(this, function (_a) {
-                // Todo attach post form to cart to order the products
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }

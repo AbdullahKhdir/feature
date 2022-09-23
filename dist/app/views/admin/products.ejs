@@ -27,11 +27,15 @@
                             <img class="activator" src="<%= product.imageUrl %>" alt="<%= lodash.capitalize(product.title) %>">
                         </div>
                         <div class="card-content card-content-cart">
+                            <a href="/admin/edit-product/<%= product.id %>" class="edit-admin-product black-text" title="Edit product">
+                                <i class="material-icons black-text">edit</i>
+                            </a>
                             <span class="card-title activator grey-text text-darken-4">
                                 <%= lodash.capitalize(product.title) %>    
                                 <i class="material-icons right">more_vert</i>
+                                <!-- <i class="material-icons right">edit</i> -->
                             </span>
-                            <p><%= lodash.capitalize(product.price) %></p>
+                            <p>$<%= lodash.capitalize(product.price) %></p>
                         </div>
                         <div class="card-reveal">
                             <span class="card-title grey-text text-darken-4">Card Title<i class="material-icons right">close</i></span>
