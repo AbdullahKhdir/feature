@@ -346,7 +346,7 @@ console.log(accounting.getId);  //without (), like normal property
 
 //Abstract classes cannot be intiated only inherited
 //When forcing to overrride or implemet methods on inheritence we use abstract classes (enforces overriding existing functionalities)
-//Abstact classes are very usefull when we want to enforce that all classes based on some other classes share some common methods or properties but without the value, so it can be implemented differently on each class that implement that abstract function or that abstract property
+//Absrtact classes are very usefull when we want to enforce that all classes based on some other classes share some common methods or properties but without the value, so it can be implemented differently on each class that implement that abstract function or that abstract property
 
 class Department {                                  //Inheritence and static access modifier
     private id: number;

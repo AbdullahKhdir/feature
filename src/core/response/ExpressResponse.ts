@@ -141,15 +141,21 @@ export abstract class ExpressResponse {
         let status = null;
         res.type(this.codes.RESPONSE.TYPES.HTML);
         if (typeof errors !== 'undefined') {
-            if (errors.length >= 0) {
-                let obj_warnings = {};
-                let errored_params = {};
-                errors.forEach((error: any, index: any) => {
-                    Object.assign(obj_warnings, {[index]:`${error.msg}`});
-                    Object.assign(errored_params, {[index]:`${error.param}`});
-                });
-                res.req.flash('validation_errors', JSON.stringify(obj_warnings));
-                res.req.flash('errored_inputs', JSON.stringify(errored_params));
+            if (typeof errors === 'object' && typeof errors[Symbol.iterator] === 'function') {
+                if (errors.length >= 0) {
+                    let obj_warnings = {};
+                    let errored_params = {};
+                    errors.forEach((error: any, index: any) => {
+                        Object.assign(obj_warnings, {[index]:`${error.msg}`});
+                        Object.assign(errored_params, {[index]:`${error.param}`});
+                    });
+                    res.req.flash('validation_errors', JSON.stringify(obj_warnings));
+                    res.req.flash('errored_inputs', JSON.stringify(errored_params));
+                }
+            } else if (typeof errors === 'string') {
+                const error = errors;
+                res.req.flash('validation_errors', JSON.stringify({error: error}));
+                res.req.flash('errored_inputs', JSON.stringify({error: error}));
             }
         }
         if (res.req.method === this.codes.REQUEST.TYPE.GET) {

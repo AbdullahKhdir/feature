@@ -28,6 +28,7 @@
     "@types/jquery": "^3.5.14",
     "@types/lodash": "^4.14.184",
     "@types/morgan": "^1.9.3",
+    "@types/multer": "^1.4.7",
     "@types/node": "^18.7.16",
     "@types/workerpool": "^6.1.0",
     "autocannon": "^7.9.0",

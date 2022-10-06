@@ -1,8 +1,6 @@
 'use strict';
 
 import { Router } from 'express';
-import Lodash from '../../app/utils/Lodash';
-import { Express } from '../framework/Express';
 import { ExpressResponse } from '../response/ExpressResponse';
 import { Singleton } from '../Singleton/Singleton';
 import asyncHandler from '../utils/Promise';

@@ -54,7 +54,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var express_validator_1 = require("express-validator");
+var multer_1 = __importDefault(require("multer"));
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
+var Singleton_1 = require("../../../core/Singleton/Singleton");
 var init_user_session_1 = __importDefault(require("../../middlewares/init_user_session"));
 var is_auth_1 = __importDefault(require("../../middlewares/is_auth"));
 var Product_1 = __importDefault(require("../../models/shop/Product"));
@@ -144,16 +146,64 @@ module.exports = /** @class */ (function (_super) {
             });
         }); }); };
         _this.validatedEditProduct = function () { return ({
+            uploader_error_handler: function (req, res, next) {
+                _this.upload_middleware(req, res, function (err) {
+                    if (err instanceof multer_1.default.MulterError) {
+                        switch (err.code) {
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
+                                return _this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
+                                return _this.onErrorValidation(res, 'File exceded the allowed parts!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
+                                return _this.onErrorValidation(res, 'Too many files uploaded, please upload less files!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
+                                return _this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_VALUE_TOO_LONG:
+                                return _this.onErrorValidation(res, "Field value is too long, please insert a short fields's value!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FIELDS:
+                                return _this.onErrorValidation(res, "Alot of fields have been detected, please use less fields!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.UNEXPECTED_FIELD:
+                                return _this.onErrorValidation(res, "Unexpected field detected, please check your fields!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_MISSING:
+                                return _this.onErrorValidation(res, "Field's name is missing, please validate your fields!");
+                                break;
+                            default:
+                                next();
+                                break;
+                        }
+                    }
+                    next();
+                });
+            },
             is_authenticated: is_auth_1.default,
             user_session: init_user_session_1.default,
             validate_product_id: (0, express_validator_1.check)('product_id').not().isEmpty().withMessage("Product could not be edited, plase contact the support team!").bail(),
             validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
-            validate_imageUrl: (0, express_validator_1.check)('imageUrl').isURL().withMessage("Please enter products's image url!").bail(),
             validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
-            validate_price: (0, express_validator_1.check)('price')
-                .isNumeric()
-                .withMessage("Please enter product's price!")
-                .bail()
+            validate_price: (0, express_validator_1.check)('price').isNumeric().withMessage("Please enter product's price!").bail(),
+            validate_imageUrl: (0, express_validator_1.check)('uploaded_image').
+                // @ts-ignore 
+                custom(function (value, _a) {
+                var _b, _c, _d;
+                var req = _a.req;
+                if (req.file) {
+                    if (((_b = req.file) === null || _b === void 0 ? void 0 : _b.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG))
+                        || ((_c = req.file) === null || _c === void 0 ? void 0 : _c.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG))
+                        || ((_d = req.file) === null || _d === void 0 ? void 0 : _d.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG))) {
+                        return true;
+                    }
+                    //! FILE WILL BE SAVED
+                    // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
+                }
+                return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
+            }).bail(),
         }); };
         /**
          * @function postEditedProduct
@@ -165,17 +215,19 @@ module.exports = /** @class */ (function (_super) {
         _this.postEditedProduct = function () { return _this.route('post', '/admin/edit-product/:product_id/', _this.validatedEditProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var product_id, title, price, description, image, values, errors;
             var _this = this;
-            var _a, _b, _c, _d, _e;
-            return __generator(this, function (_f) {
+            return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 req.sendFormPostedData();
-                product_id = (_a = +req.getFormPostedData('product_id')) !== null && _a !== void 0 ? _a : false;
-                title = (_b = this.__.capitalize(req.getFormPostedData('title'))) !== null && _b !== void 0 ? _b : false;
-                price = (_c = req.getFormPostedData('price')) !== null && _c !== void 0 ? _c : false;
-                description = (_d = this.__.capitalize(req.getFormPostedData('description'))) !== null && _d !== void 0 ? _d : false;
-                image = (_e = req.getFormPostedData('imageUrl')) !== null && _e !== void 0 ? _e : false;
+                product_id = +req.getFormPostedData('product_id');
+                title = this.__.capitalize(req.getFormPostedData('title'));
+                price = req.getFormPostedData('price');
+                description = this.__.capitalize(req.getFormPostedData('description'));
+                image = req.getFormPostedData('uploaded_image');
+                //* uploading images and validating is done 
+                // todo: save images in db or in filesystem to show as card images
+                console.log(req.getAllFormPostedData());
                 values = {
                     title: title,
                     price: price,
@@ -190,7 +242,7 @@ module.exports = /** @class */ (function (_super) {
                             if (result[0].affectedRows) {
                                 return res.redirect('/admin/products/');
                             }
-                        }).catch(function (err) { return _this.onError(err); });
+                        }).catch(function (err) { return _this.onError(res, err); });
                     }
                 }
                 else {
@@ -369,6 +421,32 @@ module.exports = /** @class */ (function (_super) {
             }
             callback(null, corsOptions); // callback expects two parameters: error and options
         };
+        //************\\
+        //* UPLOADER *\\
+        //************\\
+        _this.file_size = 10 * 1024 * 1024;
+        _this.uploader = Singleton_1.Singleton.getUploader();
+        _this.uploader_configs = _this.uploader.diskStorage({
+            destination: function (req, file, callback) {
+                callback(null, Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
+            },
+            filename: function (req, file, callback) {
+                callback(null, new Date().toISOString() + '_' + file.originalname);
+            }
+        });
+        _this.file_filter = function (req, file, callback) {
+            if (file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG
+                || file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG
+                || file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG) {
+                callback(null, true);
+            }
+            else {
+                //! FILE WILL NOT BE SAVED
+                // @ts-ignore 
+                return _this.onErrorValidation(req.res, 'Only images with the (PNG, JPEG or JPG) extensions are allowed');
+            }
+        };
+        _this.upload_middleware = _this.uploader({ storage: _this.uploader_configs, limits: { fileSize: _this.file_size }, fileFilter: _this.file_filter }).single('uploaded_image');
         return _this;
     }
     return Admin;

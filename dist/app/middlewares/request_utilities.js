@@ -7,7 +7,7 @@ function reqUtil(req, res, next) {
     res.globalPostFormData = function () { return res.locals['post_data'] ? res.locals['post_data'] : ''; };
     res.globalGetFormData = function () { return res.locals['get_data'] ? res.locals['get_data'] : ''; };
     req.sendFormPostedData = function () { return req.setProp('post_data', req.getAllFormPostedData()); };
-    req.getAllFormPostedData = function () { return req.body ? req.body : ''; };
+    req.getAllFormPostedData = function () { return req.body ? req.file ? Object.assign(req.body, req.file) : req.files ? Object.assign(req.body, req.files) : req.body : ''; };
     req.getFormPostedData = function (param) { return req.body ? req.body[param] ? req.body[param].toString() : '' : ''; };
     req.getQueryParams = function () { return req.query ? req.query : ''; };
     req.getQueryParam = function (param) { return req.query ? req.query[param] ? req.query[param] : '' : ''; };

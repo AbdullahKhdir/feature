@@ -211,7 +211,15 @@ module.exports = /** @class */ (function (_super) {
         * Send csrf token on every request along with the authentication status
         */
         _this.app.use(function (req, res, next) {
-            res.locals['csrf'] = req.csrfToken();
+            var token = req.csrfToken();
+            // res.set({
+            //     'csrf-Token':   token,
+            //     'X-CSRF-TOKEN': token,
+            //     'xsrf-token':   token,
+            //     'x-csrf-token': token,
+            //     'x-xsrf-token': token
+            // });
+            res.locals['csrf'] = token;
             res.locals['is_authenticated'] = res.req.session.is_authenticated;
             _this.app.locals['is_authenticated'] = res.req.session.is_authenticated;
             next();
@@ -233,6 +241,10 @@ module.exports = /** @class */ (function (_super) {
             if (err.code !== _this.constants.CSRF.errCode) {
                 return next(err);
             }
+        });
+        process.on('uncaughtException', function (ls) {
+            console.log(ls);
+            // (function(){})();
         });
         /*
         * Routes

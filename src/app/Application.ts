@@ -232,7 +232,15 @@ export = class Application extends BaseController {
         * Send csrf token on every request along with the authentication status
         */
         this.app.use((req: Request, res: Response, next: NextFunction) => {
-            res.locals['csrf'] = req.csrfToken();
+            const token = req.csrfToken();
+            // res.set({
+            //     'csrf-Token':   token,
+            //     'X-CSRF-TOKEN': token,
+            //     'xsrf-token':   token,
+            //     'x-csrf-token': token,
+            //     'x-xsrf-token': token
+            // });
+            res.locals['csrf'] = token;
             res.locals['is_authenticated'] = res.req.session.is_authenticated;
             this.app.locals['is_authenticated'] = res.req.session.is_authenticated;
             next();
@@ -258,6 +266,10 @@ export = class Application extends BaseController {
             }
         })
         
+        process.on('uncaughtException', function(ls){
+            console.log(ls);
+            // (function(){})();
+        });
         /*
         * Routes 
         */

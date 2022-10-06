@@ -1,6 +1,7 @@
 
 import mysql from 'mysql2';
 import Application from "../../app/Application";
+import Uploader from "../../app/plugins/Uploader";
 import Constants from "../../app/utils/Constants";
 import Lodash from "../../app/utils/Lodash";
 import Db from "../database/Db";
@@ -88,6 +89,13 @@ export class Singleton{
     //************************\\
     public static getPath() : typeof import('path'){
         return Path.getPathInstance();
+    }
+
+    //************************\\
+    //* Path getter function *\\
+    //************************\\
+    public static getUploader() : typeof import('multer'){
+        return Uploader.getMulterInstance();
     }
 
     //******************************\\

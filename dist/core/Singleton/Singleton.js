@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Singleton = void 0;
 var Application_1 = __importDefault(require("../../app/Application"));
+var Uploader_1 = __importDefault(require("../../app/plugins/Uploader"));
 var Constants_1 = __importDefault(require("../../app/utils/Constants"));
 var Lodash_1 = __importDefault(require("../../app/utils/Lodash"));
 var Db_1 = __importDefault(require("../database/Db"));
@@ -76,6 +77,12 @@ var Singleton = /** @class */ (function () {
     //************************\\
     Singleton.getPath = function () {
         return Path_1.default.getPathInstance();
+    };
+    //************************\\
+    //* Path getter function *\\
+    //************************\\
+    Singleton.getUploader = function () {
+        return Uploader_1.default.getMulterInstance();
     };
     //******************************\\
     //* FileSystem getter function *\\
