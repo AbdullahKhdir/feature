@@ -1,0 +1,193 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// WHITE > BLACK
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$white:   #fff
+$grey-e:  #eee
+$grey-e6: #e6e6e6
+$grey-e5: #e5e5e5
+$grey-e3: #e3e3e3
+$grey-df: #dfdfdf
+$grey-d:  #ddd
+$grey-d0: #d0d0d0
+$grey-c:  #ccc
+$grey-c9: #c9c9c9
+$grey-b:  #bbb
+$grey-b4: #b4b4b4
+$grey-a:  #aaa
+$grey-9:  #999
+$grey-8:  #888
+$grey-7:  #777
+$grey-6:  #666
+$grey-5:  #555
+$grey-4:  #444
+$grey-3:  #333
+$grey-2:  #222
+$grey-1:  #111
+$black:   #000
+
+$white-diffuse: darken($white, 9%)
+$black-diffuse: lighten($black, 22%)
+
+$darkblue: #000236
+$lightblue: #e8edf4
+$lightgreyblue: #e2e5ea
+
+$lightred: #f0caca
+$softred: #f66666
+
+$light-grey: #9e9e9e
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Telekom-CI
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$color-green:       #6bb324
+$color-positive:    $color-green
+
+$color-orange:      #dbad39
+$color-warning:     $color-orange
+
+$color-dark-orange: #d2691e
+$color-urgent:      $color-dark-orange
+
+$color-red:         #d90000
+$color-negative:    $color-red
+$color-error:       $color-red
+
+$color-magenta:     #e20074
+$color-brand:       $color-magenta
+
+$color-inactive:    $grey-d0
+
+$color-yellow:      #ff0
+$color-highlight:   $color-yellow
+
+$color-blue:        #5b9dd1
+$color-function:    $color-blue
+$color-solved:      $color-blue
+
+$color-dark-blue:   #2f6c9c
+
+$color-light-blue:  #b7d4ea
+$color-efficient:   $color-light-blue
+$color-correction:  $color-light-blue
+
+$color-purple:      #9b59b6
+$color-approval:    $color-purple
+
+$color-orange: #d2691e
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// HTML-Defaults
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$color-font:          $black
+$color-border:        #b2b2b2
+$color-border-bright: #dcdcdc
+$color-border-focus:  #66afe9 // alt: #0084ff; CI: #66afe9
+
+$color-border-input: $color-border
+
+$color-shadow: $grey-b
+
+$color-selection-background: #b3d4fc
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// myShS Default Styles
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$color-headline: $black-diffuse !default
+
+$color-bg-light: #f5f5f5 !default
+$color-bg-blue: mix($color-bg-light, $color-function, 90%)
+$color-bg-greyblue: darken($color-bg-blue, 15%)
+$color-bg-darkblue: mix($black, $color-function, 60%)
+$color-bg-near-white: #fcfcfc
+
+$color-bg-yellow: #feffe4
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Form-Defaults
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$color-label-font: $black-diffuse
+$color-label-disabled-font: lighten($color-label-font, 15%)
+
+$color-input-font:         $black-diffuse
+$color-input-border:       $color-border
+$color-input-bg:           $white
+$color-input-border-focus: $color-border-focus
+
+$color-button-font:     $white
+$color-button-border:   $color-border
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Layout
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$color-header-bg: $white
+$color-header-navi-bg: $color-bg-darkblue
+$color-header-navi-font: $white
+$color-title-navi-inactive: #979797
+$color-title-navi-inactive-a: #6a6a6a
+$color-module-container-description: #636363
+
+$color-footer-bg: $color-bg-darkblue
+$color-footer-font: $white
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// sonstiges
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$color-table-border: $grey-b !default
+$color-link-font: darken($color-function, 12%)
+$color-pagination-bg: $color-bg-light
+
+$color-bg-error: $lightred !default
+$color-bg-warning: #ffe0b3 !default
+$color-bg-success: #7fd165 !default
+$color-toggle-element: #ffffe5
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Monokai
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$color-monokai-comment: #75715e
+$color-monokai-class: #66d9ef
+$color-monokai-method: #a7ec21
+$color-monokai-bracket: #f9faf4
+$color-monokai-number: #ae81ff
+$color-monokai-string: #e6db74
+$color-monokai-operator: #f92672
+$color-monokai-keyword: #f92672
+$color-monokai-annotation: #f9faf4
+$color-monokai-constant: #ae81ff
+$color-monokai-background: #272822
+$color-monokai-current-line: #5b5a4e
+$color-monokai-foreground: #f8f8f2
+$color-monokai-selection-background: #49483e
+$color-monokai-selection-foreground: #f8f8f2
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Funktionen
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@function calc-status-font-color($default, $status: null)
+    @if $status != null
+        @return mix($status, $default, 20%)
+    @return $default
+
+@function calc-status-bg-color($default, $status: null)
+    @if $status != null
+        @return mix($status, $default, 10%)
+    @return $default
+
+@function calc-status-border-color($default, $status: null)
+    @if $status != null
+        @return mix($status, $default, 40%)
+    @return $default
+
+@function calc-status-border-focus-color($default, $status: null)
+    @if $status != null
+        @return lighten(mix($status, $default, 75%), 20%)
+    @return $default

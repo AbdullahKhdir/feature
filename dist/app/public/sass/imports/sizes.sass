@@ -1,0 +1,112 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Größen
+// @author Marcel Kade <marcel.kade@t-systems.com>
+// @author Tony Niepagen <tony.niepagen@telekom.de>
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$size-font: 14px
+$size-font-xsmall:  round($size-font *  .75) // ~11px
+$size-font-small:   round($size-font *  .83) // ~12px
+$size-font-large:   round($size-font * 1.16) // ~17px
+$size-font-xlarge:  round($size-font * 1.33) // ~19px
+$size-font-xxlarge: round($size-font * 1.5)  // ~21px
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Allgemeines
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$size-border-brand: 3px
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Headlines
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$size-headline-h1-font: round($size-font * 1.75) // ~25px
+$size-headline-h2-font: round($size-font * 1.5)  // ~21px
+$size-headline-h3-font: round($size-font * 1.33) // ~19px
+$size-headline-h4-font: round($size-font * 1.16) // ~17px
+$size-headline-h5-font: $size-font               // ~14px
+$size-headline-h6-font: round($size-font * .83)  // ~12px
+
+// Margin TopDown = Hälfte der Fontsize
+// $size-headline-margin-topdown: round($size-headline-h123456-font / 2)
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Bildschirm min. Breiten
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$size-screen-xs:  0
+$size-screen-s:   320px
+$size-screen-m:   640px
+$size-screen-l:   1024px
+$size-screen-xl:  1275px
+$size-screen-xxl: 1500px
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Layout
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$size-header-logos: 55px
+$size-header-infos: 30px
+$size-header-infos-height: 36px
+$size-header-navi-font: $size-font
+$size-header-navi-height: 35px
+$size-header-height: auto // $size-header-inner + $size-header-navi-height // Icons + Navi
+
+$size-navi-vertical-headline: 16px
+
+$size-main-width-screen-xs:  auto
+$size-main-width-screen-s:   auto
+$size-main-width-screen-m:   auto
+$size-main-width-screen-l:   auto
+$size-main-width-screen-xl:  $size-screen-xl - 25px
+$size-main-width-screen-xxl: $size-screen-xxl - 25px
+$size-main-min-width: 1150px
+
+$size-footer-height: 45px
+
+// 2-splatiges Layout
+$size-two-column-layout-sidecolumn-width: 200px
+$size-two-column-layout-navi-width: $size-two-column-layout-sidecolumn-width
+$size-two-column-layout-main-col-margin-left: 5px
+
+// ((Link-)Tab)-Container
+$size-container-tabs-font: $size-font
+$size-container-tabs-height: floor($size-container-tabs-font * 1.5)
+$size-container-tab-prev-next-ctrl-width: 15px
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// FORMs
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$size-form-font: $size-font
+$size-form-line-height: floor($size-form-font * 1.2)
+
+$size-form-input-padding-topdown: 4px
+$size-form-input-padding-right: (16px + (2 * 5px)) // Icon-Breite + Icon-"Padding"
+$size-form-input-padding-left: 6px
+
+$size-form-label-padding-topdown: $size-form-input-padding-topdown + 1 // +1, da keine Border
+$size-form-label-padding-leftright: 3px
+
+$size-line-form-label-width: 115px !default
+$size-line-form-input-width: 340px !default
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Notifications
+////////////////////////////////////////////////////////////////////////////////////////////////////
+$size-notification-font: $size-font
+$size-toastmessage-width: 400px
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// sonstige Module
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$overview-module-container-width: 300px
+
+$icon-checkbox-s-height: 25px
+$icon-checkbox-m-height: 40px
+$icon-checkbox-l-height: 50px
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Funktionen
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@function strip-units($value)
+    @return $value / ($value * 0 + 1)

@@ -451,6 +451,10 @@ module.exports = /** @class */ (function () {
                 TOO_MANY_FIELDS: 'LIMIT_FIELD_COUNT',
                 UNEXPECTED_FIELD: 'LIMIT_UNEXPECTED_FILE',
                 FIELD_NAME_MISSING: 'MISSING_FIELD_NAME'
+            },
+            UPLOADER_TYPES: {
+                DISK: 'diskStorage',
+                MEMORY: 'memoryStorage'
             }
         };
     }

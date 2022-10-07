@@ -1,9 +1,11 @@
 
+import multer from 'multer';
 import mysql from 'mysql2';
 import Application from "../../app/Application";
 import Uploader from "../../app/plugins/Uploader";
 import Constants from "../../app/utils/Constants";
 import Lodash from "../../app/utils/Lodash";
+import { uploader_config_options, uploader_options } from '../../core/utils/data_typs';
 import Db from "../database/Db";
 import { Express } from "../framework/Express";
 import BodyParser from "../node/Bodyparser";
@@ -94,8 +96,16 @@ export class Singleton{
     //************************\\
     //* Path getter function *\\
     //************************\\
-    public static getUploader() : typeof import('multer'){
-        return Uploader.getMulterInstance();
+    public static getUploader() : typeof multer{
+        return Uploader.getUploaderInstance().getMulter;
+    }
+
+    public static configUploader(options: uploader_config_options, instance: typeof import('multer') = Singleton.getUploader()) : multer.Multer | undefined {
+        return Uploader.getUploaderInstance().configureUploader(options, instance);
+    }
+
+    public static buildUploader(options: uploader_options) {
+        return Uploader.getUploaderInstance()._buildUploader(options);
     }
 
     //******************************\\

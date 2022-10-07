@@ -1,3 +1,7 @@
+@import './imports/css3-helper'
+@import './imports/colors'
+@import './imports/sizes'
+
 $light-grey-image-background: #f1f1f1
 $light-blue-btn-color: #e6e6e6
 $light-white-footer-color: #fff
@@ -328,3 +332,204 @@ textarea.materialize-textarea.valid
   border-bottom: 1px solid $dark-blue-color !important // sass-lint:disable-line no-important
   -webkit-box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
   box-shadow: 0 1px 0 0 $dark-blue-color !important // sass-lint:disable-line no-important
+
+
+#progress
+  border: 1px solid #ccc
+  display: inline-block
+  height: 5px
+  margin: 0
+  padding: 0
+  position: relative
+  top: 29px
+  width: 100%
+
+
+.file-path
+  height: auto !important // sass-lint:disable-line no-important
+
+#uploader_status_icon,
+#uploader_status_icon_complete
+  display: none
+  position: absolute
+  right: 0
+  top: 15px
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Progress-Element
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@keyframes progress-bar-growing
+    0%
+        background-position: left bottom
+
+    100%
+        background-position: right bottom
+
+@keyframes progress-bar-shrinking
+    0%
+        background-position: right bottom
+
+    100%
+        background-position: left bottom
+
+@mixin progress-bar-linear-gradient($color)
+    @include background-linear-gradient('left, #{$color} 30%, #{saturate(lighten($color, 20%), 20%)} 70%, #{$color} 100%', $color)
+
+%progress-bar
+    @include text-shadow(0, 0, 2px, white)
+    color: $black
+    float: left
+    width: 0%
+    height: 100%
+    font-size: $size-font
+    text-align: center
+    padding: 5px 0
+    text-indent: 5px
+    max-width: 100%
+    background:
+        size: 50% 100%
+        repeat: repeat
+        color: $color-function
+    transition: width 1s
+    animation: progress-bar-growing 1s infinite linear
+
+    &.progress_bar_fixed
+        animation: none
+        background:
+            size: 100% 100%
+            image: none
+
+    &.progress_bar_shrinking
+        animation-name: progress-bar-shrinking
+
+%progress-bar-container
+    @include no-user-select
+    @include border-radius(4px)
+    display: inline-block
+    height: $size-form-line-height + (2 * $size-form-input-padding-topdown)
+    padding: 0 !important // sass-lint:disable-line no-important
+    margin: 0
+    border: 1px solid $color-border
+    width: 300px
+    overflow: hidden
+    margin-bottom: 20px
+    background-color: $white
+    color: $black
+    font-size: $size-font
+    float: none
+
+span.progress
+    @extend %progress-bar-container
+
+    > .progress_bar
+        @extend %progress-bar
+        @include progress-bar-linear-gradient($color-function)
+
+    > .progress_bar_positive
+        @extend %progress-bar
+        @include progress-bar-linear-gradient($color-positive)
+
+    > .progress_bar_warning
+        @extend %progress-bar
+        @include progress-bar-linear-gradient($color-warning)
+
+    > .progress_bar_negative, > .progress_bar_error
+        @extend %progress-bar
+        @include progress-bar-linear-gradient($color-negative)
+
+    > .progress_bar_magenta, > .progress_bar_brand
+        @extend %progress-bar
+        @include progress-bar-linear-gradient($color-magenta)
+
+    > .progress_bar_inactive
+        @extend %progress-bar
+        @include progress-bar-linear-gradient($color-inactive)
+
+    &#idle_detection_session_lifetime_progress
+        width: 100%
+        box-sizing: border-box
+
+%progress-bar-native
+    @extend %progress-bar-container
+    @extend %progress-bar
+    appearance: none
+    background-position: inherit
+    float: none
+
+    &::-webkit-progress-inner-element
+        background-position: inherit
+
+    &::-webkit-progress-bar
+        background:
+            color: transparent
+            position: inherit
+
+    &::-webkit-progress-value
+        background:
+            size: 50% 100%
+            position: inherit
+
+    &::-moz-progress-bar
+        animation: progress-bar-growing 1s infinite linear
+        background:
+            size: 50% 100%, 100% 800%
+            position: inherit
+
+    &.progress_bar_fixed
+        &::-webkit-progress-value
+            animation: none
+            background:
+                size: 100% 100%
+                image: none
+        &::-moz-progress-bar
+            animation: none
+            background:
+                size: 100% 100%
+                image: none
+
+    &.progress_bar_shrinking::-moz-progress-bar
+        animation-name: progress-bar-shrinking
+
+progress[value]
+    &.progress_bar
+        @extend %progress-bar-native
+        &::-webkit-progress-value
+            @include progress-bar-linear-gradient($color-function)
+        &::-moz-progress-bar
+            @include progress-bar-linear-gradient($color-function)
+
+    &.progress_bar_positive
+        @extend %progress-bar-native
+        &::-webkit-progress-value
+            @include progress-bar-linear-gradient($color-positive)
+        &::-moz-progress-bar
+            @include progress-bar-linear-gradient($color-positive)
+
+    &.progress_bar_warning
+        @extend %progress-bar-native
+        &::-webkit-progress-value
+            @include progress-bar-linear-gradient($color-warning)
+        &::-moz-progress-bar
+            @include progress-bar-linear-gradient($color-warning)
+
+    &.progress_bar_negative, &.progress_bar_error
+        @extend %progress-bar-native
+        &::-webkit-progress-value
+            @include progress-bar-linear-gradient($color-negative)
+        &::-moz-progress-bar
+            @include progress-bar-linear-gradient($color-negative)
+
+    &.progress_bar_magenta, &.progress_bar_brand
+        @extend %progress-bar-native
+        &::-webkit-progress-value
+            @include progress-bar-linear-gradient($color-magenta)
+        &::-moz-progress-bar
+            @include progress-bar-linear-gradient($color-magenta)
+
+    &.progress_bar_inactive
+        @extend %progress-bar-native
+        &::-webkit-progress-value
+            @include progress-bar-linear-gradient($light-grey)
+        &::-moz-progress-bar
+            @include progress-bar-linear-gradient($light-grey)

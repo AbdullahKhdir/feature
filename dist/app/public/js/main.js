@@ -244,5 +244,44 @@ $(document).ready(function() {
         }, 400);
       });
     })(),
+
+    /**
+     * @namespace _core_functions
+     * @function completeUploaderForm
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @description Adds the csrf token to all uploader forms
+     * @version 1.0.0
+     * @since 22.09.2022
+     * @returns void
+    */
+    completeUploaderForm: (() => {
+      const uploader = $('div#_uploader');
+      const token    = $('input#_csrf').val();
+      let   parent   = uploader.parent();
+
+      if (uploader.length > 0) {
+        while (parent.map(function () {return this.tagName}).get().join(", ") !== 'FORM') {
+          parent = parent.parent();
+        }
+        let url     = parent.attr('action');
+        let is_form = parent.map(function () {return this.tagName}).get().join(", ") === 'FORM';
+        if (is_form) {
+          if (typeof url === 'string' && url) {
+            if (url.endsWith('/')) {
+              url = url + `?_csrf=${token}`;
+            } else {
+              url = url + `/?_csrf=${token}`;
+            }
+          }
+        }
+        parent.attr('action', url)
+        $('#uploader_status_icon').fadeIn('slow');
+        setTimeout(() => {
+          $('#progress').fadeIn('slow');
+          $('#uploader_status_icon').fadeOut('slow');
+          $('#uploader_status_icon_complete').fadeIn('slow');
+        }, 3000);
+      }
+    })(),
   };
 });

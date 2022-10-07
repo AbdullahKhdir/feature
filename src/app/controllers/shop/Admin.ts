@@ -22,10 +22,6 @@ export = class Admin extends BaseController {
     protected corsOptionsDelegate: any;
     public    methods: any;
     protected product_object: Product
-    protected file_size: number;
-    protected uploader: typeof import ('multer');
-    protected uploader_configs: any;
-    protected file_filter: (req: Request, file: Express.Multer.File, callback: Function) => void;
     protected upload_middleware;
     constructor() {
         super();
@@ -68,28 +64,58 @@ export = class Admin extends BaseController {
         //************\\
         //* UPLOADER *\\
         //************\\
-        this.file_size   = 10 * 1024 * 1024;
-        this.uploader    = Singleton.getUploader();
-        this.uploader_configs = this.uploader.diskStorage({
-            destination: (req: Request, file: Express.Multer.File, callback: Function) => {
+        // this.uploader    = Singleton.getUploader();
+        // this.uploader_configs = this.uploader.diskStorage({
+            // destination: (req: Request, file: Express.Multer.File, callback: Function) => {
+            //     callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
+            // },
+            // filename: (req: Request, file: Express.Multer.File, callback: Function) => {
+            //     callback(null, new Date().toISOString() + '_' + file.originalname);
+            // }
+        // })
+        // this.file_filter = (req: Request, file: Express.Multer.File, callback: Function) => {
+        //     if (file.mimetype === Singleton.getConstants().RESPONSE.TYPES.PNG
+        //      || file.mimetype === Singleton.getConstants().RESPONSE.TYPES.JPEG
+        //      || file.mimetype === Singleton.getConstants().RESPONSE.TYPES.JPG) {
+        //          callback(null, true);
+        //     } else {
+        //         //! FILE WILL NOT BE SAVED
+        //         req.sendFormPostedData();
+        //         // @ts-ignore
+        //         return this.onErrorValidation(req.res, 'Only images with the (PNG, JPEG or JPG) extensions are allowed');
+        //     }
+        // };
+        // this.upload_middleware = this.uploader({storage: this.uploader_configs, limits: {fileSize: this.file_size}, fileFilter: this.file_filter}).single('uploaded_image');
+        
+        this.upload_middleware = Singleton.configUploader({
+            file_size: 10 * 1024 * 1024,
+            input_name: 'uploaded_image',
+            storage_type: 'diskStorage',
+            upload_type: 'single',
+            // @ts-ignore
+            file_filter: (req: Request, file: Express.Multer.File, callback: multer.FileFilterCallback) => {
+                if (file.mimetype === Singleton.getConstants().RESPONSE.TYPES.PNG
+                 || file.mimetype === Singleton.getConstants().RESPONSE.TYPES.JPEG
+                 || file.mimetype === Singleton.getConstants().RESPONSE.TYPES.JPG) {
+                     callback(null, true);
+                } else {
+                    //! FILE WILL NOT BE SAVED
+                    req.sendFormPostedData();
+                    // @ts-ignore
+                    return this.onErrorValidation(req.res, 'Only images with the (PNG, JPEG or JPG) extensions are allowed');
+                }
+            },
+            // @ts-ignore
+            storage_disk_destination_callback: (req: Request, file: Express.Multer.File, callback: Function) => {
                 callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
             },
-            filename: (req: Request, file: Express.Multer.File, callback: Function) => {
+            // @ts-ignore
+            storage_disk_filename_callback: (req: Request, file: Express.Multer.File, callback: Function) => {
                 callback(null, new Date().toISOString() + '_' + file.originalname);
-            }
+            },
+            // todo: testing fields, array, none and undefined (any) option
+            // upload_type_fields_array: [{name: 'uploaded_image', maxCount: 5}]
         })
-        this.file_filter = (req: Request, file: Express.Multer.File, callback: Function) => {
-            if (file.mimetype === Singleton.getConstants().RESPONSE.TYPES.PNG
-             || file.mimetype === Singleton.getConstants().RESPONSE.TYPES.JPEG
-             || file.mimetype === Singleton.getConstants().RESPONSE.TYPES.JPG) {
-                 callback(null, true);
-            } else {
-                //! FILE WILL NOT BE SAVED
-                // @ts-ignore 
-                return this.onErrorValidation(req.res, 'Only images with the (PNG, JPEG or JPG) extensions are allowed');
-            }
-        };
-        this.upload_middleware = this.uploader({storage: this.uploader_configs, limits: {fileSize: this.file_size}, fileFilter: this.file_filter}).single('uploaded_image');
     }
 
     /**
@@ -101,6 +127,14 @@ export = class Admin extends BaseController {
     */
     product           = () => this.route('get', '/admin/add-product/', {isAuth, userSession} , async (req: Request, res: Response, next: NextFunction) => {
         if (req.isGet()) {
+            const uploader_form = Singleton.buildUploader(
+                {
+                    extensions: ['png', 'jepg', 'jpg'],
+                    url: '/admin/add-product/',
+                    button_name: 'Upload Image',
+                    input_name: 'uploaded_image'
+                }
+            );
             return this.render(
                 res,
                 'admin/add-product',
@@ -108,6 +142,7 @@ export = class Admin extends BaseController {
                     nav_title: 'Add Product',
                     path : '/admin/add-product/',
                     root: 'shop',
+                    uploader: uploader_form,
                     breadcrumbs: [
                         {
                             title: 'Shop',
@@ -135,7 +170,14 @@ export = class Admin extends BaseController {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
-
+        const uploader_form = Singleton.buildUploader(
+            {
+                extensions: ['png', 'jepg', 'jpg'],
+                url: '/admin/add-product/',
+                button_name: 'Upload Image',
+                input_name: 'uploaded_image'
+            }
+        );
         const product_id = +req.getDynamicParam('product_id') ?? false;
         const user_id    = +req.getCurrentUser().id;
         
@@ -153,6 +195,7 @@ export = class Admin extends BaseController {
                             product_id: product_id,
                             product: product,
                             root: 'shop',
+                            uploader: uploader_form,
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -177,6 +220,7 @@ export = class Admin extends BaseController {
 
     protected validatedEditProduct  = () => ({
         uploader_error_handler: (req: Request, res: Response, next: NextFunction) => {
+            // @ts-ignore
             this.upload_middleware(req, res, (err) => {
                 if (err instanceof multer.MulterError) {
                     switch (err.code) {
@@ -282,15 +326,62 @@ export = class Admin extends BaseController {
     //* Add Product middleware     *\\
     //******************************\\
     protected validatedNewProduct  = () => ({
+        uploader_error_handler: (req: Request, res: Response, next: NextFunction) => {
+            // @ts-ignore
+            this.upload_middleware(req, res, (err: multer.MulterError) => {
+                if (err instanceof multer.MulterError) {
+                    switch (err.code) {
+                        case Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
+                            return this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!')
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
+                            return this.onErrorValidation(res, 'File exceded the allowed parts!')
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
+                            return this.onErrorValidation(res, 'Too many files uploaded, please upload less files!')
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
+                            return this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!")
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_VALUE_TOO_LONG:
+                            return this.onErrorValidation(res, "Field value is too long, please insert a short fields's value!")
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FIELDS:
+                            return this.onErrorValidation(res, "Alot of fields have been detected, please use less fields!")
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.UNEXPECTED_FIELD:
+                            return this.onErrorValidation(res, "Unexpected field detected, please check your fields!")
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_MISSING:
+                            return this.onErrorValidation(res, "Field's name is missing, please validate your fields!")
+                            break;
+                        default:
+                            next()
+                            break;
+                    }
+                }
+                next();
+            })
+        },
         is_authenticated:     isAuth,
         user_session:         userSession,
         validate_title:       check('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
-        validate_imageUrl:    check('imageUrl').isURL().withMessage("Please enter products's image url!").bail(),
         validate_description: check('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
-        validate_price:       check('price')
-                              .isNumeric()
-                              .withMessage("Please enter product's price!")
-                              .bail()
+        validate_price:       check('price').isNumeric().withMessage("Please enter product's price!").bail(),
+        validate_imageUrl:    check('uploaded_image').
+        // @ts-ignore
+        custom((value: any, {req} : Request) => {
+            if (req.file) {
+                if (req.file?.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.PNG)
+                || req.file?.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.JPG)
+                || req.file?.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
+                    return true;
+                }
+                //! FILE WILL BE SAVED
+                // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
+            }
+            return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
+        }).bail(),
     });
     /**
      * @function addProduct

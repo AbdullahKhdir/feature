@@ -82,7 +82,14 @@ var Singleton = /** @class */ (function () {
     //* Path getter function *\\
     //************************\\
     Singleton.getUploader = function () {
-        return Uploader_1.default.getMulterInstance();
+        return Uploader_1.default.getUploaderInstance().getMulter;
+    };
+    Singleton.configUploader = function (options, instance) {
+        if (instance === void 0) { instance = Singleton.getUploader(); }
+        return Uploader_1.default.getUploaderInstance().configureUploader(options, instance);
+    };
+    Singleton.buildUploader = function (options) {
+        return Uploader_1.default.getUploaderInstance()._buildUploader(options);
     };
     //******************************\\
     //* FileSystem getter function *\\

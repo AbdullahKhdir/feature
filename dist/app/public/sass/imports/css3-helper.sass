@@ -1,0 +1,136 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// CSS3 Mixins
+// sass-lint:disable no-duplicate-properties
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@mixin css3-prefix($property, $value)
+    -khtml-#{$property}:  #{$value} // sass-lint:disable-line no-misspelled-properties
+    -moz-#{$property}:    #{$value}
+    -ms-#{$property}:     #{$value}
+    -o-#{$property}:      #{$value}
+    -webkit-#{$property}: #{$value}
+    #{$property}:         #{$value}
+
+/// Background Gradient
+@mixin background-gradient($start-color, $end-color: #999)
+    background:
+        color: $start-color
+        image: -webkit-gradient(linear, left top, left bottom, from($start-color), to($end-color))
+        image: -webkit-linear-gradient(top, $start-color, $end-color)
+        image: -moz-linear-gradient(top, $start-color, $end-color)
+        image: -ms-linear-gradient(top, $start-color, $end-color)
+        image: -o-linear-gradient(top, $start-color, $end-color)
+        image: linear-gradient(top, $start-color, $end-color)
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr = '#{$start-color}', endColorStr='#{$end-color}')
+
+// Linear Gardient
+@mixin background-linear-gradient($val, $bg-color)
+    background:
+        color: $bg-color
+        image: -webkit-linear-gradient(#{$val})
+        image: -moz-linear-gradient(#{$val})
+        image: -ms-linear-gradient(#{$val})
+        image: -o-linear-gradient(#{$val})
+        image: linear-gradient(#{$val})
+
+// Background Horizontal
+@mixin background-horizontal($start-color, $end-color: #999)
+    background:
+        color: $start-color
+        image: -webkit-gradient(linear, left top, right top, from($start-color), to($end-color))
+        image: -webkit-linear-gradient(left, $start-color, $end-color)
+        image: -moz-linear-gradient(left, $start-color, $end-color)
+        image: -ms-linear-gradient(left, $start-color, $end-color)
+        image: -o-linear-gradient(left, $start-color, $end-color)
+        image: linear-gradient(left, $start-color, $end-color)
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorStr='#{$start-color}', endColorStr='#{$end-color}', gradientType='1')
+
+// Background Size
+@mixin background-size($width: 100%, $height: $width)
+    @if type-of($width) == 'number' and $height != null
+        @include css3-prefix('background-size', $width $height)
+    @else
+        @include css3-prefix('background-size', $width)
+
+// Background Color Opacity
+@mixin background-opacity($color: #000, $opacity: .85)
+    background: $color
+    background: rgba($color, $opacity) // sass-lint:disable-line no-color-literals
+
+// Border Radius
+@mixin border-radius($radius: 5px)
+    @include css3-prefix('border-radius', $radius)
+
+// Border Radius Separate
+@mixin border-radius-separate($top-left-radius: 5px, $top-right-radius: 5px, $bottom-left-radius: 5px, $bottom-right-radius: 5px) // sass-lint:disable-line max-line-length
+    // sass-lint:disable-block no-vendor-prefixes
+    -webkit-border-top-left-radius:     $top-left-radius
+    -webkit-border-top-right-radius:    $top-right-radius
+    -webkit-border-bottom-right-radius: $bottom-right-radius
+    -webkit-border-bottom-left-radius:  $bottom-left-radius
+
+    -moz-border-radius-topleft:     $top-left-radius
+    -moz-border-radius-topright:    $top-right-radius
+    -moz-border-radius-bottomright: $bottom-right-radius
+    -moz-border-radius-bottomleft:  $bottom-left-radius
+
+    border-top-left-radius:     $top-left-radius
+    border-top-right-radius:    $top-right-radius
+    border-bottom-right-radius: $bottom-right-radius
+    border-bottom-left-radius:  $bottom-left-radius
+
+// Box Shadow
+@mixin box-shadow($x: 2px, $y: 2px, $blur: 5px, $color: rgba(0, 0, 0, .4), $inset: '')
+    @if ($inset != '')
+        @include css3-prefix('box-shadow', $inset $x $y $blur $color)
+    @else
+        @include css3-prefix('box-shadow', $x $y $blur $color)
+
+@mixin no-box-shadow
+    @include css3-prefix('box-shadow', none)
+
+// Box Sizing
+@mixin box-sizing($type: border-box)
+    @include css3-prefix('box-sizing', $type)
+
+// Opacity
+@mixin opacity($opacity: .5)
+    $opacity-multiplied: ($opacity * 100)
+
+    @include css3-prefix('opacity', $opacity)
+    filter:     alpha(opacity=$opacity-multiplied)
+    -ms-filter: 'progid:DXImageTransform.Microsoft.Alpha(Opacity=' + $opacity-multiplied + ')' // sass-lint:disable-line no-vendor-prefixes
+
+// Text Shadow
+@mixin text-shadow($x: 2px, $y: 2px, $blur: 5px, $color: rgba(0, 0, 0, .4))
+    text-shadow: $x $y $blur $color
+
+// Animation
+@mixin animation($val)
+    @include css3-prefix('animation', $val)
+
+// Animation
+@mixin user-select($val: none)
+    @include css3-prefix('user-select', $val)
+
+@mixin no-user-select
+    @include user-select(none)
+
+/// Rotate
+@mixin rotate-vertical
+    @include css3-prefix('transform', 'rotate(-90deg)')
+    @include css3-prefix('transform-origin', '50% 50%')
+
+    // IE-Hack // Ab IE9+ deaktiviert */
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3)
+
+// Transition
+@mixin transition($transition, $type: '')
+    @include css3-prefix('transition'+$type, $transition)
+
+@mixin avoid-column-break-inside
+    @include css3-prefix('column-break-inside', 'avoid')
+    overflow: hidden
+    page-break-inside: avoid
+    break-inside: avoid
+    break-inside: avoid-column

@@ -72,12 +72,20 @@ module.exports = /** @class */ (function (_super) {
          * @returns Response
         */
         _this.product = function () { return _this.route('get', '/admin/add-product/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var uploader_form;
             return __generator(this, function (_a) {
                 if (req.isGet()) {
+                    uploader_form = Singleton_1.Singleton.buildUploader({
+                        extensions: ['png', 'jepg', 'jpg'],
+                        url: '/admin/add-product/',
+                        button_name: 'Upload Image',
+                        input_name: 'uploaded_image'
+                    });
                     return [2 /*return*/, this.render(res, 'admin/add-product', {
                             nav_title: 'Add Product',
                             path: '/admin/add-product/',
                             root: 'shop',
+                            uploader: uploader_form,
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -101,13 +109,19 @@ module.exports = /** @class */ (function (_super) {
          * @returns Response
         */
         _this.editProduct = function () { return _this.route('get', '/admin/edit-product/:product_id/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var product_id, user_id;
+            var uploader_form, product_id, user_id;
             var _this = this;
             var _a;
             return __generator(this, function (_b) {
                 if (!req.isGet()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
+                uploader_form = Singleton_1.Singleton.buildUploader({
+                    extensions: ['png', 'jepg', 'jpg'],
+                    url: '/admin/add-product/',
+                    button_name: 'Upload Image',
+                    input_name: 'uploaded_image'
+                });
                 product_id = (_a = +req.getDynamicParam('product_id')) !== null && _a !== void 0 ? _a : false;
                 user_id = +req.getCurrentUser().id;
                 if (this.__.isNumber(user_id) && this.__.isNumber(product_id)) {
@@ -121,6 +135,7 @@ module.exports = /** @class */ (function (_super) {
                                 product_id: product_id,
                                 product: product,
                                 root: 'shop',
+                                uploader: uploader_form,
                                 breadcrumbs: [
                                     {
                                         title: 'Shop',
@@ -147,6 +162,7 @@ module.exports = /** @class */ (function (_super) {
         }); }); };
         _this.validatedEditProduct = function () { return ({
             uploader_error_handler: function (req, res, next) {
+                // @ts-ignore
                 _this.upload_middleware(req, res, function (err) {
                     if (err instanceof multer_1.default.MulterError) {
                         switch (err.code) {
@@ -255,15 +271,64 @@ module.exports = /** @class */ (function (_super) {
         //* Add Product middleware     *\\
         //******************************\\
         _this.validatedNewProduct = function () { return ({
+            uploader_error_handler: function (req, res, next) {
+                // @ts-ignore
+                _this.upload_middleware(req, res, function (err) {
+                    if (err instanceof multer_1.default.MulterError) {
+                        switch (err.code) {
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
+                                return _this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
+                                return _this.onErrorValidation(res, 'File exceded the allowed parts!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
+                                return _this.onErrorValidation(res, 'Too many files uploaded, please upload less files!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
+                                return _this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_VALUE_TOO_LONG:
+                                return _this.onErrorValidation(res, "Field value is too long, please insert a short fields's value!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FIELDS:
+                                return _this.onErrorValidation(res, "Alot of fields have been detected, please use less fields!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.UNEXPECTED_FIELD:
+                                return _this.onErrorValidation(res, "Unexpected field detected, please check your fields!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_MISSING:
+                                return _this.onErrorValidation(res, "Field's name is missing, please validate your fields!");
+                                break;
+                            default:
+                                next();
+                                break;
+                        }
+                    }
+                    next();
+                });
+            },
             is_authenticated: is_auth_1.default,
             user_session: init_user_session_1.default,
             validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
-            validate_imageUrl: (0, express_validator_1.check)('imageUrl').isURL().withMessage("Please enter products's image url!").bail(),
             validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
-            validate_price: (0, express_validator_1.check)('price')
-                .isNumeric()
-                .withMessage("Please enter product's price!")
-                .bail()
+            validate_price: (0, express_validator_1.check)('price').isNumeric().withMessage("Please enter product's price!").bail(),
+            validate_imageUrl: (0, express_validator_1.check)('uploaded_image').
+                // @ts-ignore
+                custom(function (value, _a) {
+                var _b, _c, _d;
+                var req = _a.req;
+                if (req.file) {
+                    if (((_b = req.file) === null || _b === void 0 ? void 0 : _b.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG))
+                        || ((_c = req.file) === null || _c === void 0 ? void 0 : _c.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG))
+                        || ((_d = req.file) === null || _d === void 0 ? void 0 : _d.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG))) {
+                        return true;
+                    }
+                    //! FILE WILL BE SAVED
+                    // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
+                }
+                return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
+            }).bail(),
         }); };
         /**
          * @function addProduct
@@ -424,29 +489,58 @@ module.exports = /** @class */ (function (_super) {
         //************\\
         //* UPLOADER *\\
         //************\\
-        _this.file_size = 10 * 1024 * 1024;
-        _this.uploader = Singleton_1.Singleton.getUploader();
-        _this.uploader_configs = _this.uploader.diskStorage({
-            destination: function (req, file, callback) {
+        // this.uploader    = Singleton.getUploader();
+        // this.uploader_configs = this.uploader.diskStorage({
+        // destination: (req: Request, file: Express.Multer.File, callback: Function) => {
+        //     callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
+        // },
+        // filename: (req: Request, file: Express.Multer.File, callback: Function) => {
+        //     callback(null, new Date().toISOString() + '_' + file.originalname);
+        // }
+        // })
+        // this.file_filter = (req: Request, file: Express.Multer.File, callback: Function) => {
+        //     if (file.mimetype === Singleton.getConstants().RESPONSE.TYPES.PNG
+        //      || file.mimetype === Singleton.getConstants().RESPONSE.TYPES.JPEG
+        //      || file.mimetype === Singleton.getConstants().RESPONSE.TYPES.JPG) {
+        //          callback(null, true);
+        //     } else {
+        //         //! FILE WILL NOT BE SAVED
+        //         req.sendFormPostedData();
+        //         // @ts-ignore
+        //         return this.onErrorValidation(req.res, 'Only images with the (PNG, JPEG or JPG) extensions are allowed');
+        //     }
+        // };
+        // this.upload_middleware = this.uploader({storage: this.uploader_configs, limits: {fileSize: this.file_size}, fileFilter: this.file_filter}).single('uploaded_image');
+        _this.upload_middleware = Singleton_1.Singleton.configUploader({
+            file_size: 10 * 1024 * 1024,
+            input_name: 'uploaded_image',
+            storage_type: 'diskStorage',
+            upload_type: 'single',
+            // @ts-ignore
+            file_filter: function (req, file, callback) {
+                if (file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG
+                    || file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG
+                    || file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG) {
+                    callback(null, true);
+                }
+                else {
+                    //! FILE WILL NOT BE SAVED
+                    req.sendFormPostedData();
+                    // @ts-ignore
+                    return _this.onErrorValidation(req.res, 'Only images with the (PNG, JPEG or JPG) extensions are allowed');
+                }
+            },
+            // @ts-ignore
+            storage_disk_destination_callback: function (req, file, callback) {
                 callback(null, Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
             },
-            filename: function (req, file, callback) {
+            // @ts-ignore
+            storage_disk_filename_callback: function (req, file, callback) {
                 callback(null, new Date().toISOString() + '_' + file.originalname);
-            }
+            },
+            // todo: testing fields, array, none and undefined (any) option
+            // upload_type_fields_array: [{name: 'uploaded_image', maxCount: 5}]
         });
-        _this.file_filter = function (req, file, callback) {
-            if (file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG
-                || file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG
-                || file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG) {
-                callback(null, true);
-            }
-            else {
-                //! FILE WILL NOT BE SAVED
-                // @ts-ignore 
-                return _this.onErrorValidation(req.res, 'Only images with the (PNG, JPEG or JPG) extensions are allowed');
-            }
-        };
-        _this.upload_middleware = _this.uploader({ storage: _this.uploader_configs, limits: { fileSize: _this.file_size }, fileFilter: _this.file_filter }).single('uploaded_image');
         return _this;
     }
     return Admin;

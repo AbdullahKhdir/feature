@@ -6,15 +6,11 @@
     <%- include('../includes/updated/toaster.ejs') %>
     <main>
         <div class="container">
-            <form class="product-form cube-loader" action="/admin/add-product/" method="POST">
+            <form class="product-form cube-loader" action="/admin/add-product/" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="_csrf" value="<%= csrf %>">
                 <div class="input-field col s12 m6">
                     <label for="title"><%= nav_title %></label>
                     <input type="text" name="title" id="title">
-                </div>
-                <div class="input-field col s12 m6">
-                    <label for="imageUrl"><%= 'Image url' %></label>
-                    <input type="text" name="imageUrl" id="imageUrl">
                 </div>
                 <div class="input-field col s12 m6">
                     <label for="price"><%= 'Price' %></label>
@@ -24,7 +20,7 @@
                     <label for="description"><%= 'Description' %></label>
                     <textarea class="materialize-textarea" name="description" id="description" rows="5"></textarea>
                 </div>
-        
+                <%- uploader %>
                 <button class="btn" type="submit">Add Product</button>
             </form>
         </div>
