@@ -71,6 +71,7 @@ export = class Uploader {
                                 id="${options.input_name}"
                                 type="file"
                                 accept="${extensions}"
+                                ${options.multiple_files ? 'multiple' : ''}
                             >
                         </div>
                         <div class="file-path-wrapper">

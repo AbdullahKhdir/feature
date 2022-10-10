@@ -163,6 +163,7 @@ export abstract class ExpressResponse {
         } else if (res.req.method === this.codes.REQUEST.TYPE.POST) {
             status = this.codes.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY;
         }
+        
         res.redirect(status, res.req.url);
         return res.end();
     }

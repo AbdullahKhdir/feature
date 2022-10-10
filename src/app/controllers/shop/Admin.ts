@@ -112,9 +112,7 @@ export = class Admin extends BaseController {
             // @ts-ignore
             storage_disk_filename_callback: (req: Request, file: Express.Multer.File, callback: Function) => {
                 callback(null, new Date().toISOString() + '_' + file.originalname);
-            },
-            // todo: testing fields, array, none and undefined (any) option
-            // upload_type_fields_array: [{name: 'uploaded_image', maxCount: 5}]
+            }
         })
     }
 
@@ -132,7 +130,8 @@ export = class Admin extends BaseController {
                     extensions: ['png', 'jpeg', 'jpg'],
                     url: '/admin/add-product/',
                     button_name: 'Upload Image',
-                    input_name: 'uploaded_image'
+                    input_name: 'uploaded_image',
+                    multiple_files: false
                 }
             );
             return this.render(
@@ -175,7 +174,8 @@ export = class Admin extends BaseController {
                 extensions: ['png', 'jpeg', 'jpg'],
                 url: '/admin/add-product/',
                 button_name: 'Upload Image',
-                input_name: 'uploaded_image'
+                input_name: 'uploaded_image',
+                multiple_files: false
             }
         );
         const product_id = +req.getDynamicParam('product_id') ?? false;
@@ -273,6 +273,23 @@ export = class Admin extends BaseController {
                 }
                 //! FILE WILL BE SAVED
                 // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
+            } else if (req.files) {
+                if (typeof req.files['uploaded_image'] !== 'undefined') {
+                    if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
+                        if (req.files['uploaded_image'].length > 5) {
+                            console.log('checked')
+                            return this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!")
+                        }
+                        req.files['uploaded_image'].forEach((image: any) => {
+                            if (!image.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.PNG)
+                            || !image.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.JPG)
+                            || !image.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
+                                return false;
+                            }
+                        });
+                        return true;
+                    }
+                }
             }
             return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
         }).bail(),
@@ -379,6 +396,23 @@ export = class Admin extends BaseController {
                 }
                 //! FILE WILL BE SAVED
                 // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
+            } else if (req.files) {
+                if (typeof req.files['uploaded_image'] !== 'undefined') {
+                    if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
+                        if (req.files['uploaded_image'].length > 5) {
+                            console.log('checked')
+                            return this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!")
+                        }
+                        req.files['uploaded_image'].forEach((image: any) => {
+                            if (!image.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.PNG)
+                            || !image.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.JPG)
+                            || !image.mimetype.includes(Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
+                                return false;
+                            }
+                        });
+                        return true;
+                    }
+                }
             }
             return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
         }).bail(),
@@ -394,7 +428,9 @@ export = class Admin extends BaseController {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
+        
         req.sendFormPostedData();
+        
         const title       = this.__.capitalize(req.getFormPostedData('title'));
         const imageUrl    = req.getFormPostedData('imageUrl');
         const description = this.__.capitalize(req.getFormPostedData('description'));

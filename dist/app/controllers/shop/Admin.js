@@ -79,7 +79,8 @@ module.exports = /** @class */ (function (_super) {
                         extensions: ['png', 'jpeg', 'jpg'],
                         url: '/admin/add-product/',
                         button_name: 'Upload Image',
-                        input_name: 'uploaded_image'
+                        input_name: 'uploaded_image',
+                        multiple_files: false
                     });
                     return [2 /*return*/, this.render(res, 'admin/add-product', {
                             nav_title: 'Add Product',
@@ -120,7 +121,8 @@ module.exports = /** @class */ (function (_super) {
                     extensions: ['png', 'jpeg', 'jpg'],
                     url: '/admin/add-product/',
                     button_name: 'Upload Image',
-                    input_name: 'uploaded_image'
+                    input_name: 'uploaded_image',
+                    multiple_files: false
                 });
                 product_id = (_a = +req.getDynamicParam('product_id')) !== null && _a !== void 0 ? _a : false;
                 user_id = +req.getCurrentUser().id;
@@ -217,6 +219,24 @@ module.exports = /** @class */ (function (_super) {
                     }
                     //! FILE WILL BE SAVED
                     // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
+                }
+                else if (req.files) {
+                    if (typeof req.files['uploaded_image'] !== 'undefined') {
+                        if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
+                            if (req.files['uploaded_image'].length > 5) {
+                                console.log('checked');
+                                return _this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!");
+                            }
+                            req.files['uploaded_image'].forEach(function (image) {
+                                if (!image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG)
+                                    || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG)
+                                    || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
+                                    return false;
+                                }
+                            });
+                            return true;
+                        }
+                    }
                 }
                 return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
             }).bail(),
@@ -326,6 +346,24 @@ module.exports = /** @class */ (function (_super) {
                     }
                     //! FILE WILL BE SAVED
                     // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
+                }
+                else if (req.files) {
+                    if (typeof req.files['uploaded_image'] !== 'undefined') {
+                        if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
+                            if (req.files['uploaded_image'].length > 5) {
+                                console.log('checked');
+                                return _this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!");
+                            }
+                            req.files['uploaded_image'].forEach(function (image) {
+                                if (!image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG)
+                                    || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG)
+                                    || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
+                                    return false;
+                                }
+                            });
+                            return true;
+                        }
+                    }
                 }
                 return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
             }).bail(),
@@ -537,9 +575,7 @@ module.exports = /** @class */ (function (_super) {
             // @ts-ignore
             storage_disk_filename_callback: function (req, file, callback) {
                 callback(null, new Date().toISOString() + '_' + file.originalname);
-            },
-            // todo: testing fields, array, none and undefined (any) option
-            // upload_type_fields_array: [{name: 'uploaded_image', maxCount: 5}]
+            }
         });
         return _this;
     }

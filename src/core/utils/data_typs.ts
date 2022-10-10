@@ -6,6 +6,7 @@ export type uploader_options = {
     url: string;
     button_name: string;
     input_name: string;
+    multiple_files: boolean;
     parent_class?: string;
     parent_id?: string;
     text_class?: string;
