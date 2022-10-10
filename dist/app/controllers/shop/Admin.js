@@ -76,7 +76,7 @@ module.exports = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 if (req.isGet()) {
                     uploader_form = Singleton_1.Singleton.buildUploader({
-                        extensions: ['png', 'jepg', 'jpg'],
+                        extensions: ['png', 'jpeg', 'jpg'],
                         url: '/admin/add-product/',
                         button_name: 'Upload Image',
                         input_name: 'uploaded_image'
@@ -117,7 +117,7 @@ module.exports = /** @class */ (function (_super) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 uploader_form = Singleton_1.Singleton.buildUploader({
-                    extensions: ['png', 'jepg', 'jpg'],
+                    extensions: ['png', 'jpeg', 'jpg'],
                     url: '/admin/add-product/',
                     button_name: 'Upload Image',
                     input_name: 'uploaded_image'

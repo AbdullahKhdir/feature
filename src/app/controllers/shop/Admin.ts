@@ -129,7 +129,7 @@ export = class Admin extends BaseController {
         if (req.isGet()) {
             const uploader_form = Singleton.buildUploader(
                 {
-                    extensions: ['png', 'jepg', 'jpg'],
+                    extensions: ['png', 'jpeg', 'jpg'],
                     url: '/admin/add-product/',
                     button_name: 'Upload Image',
                     input_name: 'uploaded_image'
@@ -172,7 +172,7 @@ export = class Admin extends BaseController {
         }
         const uploader_form = Singleton.buildUploader(
             {
-                extensions: ['png', 'jepg', 'jpg'],
+                extensions: ['png', 'jpeg', 'jpg'],
                 url: '/admin/add-product/',
                 button_name: 'Upload Image',
                 input_name: 'uploaded_image'
