@@ -108,6 +108,10 @@ export class Singleton{
         return Uploader.getUploaderInstance()._buildUploader(options);
     }
 
+    public static asyncUploader(req: Request, res: Response, uploader: any) {
+        return Uploader.getUploaderInstance().asyncUpload(req, res, uploader);
+    }
+
     //******************************\\
     //* FileSystem getter function *\\
     //******************************\\

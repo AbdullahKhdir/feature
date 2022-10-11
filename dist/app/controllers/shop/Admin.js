@@ -56,6 +56,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var express_validator_1 = require("express-validator");
 var multer_1 = __importDefault(require("multer"));
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
+var JsonResponse_1 = __importDefault(require("../../../core/response/types/JsonResponse"));
 var Singleton_1 = require("../../../core/Singleton/Singleton");
 var init_user_session_1 = __importDefault(require("../../middlewares/init_user_session"));
 var is_auth_1 = __importDefault(require("../../middlewares/is_auth"));
@@ -77,7 +78,7 @@ module.exports = /** @class */ (function (_super) {
                 if (req.isGet()) {
                     uploader_form = Singleton_1.Singleton.buildUploader({
                         extensions: ['png', 'jpeg', 'jpg'],
-                        url: '/admin/add-product/',
+                        url: '/upload-image/',
                         button_name: 'Upload Image',
                         input_name: 'uploaded_image',
                         multiple_files: false
@@ -87,6 +88,22 @@ module.exports = /** @class */ (function (_super) {
                             path: '/admin/add-product/',
                             root: 'shop',
                             uploader: uploader_form,
+                            // todo: check which lib is mandatory and which is not
+                            js: [
+                                'plugins/jquery/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
+                                'plugins/jquery/blueimp-file-upload/js/load_image.js',
+                                'plugins/jquery/blueimp-file-upload/js/canvas_to_blob.js',
+                                'plugins/jquery/blueimp-file-upload/js/blueimp_gallery.js',
+                                'plugins/jquery/blueimp-file-upload/js/jquery.iframe-transport.js',
+                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload.js',
+                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-process.js',
+                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-image.js',
+                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-audio.js',
+                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-video.js',
+                                'plugins/jquery/blueimp-file-upload/js/validate.js',
+                                'plugins/jquery/blueimp-file-upload/js/cors/jquery.postmessage-transport.js',
+                                'plugins/jquery/blueimp-file-upload/js/cors/jquery.xdr-transport.js',
+                            ],
                             breadcrumbs: [
                                 {
                                     title: 'Shop',
@@ -224,7 +241,6 @@ module.exports = /** @class */ (function (_super) {
                     if (typeof req.files['uploaded_image'] !== 'undefined') {
                         if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
                             if (req.files['uploaded_image'].length > 5) {
-                                console.log('checked');
                                 return _this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!");
                             }
                             req.files['uploaded_image'].forEach(function (image) {
@@ -261,9 +277,6 @@ module.exports = /** @class */ (function (_super) {
                 price = req.getFormPostedData('price');
                 description = this.__.capitalize(req.getFormPostedData('description'));
                 image = req.getFormPostedData('uploaded_image');
-                //* uploading images and validating is done 
-                // todo: save images in db or in filesystem to show as card images
-                console.log(req.getAllFormPostedData());
                 values = {
                     title: title,
                     price: price,
@@ -291,43 +304,6 @@ module.exports = /** @class */ (function (_super) {
         //* Add Product middleware     *\\
         //******************************\\
         _this.validatedNewProduct = function () { return ({
-            uploader_error_handler: function (req, res, next) {
-                // @ts-ignore
-                _this.upload_middleware(req, res, function (err) {
-                    if (err instanceof multer_1.default.MulterError) {
-                        switch (err.code) {
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
-                                return _this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!');
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
-                                return _this.onErrorValidation(res, 'File exceded the allowed parts!');
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
-                                return _this.onErrorValidation(res, 'Too many files uploaded, please upload less files!');
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
-                                return _this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!");
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_VALUE_TOO_LONG:
-                                return _this.onErrorValidation(res, "Field value is too long, please insert a short fields's value!");
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FIELDS:
-                                return _this.onErrorValidation(res, "Alot of fields have been detected, please use less fields!");
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.UNEXPECTED_FIELD:
-                                return _this.onErrorValidation(res, "Unexpected field detected, please check your fields!");
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_MISSING:
-                                return _this.onErrorValidation(res, "Field's name is missing, please validate your fields!");
-                                break;
-                            default:
-                                next();
-                                break;
-                        }
-                    }
-                    next();
-                });
-            },
             is_authenticated: is_auth_1.default,
             user_session: init_user_session_1.default,
             validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
@@ -351,7 +327,6 @@ module.exports = /** @class */ (function (_super) {
                     if (typeof req.files['uploaded_image'] !== 'undefined') {
                         if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
                             if (req.files['uploaded_image'].length > 5) {
-                                console.log('checked');
                                 return _this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!");
                             }
                             req.files['uploaded_image'].forEach(function (image) {
@@ -396,7 +371,7 @@ module.exports = /** @class */ (function (_super) {
                         if (primary_key) {
                             return _this.redirect(res, '/');
                         }
-                    }).catch(function (err) { return _this.onError(err); });
+                    }).catch(function (err) { return _this.onError(res, err); });
                 }
                 else {
                     return [2 /*return*/, this.onErrorValidation(res, errors.array())];
@@ -404,8 +379,56 @@ module.exports = /** @class */ (function (_super) {
                 return [2 /*return*/];
             });
         }); }); };
+        _this._uploader = function () { return ({
+            uploader_error_handler: function (req, res, next) {
+                // @ts-ignore
+                _this.upload_middleware(req, res, function (err) {
+                    if (err instanceof multer_1.default.MulterError) {
+                        switch (err.code) {
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
+                                return _this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
+                                return _this.onErrorValidation(res, 'File exceded the allowed parts!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
+                                return _this.onErrorValidation(res, 'Too many files uploaded, please upload less files!');
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
+                                return _this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_VALUE_TOO_LONG:
+                                return _this.onErrorValidation(res, "Field value is too long, please insert a short fields's value!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FIELDS:
+                                return _this.onErrorValidation(res, "Alot of fields have been detected, please use less fields!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.UNEXPECTED_FIELD:
+                                return _this.onErrorValidation(res, "Unexpected field detected, please check your fields!");
+                                break;
+                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_MISSING:
+                                return _this.onErrorValidation(res, "Field's name is missing, please validate your fields!");
+                                break;
+                            default:
+                                next();
+                                break;
+                        }
+                    }
+                    next();
+                });
+            },
+            is_authenticated: is_auth_1.default,
+            user_session: init_user_session_1.default,
+        }); };
+        _this.uploader = function () { return _this.route('post', '/upload-image/', _this._uploader(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var uploaded_file;
+            return __generator(this, function (_a) {
+                uploaded_file = JSON.stringify(req.getAllFormPostedData());
+                return [2 /*return*/, new JsonResponse_1.default('Success', { upload_object: uploaded_file }).sendAsJson(res)];
+            });
+        }); }); };
         //******************************\\
-        //* Add Product middleware     *\\
+        //* Delete Product middleware  *\\
         //******************************\\
         _this.validatedDeleteProduct = function () { return ({
             is_authenticated: is_auth_1.default,
@@ -495,7 +518,8 @@ module.exports = /** @class */ (function (_super) {
             'products',
             'postEditedProduct',
             'deleteProduct',
-            'editProduct'
+            'editProduct',
+            'uploader',
         ];
         _this.product_object = new Product_1.default();
         /*
@@ -574,7 +598,13 @@ module.exports = /** @class */ (function (_super) {
             },
             // @ts-ignore
             storage_disk_filename_callback: function (req, file, callback) {
-                callback(null, new Date().toISOString() + '_' + file.originalname);
+                var date = new Date();
+                var year = date.getFullYear();
+                var month = (date.getMonth() + 1);
+                var day = date.getDate();
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                callback(null, "".concat(year, "_").concat(month, "_").concat(day, "_").concat(hours, "_").concat(minutes, "_").concat(file.originalname));
             }
         });
         return _this;

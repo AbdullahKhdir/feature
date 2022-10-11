@@ -68,11 +68,13 @@ export = class Application extends BaseController {
           ! referrerPolicy
           ! xssFilter
         */
-        this.app.use(Helmet.contentSecurityPolicy({
-            directives: {
-                frameAncestors: ["'none'"]
-            }
-        }));
+        // this.app.use(Helmet.contentSecurityPolicy({
+        //     // useDefaults: true,
+        //     directives: {
+        //         "img-src": ["'self'", "data: https:"],
+        //         frameAncestors: ["'none'"],
+        //     }
+        // }));
         this.app.use(Helmet.crossOriginEmbedderPolicy());
         this.app.use(Helmet.crossOriginOpenerPolicy());
         this.app.use(Helmet.crossOriginResourcePolicy());
@@ -176,7 +178,7 @@ export = class Application extends BaseController {
         * Parse JSON-BODY or ANY DATA TYPE Requests
         */
         this.app.use(this.body_parser.json());
-        this.app.use(this.body_parser.urlencoded({extended: true}));        
+        this.app.use(this.body_parser.urlencoded({extended: true}));
 
         /*
         * Middleware To Initiate Mysql Session
@@ -266,10 +268,18 @@ export = class Application extends BaseController {
             }
         })
         
-        process.on('uncaughtException', function(ls){
-            console.log(ls);
-            // (function(){})();
+        /*
+        * Middleware populating file or files attribute on file upload
+        */
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            const upload_object = req.getFormPostedData('upload_object');
+            // todo: identifier for req.file and req.files
+            if (!this.__.isEmpty(upload_object)) {
+                req.file = JSON.parse(upload_object);
+            }
+            next();
         });
+
         /*
         * Routes 
         */
@@ -282,7 +292,6 @@ export = class Application extends BaseController {
         * Passing default and helpful properties to all templates
         ? lasts for the life cycle of the application 
         */
-        
         this.app.locals = Object.assign(this.app.locals, Locals);
     }
 

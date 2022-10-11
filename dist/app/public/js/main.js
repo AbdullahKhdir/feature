@@ -255,10 +255,12 @@ $(document).ready(function() {
      * @returns void
     */
     completeUploaderForm: (() => {
+      $('#uploader_status_icon').fadeIn('slow');
       const uploader = $('div#_uploader');
       const token    = $('input#_csrf').val();
       let   parent   = uploader.parent();
-
+      const _start_upload = 'Upload the file';
+      
       if (uploader.length > 0) {
         while (parent.map(function () {return this.tagName}).get().join(", ") !== 'FORM') {
           parent = parent.parent();
@@ -274,13 +276,63 @@ $(document).ready(function() {
             }
           }
         }
-        parent.attr('action', url)
-        $('#uploader_status_icon').fadeIn('slow');
-        setTimeout(() => {
-          $('#progress').fadeIn('slow');
-          $('#uploader_status_icon').fadeOut('slow');
-          $('#uploader_status_icon_complete').fadeIn('slow');
-        }, 3000);
+        parent.attr('action', url);
+        
+        $('#fileupload').fileupload({
+          dataType: 'json',
+          add: function (e, data) {
+            if ($('#start_upload_process span').text() === _start_upload) {
+              data.context = $('#start_upload_process').click(function (e) {
+                e.preventDefault();
+                data.submit()
+                .complete(result => {
+                  let upload_object = {};
+                  if (result) {
+                    if (result.responseJSON) {
+                      if (result.responseJSON.data) {
+                        if (result.responseJSON.data.upload_object) {
+                          upload_object = JSON.parse(result.responseJSON.data.upload_object);
+                          Array.from($('form')).forEach(function (form) {
+                            $(form).append($(`<input type='hidden' class="uploader upload_object" name='upload_object' value="">`));
+                            Array.from($('.uploader.upload_object')).forEach(function(input) {
+                              $(input).val(JSON.stringify(upload_object))
+                            });
+                          });
+                        }
+                      }
+                    }
+                  }
+                });
+              });
+            }
+          },
+          change: function (e, data) {
+            $('#start_upload_process span').text('Upload the file');
+            $.each(data.files, function (index, file) {
+              $('.file-path').val(file.name);
+            });
+          },
+          progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            if (progress === 100) {
+              $('#progress').addClass('progress_bar_fixed');
+            }
+            $('#progress').attr('value', progress.toString());
+          },
+          done: (data) => {
+            $('#start_upload_process span').text('Upload completed');
+            $('#start_upload_process').attr('disabled', true);
+            $('.toast.rounded').addClass('success');
+            M.toast({html: 'File has been uploaded', classes: 'rounded _success'});
+            $('#start_upload_process').click(function (e) {
+                e.preventDefault();
+                $('.toast.rounded').addClass('success');
+                M.toast({html: 'File has been uploaded', classes: 'rounded _success'});
+            });
+            $('#uploader_status_icon').fadeOut('slow');
+            $('#uploader_status_icon_complete').fadeIn('slow');
+          }
+        });
       }
     })(),
   };

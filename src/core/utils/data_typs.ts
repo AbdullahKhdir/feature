@@ -9,6 +9,7 @@ export type uploader_options = {
     multiple_files: boolean;
     parent_class?: string;
     parent_id?: string;
+    enable_loader?: boolean;
     text_class?: string;
     text_id?: string;
     input_class?: string;

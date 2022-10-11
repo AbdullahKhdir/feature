@@ -91,6 +91,9 @@ var Singleton = /** @class */ (function () {
     Singleton.buildUploader = function (options) {
         return Uploader_1.default.getUploaderInstance()._buildUploader(options);
     };
+    Singleton.asyncUploader = function (req, res, uploader) {
+        return Uploader_1.default.getUploaderInstance().asyncUpload(req, res, uploader);
+    };
     //******************************\\
     //* FileSystem getter function *\\
     //******************************\\

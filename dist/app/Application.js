@@ -67,11 +67,13 @@ module.exports = /** @class */ (function (_super) {
           ! referrerPolicy
           ! xssFilter
         */
-        _this.app.use(helmet_1.default.contentSecurityPolicy({
-            directives: {
-                frameAncestors: ["'none'"]
-            }
-        }));
+        // this.app.use(Helmet.contentSecurityPolicy({
+        //     // useDefaults: true,
+        //     directives: {
+        //         "img-src": ["'self'", "data: https:"],
+        //         frameAncestors: ["'none'"],
+        //     }
+        // }));
         _this.app.use(helmet_1.default.crossOriginEmbedderPolicy());
         _this.app.use(helmet_1.default.crossOriginOpenerPolicy());
         _this.app.use(helmet_1.default.crossOriginResourcePolicy());
@@ -242,9 +244,16 @@ module.exports = /** @class */ (function (_super) {
                 return next(err);
             }
         });
-        process.on('uncaughtException', function (ls) {
-            console.log(ls);
-            // (function(){})();
+        /*
+        * Middleware populating file or files attribute on file upload
+        */
+        _this.app.use(function (req, res, next) {
+            var upload_object = req.getFormPostedData('upload_object');
+            // todo: identifier for req.file and req.files
+            if (!_this.__.isEmpty(upload_object)) {
+                req.file = JSON.parse(upload_object);
+            }
+            next();
         });
         /*
         * Routes

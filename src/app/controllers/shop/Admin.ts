@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import { check, validationResult } from 'express-validator';
 import multer from 'multer';
 import BaseController from "../../../core/controller/BaseController";
+import JsonResponse from '../../../core/response/types/JsonResponse';
 import { Singleton } from '../../../core/Singleton/Singleton';
 import userSession from "../../middlewares/init_user_session";
 import isAuth from "../../middlewares/is_auth";
@@ -31,7 +32,8 @@ export = class Admin extends BaseController {
             'products',
             'postEditedProduct',
             'deleteProduct',
-            'editProduct'
+            'editProduct',
+            'uploader',
         ];
         this.product_object = new Product();
 
@@ -111,7 +113,13 @@ export = class Admin extends BaseController {
             },
             // @ts-ignore
             storage_disk_filename_callback: (req: Request, file: Express.Multer.File, callback: Function) => {
-                callback(null, new Date().toISOString() + '_' + file.originalname);
+                let date    = new Date();
+                let year    = date.getFullYear();
+                let month   = (date.getMonth() + 1);
+                let day     = date.getDate();
+                let hours   = date.getHours();
+                let minutes = date.getMinutes();
+                callback(null, `${year}_${month}_${day}_${hours}_${minutes}_${file.originalname}`);
             }
         })
     }
@@ -125,10 +133,11 @@ export = class Admin extends BaseController {
     */
     product           = () => this.route('get', '/admin/add-product/', {isAuth, userSession} , async (req: Request, res: Response, next: NextFunction) => {
         if (req.isGet()) {
+            // todo: test with multiple files
             const uploader_form = Singleton.buildUploader(
                 {
                     extensions: ['png', 'jpeg', 'jpg'],
-                    url: '/admin/add-product/',
+                    url: '/upload-image/',
                     button_name: 'Upload Image',
                     input_name: 'uploaded_image',
                     multiple_files: false
@@ -142,6 +151,22 @@ export = class Admin extends BaseController {
                     path : '/admin/add-product/',
                     root: 'shop',
                     uploader: uploader_form,
+                    // todo: check which lib is mandatory and which is not
+                    js: [
+                        'plugins/jquery/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
+                        'plugins/jquery/blueimp-file-upload/js/load_image.js',
+                        'plugins/jquery/blueimp-file-upload/js/canvas_to_blob.js',
+                        'plugins/jquery/blueimp-file-upload/js/blueimp_gallery.js',
+                        'plugins/jquery/blueimp-file-upload/js/jquery.iframe-transport.js',
+                        'plugins/jquery/blueimp-file-upload/js/jquery.fileupload.js',
+                        'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-process.js',
+                        'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-image.js',
+                        'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-audio.js',
+                        'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-video.js',
+                        'plugins/jquery/blueimp-file-upload/js/validate.js',
+                        'plugins/jquery/blueimp-file-upload/js/cors/jquery.postmessage-transport.js',
+                        'plugins/jquery/blueimp-file-upload/js/cors/jquery.xdr-transport.js',
+                    ],
                     breadcrumbs: [
                         {
                             title: 'Shop',
@@ -277,7 +302,6 @@ export = class Admin extends BaseController {
                 if (typeof req.files['uploaded_image'] !== 'undefined') {
                     if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
                         if (req.files['uploaded_image'].length > 5) {
-                            console.log('checked')
                             return this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!")
                         }
                         req.files['uploaded_image'].forEach((image: any) => {
@@ -315,7 +339,7 @@ export = class Admin extends BaseController {
         
         //* uploading images and validating is done 
         // todo: save images in db or in filesystem to show as card images
-        console.log(req.getAllFormPostedData())
+        // console.log(req.getAllFormPostedData())
         
         const values = {
             title: title,
@@ -343,43 +367,6 @@ export = class Admin extends BaseController {
     //* Add Product middleware     *\\
     //******************************\\
     protected validatedNewProduct  = () => ({
-        uploader_error_handler: (req: Request, res: Response, next: NextFunction) => {
-            // @ts-ignore
-            this.upload_middleware(req, res, (err: multer.MulterError) => {
-                if (err instanceof multer.MulterError) {
-                    switch (err.code) {
-                        case Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
-                            return this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!')
-                            break;
-                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
-                            return this.onErrorValidation(res, 'File exceded the allowed parts!')
-                            break;
-                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
-                            return this.onErrorValidation(res, 'Too many files uploaded, please upload less files!')
-                            break;
-                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
-                            return this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!")
-                            break;
-                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_VALUE_TOO_LONG:
-                            return this.onErrorValidation(res, "Field value is too long, please insert a short fields's value!")
-                            break;
-                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FIELDS:
-                            return this.onErrorValidation(res, "Alot of fields have been detected, please use less fields!")
-                            break;
-                        case Singleton.getConstants().UPLOADER_ERRORS.UNEXPECTED_FIELD:
-                            return this.onErrorValidation(res, "Unexpected field detected, please check your fields!")
-                            break;
-                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_MISSING:
-                            return this.onErrorValidation(res, "Field's name is missing, please validate your fields!")
-                            break;
-                        default:
-                            next()
-                            break;
-                    }
-                }
-                next();
-            })
-        },
         is_authenticated:     isAuth,
         user_session:         userSession,
         validate_title:       check('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
@@ -400,7 +387,6 @@ export = class Admin extends BaseController {
                 if (typeof req.files['uploaded_image'] !== 'undefined') {
                     if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
                         if (req.files['uploaded_image'].length > 5) {
-                            console.log('checked')
                             return this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!")
                         }
                         req.files['uploaded_image'].forEach((image: any) => {
@@ -446,14 +432,60 @@ export = class Admin extends BaseController {
                 if (primary_key) {
                     return this.redirect(res, '/');
                 }
-            }).catch((err: any) => this.onError(err));
+            }).catch((err: any) => this.onError(res, err));
         } else {
             return this.onErrorValidation(res, errors.array());
         }
     });
 
+    protected _uploader  = () => ({
+        uploader_error_handler: (req: Request, res: Response, next: NextFunction) => {
+            // @ts-ignore
+            this.upload_middleware(req, res, (err: multer.MulterError) => {
+                if (err instanceof multer.MulterError) {
+                    switch (err.code) {
+                        case Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
+                            return this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!')
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
+                            return this.onErrorValidation(res, 'File exceded the allowed parts!')
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
+                            return this.onErrorValidation(res, 'Too many files uploaded, please upload less files!')
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
+                            return this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!")
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_VALUE_TOO_LONG:
+                            return this.onErrorValidation(res, "Field value is too long, please insert a short fields's value!")
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FIELDS:
+                            return this.onErrorValidation(res, "Alot of fields have been detected, please use less fields!")
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.UNEXPECTED_FIELD:
+                            return this.onErrorValidation(res, "Unexpected field detected, please check your fields!")
+                            break;
+                        case Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_MISSING:
+                            return this.onErrorValidation(res, "Field's name is missing, please validate your fields!")
+                            break;
+                        default:
+                            next()
+                            break;
+                    }
+                }
+                next();
+            })
+        },
+        is_authenticated:     isAuth,
+        user_session:         userSession,
+    });
+    uploader = () => this.route('post', '/upload-image/', this._uploader(), async (req: Request, res: Response, next: NextFunction) => {
+        const uploaded_file = JSON.stringify(req.getAllFormPostedData());
+        return new JsonResponse('Success', {upload_object: uploaded_file}).sendAsJson(res);
+    });
+
     //******************************\\
-    //* Add Product middleware     *\\
+    //* Delete Product middleware  *\\
     //******************************\\
     protected validatedDeleteProduct  = () => ({
         is_authenticated:     isAuth,
