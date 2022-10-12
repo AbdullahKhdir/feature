@@ -101,7 +101,6 @@ export default function(execution: AsyncFunction) {
                             _cookie = key + '=' + object[key]+ '; ' + 'Expires=' + expires + '; '; 
                         }
                     }
-                    console.log(_cookie);
                     domain      ? _cookie = _cookie + 'Domain='+domain+'; '      : _cookie;
                     domain      ? options.domain = domain                        : options.domain  = '';
 

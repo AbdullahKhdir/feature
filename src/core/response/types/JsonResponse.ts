@@ -43,7 +43,6 @@ export =  class JsonResponse extends ExpressResponse {
      * @returns Object
     */
     getData() {
-        console.log(this.data)
         return this.data;
     }
 

@@ -77,8 +77,11 @@ export = class Uploader {
                             </div>
                             <div class="file-path-wrapper">
                             
-                            <i id="uploader_status_icon" class="material-icons text-darken-4 blue-text">cloud_upload</i>
-                            <i id="uploader_status_icon_complete" class="material-icons text-darken-4 blue-text">cloud_done</i>
+                            <i id="uploader_status_icon"                title="Start uploading"                   class="material-icons text-darken-4 blue-text">file_upload</i>
+                            <i id="uploader_status_icon_complete_one"   title="File has been uploaded"   class="material-icons text-darken-1 green-text">done</i>
+                            <i id="uploader_status_icon_complete_all"   title="Files has been uploaded"  class="material-icons text-darken-1 green-text">done_all</i>
+                            <i id="uploader_status_icon_complete_error" title="Error, max files reached" class="material-icons text-darken-1 red-text">error</i>
+                            <i id="uploader_status_icon_reset"          title="Delete selected files and upload again" class="material-icons text-darken-4 blue-text">delete</i>
                             <progress id="progress" class="progress_bar" max="100" value="0">0</progress>
                                 <input 
                                     id="${options.text_id ? options.text_id : ''}"
@@ -86,6 +89,9 @@ export = class Uploader {
                                     type="text"
                                 >
                             </div>
+                            <input type='hidden' id="max-file-size" class="max-file-size" name='max-file-size' value="${options.max_files}">
+                            <input type='hidden' id="" class="max-file-size" name='max-file-size' value="${options.max_files}">
+                            <input type='hidden' id="" class="uploader-form-id" name='uploader-form-id' value="${options.form_id}">
                         </div>
                     </form>
                 `;

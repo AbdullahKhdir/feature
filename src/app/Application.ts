@@ -272,10 +272,20 @@ export = class Application extends BaseController {
         * Middleware populating file or files attribute on file upload
         */
         this.app.use((req: Request, res: Response, next: NextFunction) => {
-            const upload_object = req.getFormPostedData('upload_object');
-            // todo: identifier for req.file and req.files
-            if (!this.__.isEmpty(upload_object)) {
-                req.file = JSON.parse(upload_object);
+            if (req.isPost()) {
+                var upload_object = req.getFormPostedData('upload_object');
+                var upload_id     = req.getFormPostedData('upload-input-name');
+                if (!this.__.isEmpty(upload_object) && !this.__.isEmpty(upload_id)) {
+                    upload_object = upload_object.replaceAll("'", '"');
+                    upload_id     = upload_id.split(',')[1];
+                    if (upload_object.startsWith('[')) {
+                        upload_object = `{ "${upload_id}" : [${upload_object}`;
+                        upload_object = `${upload_object} ]}`;
+                        req.files = JSON.parse(upload_object);
+                    } else {
+                        req.file = JSON.parse(upload_object);
+                    }
+                }
             }
             next();
         });

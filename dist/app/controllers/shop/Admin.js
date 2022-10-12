@@ -81,7 +81,9 @@ module.exports = /** @class */ (function (_super) {
                         url: '/upload-image/',
                         button_name: 'Upload Image',
                         input_name: 'uploaded_image',
-                        multiple_files: false
+                        multiple_files: true,
+                        max_files: 5,
+                        form_id: 'form-add-product'
                     });
                     return [2 /*return*/, this.render(res, 'admin/add-product', {
                             nav_title: 'Add Product',
@@ -136,10 +138,12 @@ module.exports = /** @class */ (function (_super) {
                 }
                 uploader_form = Singleton_1.Singleton.buildUploader({
                     extensions: ['png', 'jpeg', 'jpg'],
-                    url: '/admin/add-product/',
+                    url: '/upload-image/',
                     button_name: 'Upload Image',
                     input_name: 'uploaded_image',
-                    multiple_files: false
+                    multiple_files: true,
+                    form_id: 'edit-product',
+                    max_files: 5
                 });
                 product_id = (_a = +req.getDynamicParam('product_id')) !== null && _a !== void 0 ? _a : false;
                 user_id = +req.getCurrentUser().id;
@@ -155,6 +159,21 @@ module.exports = /** @class */ (function (_super) {
                                 product: product,
                                 root: 'shop',
                                 uploader: uploader_form,
+                                js: [
+                                    'plugins/jquery/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
+                                    'plugins/jquery/blueimp-file-upload/js/load_image.js',
+                                    'plugins/jquery/blueimp-file-upload/js/canvas_to_blob.js',
+                                    'plugins/jquery/blueimp-file-upload/js/blueimp_gallery.js',
+                                    'plugins/jquery/blueimp-file-upload/js/jquery.iframe-transport.js',
+                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload.js',
+                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-process.js',
+                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-image.js',
+                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-audio.js',
+                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-video.js',
+                                    'plugins/jquery/blueimp-file-upload/js/validate.js',
+                                    'plugins/jquery/blueimp-file-upload/js/cors/jquery.postmessage-transport.js',
+                                    'plugins/jquery/blueimp-file-upload/js/cors/jquery.xdr-transport.js',
+                                ],
                                 breadcrumbs: [
                                     {
                                         title: 'Shop',
@@ -180,43 +199,6 @@ module.exports = /** @class */ (function (_super) {
             });
         }); }); };
         _this.validatedEditProduct = function () { return ({
-            uploader_error_handler: function (req, res, next) {
-                // @ts-ignore
-                _this.upload_middleware(req, res, function (err) {
-                    if (err instanceof multer_1.default.MulterError) {
-                        switch (err.code) {
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
-                                return _this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!');
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
-                                return _this.onErrorValidation(res, 'File exceded the allowed parts!');
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
-                                return _this.onErrorValidation(res, 'Too many files uploaded, please upload less files!');
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
-                                return _this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!");
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_VALUE_TOO_LONG:
-                                return _this.onErrorValidation(res, "Field value is too long, please insert a short fields's value!");
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FIELDS:
-                                return _this.onErrorValidation(res, "Alot of fields have been detected, please use less fields!");
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.UNEXPECTED_FIELD:
-                                return _this.onErrorValidation(res, "Unexpected field detected, please check your fields!");
-                                break;
-                            case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_MISSING:
-                                return _this.onErrorValidation(res, "Field's name is missing, please validate your fields!");
-                                break;
-                            default:
-                                next();
-                                break;
-                        }
-                    }
-                    next();
-                });
-            },
             is_authenticated: is_auth_1.default,
             user_session: init_user_session_1.default,
             validate_product_id: (0, express_validator_1.check)('product_id').not().isEmpty().withMessage("Product could not be edited, plase contact the support team!").bail(),
@@ -224,7 +206,7 @@ module.exports = /** @class */ (function (_super) {
             validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
             validate_price: (0, express_validator_1.check)('price').isNumeric().withMessage("Please enter product's price!").bail(),
             validate_imageUrl: (0, express_validator_1.check)('uploaded_image').
-                // @ts-ignore 
+                // @ts-ignore
                 custom(function (value, _a) {
                 var _b, _c, _d;
                 var req = _a.req;
@@ -240,9 +222,6 @@ module.exports = /** @class */ (function (_super) {
                 else if (req.files) {
                     if (typeof req.files['uploaded_image'] !== 'undefined') {
                         if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
-                            if (req.files['uploaded_image'].length > 5) {
-                                return _this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!");
-                            }
                             req.files['uploaded_image'].forEach(function (image) {
                                 if (!image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG)
                                     || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG)
@@ -326,9 +305,6 @@ module.exports = /** @class */ (function (_super) {
                 else if (req.files) {
                     if (typeof req.files['uploaded_image'] !== 'undefined') {
                         if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
-                            if (req.files['uploaded_image'].length > 5) {
-                                return _this.onErrorValidation(req.res, "Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!");
-                            }
                             req.files['uploaded_image'].forEach(function (image) {
                                 if (!image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG)
                                     || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG)
@@ -423,7 +399,7 @@ module.exports = /** @class */ (function (_super) {
         _this.uploader = function () { return _this.route('post', '/upload-image/', _this._uploader(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var uploaded_file;
             return __generator(this, function (_a) {
-                uploaded_file = JSON.stringify(req.getAllFormPostedData());
+                uploaded_file = JSON.stringify(req.getUploadedFiles());
                 return [2 /*return*/, new JsonResponse_1.default('Success', { upload_object: uploaded_file }).sendAsJson(res)];
             });
         }); }); };
@@ -577,7 +553,7 @@ module.exports = /** @class */ (function (_super) {
             file_size: 10 * 1024 * 1024,
             input_name: 'uploaded_image',
             storage_type: 'diskStorage',
-            upload_type: 'single',
+            upload_type: 'array',
             // @ts-ignore
             file_filter: function (req, file, callback) {
                 if (file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG
@@ -605,7 +581,8 @@ module.exports = /** @class */ (function (_super) {
                 var hours = date.getHours();
                 var minutes = date.getMinutes();
                 callback(null, "".concat(year, "_").concat(month, "_").concat(day, "_").concat(hours, "_").concat(minutes, "_").concat(file.originalname));
-            }
+            },
+            upload_type_array_length: 5
         });
         return _this;
     }

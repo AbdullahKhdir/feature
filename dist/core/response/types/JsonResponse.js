@@ -45,7 +45,6 @@ module.exports = /** @class */ (function (_super) {
      * @returns Object
     */
     JsonResponse.prototype.getData = function () {
-        console.log(this.data);
         return this.data;
     };
     /**

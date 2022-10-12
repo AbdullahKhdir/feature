@@ -7,7 +7,7 @@
     <main>
         <div class="container">
             <%- uploader %>
-            <form class="product-form cube-loader" action="/admin/add-product/" method="POST">
+            <form id="form-add-product" class="product-form cube-loader" action="/admin/add-product/" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrf %>">
                 <div class="input-field col s12 m6">
                     <label for="title"><%= nav_title %></label>

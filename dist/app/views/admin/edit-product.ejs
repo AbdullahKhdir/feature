@@ -6,16 +6,13 @@
     <%- include('../includes/updated/toaster.ejs') %>
     <main>
         <div class="container">
-            <form class="product-form cube-loader" action="/admin/edit-product/<%= product.id %>" method="POST" enctype="multipart/form-data">
+            <%- uploader %>
+            <form id="edit-product" class="product-form cube-loader" action="/admin/edit-product/<%= product.id %>" method="POST">
                 <input type="hidden" name="_csrf" value="<%= csrf %>">
                 <div class="input-field col s12 m6">
                     <label for="title"><%= nav_title %></label>
                     <input type="text" name="title" id="title" value="<%= lodash.capitalize(product.title) %>">
                 </div>              
-                <!-- <div class="input-field col s12 m6">
-                    <label for="imageUrl"><%= 'Image url' %></label>
-                    <input type="text" name="imageUrl" id="imageUrl" value="<%= product.imageUrl %>">
-                </div> -->
                 <div class="input-field col s12 m6">
                     <label for="price"><%= 'Price' %></label>
                     <input type="number" name="price" id="price" step="0.01" value="<%= product.price %>">
@@ -24,7 +21,6 @@
                     <label for="description"><%= 'Description' %></label>
                     <textarea class="materialize-textarea" name="description" id="description" rows="5"><%= lodash.capitalize(product.description) %></textarea>
                 </div>
-                <%- uploader %>
                 <input type="hidden" name="product_id" id="product_id" value="<%= product.id %>">
                 <button class="btn" type="submit">Edit Product</button>
             </form>

@@ -255,85 +255,176 @@ $(document).ready(function() {
      * @returns void
     */
     completeUploaderForm: (() => {
-      $('#uploader_status_icon').fadeIn('slow');
-      const uploader = $('div#_uploader');
-      const token    = $('input#_csrf').val();
-      let   parent   = uploader.parent();
-      const _start_upload = 'Upload the file';
-      
-      if (uploader.length > 0) {
-        while (parent.map(function () {return this.tagName}).get().join(", ") !== 'FORM') {
-          parent = parent.parent();
-        }
-        let url     = parent.attr('action');
-        let is_form = parent.map(function () {return this.tagName}).get().join(", ") === 'FORM';
-        if (is_form) {
-          if (typeof url === 'string' && url) {
-            if (url.endsWith('/')) {
-              url = url + `?_csrf=${token}`;
-            } else {
-              url = url + `/?_csrf=${token}`;
+      const is_upload_process   = $('div#_uploader').length
+      const uploader            = $('form');
+      const token               = $('input#_csrf').val();
+      const TEN_MB              = 10000000;
+      const FIVE_MB             = 5000000;
+      const ONE_BYTE            = 1;
+      var   _start_upload_file  = 'Upload file';
+      var   _start_upload_files = 'Upload files';
+      let   url                 = ''
+      $.each(uploader, function (index, form) {
+        if($(form).attr('method') === 'POST' 
+           || $(form).attr('method') === 'post'
+          || $(form).attr('method') === 'Post') {
+            url = $(form).attr('action');
+            if (typeof url === 'string' && url) {
+              if (url.endsWith('/')) {
+                url = url + `?_csrf=${token}`;
+              } else {
+                url = url + `/?_csrf=${token}`;
+              }
+              $(form).attr('action', url);
             }
           }
-        }
-        parent.attr('action', url);
-        
+      });
+      if (is_upload_process !== 0) {
+        var max_upload_files = +$('.max-file-size').val();
         $('#fileupload').fileupload({
-          dataType: 'json',
-          add: function (e, data) {
-            if ($('#start_upload_process span').text() === _start_upload) {
-              data.context = $('#start_upload_process').click(function (e) {
-                e.preventDefault();
-                data.submit()
-                .complete(result => {
-                  let upload_object = {};
-                  if (result) {
-                    if (result.responseJSON) {
-                      if (result.responseJSON.data) {
-                        if (result.responseJSON.data.upload_object) {
-                          upload_object = JSON.parse(result.responseJSON.data.upload_object);
-                          Array.from($('form')).forEach(function (form) {
-                            $(form).append($(`<input type='hidden' class="uploader upload_object" name='upload_object' value="">`));
-                            Array.from($('.uploader.upload_object')).forEach(function(input) {
-                              $(input).val(JSON.stringify(upload_object))
-                            });
-                          });
+            dataType: 'json',
+            limitMultiFileUploads: 1,
+            limitConcurrentUploads: max_upload_files,
+            maxFileSize: TEN_MB,
+            minFileSize: ONE_BYTE,
+            maxChunkSize: FIVE_MB,
+            maxNumberOfFiles: max_upload_files,
+            disableValidation: false,
+            limitMultiFileUploadSize: TEN_MB,
+            cache: false,
+            singleFileUploads: true,
+            sequentialUploads: true,
+            forceIframeTransport: true,
+            autoUpload: false,
+            add: function (e, data) {
+              data.context = $('#uploader_status_icon').click((e) => {
+                if ($('#start_upload_process span').text() === 'Upload files'
+                ||  $('#start_upload_process span').text() === 'Upload file') {
+                  if (data != null) {
+                    if (+data.files.length <= +max_upload_files) {
+                      e.preventDefault();
+                      data.submit()
+                      .complete(result => {
+                        let upload_object = {};
+                        if (result) {
+                          if (result.responseJSON) {
+                            if (result.responseJSON.data) {
+                              if (result.responseJSON.data.upload_object) {
+                                upload_object              = JSON.parse(result.responseJSON.data.upload_object);
+                                var sanitize_upload_object = JSON.stringify(upload_object).replaceAll('"', "'"); 
+                                var form_id                = $('.uploader-form-id').val().trim();
+                                var upload_input_name      = $('#fileupload').attr('name');
+                                if (form_id && upload_input_name) {
+                                  $(`#${form_id}`).append($(`<input type='hidden' class="uploader upload_object" name='upload_object' value="${sanitize_upload_object}">`));
+                                  $(`#${form_id}`).append($(`<input type='hidden' class="upload-input-name" name='upload-input-name' value="${upload_input_name}">`));
+                                }
+                              }
+                            }
+                          }
                         }
-                      }
+                      });
+                    } else {
+                      console.log('max reached')
+                      console.log(data.files)
+                      // data.files = [];
+                      var file_input = $("#fileupload");
+                      file_input.wrap('<form>').closest('form').get(0).reset();
+                      file_input.unwrap();
+                      file_input.val(null);
+                      M.toast({html: 'Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!', classes: 'rounded _warning'});
+                      $('#start_upload_process span').text('Upload again');
+                      $('#uploader_status_icon').fadeOut('fast');
+                      $('#uploader_status_icon_reset').fadeOut('fast');
+                      $('#uploader_status_icon_complete_error').fadeIn('fast');
+                      $('.file-path').val('');
+                      return;
                     }
                   }
-                });
+                }
               });
-            }
-          },
-          change: function (e, data) {
-            $('#start_upload_process span').text('Upload the file');
-            $.each(data.files, function (index, file) {
-              $('.file-path').val(file.name);
-            });
-          },
-          progressall: function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100, 10);
-            if (progress === 100) {
-              $('#progress').addClass('progress_bar_fixed');
-            }
-            $('#progress').attr('value', progress.toString());
-          },
-          done: (data) => {
-            $('#start_upload_process span').text('Upload completed');
-            $('#start_upload_process').attr('disabled', true);
-            $('.toast.rounded').addClass('success');
-            M.toast({html: 'File has been uploaded', classes: 'rounded _success'});
-            $('#start_upload_process').click(function (e) {
-                e.preventDefault();
-                $('.toast.rounded').addClass('success');
-                M.toast({html: 'File has been uploaded', classes: 'rounded _success'});
-            });
-            $('#uploader_status_icon').fadeOut('slow');
-            $('#uploader_status_icon_complete').fadeIn('slow');
-          }
+            },
+            change: function (e, data) {
+              var total_uploaded_files   = +data.files.length;
+              $(document).on('click', $('#uploader_status_icon_reset'), (event) => {
+                console.log('reset')
+                console.log(data.files)
+                // data.files = [];
+                var file_input = $("#fileupload");
+                file_input.wrap('<form>').closest('form').get(0).reset();
+                file_input.unwrap();
+                file_input.val(null);
+                $('#start_upload_process span').text('Upload again');
+                $('#uploader_status_icon').fadeOut('fast');
+                $('#uploader_status_icon_reset').fadeOut('fast');
+                $('#uploader_status_icon_complete_error').fadeIn('fast');
+                $('.file-path').val('');
+                return;
+              });
+              if (max_upload_files && total_uploaded_files) {
+                if (total_uploaded_files > max_upload_files) {
+                  data.files = [];
+                  var file_input = $("#fileupload");
+                  file_input.wrap('<form>').closest('form').get(0).reset();
+                  file_input.unwrap();
+                  file_input.val(null);
+                  M.toast({html: 'Max limit of uploaded files exceeded, please upload the allowed limit of 5 files!', classes: 'rounded _warning'});
+                  $('#start_upload_process span').text('Upload again');
+                  $('#uploader_status_icon').fadeOut('fast');
+                  $('#uploader_status_icon_reset').fadeOut('fast');
+                  $('#uploader_status_icon_complete_error').fadeIn('fast');
+                  $('.file-path').val('');
+                  return;
+                } else {
+                  $('#uploader_status_icon_complete_error').fadeOut('fast');
+                  if ($('.file-path').val() === '') {
+                    $('#uploader_status_icon').fadeOut('fast');
+                    $('#uploader_status_icon_reset').fadeOut('fast');
+                  } else {
+                    $('#uploader_status_icon').fadeIn('fast');
+                    $('#uploader_status_icon_reset').fadeIn('fast');
+                  }
+                  if (total_uploaded_files > 1) {
+                    $('#start_upload_process span').text('Upload files');
+                    _start_upload_file = null;
+                  } else {
+                    $('#start_upload_process span').text('Upload file');
+                    _start_upload_files = null;
+                  }
+                  $.each(data.files, function (index, file) {
+                    $('.file-path').val(file.name);
+                  });
+                }
+              }
+            },
+            progressall: function (e, data) {
+              var progress = parseInt(data.loaded / data.total * 100, 10);
+              if (progress === 100) {
+                $('#progress').addClass('progress_bar_fixed');
+              }
+              $('#progress').attr('value', progress.toString());
+            },
+            done: (data) => {
+              $('#start_upload_process span').text('Upload completed');
+              $('#start_upload_process').attr('disabled', true);
+              $('.toast.rounded').addClass('success');
+              $('#uploader_status_icon').click(function (e) {
+                  e.preventDefault();
+                  $('.toast.rounded').addClass('success');
+                  M.toast({html: 'File has been uploaded', classes: 'rounded _success'});
+              });
+              if (_start_upload_files == null) {
+                $('#uploader_status_icon').fadeOut('slow');
+                $('#uploader_status_icon_reset').fadeOut('slow');
+                $('#uploader_status_icon_complete_one').fadeIn('slow');
+              } else if (_start_upload_file == null) {
+                $('#uploader_status_icon').fadeOut('slow');
+                $('#uploader_status_icon_reset').fadeOut('slow');
+                $('#uploader_status_icon_complete_all').fadeIn('slow');
+              }
+            },
         });
       }
     })(),
+    
   };
 });

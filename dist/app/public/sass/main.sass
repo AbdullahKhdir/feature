@@ -348,8 +348,23 @@ textarea.materialize-textarea.valid
 .file-path
   height: auto !important // sass-lint:disable-line no-important
 
-#uploader_status_icon,
-#uploader_status_icon_complete
+#uploader_status_icon
+    display: none
+    position: absolute !important // sass-lint:disable-line no-important
+    right: 20px !important // sass-lint:disable-line no-important
+    top: 15px !important // sass-lint:disable-line no-important
+    cursor: pointer !important // sass-lint:disable-line no-important
+
+#uploader_status_icon_reset
+  display: none
+  position: absolute !important // sass-lint:disable-line no-important
+  right: 0 !important // sass-lint:disable-line no-important
+  top: 15px !important // sass-lint:disable-line no-important
+  cursor: pointer !important // sass-lint:disable-line no-important
+
+#uploader_status_icon_complete_one,
+#uploader_status_icon_complete_all,
+#uploader_status_icon_complete_error
   display: none
   position: absolute
   right: 0

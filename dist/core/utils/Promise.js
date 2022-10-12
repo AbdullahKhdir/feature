@@ -82,7 +82,6 @@ function default_1(execution) {
                             _cookie = key + '=' + object[key] + '; ' + 'Expires=' + expires + '; ';
                         }
                     }
-                    console.log(_cookie);
                     domain ? _cookie = _cookie + 'Domain=' + domain + '; ' : _cookie;
                     domain ? options.domain = domain : options.domain = '';
                     path ? _cookie = _cookie + 'Path=' + path + '; ' : _cookie;
