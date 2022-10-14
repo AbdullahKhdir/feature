@@ -76,13 +76,14 @@ module.exports = /** @class */ (function (_super) {
             var uploader_form;
             return __generator(this, function (_a) {
                 if (req.isGet()) {
+                    res.longTimeNoCache();
                     uploader_form = Singleton_1.Singleton.buildUploader({
                         extensions: ['png', 'jpeg', 'jpg'],
                         url: '/upload-image/',
                         button_name: 'Upload Image',
                         input_name: 'uploaded_image',
-                        multiple_files: true,
-                        max_files: 5,
+                        multiple_files: false,
+                        max_files: 1,
                         form_id: 'form-add-product'
                     });
                     return [2 /*return*/, this.render(res, 'admin/add-product', {
@@ -141,9 +142,9 @@ module.exports = /** @class */ (function (_super) {
                     url: '/upload-image/',
                     button_name: 'Upload Image',
                     input_name: 'uploaded_image',
-                    multiple_files: true,
+                    multiple_files: false,
+                    max_files: 1,
                     form_id: 'edit-product',
-                    max_files: 5
                 });
                 product_id = (_a = +req.getDynamicParam('product_id')) !== null && _a !== void 0 ? _a : false;
                 user_id = +req.getCurrentUser().id;
@@ -180,6 +181,10 @@ module.exports = /** @class */ (function (_super) {
                                         url: '/'
                                     },
                                     {
+                                        title: 'Admin Products',
+                                        url: '/admin/products/'
+                                    },
+                                    {
                                         title: 'Edit Product',
                                         url: "/admin/edit-product/".concat(product_id)
                                     }
@@ -205,7 +210,7 @@ module.exports = /** @class */ (function (_super) {
             validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
             validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
             validate_price: (0, express_validator_1.check)('price').isNumeric().withMessage("Please enter product's price!").bail(),
-            validate_imageUrl: (0, express_validator_1.check)('uploaded_image').
+            validate_image_path: (0, express_validator_1.check)('uploaded_image').
                 // @ts-ignore
                 custom(function (value, _a) {
                 var _b, _c, _d;
@@ -233,7 +238,7 @@ module.exports = /** @class */ (function (_super) {
                         }
                     }
                 }
-                return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
+                return true;
             }).bail(),
         }); };
         /**
@@ -246,7 +251,8 @@ module.exports = /** @class */ (function (_super) {
         _this.postEditedProduct = function () { return _this.route('post', '/admin/edit-product/:product_id/', _this.validatedEditProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var product_id, title, price, description, image, values, errors;
             var _this = this;
-            return __generator(this, function (_a) {
+            var _a;
+            return __generator(this, function (_b) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
@@ -255,17 +261,31 @@ module.exports = /** @class */ (function (_super) {
                 title = this.__.capitalize(req.getFormPostedData('title'));
                 price = req.getFormPostedData('price');
                 description = this.__.capitalize(req.getFormPostedData('description'));
-                image = req.getFormPostedData('uploaded_image');
+                image = (_a = req.getUploadedFile()) !== null && _a !== void 0 ? _a : null;
                 values = {
                     title: title,
                     price: price,
-                    description: description,
-                    imageUrl: image
+                    description: description
                 };
+                if (Object.keys(image).length > 0) {
+                    values['imageUrl'] = "/images/".concat(image.filename);
+                    this.product_object.get({ id: product_id })
+                        .then(function (result) {
+                        if (result) {
+                            var image_path = result[0].imageUrl;
+                            var fs = Singleton_1.Singleton.getFileSystem();
+                            var path = Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', image_path);
+                            if (fs.existsSync(path)) {
+                                fs.unlinkSync(path);
+                            }
+                        }
+                    })
+                        .catch(function (err) { return _this.onError(res, err); });
+                }
                 errors = (0, express_validator_1.validationResult)(req);
                 if (errors.isEmpty()) {
                     if (product_id) {
-                        // @ts-ignore 
+                        // @ts-ignore
                         this.product_object.update(values, product_id).then(function (result) {
                             if (result[0].affectedRows) {
                                 return res.redirect('/admin/products/');
@@ -288,7 +308,7 @@ module.exports = /** @class */ (function (_super) {
             validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
             validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
             validate_price: (0, express_validator_1.check)('price').isNumeric().withMessage("Please enter product's price!").bail(),
-            validate_imageUrl: (0, express_validator_1.check)('uploaded_image').
+            validate_image_path: (0, express_validator_1.check)('uploaded_image').
                 // @ts-ignore
                 custom(function (value, _a) {
                 var _b, _c, _d;
@@ -327,7 +347,7 @@ module.exports = /** @class */ (function (_super) {
          * @returns Response
         */
         _this.addProduct = function () { return _this.route('post', '/admin/add-product/', _this.validatedNewProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var title, imageUrl, description, price, user_id, errors;
+            var title, description, price, user_id, image, errors;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!req.isPost()) {
@@ -335,13 +355,14 @@ module.exports = /** @class */ (function (_super) {
                 }
                 req.sendFormPostedData();
                 title = this.__.capitalize(req.getFormPostedData('title'));
-                imageUrl = req.getFormPostedData('imageUrl');
                 description = this.__.capitalize(req.getFormPostedData('description'));
                 price = req.getFormPostedData('price');
                 user_id = req.getCurrentUser().id;
+                image = req.getUploadedFile();
                 errors = (0, express_validator_1.validationResult)(req);
                 if (errors.isEmpty()) {
-                    this.product_object.create({ title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id })
+                    image = "/images/".concat(image.filename);
+                    this.product_object.create({ title: title, imageUrl: image, description: description, price: price, user_id: user_id })
                         .then(function (results) {
                         var primary_key = results[0].insertId;
                         if (primary_key) {
@@ -434,10 +455,22 @@ module.exports = /** @class */ (function (_super) {
                         this.product_object.get({ id: product_id, user_id: user_id })
                             .then(function (rows) {
                             if (!_this.__.isEmpty(rows)) {
-                                var id = rows[0].id;
-                                _this.product_object.delete(id).then(function (result) {
-                                    return _this.redirect(res, '/admin/products/');
-                                }).catch(function (err) { return _this.onError(res, err); });
+                                var image_path = rows[0].imageUrl;
+                                var fs = Singleton_1.Singleton.getFileSystem();
+                                var path = Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', image_path);
+                                if (fs.existsSync(path)) {
+                                    fs.unlink(path, function (err) {
+                                        if (err) {
+                                            return _this.onError(res, err);
+                                        }
+                                        var id = rows[0].id;
+                                        _this.product_object.delete(id)
+                                            .then(function (result) {
+                                            return _this.redirect(res, '/admin/products/');
+                                        })
+                                            .catch(function (err) { return _this.onError(res, err); });
+                                    });
+                                }
                             }
                         })
                             .catch(function (err) { return _this.onError(res, err); });
@@ -478,13 +511,13 @@ module.exports = /** @class */ (function (_super) {
                                 url: '/'
                             },
                             {
-                                title: 'Admin Product',
+                                title: 'Admin Products',
                                 url: '/admin/products/'
                             }
                         ]
                     });
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -530,7 +563,7 @@ module.exports = /** @class */ (function (_super) {
         // this.uploader    = Singleton.getUploader();
         // this.uploader_configs = this.uploader.diskStorage({
         // destination: (req: Request, file: Express.Multer.File, callback: Function) => {
-        //     callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
+        //     callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'images'));
         // },
         // filename: (req: Request, file: Express.Multer.File, callback: Function) => {
         //     callback(null, new Date().toISOString() + '_' + file.originalname);
@@ -553,7 +586,7 @@ module.exports = /** @class */ (function (_super) {
             file_size: 10 * 1024 * 1024,
             input_name: 'uploaded_image',
             storage_type: 'diskStorage',
-            upload_type: 'array',
+            upload_type: 'single',
             // @ts-ignore
             file_filter: function (req, file, callback) {
                 if (file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG
@@ -570,7 +603,7 @@ module.exports = /** @class */ (function (_super) {
             },
             // @ts-ignore
             storage_disk_destination_callback: function (req, file, callback) {
-                callback(null, Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
+                callback(null, Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', 'images'));
             },
             // @ts-ignore
             storage_disk_filename_callback: function (req, file, callback) {
@@ -581,8 +614,7 @@ module.exports = /** @class */ (function (_super) {
                 var hours = date.getHours();
                 var minutes = date.getMinutes();
                 callback(null, "".concat(year, "_").concat(month, "_").concat(day, "_").concat(hours, "_").concat(minutes, "_").concat(file.originalname));
-            },
-            upload_type_array_length: 5
+            }
         });
         return _this;
     }

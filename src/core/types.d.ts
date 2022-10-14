@@ -6,6 +6,7 @@ declare namespace Express {
         setProp:              Function;
         getAllFormPostedData: Function,
         getUploadedFiles:     Function,
+        getUploadedFile:      Function,
         sendFormPostedData:   Function,
         getFormPostedData:    Function,
         getQueryParams:       Function,

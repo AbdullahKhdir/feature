@@ -60,7 +60,7 @@ export = class Uploader {
             if (typeof options !== 'undefined' && typeof options === 'object' && Object.keys(options).length > 0) {
                 const extensions = options.extensions.map((item) => item.startsWith('.') ? item : '.'+item).join(',');
                 _html = `
-                    <form class="${options.enable_loader ? 'cube-loader' : ''}" action="${options.url}" method="POST" enctype="multipart/form-data">
+                    <form id="pre-populated-upload-form" class="${options.enable_loader ? 'cube-loader' : ''}" action="${options.url}" method="POST" enctype="multipart/form-data">
                         <div id="_uploader${options.parent_id ? ' '+options.parent_id : ''}"
                             class="file-field input-field${options.parent_class ? ' '+options.parent_class : ''}">
                             <div id="start_upload_process" class="btn">
@@ -90,6 +90,7 @@ export = class Uploader {
                                 >
                             </div>
                             <input type='hidden' id="max-file-size" class="max-file-size" name='max-file-size' value="${options.max_files}">
+                            <input type='hidden' id="upload-action-url" class="upload-action-url" name='upload-action-url' value="${options.url}">
                             <input type='hidden' id="" class="max-file-size" name='max-file-size' value="${options.max_files}">
                             <input type='hidden' id="" class="uploader-form-id" name='uploader-form-id' value="${options.form_id}">
                         </div>

@@ -3,6 +3,7 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import BaseController from "../../../core/controller/BaseController";
+import { Singleton } from '../../../core/Singleton/Singleton';
 import userSession from "../../middlewares/init_user_session";
 import isAuth from "../../middlewares/is_auth";
 import Cart from "../../models/shop/Cart";
@@ -41,7 +42,8 @@ export = class Shop extends BaseController {
             'postCart',
             'deleteCartProducts',
             'deleteCartProduct',
-            'dynProductInfo'
+            'getInvoice',
+            'dynProductInfo',
         ];
         this.product            = new Product();
         this.cart_object        = new Cart();
@@ -95,7 +97,7 @@ export = class Shop extends BaseController {
                         }
                     );
                 })
-                .catch((err: any) => this.onError(err));
+                .catch((err: any) => this.onError(res, err));
         } else {
             return res.render(
                 'shop/product-list',
@@ -135,12 +137,52 @@ export = class Shop extends BaseController {
         // TODO: Add public products
         
         /*
+        * Pagination
+        */
+        let current_page = req.getQueryParam('page') ?? false;
+        if (this.__.isNumber(current_page) || !this.__.isNaN(current_page)) {
+            current_page = +current_page === 0 ? 1 : +current_page;
+        }
+
+        /*
         * User specific products
         */
         const user_products   = req.getCurrentUser() ? req.getCurrentUser().getProducts(): false;
         if (typeof user_products === 'object') {
             user_products
                 .then((rows: any) => {
+                    // todo: create new paginator class where u manipulate the records and deliver ready to use functions
+                    let total = rows.length;
+                    let pagination_counter = 0;
+                    let sign  = 0;
+                    let skip = (current_page - 1) * 12 === 0 ? 1 : (current_page - 1) * 12;
+                    
+                    while(total !== 0) {
+                        total = total - 12;
+                        sign  = Math.sign(total);
+                        if (sign === 0 || sign > 0) {
+                            pagination_counter++;
+                        } else {
+                            pagination_counter++;
+                            total = 0;
+                        }
+                    }
+                    
+                    if (rows.length !== 12) {
+                        if (current_page === skip) { //first page
+                            rows.length = 12;
+                        } else if(skip > current_page) { //any other page
+                            while(rows.length !== 12) {
+                                rows = rows.slice(skip);
+                                if (rows.length > 12) {
+                                    rows.length = 12;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    
                     return this.render(
                         res,
                         'shop/index',
@@ -154,11 +196,13 @@ export = class Shop extends BaseController {
                                     title: 'Shop',
                                     url: '/'
                                 }
-                            ]
+                            ],
+                            pagination_counter,
+                            current_page
                         }
                     );
                 })
-                .catch((err: any) => this.onError(err)); 
+                .catch((err: any) => this.onError(res, err)); 
         } else {
             return this.render(
                 res,
@@ -320,7 +364,7 @@ export = class Shop extends BaseController {
                 );
             }
         })
-        .catch((err: any) => this.onError(err));
+        .catch((err: any) => this.onError(res, err));
     });
 
     /**
@@ -370,10 +414,10 @@ export = class Shop extends BaseController {
                                     return this.redirect(res, '/cart/');
                                 }
                             })
-                            .catch((err: any) => this.onError(err));
+                            .catch((err: any) => this.onError(res, err));
                         }
                     })
-                    .catch((err: any) => this.onError(err));  
+                    .catch((err: any) => this.onError(res, err));  
                 } else {
                     const cart_params = {
                         user_id: user_id
@@ -397,7 +441,7 @@ export = class Shop extends BaseController {
                                             return this.redirect(res, '/cart/');
                                         }
                                     }))
-                                    .catch((err: any) => this.onError(err));
+                                    .catch((err: any) => this.onError(res, err));
                                 } else {
                                     const cart_item_params = {
                                         cart_id: +id,
@@ -411,15 +455,15 @@ export = class Shop extends BaseController {
                                             return this.redirect(res, '/cart/');
                                         }
                                     })
-                                    .catch((err: any) => this.onError(err));
+                                    .catch((err: any) => this.onError(res, err));
                                 }
                             })
-                            .catch((err: any) => this.onError(err));  
+                            .catch((err: any) => this.onError(res, err));  
                         }
                     })
-                    .catch((err: any) => this.onError(err));
+                    .catch((err: any) => this.onError(res, err));
                 }
-            }).catch((err: any) => this.onError(err));
+            }).catch((err: any) => this.onError(res, err));
         } else {
             return this.onErrorValidation(res, errors.array())
         }
@@ -512,17 +556,17 @@ export = class Shop extends BaseController {
                                 }
                             );
                         })
-                        .catch((err: any) => this.onError(err));
+                        .catch((err: any) => this.onError(res, err));
                     } else {
                         return this.redirect(res, '/cart');
                     }
                 })
-                .catch((err: any) => this.onError(err));
+                .catch((err: any) => this.onError(res, err));
             } else {
                 return this.redirect(res, '/cart');
             }
         })
-        .catch((err: any) => this.onError(err));
+        .catch((err: any) => this.onError(res, err));
     });
 
     /**
@@ -573,7 +617,7 @@ export = class Shop extends BaseController {
                                                 }
                                             }
                                         })
-                                        .catch((err: any) => this.onError(err));
+                                        .catch((err: any) => this.onError(res, err));
                                     } else if (typeof order_items_rows !== 'undefined') {
                                         order_items_rows.forEach((order_items_row: any) => {
                                             this.order_items_object.filter({id: order_items_row.id})
@@ -639,13 +683,13 @@ export = class Shop extends BaseController {
                                 });
                             }
                         })
-                        .catch((err: any) => this.onError(err));
+                        .catch((err: any) => this.onError(res, err));
                     }
                 })
-                .catch((err: any) => this.onError(err));
+                .catch((err: any) => this.onError(res, err));
             }
         })
-        .catch((err: any) => this.onError(err));
+        .catch((err: any) => this.onError(res, err));
     });
 
     /**
@@ -682,7 +726,7 @@ export = class Shop extends BaseController {
                     return this.siteNotFound(res);
                 }
             })
-            .catch((err: any) => this.onError(err));
+            .catch((err: any) => this.onError(res, err));
         } else {
             return this.render(
                 res,
@@ -757,7 +801,7 @@ export = class Shop extends BaseController {
                                     return this.redirect(res, '/cart/');
                                 }
                             })
-                            .catch((err: any) => this.onError(err));
+                            .catch((err: any) => this.onError(res, err));
                     } else {
                         this.cart_items_object.delete({product_id: cart_item_product_id})
                             .then((result: any) => {
@@ -765,14 +809,105 @@ export = class Shop extends BaseController {
                                     return this.redirect(res, '/cart/');
                                 }
                             })
-                            .catch((err: any) => this.onError(err));
+                            .catch((err: any) => this.onError(res, err));
                     }
                 }
             })
-            .catch((err: any) => this.onError(err));
+            .catch((err: any) => this.onError(res, err));
         }
     });
 
+    //*******************************\\
+    //* Orders's invoice middleware *\\
+    //*******************************\\
+    protected orderInvoice  = () => ({
+        isAuth,
+        userSession,
+    })
+    /**
+     * @function getInvoice
+     * @description Fetches the invoice on ordering a product
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    getInvoice = (): Router => this.route('get', '/orders/invoice/:order_id/', this.orderInvoice(), async (req: Request, res: Response, next: NextFunction) => {
+        // todo: check why route with params followed by slug "/orders/:order_id/invoice/" is not working or deployed
+        const order_id = +req.getDynamicParam('order_id');
+        const user     = req.getCurrentUser();
+        
+        if (!this.__.isNumber(order_id)) {
+            return this.onError(res, 'Please do not alter the link!')
+        }
+
+        if (Object.keys(user).length === 0 || this.__.isEmpty(user)) {
+            return this.redirect(res, '/');
+        }
+
+        this.order_items_object.get({id: order_id})
+        .then((result) => {
+            if (result) {
+                var quantity = +result[0].quantity;
+                if (typeof result['product_id'] !== 'undefined') {
+                    result['product_id']
+                    .then((_result: any) => {
+                        if (_result) {
+                            Singleton.getModel('User').get({id: user.id})
+                            .then((_user: any) => {
+                                if (_user) {
+                                    let condition = false;
+                                    if (_result['order_products_items'] && user.id) {
+                                        condition = _result['order_products_items'][0].user_id.toString() === user.id.toString();
+                                    }
+                                    if (condition) {
+                                        const invoice = `invoice_${order_id}.pdf`;
+                                        const path    = Singleton.getPath().join(__dirname, '..', '..', 'public', 'data', 'invoices', invoice);
+                                        const fs      = Singleton.getFileSystem();
+                                        var price     = +_result['order_products_items'][0].price;
+                                        const total_price = price * quantity;
+                                        if (fs.existsSync(path)) {
+                                            const file = fs.createReadStream(path);
+                                            return this.sendPdf(res, file, invoice, false);
+                                        } else {
+                                            const pdf = Singleton.getPdfMaker();
+                                            pdf.pipe(fs.createWriteStream(path))
+                                            let header = {
+                                                align: 'center',
+                                                underline: true
+                                            };
+                                            let bullet_points = {
+                                                align: 'center',
+                                            };
+                                            pdf.fontSize(26).text('Test', header)
+                                            pdf.fontSize(14).text('-----------------------------', bullet_points);
+                                            pdf.fontSize(14).text(
+                                                _result['order_products_items'][0].title +
+                                                ' - ' + 
+                                                quantity + 
+                                                'x' +
+                                                ' $' + price,
+                                                bullet_points
+                                            );
+                                            pdf.fontSize(14).text('-----------------------------', bullet_points);
+                                            pdf.fontSize(20).text('Total price: $'+ total_price, bullet_points);
+                                            return this.sendPdf(res, pdf, invoice, false);
+                                        }
+                                    } else {
+                                        return this.redirect(res, '/orders/');
+                                    }
+                                }
+                            })
+                            .catch((err: any) => this.onError(res, err));
+                        }
+                    })
+                    .catch((err: any) => this.onError(res, err));
+                }
+            } else {
+                return this.siteNotFound(res)
+            }
+        })
+        .catch(err => this.onError(res, err));
+    });
 
     //**************************************************************************
     //* Process protected functions

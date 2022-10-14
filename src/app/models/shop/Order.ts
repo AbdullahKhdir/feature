@@ -1,8 +1,6 @@
 'use strict';
 
-import RuntimeException from "../../../core/exception/types/RuntimeException";
 import BaseModel from "../../../core/model/BaseModel";
-import getClass         from "../../../core/utils/helperFunctions";
 
 
 /**
@@ -44,7 +42,8 @@ export = class Order extends BaseModel{
                 references: {
                     name: 'user_order',
                     table: 'node.tbl_users',
-                    class: 'shop/User'
+                    class: 'shop/User',
+                    column: 'id'
                 },
                 required: true,
             },

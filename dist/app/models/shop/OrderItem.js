@@ -40,7 +40,8 @@ module.exports = /** @class */ (function (_super) {
                 references: {
                     name: 'order_items',
                     table: 'node.tbl_orders',
-                    class: 'shop/Order'
+                    class: 'shop/Order',
+                    column: 'id',
                 },
                 required: true
             },
@@ -49,7 +50,8 @@ module.exports = /** @class */ (function (_super) {
                 references: {
                     name: 'order_products_items',
                     table: 'node.tbl_products',
-                    class: 'shop/Products'
+                    class: 'shop/Products',
+                    column: 'id',
                 },
                 required: true
             },

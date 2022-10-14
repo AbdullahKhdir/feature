@@ -24,7 +24,7 @@
                                         <div class="quantity-icon btn-floating  waves-effect waves-darken white black-text">x<%= order.quantity %></div>
                                         <img src="<%= order.imageUrl %>" alt="<%= lodash.capitalize(order.title) %>">
                                     </div>
-                                    <p class="user-order-id">#<%= order.id %></p>
+                                    <p class="user-order-id"><a href="/orders/invoice/<%= order.id %>/" target="_blank">#<%= order.id %></a></p>
                                     <span class="span-card-title card-title"><%= lodash.capitalize(order.title) %></span>
                                     <div class="card-content card-content-cart" style="overflow-y: scroll;overflow-x: hidden;">
                                         <p class="break-words"><%= lodash.capitalize(order.description) %></p>

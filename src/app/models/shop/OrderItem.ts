@@ -1,8 +1,6 @@
 'use strict';
 
 import BaseModel from "../../../core/model/BaseModel";
-import RuntimeException from "../../../core/exception/types/RuntimeException";
-import getClass         from "../../../core/utils/helperFunctions";
 
 
 /**
@@ -13,7 +11,7 @@ import getClass         from "../../../core/utils/helperFunctions";
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-export = class OrderItem extends BaseModel{
+export = class OrderItem extends BaseModel {
 
     constructor() {
         super();
@@ -37,7 +35,8 @@ export = class OrderItem extends BaseModel{
                 references: {
                     name: 'order_items',
                     table: 'node.tbl_orders',
-                    class: 'shop/Order'
+                    class: 'shop/Order',
+                    column: 'id',
                 },
                 required: true
             },
@@ -46,7 +45,8 @@ export = class OrderItem extends BaseModel{
                 references: {
                     name: 'order_products_items',
                     table: 'node.tbl_products',
-                    class: 'shop/Products'
+                    class: 'shop/Products',
+                    column: 'id',
                 },
                 required: true
             },

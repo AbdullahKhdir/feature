@@ -93,7 +93,7 @@ module.exports = /** @class */ (function (_super) {
                     var rows = _a[0], fieldData = _a[1];
                     return _this.send(res, '<h1>DATA FETCHED FROM EXAMPLE MODEL SUCCESSFULY</h1>');
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -121,11 +121,11 @@ module.exports = /** @class */ (function (_super) {
                             .then(function () {
                             console.log('RECORD UPDATED :)');
                         })
-                            .catch(function (err) { return _this.onError(err); });
+                            .catch(function (err) { return _this.onError(res, err); });
                     }
                     return _this.redirect(res, '/get_example');
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -153,11 +153,11 @@ module.exports = /** @class */ (function (_super) {
                             .then(function () {
                             console.log('RECORD UPDATED :)');
                         })
-                            .catch(function (err) { return _this.onError(err); });
+                            .catch(function (err) { return _this.onError(res, err); });
                     }
                     return _this.redirect(res, '/get_example');
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -185,11 +185,11 @@ module.exports = /** @class */ (function (_super) {
                             .then(function () {
                             console.log('RECORD DELETED :)');
                         })
-                            .catch(function (err) { return _this.onError(err); });
+                            .catch(function (err) { return _this.onError(res, err); });
                     }
                     return _this.redirect(res, '/get_example');
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -215,7 +215,7 @@ module.exports = /** @class */ (function (_super) {
                     console.log(result);
                     return result;
                 })
-                    .catch(function (err) { return _this.onError(err); })
+                    .catch(function (err) { return _this.onError(res, err); })
                     .then(function (result) {
                     res.status(200).send('<h1>Worker Pool In Progress</h1><br><p>' + result + '</p>');
                     res.end();
@@ -223,7 +223,7 @@ module.exports = /** @class */ (function (_super) {
                     _this.worker.terminate();
                     console.log('is terminated ?: ', _this.worker.isTerminated());
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 ;
                 return [2 /*return*/];
             });
@@ -256,7 +256,7 @@ module.exports = /** @class */ (function (_super) {
                 }).then(function (result) {
                     console.log(result);
                     return result;
-                }).catch(function (err) { return _this.onError(err); })
+                }).catch(function (err) { return _this.onError(res, err); })
                     .then(function (result) {
                     res.status(200).send('<h1>Worker Emit In Progress</h1><br><p>' + result + '</p>');
                     res.end();
@@ -264,7 +264,7 @@ module.exports = /** @class */ (function (_super) {
                     _this.worker.terminate();
                     console.log('is terminated ?: ', _this.worker.isTerminated());
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 ;
                 return [2 /*return*/];
             });
@@ -298,7 +298,7 @@ module.exports = /** @class */ (function (_super) {
                         });
                     }
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -329,7 +329,7 @@ module.exports = /** @class */ (function (_super) {
                         });
                     }
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };

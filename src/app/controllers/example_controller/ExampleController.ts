@@ -86,7 +86,7 @@ module.exports = class ExampleController extends BaseController{
             .then(([rows, fieldData]) => {
                 return this.send(res, '<h1>DATA FETCHED FROM EXAMPLE MODEL SUCCESSFULY</h1>');
             })
-            .catch((err: any) => this.onError(err));
+            .catch((err: any) => this.onError(res, err));
     });
 
     /**
@@ -110,11 +110,11 @@ module.exports = class ExampleController extends BaseController{
                         .then(() => {
                             console.log('RECORD UPDATED :)');
                         })
-                        .catch((err: any) => this.onError(err));
+                        .catch((err: any) => this.onError(res, err));
                 }
                 return this.redirect(res, '/get_example');
             })
-            .catch((err: any) => this.onError(err));
+            .catch((err: any) => this.onError(res, err));
     });
 
     /**
@@ -138,11 +138,11 @@ module.exports = class ExampleController extends BaseController{
                         .then(() => {
                             console.log('RECORD UPDATED :)');
                         })
-                        .catch((err: any) => this.onError(err));
+                        .catch((err: any) => this.onError(res, err));
                 }
                 return this.redirect(res, '/get_example');
             })
-            .catch((err: any) => this.onError(err));
+            .catch((err: any) => this.onError(res, err));
     });
 
     /**
@@ -166,11 +166,11 @@ module.exports = class ExampleController extends BaseController{
                         .then(() => {
                             console.log('RECORD DELETED :)');
                         })
-                        .catch((err: any) => this.onError(err));
+                        .catch((err: any) => this.onError(res, err));
                 }
                 return this.redirect(res, '/get_example');
             })
-            .catch((err: any) => this.onError(err));
+            .catch((err: any) => this.onError(res, err));
     });
 
     /**
@@ -193,7 +193,7 @@ module.exports = class ExampleController extends BaseController{
                 console.log(result)
                 return result;
             })
-            .catch(err => this.onError(err))
+            .catch(err => this.onError(res, err))
             .then((result) => {
                 res.status(200).send('<h1>Worker Pool In Progress</h1><br><p>'+result+'</p>');
                 res.end();
@@ -201,7 +201,7 @@ module.exports = class ExampleController extends BaseController{
                 this.worker.terminate();
                 console.log('is terminated ?: ', this.worker.isTerminated());
             })
-            .catch(err => this.onError(err));;
+            .catch(err => this.onError(res, err));;
     });
     
     /**
@@ -229,7 +229,7 @@ module.exports = class ExampleController extends BaseController{
         }).then(result => {
             console.log(result);
             return result
-        }).catch(err => this.onError(err))
+        }).catch(err => this.onError(res, err))
         .then(result => {
             res.status(200).send('<h1>Worker Emit In Progress</h1><br><p>'+result+'</p>');
             res.end();
@@ -237,7 +237,7 @@ module.exports = class ExampleController extends BaseController{
             this.worker.terminate();
             console.log('is terminated ?: ', this.worker.isTerminated());
         })
-        .catch(err => this.onError(err));;
+        .catch(err => this.onError(res, err));;
     });
 
     //******************\\
@@ -269,7 +269,7 @@ module.exports = class ExampleController extends BaseController{
                     );
                 }
             })
-            .catch((err: any) => this.onError(err));
+            .catch((err: any) => this.onError(res, err));
     });
 
     /**
@@ -298,7 +298,7 @@ module.exports = class ExampleController extends BaseController{
                 );
             }
         })
-        .catch((err: any) => this.onError(err));
+        .catch((err: any) => this.onError(res, err));
     });
 
     //! **************************** !\\

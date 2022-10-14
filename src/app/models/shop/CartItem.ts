@@ -1,8 +1,6 @@
 'use strict';
 
 import BaseModel from "../../../core/model/BaseModel";
-import RuntimeException from "../../../core/exception/types/RuntimeException";
-import getClass         from "../../../core/utils/helperFunctions";
 
 /**
  * @class CartItem
@@ -36,7 +34,8 @@ export = class CartItem extends BaseModel{
                 references: {
                     name: 'items_cart',
                     table: 'node.tbl_carts',
-                    class: 'shop/Cart'          
+                    class: 'shop/Cart',
+                    column: 'id'        
                 },
                 required: true
             },
@@ -45,7 +44,8 @@ export = class CartItem extends BaseModel{
                 references: {
                     name: 'items_cart_products',
                     table: 'node.tbl_products',
-                    class: 'shop/Products'
+                    class: 'shop/Products',
+                    column: 'id'
                 },
                 required: true
             },

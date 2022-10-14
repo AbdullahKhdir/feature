@@ -47,7 +47,8 @@ module.exports = /** @class */ (function (_super) {
                 references: {
                     name: 'user_cart',
                     table: 'node.tbl_users',
-                    class: 'shop/User'
+                    class: 'shop/User',
+                    column: 'id'
                 },
                 required: true
             },

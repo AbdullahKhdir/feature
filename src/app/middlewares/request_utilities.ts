@@ -10,6 +10,7 @@ export function reqUtil(req: Request, res: Response, next: NextFunction) {
     req.sendFormPostedData   = () => req.setProp('post_data', req.getAllFormPostedData());
     req.getAllFormPostedData = () => req.body ? req.file ? Object.assign(req.body, req.file) : req.files ? Object.assign(req.body, req.files) : req.body : '';
     req.getUploadedFiles     = () => req.file ? req.file : req.files ? req.files : {};
+    req.getUploadedFile      = () => req.file ? req.file : {};
     req.getFormPostedData    = (param: string) => req.body ? req.body[param] ? req.body[param].toString() : '' : '';
     req.getQueryParams       = () => req.query ? req.query : '';
     req.getQueryParam        = (param: string) => req.query ? req.query[param] ? req.query[param] : '' : '';

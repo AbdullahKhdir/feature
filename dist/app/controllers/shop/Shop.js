@@ -55,6 +55,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var express_validator_1 = require("express-validator");
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
+var Singleton_1 = require("../../../core/Singleton/Singleton");
 var init_user_session_1 = __importDefault(require("../../middlewares/init_user_session"));
 var is_auth_1 = __importDefault(require("../../middlewares/is_auth"));
 var Cart_1 = __importDefault(require("../../models/shop/Cart"));
@@ -105,7 +106,7 @@ module.exports = /** @class */ (function (_super) {
                             ]
                         });
                     })
-                        .catch(function (err) { return _this.onError(err); });
+                        .catch(function (err) { return _this.onError(res, err); });
                 }
                 else {
                     return [2 /*return*/, res.render('shop/product-list', {
@@ -136,17 +137,54 @@ module.exports = /** @class */ (function (_super) {
          * @returns Response
         */
         _this.index = function () { return _this.route('get', '/', { userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var user_products;
+            var current_page, user_products;
             var _this = this;
-            return __generator(this, function (_a) {
+            var _a;
+            return __generator(this, function (_b) {
                 if (!req.isGet()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.noCacheNeeded();
+                current_page = (_a = req.getQueryParam('page')) !== null && _a !== void 0 ? _a : false;
+                if (this.__.isNumber(current_page) || !this.__.isNaN(current_page)) {
+                    current_page = +current_page === 0 ? 1 : +current_page;
+                }
                 user_products = req.getCurrentUser() ? req.getCurrentUser().getProducts() : false;
                 if (typeof user_products === 'object') {
                     user_products
                         .then(function (rows) {
+                        // todo: create new paginator class where u manipulate the records and deliver ready to use functions
+                        var total = rows.length;
+                        var pagination_counter = 0;
+                        var sign = 0;
+                        var skip = (current_page - 1) * 12 === 0 ? 1 : (current_page - 1) * 12;
+                        while (total !== 0) {
+                            total = total - 12;
+                            sign = Math.sign(total);
+                            if (sign === 0 || sign > 0) {
+                                pagination_counter++;
+                            }
+                            else {
+                                pagination_counter++;
+                                total = 0;
+                            }
+                        }
+                        if (rows.length !== 12) {
+                            if (current_page === skip) { //first page
+                                rows.length = 12;
+                            }
+                            else if (skip > current_page) { //any other page
+                                while (rows.length !== 12) {
+                                    rows = rows.slice(skip);
+                                    if (rows.length > 12) {
+                                        rows.length = 12;
+                                    }
+                                    else {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                         return _this.render(res, 'shop/index', {
                             products: rows !== null && rows !== void 0 ? rows : [],
                             nav_title: 'shop',
@@ -157,10 +195,12 @@ module.exports = /** @class */ (function (_super) {
                                     title: 'Shop',
                                     url: '/'
                                 }
-                            ]
+                            ],
+                            pagination_counter: pagination_counter,
+                            current_page: current_page
                         });
                     })
-                        .catch(function (err) { return _this.onError(err); });
+                        .catch(function (err) { return _this.onError(res, err); });
                 }
                 else {
                     return [2 /*return*/, this.render(res, 'shop/index', {
@@ -312,7 +352,7 @@ module.exports = /** @class */ (function (_super) {
                         });
                     }
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -366,10 +406,10 @@ module.exports = /** @class */ (function (_super) {
                                             return _this.redirect(res, '/cart/');
                                         }
                                     })
-                                        .catch(function (err) { return _this.onError(err); });
+                                        .catch(function (err) { return _this.onError(res, err); });
                                 }
                             })
-                                .catch(function (err) { return _this.onError(err); });
+                                .catch(function (err) { return _this.onError(res, err); });
                         }
                         else {
                             var cart_params = {
@@ -393,7 +433,7 @@ module.exports = /** @class */ (function (_super) {
                                                     return _this.redirect(res, '/cart/');
                                                 }
                                             }))
-                                                .catch(function (err) { return _this.onError(err); });
+                                                .catch(function (err) { return _this.onError(res, err); });
                                         }
                                         else {
                                             var cart_item_params = {
@@ -408,15 +448,15 @@ module.exports = /** @class */ (function (_super) {
                                                     return _this.redirect(res, '/cart/');
                                                 }
                                             })
-                                                .catch(function (err) { return _this.onError(err); });
+                                                .catch(function (err) { return _this.onError(res, err); });
                                         }
                                     })
-                                        .catch(function (err) { return _this.onError(err); });
+                                        .catch(function (err) { return _this.onError(res, err); });
                                 }
                             })
-                                .catch(function (err) { return _this.onError(err); });
+                                .catch(function (err) { return _this.onError(res, err); });
                         }
-                    }).catch(function (err) { return _this.onError(err); });
+                    }).catch(function (err) { return _this.onError(res, err); });
                 }
                 else {
                     return [2 /*return*/, this.onErrorValidation(res, errors.array())];
@@ -507,19 +547,19 @@ module.exports = /** @class */ (function (_super) {
                                         ]
                                     });
                                 })
-                                    .catch(function (err) { return _this.onError(err); });
+                                    .catch(function (err) { return _this.onError(res, err); });
                             }
                             else {
                                 return _this.redirect(res, '/cart');
                             }
                         })
-                            .catch(function (err) { return _this.onError(err); });
+                            .catch(function (err) { return _this.onError(res, err); });
                     }
                     else {
                         return _this.redirect(res, '/cart');
                     }
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -573,7 +613,7 @@ module.exports = /** @class */ (function (_super) {
                                                         }
                                                     }
                                                 })
-                                                    .catch(function (err) { return _this.onError(err); });
+                                                    .catch(function (err) { return _this.onError(res, err); });
                                             }
                                             else if (typeof order_items_rows !== 'undefined') {
                                                 order_items_rows.forEach(function (order_items_row) {
@@ -641,13 +681,13 @@ module.exports = /** @class */ (function (_super) {
                                         });
                                     }
                                 })
-                                    .catch(function (err) { return _this.onError(err); });
+                                    .catch(function (err) { return _this.onError(res, err); });
                             }
                         })
-                            .catch(function (err) { return _this.onError(err); });
+                            .catch(function (err) { return _this.onError(res, err); });
                     }
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -687,7 +727,7 @@ module.exports = /** @class */ (function (_super) {
                             return _this.siteNotFound(res);
                         }
                     })
-                        .catch(function (err) { return _this.onError(err); });
+                        .catch(function (err) { return _this.onError(res, err); });
                 }
                 else {
                     return [2 /*return*/, this.render(res, '404', { page_title: 'Page not found', path: '/404/' }, null, this.constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND)];
@@ -767,7 +807,7 @@ module.exports = /** @class */ (function (_super) {
                                         return _this.redirect(res, '/cart/');
                                     }
                                 })
-                                    .catch(function (err) { return _this.onError(err); });
+                                    .catch(function (err) { return _this.onError(res, err); });
                             }
                             else {
                                 _this.cart_items_object.delete({ product_id: cart_item_product_id })
@@ -776,12 +816,104 @@ module.exports = /** @class */ (function (_super) {
                                         return _this.redirect(res, '/cart/');
                                     }
                                 })
-                                    .catch(function (err) { return _this.onError(err); });
+                                    .catch(function (err) { return _this.onError(res, err); });
                             }
                         }
                     })
-                        .catch(function (err) { return _this.onError(err); });
+                        .catch(function (err) { return _this.onError(res, err); });
                 }
+                return [2 /*return*/];
+            });
+        }); }); };
+        //*******************************\\
+        //* Orders's invoice middleware *\\
+        //*******************************\\
+        _this.orderInvoice = function () { return ({
+            isAuth: is_auth_1.default,
+            userSession: init_user_session_1.default,
+        }); };
+        /**
+         * @function getInvoice
+         * @description Fetches the invoice on ordering a product
+         * @version 1.0.0
+         * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+         * @returns Response
+        */
+        _this.getInvoice = function () { return _this.route('get', '/orders/invoice/:order_id/', _this.orderInvoice(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            var order_id, user;
+            var _this = this;
+            return __generator(this, function (_a) {
+                order_id = +req.getDynamicParam('order_id');
+                user = req.getCurrentUser();
+                if (!this.__.isNumber(order_id)) {
+                    return [2 /*return*/, this.onError(res, 'Please do not alter the link!')];
+                }
+                if (Object.keys(user).length === 0 || this.__.isEmpty(user)) {
+                    return [2 /*return*/, this.redirect(res, '/')];
+                }
+                this.order_items_object.get({ id: order_id })
+                    .then(function (result) {
+                    if (result) {
+                        var quantity = +result[0].quantity;
+                        if (typeof result['product_id'] !== 'undefined') {
+                            result['product_id']
+                                .then(function (_result) {
+                                if (_result) {
+                                    Singleton_1.Singleton.getModel('User').get({ id: user.id })
+                                        .then(function (_user) {
+                                        if (_user) {
+                                            var condition = false;
+                                            if (_result['order_products_items'] && user.id) {
+                                                condition = _result['order_products_items'][0].user_id.toString() === user.id.toString();
+                                            }
+                                            if (condition) {
+                                                var invoice = "invoice_".concat(order_id, ".pdf");
+                                                var path = Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', 'data', 'invoices', invoice);
+                                                var fs = Singleton_1.Singleton.getFileSystem();
+                                                var price = +_result['order_products_items'][0].price;
+                                                var total_price = price * quantity;
+                                                if (fs.existsSync(path)) {
+                                                    var file = fs.createReadStream(path);
+                                                    return _this.sendPdf(res, file, invoice, false);
+                                                }
+                                                else {
+                                                    var pdf = Singleton_1.Singleton.getPdfMaker();
+                                                    pdf.pipe(fs.createWriteStream(path));
+                                                    var header = {
+                                                        align: 'center',
+                                                        underline: true
+                                                    };
+                                                    var bullet_points = {
+                                                        align: 'center',
+                                                    };
+                                                    pdf.fontSize(26).text('Test', header);
+                                                    pdf.fontSize(14).text('-----------------------------', bullet_points);
+                                                    pdf.fontSize(14).text(_result['order_products_items'][0].title +
+                                                        ' - ' +
+                                                        quantity +
+                                                        'x' +
+                                                        ' $' + price, bullet_points);
+                                                    pdf.fontSize(14).text('-----------------------------', bullet_points);
+                                                    pdf.fontSize(20).text('Total price: $' + total_price, bullet_points);
+                                                    return _this.sendPdf(res, pdf, invoice, false);
+                                                }
+                                            }
+                                            else {
+                                                return _this.redirect(res, '/orders/');
+                                            }
+                                        }
+                                    })
+                                        .catch(function (err) { return _this.onError(res, err); });
+                                }
+                            })
+                                .catch(function (err) { return _this.onError(res, err); });
+                        }
+                    }
+                    else {
+                        return _this.siteNotFound(res);
+                    }
+                })
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -809,7 +941,8 @@ module.exports = /** @class */ (function (_super) {
             'postCart',
             'deleteCartProducts',
             'deleteCartProduct',
-            'dynProductInfo'
+            'getInvoice',
+            'dynProductInfo',
         ];
         _this.product = new Product_1.default();
         _this.cart_object = new Cart_1.default();

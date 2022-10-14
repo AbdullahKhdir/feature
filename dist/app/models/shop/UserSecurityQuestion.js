@@ -36,7 +36,8 @@ module.exports = /** @class */ (function (_super) {
                 references: {
                     name: 'user_security',
                     table: 'node.tbl_users',
-                    class: 'shop/User'
+                    class: 'shop/User',
+                    column: 'id'
                 },
                 required: true
             },
@@ -45,7 +46,8 @@ module.exports = /** @class */ (function (_super) {
                 references: {
                     name: 'question_id',
                     table: 'node.tbl_security_questions',
-                    class: 'shop/SecurityQuestion'
+                    class: 'shop/SecurityQuestion',
+                    column: 'id'
                 },
                 required: true
             },

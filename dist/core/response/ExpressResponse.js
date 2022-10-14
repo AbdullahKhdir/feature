@@ -24,6 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ExpressResponse = void 0;
+var node_fs_1 = require("node:fs");
 var config = __importStar(require("../config"));
 var Singleton_1 = require("../Singleton/Singleton");
 /**
@@ -112,7 +113,8 @@ var ExpressResponse = /** @class */ (function () {
     ExpressResponse.prototype.toSameSite = function (res, status) {
         if (status === void 0) { status = this.codes.HTTPS_STATUS.REDIRECTION.PERMANENT_REDIRECT; }
         res.type(this.codes.RESPONSE.TYPES.HTML);
-        res.redirect(status, res.req.route.path);
+        // res.redirect(status, res.req.route.path);
+        res.redirect(status, res.req.url);
         return res.end();
     };
     /**
@@ -179,6 +181,33 @@ var ExpressResponse = /** @class */ (function () {
         }
         res.redirect(status, res.req.url);
         return res.end();
+    };
+    /**
+     * @function onErrorValidation
+     * @description renders all the validation errors back to the user
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param Object errors
+     * @returns Response
+    */
+    ExpressResponse.prototype.sendPdf = function (res, pdf, pdf_name, to_download) {
+        if (pdf_name === void 0) { pdf_name = 'pdf'; }
+        if (to_download === void 0) { to_download = false; }
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = (date.getMonth() + 1);
+        var day = date.getDate();
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        res.setHeader('Content-Type', this.codes.RESPONSE.TYPES.PDF);
+        res.setHeader('Content-Disposition', "".concat(to_download ? 'attachment' : 'inline', "; filename=\"").concat(year, "_").concat(month, "_").concat(day, "_").concat(hours, "_").concat(minutes, "_").concat(pdf_name, "\""));
+        if (pdf instanceof node_fs_1.ReadStream) {
+            return pdf.pipe(res);
+        }
+        else {
+            pdf.pipe(res);
+            return pdf.end();
+        }
     };
     /**
      * @function invalidCsrfResponse

@@ -1,8 +1,6 @@
 'use strict';
 
-import RuntimeException from "../../../core/exception/types/RuntimeException";
 import BaseModel from "../../../core/model/BaseModel";
-import getClass         from "../../../core/utils/helperFunctions";
 
 /**
  * @class UserSecurityQuestion
@@ -31,7 +29,8 @@ export = class UserSecurityQuestion extends BaseModel {
                 references: {
                     name: 'user_security',
                     table: 'node.tbl_users',
-                    class: 'shop/User'
+                    class: 'shop/User',
+                    column: 'id'
                 },
                 required: true
             },
@@ -40,7 +39,8 @@ export = class UserSecurityQuestion extends BaseModel {
                 references: {
                     name: 'question_id',
                     table: 'node.tbl_security_questions',
-                    class: 'shop/SecurityQuestion'
+                    class: 'shop/SecurityQuestion',
+                    column: 'id'
                 },
                 required: true
             },

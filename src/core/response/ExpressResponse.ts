@@ -1,6 +1,7 @@
 'use strict';
 
 import { Response } from 'express';
+import { ReadStream } from 'node:fs';
 import * as config from '../config';
 import { Singleton } from '../Singleton/Singleton';
 
@@ -93,7 +94,8 @@ export abstract class ExpressResponse {
     */
     toSameSite(res: Response, status: any = this.codes.HTTPS_STATUS.REDIRECTION.PERMANENT_REDIRECT) : Response{
         res.type(this.codes.RESPONSE.TYPES.HTML);
-        res.redirect(status, res.req.route.path);
+        // res.redirect(status, res.req.route.path);
+        res.redirect(status, res.req.url);
         return res.end();
     }
 
@@ -166,6 +168,31 @@ export abstract class ExpressResponse {
         
         res.redirect(status, res.req.url);
         return res.end();
+    }
+
+    /**
+     * @function onErrorValidation
+     * @description renders all the validation errors back to the user
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param Object errors
+     * @returns Response
+    */
+    sendPdf(res: Response, pdf: PDFKit.PDFDocument | ReadStream, pdf_name = 'pdf', to_download = false) {
+        let date    = new Date();
+        let year    = date.getFullYear();
+        let month   = (date.getMonth() + 1);
+        let day     = date.getDate();
+        let hours   = date.getHours();
+        let minutes = date.getMinutes();
+        res.setHeader('Content-Type', this.codes.RESPONSE.TYPES.PDF);
+        res.setHeader('Content-Disposition', `${to_download ? 'attachment' : 'inline'}; filename="${year}_${month}_${day}_${hours}_${minutes}_${pdf_name}"`);
+        if (pdf instanceof ReadStream) {
+            return pdf.pipe(res);
+        } else {
+            pdf.pipe(res);
+            return pdf.end();
+        }
     }
 
     /**

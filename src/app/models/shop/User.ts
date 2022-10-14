@@ -1,8 +1,6 @@
 'use strict';
 
-import RuntimeException from "../../../core/exception/types/RuntimeException";
 import BaseModel from "../../../core/model/BaseModel";
-import getClass         from "../../../core/utils/helperFunctions";
 
 /**
  * @class User

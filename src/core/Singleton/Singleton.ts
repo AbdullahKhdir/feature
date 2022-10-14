@@ -2,6 +2,7 @@
 import multer from 'multer';
 import mysql from 'mysql2';
 import Application from "../../app/Application";
+import PDFDocument from '../../app/plugins/PDFDocument';
 import Uploader from "../../app/plugins/Uploader";
 import Constants from "../../app/utils/Constants";
 import Lodash from "../../app/utils/Lodash";
@@ -134,5 +135,30 @@ export class Singleton{
             return this.instance
         }
         return this.instance = new Singleton();
+    }
+
+    //******************************\\
+    //* Model getter function      *\\
+    //******************************\\
+    static getModel(model_name: string) {
+        if (model_name) {
+            var Model = null;
+            if (model_name === 'ExampleModel') {
+                Model = require('../../app/models/example_model/'+model_name);
+            } else {
+                Model = require('../../app/models/shop/'+model_name);
+            }
+            if (Model) {
+                return new Model();
+            }
+        }
+        return;
+    }
+
+    //*******************************\\
+    //* PDFDocument getter function *\\
+    //*******************************\\
+    static getPdfMaker() {
+        return PDFDocument.getPDFDocumentInstance().getPdfKit;
     }
 }

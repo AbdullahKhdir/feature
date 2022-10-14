@@ -69,7 +69,7 @@ export = class Admin extends BaseController {
         // this.uploader    = Singleton.getUploader();
         // this.uploader_configs = this.uploader.diskStorage({
             // destination: (req: Request, file: Express.Multer.File, callback: Function) => {
-            //     callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
+            //     callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'images'));
             // },
             // filename: (req: Request, file: Express.Multer.File, callback: Function) => {
             //     callback(null, new Date().toISOString() + '_' + file.originalname);
@@ -92,7 +92,7 @@ export = class Admin extends BaseController {
             file_size: 10 * 1024 * 1024,
             input_name: 'uploaded_image',
             storage_type: 'diskStorage',
-            upload_type: 'array',
+            upload_type: 'single',
             // @ts-ignore
             file_filter: (req: Request, file: Express.Multer.File, callback: multer.FileFilterCallback) => {
                 if (file.mimetype === Singleton.getConstants().RESPONSE.TYPES.PNG
@@ -108,7 +108,7 @@ export = class Admin extends BaseController {
             },
             // @ts-ignore
             storage_disk_destination_callback: (req: Request, file: Express.Multer.File, callback: Function) => {
-                callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'uploaded_images'));
+                callback(null, Singleton.getPath().join(__dirname, '..', '..', 'public', 'images'));
             },
             // @ts-ignore
             storage_disk_filename_callback: (req: Request, file: Express.Multer.File, callback: Function) => {
@@ -119,8 +119,7 @@ export = class Admin extends BaseController {
                 let hours   = date.getHours();
                 let minutes = date.getMinutes();
                 callback(null, `${year}_${month}_${day}_${hours}_${minutes}_${file.originalname}`);
-            },
-            upload_type_array_length: 5
+            }
         })
     }
 
@@ -133,6 +132,7 @@ export = class Admin extends BaseController {
     */
     product           = () => this.route('get', '/admin/add-product/', {isAuth, userSession} , async (req: Request, res: Response, next: NextFunction) => {
         if (req.isGet()) {
+            res.longTimeNoCache();
             // todo: test with multiple files
             const uploader_form = Singleton.buildUploader(
                 {
@@ -140,8 +140,8 @@ export = class Admin extends BaseController {
                     url: '/upload-image/',
                     button_name: 'Upload Image',
                     input_name: 'uploaded_image',
-                    multiple_files: true,
-                    max_files: 5,
+                    multiple_files: false,
+                    max_files: 1,
                     form_id: 'form-add-product'
                 }
             );
@@ -202,11 +202,12 @@ export = class Admin extends BaseController {
                 url: '/upload-image/',
                 button_name: 'Upload Image',
                 input_name: 'uploaded_image',
-                multiple_files: true,
+                multiple_files: false,
+                max_files: 1,
                 form_id: 'edit-product',
-                max_files: 5
             }
         );
+                
         const product_id = +req.getDynamicParam('product_id') ?? false;
         const user_id    = +req.getCurrentUser().id;
         
@@ -246,6 +247,10 @@ export = class Admin extends BaseController {
                                     url: '/'
                                 },
                                 {
+                                    title: 'Admin Products',
+                                    url: '/admin/products/'
+                                },
+                                {
                                     title: 'Edit Product',
                                     url: `/admin/edit-product/${product_id}`
                                 }
@@ -269,7 +274,7 @@ export = class Admin extends BaseController {
         validate_title:       check('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
         validate_description: check('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
         validate_price:       check('price').isNumeric().withMessage("Please enter product's price!").bail(),
-        validate_imageUrl:    check('uploaded_image').
+        validate_image_path:  check('uploaded_image').
         // @ts-ignore
         custom((value: any, {req} : Request) => {
             if (req.file) {
@@ -294,7 +299,7 @@ export = class Admin extends BaseController {
                     }
                 }
             }
-            return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
+            return true;
         }).bail(),
     });
     /**
@@ -314,23 +319,34 @@ export = class Admin extends BaseController {
         const title       = this.__.capitalize(req.getFormPostedData('title'));
         const price       = req.getFormPostedData('price');
         const description = this.__.capitalize(req.getFormPostedData('description'));
-        const image       = req.getFormPostedData('uploaded_image');
+        const image       = req.getUploadedFile() ?? null;
         
-        //* uploading images and validating is done 
-        // todo: save images in db or in filesystem to show as card images
-        // console.log(req.getAllFormPostedData())
-        
-        const values = {
+        const values : any = {
             title: title,
             price: price,
-            description: description,
-            imageUrl: image
+            description: description
         };
+
+        if (Object.keys(image).length>  0) {
+            values['imageUrl'] = `/images/${image.filename}`;
+            this.product_object.get({id: product_id})
+            .then((result: any) => {
+                if (result) {
+                    let image_path = result[0].imageUrl;
+                    let fs         = Singleton.getFileSystem();
+                    let path       = Singleton.getPath().join(__dirname, '..', '..', 'public', image_path);
+                    if (fs.existsSync(path)) {
+                        fs.unlinkSync(path);
+                    }
+                }
+            })
+            .catch((err: any) => this.onError(res, err));
+        }
         
         const errors = validationResult(req);
         if (errors.isEmpty()) {
             if (product_id) {
-                // @ts-ignore 
+                // @ts-ignore
                 this.product_object.update(values, product_id).then((result) => {
                     if (result[0].affectedRows) {
                         return res.redirect('/admin/products/');
@@ -351,7 +367,7 @@ export = class Admin extends BaseController {
         validate_title:       check('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
         validate_description: check('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
         validate_price:       check('price').isNumeric().withMessage("Please enter product's price!").bail(),
-        validate_imageUrl:    check('uploaded_image').
+        validate_image_path:  check('uploaded_image').
         // @ts-ignore
         custom((value: any, {req} : Request) => {
             if (req.file) {
@@ -394,15 +410,16 @@ export = class Admin extends BaseController {
         req.sendFormPostedData();
         
         const title       = this.__.capitalize(req.getFormPostedData('title'));
-        const imageUrl    = req.getFormPostedData('imageUrl');
         const description = this.__.capitalize(req.getFormPostedData('description'));
         const price       = req.getFormPostedData('price');
         const user_id     = req.getCurrentUser().id;
+        let image         = req.getUploadedFile();
 
         const errors = validationResult(req);
 
         if (errors.isEmpty()) {
-            this.product_object.create({title: title, imageUrl: imageUrl, description: description, price: price, user_id: user_id})
+            image = `/images/${image.filename}`;
+            this.product_object.create({title: title, imageUrl: image, description: description, price: price, user_id: user_id})
             .then((results: any) => {
                 const primary_key = results[0].insertId
                 if (primary_key) {
@@ -490,10 +507,22 @@ export = class Admin extends BaseController {
                 this.product_object.get({id: product_id, user_id: user_id})
                     .then((rows: any) => {
                         if (!this.__.isEmpty(rows)) {
-                            const id = rows[0].id;
-                            this.product_object.delete(id).then((result: any) => {
-                                return this.redirect(res, '/admin/products/');
-                            }).catch((err: any) => this.onError(res, err));
+                            let image_path = rows[0].imageUrl;
+                            let fs         = Singleton.getFileSystem();
+                            let path       = Singleton.getPath().join(__dirname, '..', '..', 'public', image_path);
+                            if (fs.existsSync(path)) {
+                                fs.unlink(path, (err: any) => {
+                                    if (err) {
+                                        return this.onError(res, err);
+                                    }
+                                    const id = rows[0].id;
+                                    this.product_object.delete(id)
+                                    .then((result: any) => {
+                                        return this.redirect(res, '/admin/products/');
+                                    })
+                                    .catch((err: any) => this.onError(res, err));
+                                })
+                            }
                         }
                     })
                     .catch((err: any) => this.onError(res, err));
@@ -532,13 +561,13 @@ export = class Admin extends BaseController {
                             url: '/'
                         },
                         {
-                            title: 'Admin Product',
+                            title: 'Admin Products',
                             url: '/admin/products/'
                         }
                     ]
                 }
             );
         })
-        .catch((err: any) => this.onError(err));
+        .catch((err: any) => this.onError(res, err));
     });
 }

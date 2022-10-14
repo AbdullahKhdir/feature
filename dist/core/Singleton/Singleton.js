@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Singleton = void 0;
 var Application_1 = __importDefault(require("../../app/Application"));
+var PDFDocument_1 = __importDefault(require("../../app/plugins/PDFDocument"));
 var Uploader_1 = __importDefault(require("../../app/plugins/Uploader"));
 var Constants_1 = __importDefault(require("../../app/utils/Constants"));
 var Lodash_1 = __importDefault(require("../../app/utils/Lodash"));
@@ -119,6 +120,30 @@ var Singleton = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    //******************************\\
+    //* Model getter function      *\\
+    //******************************\\
+    Singleton.getModel = function (model_name) {
+        if (model_name) {
+            var Model = null;
+            if (model_name === 'ExampleModel') {
+                Model = require('../../app/models/example_model/' + model_name);
+            }
+            else {
+                Model = require('../../app/models/shop/' + model_name);
+            }
+            if (Model) {
+                return new Model();
+            }
+        }
+        return;
+    };
+    //*******************************\\
+    //* PDFDocument getter function *\\
+    //*******************************\\
+    Singleton.getPdfMaker = function () {
+        return PDFDocument_1.default.getPDFDocumentInstance().getPdfKit;
+    };
     return Singleton;
 }());
 exports.Singleton = Singleton;

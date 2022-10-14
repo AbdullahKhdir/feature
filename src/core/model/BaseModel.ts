@@ -328,7 +328,9 @@ export = class BaseModel extends QueryBuilder {
         if (this.__.isEmpty(object)) {
             this.__columns;
         }
-        this._columns = object;
+        if (typeof this.__columns === 'undefined') {
+            this.__columns = object;
+        }
     }
 
     /**
@@ -443,7 +445,7 @@ export = class BaseModel extends QueryBuilder {
         this.parent  = super();
         this.model   = getClass(this.parent);
         this.__mysql = this.getDb();
-        this.db      = Singleton.getDb(); 
+        this.db      = Singleton.getDb();
     }
 
     //**************************************************************************
@@ -574,14 +576,16 @@ export = class BaseModel extends QueryBuilder {
      * @description filters data records
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param {String} table
      * @param {Object} sql_query
+     * @param {String} limit
+     * @param {String} table
      * @returns Promise
     */
-    filter(sql_query: any = null, table = this.__table) : Promise<any> {
+    filter(sql_query: any = null, limit: number | string | null = null, table = this.__table) : Promise<any> {
         if (this.__.isEmpty(table)) {
             return Promise.reject(new BadMethodCallException('Table must not be empty!'));
         }
+
         if (table !== undefined && table !== null) {
                 return this._validateTable(table)
                 .then((result: any) => {
@@ -606,9 +610,15 @@ export = class BaseModel extends QueryBuilder {
                         }
                         where_clause = this._mysql.escape(where_clause)
                         where_clause =  where_clause.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-            
+                        
                         return (async () => {
-                            return await this.db.executeModelQuery(`SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC`)
+                            let sql = `SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC`;
+                            if (limit != null && !this.__.isNaN(limit)) {
+                                var _limit = ` LIMIT ${limit.toString()}`;
+                                sql += _limit;
+                            }
+                            
+                            return await this.db.executeModelQuery(sql)
                             .then(([rows, fields]) => {
                                 if (!this.__.isEmpty(rows)) {
                                     for (const key in this.columns) {
@@ -712,15 +722,14 @@ export = class BaseModel extends QueryBuilder {
                     if (this.__.isString(sql_query) && !this.__.isEmpty(table)) {
                         // @ts-ignore
                         sql_query = this._mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
+                        let sql = `SELECT * FROM ${table} WHERE ${sql_query} ORDER BY ID ASC`;
+                        if (limit != null && !this.__.isNaN(limit)) {
+                            var _limit = ` LIMIT ${limit.toString()}`;
+                            sql += _limit;
+                        }
+                        
                         return (async () => {
-                            return await this.db.executeModelQuery(
-                                `
-                                SELECT * 
-                                FROM ${table} 
-                                where ${sql_query}
-                                ORDER BY ID ASC
-                                `
-                            )
+                            return await this.db.executeModelQuery(sql)
                             .then(([rows, fields]) => {
                                 if (!this.__.isEmpty(rows)) {
                                     for (const key in this.columns) {
@@ -824,16 +833,12 @@ export = class BaseModel extends QueryBuilder {
                     
                     if (!this.__.isNaN(sql_query) && this.__.isEmpty(table) === false) {
                         return (async () => {
-                            return await this.db.executeModelQuery(
-                                `
-                                SELECT * 
-                                FROM ${table} 
-                                where id = ?
-                                ORDER BY ID ASC
-                                `
-                                ,
-                                [sql_query]
-                            )
+                            let sql = `SELECT * FROM ${table} where id = ? ORDER BY ID ASC`;
+                            if (limit != null && !this.__.isNaN(limit)) {
+                                var _limit = ` LIMIT ${limit.toString()}`;
+                                sql += _limit;
+                            }
+                            return await this.db.executeModelQuery(sql, [sql_query])
                             .then(([rows, fields]) => {
                                 if (!this.__.isEmpty(rows)) {
                                     for (const key in this.columns) {
@@ -949,6 +954,13 @@ export = class BaseModel extends QueryBuilder {
      * @returns Promise
     */
     get(sql_query: any, table = this.__table) : Promise<any> {
+        // if (this.model) {
+        //     var _model = Singleton.getModel(this.model.toString())
+        //     // console.log(_model._columns);
+        //     // console.log(this._columns);
+        //     this.columns = _model._columns;
+        //     // console.log(this.columns);
+        // }
         if (this.__.isEmpty(table)) {
             return Promise.reject(new BadMethodCallException('Table must not be empty!'));
         }
@@ -973,7 +985,7 @@ export = class BaseModel extends QueryBuilder {
                     }
                     where_clause = this._mysql.escape(where_clause)
                     where_clause = where_clause.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-
+                    
                     return (async () => {
                         return await this.db.executeModelQuery(`SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC LIMIT 1`)
                         .then(([rows, fields]) => {
@@ -1073,10 +1085,9 @@ export = class BaseModel extends QueryBuilder {
                     })()
                 }
 
-                if (this.__.isString(sql_query) && !this.__.isEmpty(table)) {
+                if (this.__.isString(sql_query) && !this.__.isEmpty(table) && this.__.isNaN(sql_query)) {
                     sql_query = this._mysql.escape(sql_query)
                     sql_query = sql_query.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                    
                     return (async () => {
                         return await this.db.executeModelQuery(
                             `

@@ -245,7 +245,7 @@ module.exports = /** @class */ (function (_super) {
             }
         });
         /*
-        * Middleware populating file or files attribute on file upload
+        * Middleware populating file or files attribute on file upload's request
         */
         _this.app.use(function (req, res, next) {
             if (req.isPost()) {
@@ -253,10 +253,12 @@ module.exports = /** @class */ (function (_super) {
                 var upload_id = req.getFormPostedData('upload-input-name');
                 if (!_this.__.isEmpty(upload_object) && !_this.__.isEmpty(upload_id)) {
                     upload_object = upload_object.replaceAll("'", '"');
-                    upload_id = upload_id.split(',')[1];
+                    if (upload_id.includes(',')) {
+                        upload_id = upload_id.split(',')[1];
+                    }
                     if (upload_object.startsWith('[')) {
-                        upload_object = "{ \"".concat(upload_id, "\" : [").concat(upload_object);
-                        upload_object = "".concat(upload_object, " ]}");
+                        upload_object = "{ \"".concat(upload_id, "\" : ").concat(upload_object);
+                        upload_object = "".concat(upload_object, " }");
                         req.files = JSON.parse(upload_object);
                     }
                     else {

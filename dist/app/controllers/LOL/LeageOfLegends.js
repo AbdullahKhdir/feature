@@ -238,7 +238,7 @@ module.exports = /** @class */ (function (_super) {
                         });
                     }); })();
                 })
-                    .catch(function (err) { return _this.onError(err); });
+                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };

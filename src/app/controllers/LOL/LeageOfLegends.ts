@@ -175,7 +175,7 @@ export = class LeageOfLegends extends BaseController{
                 }); 
             })();
         })
-        .catch(err => this.onError(err));
+        .catch(err => this.onError(res, err));
     });
 
 

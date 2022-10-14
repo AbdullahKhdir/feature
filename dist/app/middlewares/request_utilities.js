@@ -9,6 +9,7 @@ function reqUtil(req, res, next) {
     req.sendFormPostedData = function () { return req.setProp('post_data', req.getAllFormPostedData()); };
     req.getAllFormPostedData = function () { return req.body ? req.file ? Object.assign(req.body, req.file) : req.files ? Object.assign(req.body, req.files) : req.body : ''; };
     req.getUploadedFiles = function () { return req.file ? req.file : req.files ? req.files : {}; };
+    req.getUploadedFile = function () { return req.file ? req.file : {}; };
     req.getFormPostedData = function (param) { return req.body ? req.body[param] ? req.body[param].toString() : '' : ''; };
     req.getQueryParams = function () { return req.query ? req.query : ''; };
     req.getQueryParam = function (param) { return req.query ? req.query[param] ? req.query[param] : '' : ''; };
