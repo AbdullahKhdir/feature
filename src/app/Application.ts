@@ -175,7 +175,7 @@ export = class Application extends BaseController {
         this.app.set('views', this.path.join(__dirname, 'views'));
 
         /*
-        * Parse JSON-BODY or ANY DATA TYPE Requests
+        * Parse JSON-BODY (API) or ANY DATA TYPE Requests
         */
         this.app.use(this.body_parser.json());
         this.app.use(this.body_parser.urlencoded({extended: true}));

@@ -14,6 +14,7 @@ var Express_1 = require("../framework/Express");
 var Bodyparser_1 = __importDefault(require("../node/Bodyparser"));
 var FileSystem_1 = __importDefault(require("../node/FileSystem"));
 var Path_1 = __importDefault(require("../node/Path"));
+var Pagination_1 = __importDefault(require("../utils/Pagination"));
 /**
  * @class Singleton
  * @constructor
@@ -25,6 +26,12 @@ var Path_1 = __importDefault(require("../node/Path"));
 var Singleton = /** @class */ (function () {
     function Singleton() {
     }
+    //*******************************\\
+    //* Pagination getter functions *\\
+    //*******************************\\
+    Singleton.getPagination = function () {
+        return Pagination_1.default.getPagination();
+    };
     //*****************************\\
     //* Database getter functions *\\
     //*****************************\\

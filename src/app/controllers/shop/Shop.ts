@@ -76,11 +76,14 @@ export = class Shop extends BaseController {
         if (typeof user_products === 'object') {
             user_products
                 .then((rows: any) => {
+                    const paginator = Singleton.getPagination().getRecords(req, rows, 12);
+                    let [records, current_page, pages, _paginator] = paginator;
+
                     return this.render(
                         res,
                         'shop/product-list',
                         {
-                            products: rows,
+                            products: records,
                             nav_title: 'Products',
                             path: '/products/',
                             root: 'shop',
@@ -93,7 +96,10 @@ export = class Shop extends BaseController {
                                     title: 'Products',
                                     url: '/products/'
                                 }
-                            ]
+                            ],
+                            current_page,
+                            pages,
+                            _paginator
                         }
                     );
                 })
@@ -133,16 +139,7 @@ export = class Shop extends BaseController {
             return this.siteNotFound(res);
         }
         res.noCacheNeeded();
-        // Todo: adding breadcrumbs and importing of .js and .css files to a template after the route name (routeName() === template_name.ejs)
         // TODO: Add public products
-        
-        /*
-        * Pagination
-        */
-        let current_page = req.getQueryParam('page') ?? false;
-        if (this.__.isNumber(current_page) || !this.__.isNaN(current_page)) {
-            current_page = +current_page === 0 ? 1 : +current_page;
-        }
 
         /*
         * User specific products
@@ -151,43 +148,14 @@ export = class Shop extends BaseController {
         if (typeof user_products === 'object') {
             user_products
                 .then((rows: any) => {
-                    // todo: create new paginator class where u manipulate the records and deliver ready to use functions
-                    let total = rows.length;
-                    let pagination_counter = 0;
-                    let sign  = 0;
-                    let skip = (current_page - 1) * 12 === 0 ? 1 : (current_page - 1) * 12;
-                    
-                    while(total !== 0) {
-                        total = total - 12;
-                        sign  = Math.sign(total);
-                        if (sign === 0 || sign > 0) {
-                            pagination_counter++;
-                        } else {
-                            pagination_counter++;
-                            total = 0;
-                        }
-                    }
-                    
-                    if (rows.length !== 12) {
-                        if (current_page === skip) { //first page
-                            rows.length = 12;
-                        } else if(skip > current_page) { //any other page
-                            while(rows.length !== 12) {
-                                rows = rows.slice(skip);
-                                if (rows.length > 12) {
-                                    rows.length = 12;
-                                } else {
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    const paginator = Singleton.getPagination().getRecords(req, rows, 12);
+                    let [records, current_page, pages, _paginator] = paginator;
                     
                     return this.render(
                         res,
                         'shop/index',
                         {
-                            products: rows ?? [],
+                            products: records ?? [],
                             nav_title: 'shop',
                             path: '/',
                             root: 'shop',
@@ -197,8 +165,9 @@ export = class Shop extends BaseController {
                                     url: '/'
                                 }
                             ],
-                            pagination_counter,
-                            current_page
+                            pages,
+                            current_page,
+                            _paginator
                         }
                     );
                 })

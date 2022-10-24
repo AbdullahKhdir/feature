@@ -140,7 +140,8 @@ module.exports = /** @class */ (function (_super) {
                                                     .then(function (result) {
                                                     if (typeof result !== 'undefined') {
                                                         if (result) {
-                                                            return _this.redirect(res, '/');
+                                                            var redirectionUrl = req.session.redirectUrl || '/';
+                                                            return _this.redirect(res, redirectionUrl);
                                                         }
                                                     }
                                                     else {

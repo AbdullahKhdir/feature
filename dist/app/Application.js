@@ -160,7 +160,7 @@ module.exports = /** @class */ (function (_super) {
         */
         _this.app.set('views', _this.path.join(__dirname, 'views'));
         /*
-        * Parse JSON-BODY or ANY DATA TYPE Requests
+        * Parse JSON-BODY (API) or ANY DATA TYPE Requests
         */
         _this.app.use(_this.body_parser.json());
         _this.app.use(_this.body_parser.urlencoded({ extended: true }));

@@ -149,7 +149,8 @@ export = class Auth extends BaseController {
                                         .then((result: any) => {
                                             if (typeof result !== 'undefined') {
                                                 if (result) {
-                                                    return this.redirect(res, '/');    
+                                                    var redirectionUrl = req.session.redirectUrl || '/';
+                                                    return this.redirect(res, redirectionUrl);
                                                 }
                                             } else {
                                                 req.setProp(

@@ -43,40 +43,7 @@
                             </div>
                         </div>
                 <%})%>
-                <% if (typeof pagination_counter === 'number') { %>
-                    <ul class="pagination">
-                        <% var previous = "" %> 
-                        <% var next = "" %> 
-                        <% if (pagination_counter === 1) { %>
-                            <% previous = "disabled" %> 
-                            <% next     = "disabled" %> 
-                        <% } else if (pagination_counter > 1 && current_page === 1) {%>
-                        <% } else if (pagination_counter > 1 && current_page === pagination_counter) {%>
-                            <% previous = "" %> 
-                            <% next     = "disabled" %> 
-                        <% } else {%>
-                            <% previous = "" %> 
-                        <% }%>
-
-                        <li class="waves-effect <%= previous %>"><a href="/?page=<%= current_page - 1 <= 0 ? 1 : current_page - 1 %>"><i class="material-icons">chevron_left</i></a></li>
-                        <% if (pagination_counter === 1) { %>
-                            <li class="active"><a href="/?page=1">1</a></li>
-                        <% } else { %>
-                            <% for( let index = 1; index <= pagination_counter; index++ ) { %>
-                                <% if (current_page !== false && typeof current_page === 'number') { %>
-                                    <% if (current_page === index) { %>
-                                        <li class="active"><a href="/?page=<%= index %>"><%= index %></a></li>
-                                    <% } else {%>
-                                        <li class="waves-effect"><a href="/?page=<%= index %>"><%= index %></a></li>
-                                    <% } %>
-                                <% } else {%>
-                                    <li class="waves-effect active"><a href="/?page=<%= index %>"><%= index %></a></li>
-                                <% } %>
-                            <% } %>
-                        <% } %>
-                        <li class="waves-effect <%= next %>"><a href="/?page=<%= current_page + 1 > pagination_counter ? 1 : current_page + 1 %>"><i class="material-icons">chevron_right</i></a></li>
-                    </ul>
-                <% } %>
+                <%- _paginator %>
             <% } else { %>
                 <input type="hidden" class="toast_no_products" id="toast_no_products" name="toast_no_products" value="no_products_toast">
             <% } %>

@@ -12,6 +12,7 @@ import { Express } from "../framework/Express";
 import BodyParser from "../node/Bodyparser";
 import FileSystem from "../node/FileSystem";
 import Path from "../node/Path";
+import Pagination from '../utils/Pagination';
 import Workerpool from "../worker_pool/workerpool";
 
 /**
@@ -26,6 +27,13 @@ export class Singleton{
 
     private static instance: Singleton;
     private constructor() {
+    }
+
+    //*******************************\\
+    //* Pagination getter functions *\\
+    //*******************************\\
+    public static getPagination() : Pagination {
+        return Pagination.getPagination();
     }
 
     //*****************************\\

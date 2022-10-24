@@ -89,8 +89,10 @@ module.exports = /** @class */ (function (_super) {
                 if (typeof user_products === 'object') {
                     user_products
                         .then(function (rows) {
+                        var paginator = Singleton_1.Singleton.getPagination().getRecords(req, rows, 12);
+                        var records = paginator[0], current_page = paginator[1], pages = paginator[2], _paginator = paginator[3];
                         return _this.render(res, 'shop/product-list', {
-                            products: rows,
+                            products: records,
                             nav_title: 'Products',
                             path: '/products/',
                             root: 'shop',
@@ -103,7 +105,10 @@ module.exports = /** @class */ (function (_super) {
                                     title: 'Products',
                                     url: '/products/'
                                 }
-                            ]
+                            ],
+                            current_page: current_page,
+                            pages: pages,
+                            _paginator: _paginator
                         });
                     })
                         .catch(function (err) { return _this.onError(res, err); });
@@ -137,56 +142,21 @@ module.exports = /** @class */ (function (_super) {
          * @returns Response
         */
         _this.index = function () { return _this.route('get', '/', { userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var current_page, user_products;
+            var user_products;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
+            return __generator(this, function (_a) {
                 if (!req.isGet()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.noCacheNeeded();
-                current_page = (_a = req.getQueryParam('page')) !== null && _a !== void 0 ? _a : false;
-                if (this.__.isNumber(current_page) || !this.__.isNaN(current_page)) {
-                    current_page = +current_page === 0 ? 1 : +current_page;
-                }
                 user_products = req.getCurrentUser() ? req.getCurrentUser().getProducts() : false;
                 if (typeof user_products === 'object') {
                     user_products
                         .then(function (rows) {
-                        // todo: create new paginator class where u manipulate the records and deliver ready to use functions
-                        var total = rows.length;
-                        var pagination_counter = 0;
-                        var sign = 0;
-                        var skip = (current_page - 1) * 12 === 0 ? 1 : (current_page - 1) * 12;
-                        while (total !== 0) {
-                            total = total - 12;
-                            sign = Math.sign(total);
-                            if (sign === 0 || sign > 0) {
-                                pagination_counter++;
-                            }
-                            else {
-                                pagination_counter++;
-                                total = 0;
-                            }
-                        }
-                        if (rows.length !== 12) {
-                            if (current_page === skip) { //first page
-                                rows.length = 12;
-                            }
-                            else if (skip > current_page) { //any other page
-                                while (rows.length !== 12) {
-                                    rows = rows.slice(skip);
-                                    if (rows.length > 12) {
-                                        rows.length = 12;
-                                    }
-                                    else {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+                        var paginator = Singleton_1.Singleton.getPagination().getRecords(req, rows, 12);
+                        var records = paginator[0], current_page = paginator[1], pages = paginator[2], _paginator = paginator[3];
                         return _this.render(res, 'shop/index', {
-                            products: rows !== null && rows !== void 0 ? rows : [],
+                            products: records !== null && records !== void 0 ? records : [],
                             nav_title: 'shop',
                             path: '/',
                             root: 'shop',
@@ -196,8 +166,9 @@ module.exports = /** @class */ (function (_super) {
                                     url: '/'
                                 }
                             ],
-                            pagination_counter: pagination_counter,
-                            current_page: current_page
+                            pages: pages,
+                            current_page: current_page,
+                            _paginator: _paginator
                         });
                     })
                         .catch(function (err) { return _this.onError(res, err); });

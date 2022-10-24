@@ -23,6 +23,7 @@ export = (req: Request, res: Response, next: NextFunction) => {
             }
         } else {
             if (typeof req.session.is_authenticated === 'undefined') {
+                req.session.redirectUrl = req.headers.referer || req.originalUrl || req.url;
                 return res.redirect(constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/login');
             } else {
                 next()
@@ -30,6 +31,7 @@ export = (req: Request, res: Response, next: NextFunction) => {
         }
     } else {
         if (typeof req.session.is_authenticated === 'undefined') {
+            req.session.redirectUrl = req.headers.referer || req.originalUrl || req.url;
             return res.redirect(constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER, '/login');
         } else {
             next()
