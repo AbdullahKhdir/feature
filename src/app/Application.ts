@@ -68,20 +68,29 @@ export = class Application extends BaseController {
           ! referrerPolicy
           ! xssFilter
         */
-        // this.app.use(Helmet.contentSecurityPolicy({
-        //     // useDefaults: true,
-        //     directives: {
-        //         "img-src": ["'self'", "data: https:"],
-        //         frameAncestors: ["'none'"],
-        //     }
-        // }));
+        this.app.use(Helmet.contentSecurityPolicy({
+            useDefaults: true,
+            directives: {
+                // frameAncestors: ["'none'"],
+                frameAncestors: ["'self'", "google.com", "youtube.com", "https://www.paypal.com", 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
+                defaultSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
+                styleSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', "'unsafe-inline'", "https://*.paypal.com", 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
+                scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', "'unsafe-inline'", 'https://www.paypal.com/sdk/js?client-id=Adm_n7iOm3r8oVa2I8CQ2A-Xl8cz-e-zl_ZSi7vKRxHcUC5-Xwqccu-7zlilIFUm0XGavzMIDeyyGGM9&currency=USD', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
+                imgSrc: ["'self'", "data: https:", "data: http:", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'data:', 'blob:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
+                connectSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'ws:', 'wss:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
+                frameSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'https://www.sandbox.paypal.com/', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
+                mediaSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'data:', 'blob:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
+                fontSrc: ["'self'", "https:", "data:", 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger']
+            },
+        }));
         this.app.use(Helmet.crossOriginEmbedderPolicy());
         this.app.use(Helmet.crossOriginOpenerPolicy());
         this.app.use(Helmet.crossOriginResourcePolicy());
         this.app.use(Helmet.dnsPrefetchControl());
         this.app.use(Helmet.expectCt());
-        this.app.use(Helmet.frameguard({
-            action: "deny"
+        this.app.use(Helmet.frameguard({ //iframe topics
+            action: "SAMEORIGIN"
+            // action: "deny"
         }));
         this.app.use(Helmet.hidePoweredBy());
         this.app.use(Helmet.hsts());

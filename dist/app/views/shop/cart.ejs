@@ -16,11 +16,11 @@
                                     <div class="col s12 gallery-item gallery-expand gallery-horizontal cart-item-margin" data-item-id="<%= product.product_id %>">
                                         <div class="placeholder">
                                             <div class="gallery-curve-wrapper cart-item-cursor-default">
-                                                <img style="max-width: 50%;" src="<%= product.imageUrl %>" alt="<%= lodash.capitalize(product.title) %>">
+                                                <img style="width: 318px;height: 200px;" src="<%= product.imageUrl %>" alt="<%= lodash.capitalize(product.title) %>">
                                                 <div class="gallery-header" data-stop-propagation="true">
                                                     <h4><%= lodash.capitalize(product.title) %></h4>
                                                     <div class="price-quantity-wrapper cart-item-line-height">
-                                                        <div class="price-wrapper" data-price-wrapper>
+                                                        <div class="price-wrapper" style="position: relative;top: 10px;" data-price-wrapper>
                                                             <label class="cart-item-price-height">price</label>
                                                             <span class="price" data-product-price>
                                                                 $<%= product.price %>
@@ -30,8 +30,8 @@
                                                         <div class="input-field quantity-counter">
                                                             <% total_price = total_price + (product.quantity * product.price) %> 
                                                             <% total_price = +total_price.toFixed(2) %> 
-                                                            <label class="cart-item-price-height cart-item-quantity-z-index" for="updates_<%= product.product_id %>">quantity</label>
-                                                            <div>
+                                                            <label class="cart-item-price-height cart-item-quantity-z-index" style="margin-top: 10px;" for="updates_<%= product.product_id %>">quantity</label>
+                                                            <div style="position: relative;top: 10px;">
                                                                 <form class="align-forms" action="/cart/delete-item/" method="POST" novalidate>
                                                                     <input type="hidden" name="_csrf" value="<%= csrf %>">
                                                                     <input type="hidden" name="product_id" value="<%= product.product_id %>">
@@ -87,9 +87,42 @@
                                 <div class="cart-item-total-price-alignment">$<%= total_price %></div>
                             </div>
                             <p class="cart-item-ship-note">Shipping & taxes calculated at checkout</p>
-                            <form action="/create-order/" method="POST">
+                            <form id="cart-checkout" action="/create-order/" method="POST">
                                 <input type="hidden" name="_csrf" value="<%= csrf %>">
-                                <button type="submit" name="checkout" class="btn-large waves-effect waves-light">Order</button>
+                                <!-- <button id="order-btn" type="submit" name="checkout" class="btn-large waves-effect waves-light">Check out</button> -->
+                                <div id="order-btn">Check out</div>
+                                <!-- Replace "test" with your own sandbox Business account app client ID -->
+                                <script src="https://www.paypal.com/sdk/js?client-id=Adm_n7iOm3r8oVa2I8CQ2A-Xl8cz-e-zl_ZSi7vKRxHcUC5-Xwqccu-7zlilIFUm0XGavzMIDeyyGGM9&currency=USD"></script>
+                                <script>
+                                    //root@node.com 
+                                    //test1234
+                                    paypal.Buttons({
+                                      // Sets up the transaction when a payment button is clicked
+                                      createOrder: (data, actions) => {
+                                        return actions.order.create({
+                                          purchase_units: [{
+                                            amount: {
+                                              value: '<%= total_price %>' // Can also reference a variable or function
+                                            }
+                                          }]
+                                        });
+                                      },
+                                      // Finalize the transaction after payer approval
+                                      onApprove: (data, actions) => {
+                                        return actions.order.capture().then(function(orderData) {
+                                          // Successful capture! For dev/demo purposes:
+                                          console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                                          const transaction = orderData.purchase_units[0].payments.captures[0];
+                                        //   alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                                          $('#cart-checkout').submit();
+                                          // When ready to go live, remove the alert and show a success message within this page. For example:
+                                          // const element = document.getElementById('paypal-button-container');
+                                          // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                                          // Or go to another URL:  actions.redirect('thank_you.html');
+                                        });
+                                      }
+                                    }).render('#order-btn');
+                                </script>
                             </form>
                         </div>                 
                     <% } %>
@@ -105,7 +138,7 @@
             <% } %>
         </div>
     </main>
-    <%- include('../includes/updated/footer.ejs') %>
+    <%- include('../includes/updated/cart-footer.ejs') %>
     <%- include('../includes/updated/script.ejs') %>
 </body>
 </html>

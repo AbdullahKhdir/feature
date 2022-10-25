@@ -207,6 +207,8 @@ module.exports = /** @class */ (function (_super) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.updatedContentAlways();
+                res.removeHeader("Cross-Origin-Resource-Policy");
+                res.removeHeader("Cross-Origin-Embedder-Policy");
                 user_cart = (_a = req.getCurrentUser().getCart()) !== null && _a !== void 0 ? _a : [];
                 if (!user_cart) {
                     return [2 /*return*/, this.onError(res, new Error('User is not available'))];
@@ -242,10 +244,38 @@ module.exports = /** @class */ (function (_super) {
                                                     }
                                                 });
                                             });
+                                            return { session: (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                    var stripe;
+                                                    return __generator(this, function (_a) {
+                                                        switch (_a.label) {
+                                                            case 0:
+                                                                stripe = require('stripe')('sk_test_51LwhSpHh4oQqwjTUy0a2jgwphD8CTgb8czMsySR79Jbqfwjm2M819AO3ydmvQfybePlZixdlFl0fE0ur40UE3xMw00Uinv9DFm');
+                                                                return [4 /*yield*/, stripe.checkout.sessions.create({
+                                                                        payment_method_types: ['card'],
+                                                                        mode: 'payment',
+                                                                        customer_email: req.getCurrentUser().email,
+                                                                        client_reference_id: req.getCurrentUser().id,
+                                                                        currency: 'EUR',
+                                                                        locale: 'de',
+                                                                        success_url: req.protocol + '://' + req.get('host') + '/orders/',
+                                                                        cancel_url: req.protocol + '://' + req.get('host') + '/cart/',
+                                                                        line_items: cart_products.map(function (p) {
+                                                                            return {
+                                                                                price: 'price_1LwipAHh4oQqwjTUYJe9dDc6',
+                                                                                quantity: p.quantity,
+                                                                            };
+                                                                        }),
+                                                                    })];
+                                                            case 1: return [2 /*return*/, _a.sent()];
+                                                        }
+                                                    });
+                                                }); }), cart_products: cart_products };
+                                        })
+                                            .then(function (data) {
                                             return _this.render(res, 'shop/cart', {
                                                 nav_title: 'My Cart',
                                                 path: '/cart/',
-                                                products: cart_products,
+                                                products: data.cart_products,
                                                 root: 'shop',
                                                 css: [
                                                     'materialize/gallery_materialized.css',
@@ -260,7 +290,8 @@ module.exports = /** @class */ (function (_super) {
                                                         title: 'Cart',
                                                         url: ''
                                                     }
-                                                ]
+                                                ],
+                                                session_id: data.session().id
                                             });
                                         })
                                             .catch(function (err) { return _this.onError(res, err); });
@@ -436,15 +467,34 @@ module.exports = /** @class */ (function (_super) {
             });
         }); }); };
         /**
-         * @function checkout
+         * @function getCheckout
          * @description checkout route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.checkout = function () { return _this.route('get', '/checkout/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.getCheckout = function () { return _this.route('get', '/checkout/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 if (!req.isGet()) {
+                    return [2 /*return*/, this.siteNotFound(res)];
+                }
+                res.updatedContentAlways();
+                return [2 /*return*/, this.render(res, 'shop/checkout', {
+                        page_title: 'Checkout',
+                        path: '/checkout/'
+                    })];
+            });
+        }); }); };
+        /**
+         * @function postCheckout
+         * @description post checkout route
+         * @version 1.0.0
+         * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+         * @returns Response
+        */
+        _this.postCheckout = function () { return _this.route('post', '/checkout/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.updatedContentAlways();
@@ -906,7 +956,8 @@ module.exports = /** @class */ (function (_super) {
             'index',
             'products',
             'cart',
-            'checkout',
+            'getCheckout',
+            'postCheckout',
             'orders',
             'postOrders',
             'postCart',

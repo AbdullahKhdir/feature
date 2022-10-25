@@ -36,7 +36,8 @@ export = class Shop extends BaseController {
             'index',
             'products',
             'cart',
-            'checkout',
+            'getCheckout',
+            'postCheckout',
             'orders',
             'postOrders',
             'postCart',
@@ -55,7 +56,6 @@ export = class Shop extends BaseController {
     //**********\\
     //* Routes *\\
     //**********\\
-
     /**
      * @function products
      * @description products route
@@ -205,6 +205,8 @@ export = class Shop extends BaseController {
             return this.siteNotFound(res);
         }
         res.updatedContentAlways();
+        res.removeHeader("Cross-Origin-Resource-Policy")
+        res.removeHeader("Cross-Origin-Embedder-Policy")
         const user_cart = req.getCurrentUser().getCart() ?? [];
         if (!user_cart) {
             return this.onError(res, new Error('User is not available'))
@@ -239,13 +241,36 @@ export = class Shop extends BaseController {
                                             }
                                         });
                                     });
+                                    
+                                    return {session: (async () => {
+                                        const stripe   = require('stripe')('sk_test_51LwhSpHh4oQqwjTUy0a2jgwphD8CTgb8czMsySR79Jbqfwjm2M819AO3ydmvQfybePlZixdlFl0fE0ur40UE3xMw00Uinv9DFm');
+                                        
+                                        return await stripe.checkout.sessions.create({
+                                            payment_method_types: ['card'],
+                                            mode: 'payment',
+                                            customer_email: req.getCurrentUser().email,
+                                            client_reference_id: req.getCurrentUser().id,
+                                            currency: 'EUR',
+                                            locale: 'de',
+                                            success_url: req.protocol + '://' + req.get('host') + '/orders/',
+                                            cancel_url: req.protocol + '://' + req.get('host') + '/cart/',
+                                            line_items: cart_products.map((p: any) => {
+                                                return {
+                                                    price:    'price_1LwipAHh4oQqwjTUYJe9dDc6',
+                                                    quantity: p.quantity,
+                                                };
+                                            }),
+                                        });
+                                    }), cart_products: cart_products};
+                                })
+                                .then((data: any) => {
                                     return this.render(
                                         res,
                                         'shop/cart',
                                         {
                                             nav_title: 'My Cart',
                                             path : '/cart/',
-                                            products: cart_products,
+                                            products: data.cart_products,
                                             root: 'shop',
                                             css: [
                                                 'materialize/gallery_materialized.css',
@@ -260,7 +285,8 @@ export = class Shop extends BaseController {
                                                     title: 'Cart',
                                                     url: ''
                                                 }
-                                            ]
+                                            ],
+                                            session_id: data.session().id
                                         }
                                     );
                                 })
@@ -439,14 +465,36 @@ export = class Shop extends BaseController {
     });
 
     /**
-     * @function checkout
+     * @function getCheckout
      * @description checkout route
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    checkout = (): Router => this.route('get', '/checkout/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    getCheckout = (): Router => this.route('get', '/checkout/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isGet()) {
+            return this.siteNotFound(res);
+        }
+        res.updatedContentAlways();
+        return this.render(
+            res,
+            'shop/checkout',
+            {
+                page_title: 'Checkout',
+                path : '/checkout/'
+            }
+        );
+    });
+
+    /**
+     * @function postCheckout
+     * @description post checkout route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    postCheckout = (): Router => this.route('post', '/checkout/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+        if (!req.isPost()) {
             return this.siteNotFound(res);
         }
         res.updatedContentAlways();
@@ -471,6 +519,7 @@ export = class Shop extends BaseController {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
+        
         res.updatedContentAlways();
         req.getCurrentUser().getOrder().then((order: any) => {
             if (typeof order === 'undefined') {

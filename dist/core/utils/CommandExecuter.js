@@ -75,7 +75,7 @@ exports.runCommands = runCommands;
  * @param cmd {string}
  * @return {Promise<string>}
 */
-var _execShellCommand = function (cmd) { return __awaiter(void 0, void 0, Promise, function () {
+var _execShellCommand = function (cmd) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         return [2 /*return*/, new Promise(function (resolve, reject) {
                 child_process_1.default.exec(cmd, function (error, stdout, stderr) {
