@@ -60,7 +60,6 @@ export = class AreaChart extends BaseController{
             res,
             'materialize/charts/area',
             {
-                page_title: 'Area Charts',
                 nav_title: 'Area Charts',
                 path: 'area-charts',
                 root: 'charts'

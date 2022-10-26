@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.tabbed = function () { return _this.route('get', '/header-tabbed', _this.tabbedMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/header/tabbed', {
-                        page_title: 'Header Tabbed',
                         nav_title: 'Header Tabbed',
                         path: 'header-tabbed',
                         root: 'headers'
@@ -94,7 +93,6 @@ module.exports = /** @class */ (function (_super) {
         _this.metrics = function () { return _this.route('get', '/header-metrics', _this.metricsMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/header/metrics', {
-                        page_title: 'Header Metrics',
                         nav_title: 'Header Metrics',
                         path: 'header-metrics',
                         root: 'headers'
@@ -111,7 +109,6 @@ module.exports = /** @class */ (function (_super) {
         _this.search = function () { return _this.route('get', '/header-search/', _this.searchMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/header/search', {
-                        page_title: 'Header Search',
                         nav_title: 'Header Search',
                         path: 'header-search',
                         root: 'headers'

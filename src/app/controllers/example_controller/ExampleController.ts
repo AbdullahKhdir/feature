@@ -262,7 +262,7 @@ module.exports = class ExampleController extends BaseController{
                         res,
                         'example/index',
                         {
-                            page_title: rows ?? 'Dynamic route',
+                            nav_title: rows ?? 'Dynamic route',
                             path: '/dynamic/',
                             product: rows
                         }
@@ -291,7 +291,7 @@ module.exports = class ExampleController extends BaseController{
                     res,
                     'example/index',
                     {
-                        page_title: rows ?? 'Dynamic route',
+                        nav_title: rows ?? 'Dynamic route',
                         path: '/dynamic/',
                         product: rows
                     }

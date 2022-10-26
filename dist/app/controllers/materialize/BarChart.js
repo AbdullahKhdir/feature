@@ -79,7 +79,6 @@ module.exports = /** @class */ (function (_super) {
         _this.barChart = function () { return _this.route('get', '/bar-charts/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/charts/bar', {
-                        page_title: 'Bar Charts',
                         nav_title: 'Bar Charts',
                         path: 'bar-charts',
                         root: 'charts'

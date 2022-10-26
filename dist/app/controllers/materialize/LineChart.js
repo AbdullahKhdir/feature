@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.line = function () { return _this.route('get', '/line-charts/', _this.lineMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/charts/line', {
-                        page_title: 'Line Charts',
                         nav_title: 'Line Charts',
                         path: 'line-charts',
                         root: 'charts'

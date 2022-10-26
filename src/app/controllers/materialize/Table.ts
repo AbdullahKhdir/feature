@@ -64,7 +64,6 @@ export = class Table extends BaseController{
             res,
             'materialize/tables/table',
             {
-                page_title: 'Table',
                 nav_title: 'Table',
                 path: 'fullscreen-table',
                 root: 'tables'
@@ -84,7 +83,6 @@ export = class Table extends BaseController{
             res,
             'materialize/tables/custom',
             {
-                page_title: 'Table',
                 nav_title: 'Table',
                 path: 'custom-table',
                 root: 'tables'

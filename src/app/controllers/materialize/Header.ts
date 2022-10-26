@@ -62,7 +62,6 @@ export = class Header extends BaseController {
             res,
             'materialize/header/tabbed',
             {
-                page_title: 'Header Tabbed',
                 nav_title: 'Header Tabbed',
                 path: 'header-tabbed',
                 root: 'headers'
@@ -82,7 +81,6 @@ export = class Header extends BaseController {
             res,
             'materialize/header/metrics',
             {
-                page_title: 'Header Metrics',
                 nav_title: 'Header Metrics',
                 path: 'header-metrics',
                 root: 'headers'
@@ -102,7 +100,6 @@ export = class Header extends BaseController {
             res,
             'materialize/header/search',
             {
-                page_title: 'Header Search',
                 nav_title: 'Header Search',
                 path: 'header-search',
                 root: 'headers'

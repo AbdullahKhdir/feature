@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.areaChart = function () { return _this.route('get', '/area-charts/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/charts/area', {
-                        page_title: 'Area Charts',
                         nav_title: 'Area Charts',
                         path: 'area-charts',
                         root: 'charts'

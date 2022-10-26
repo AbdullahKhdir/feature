@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.dashboard = function () { return _this.route('get', '/dashboard/', _this.dashboardMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/pages/dashboard', {
-                        page_title: 'Dashboard',
                         nav_title: 'Home',
                         path: 'dashboard',
                         root: 'pages'

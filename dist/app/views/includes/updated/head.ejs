@@ -2,17 +2,17 @@
 <html lang="en">
   <head>
     <noscript>Javascript is disabled, please activate javascript in order to use the application</noscript>
-    <input type="hidden" id="_csrf" class="_csrf" name="_csrf" value="<%= csrf %>">
+    <input type="hidden" id="_csrf" class="_csrf" name="_csrf" value="<%= typeof csrf !== 'undefined' ? csrf : '' %>">
+    <!-- <meta http-equiv="Content-Language" content="de, en, ar"> -->                        <!-- Bad practice, send as header instead --> 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="keywords" content="HTML, CSS, JavaScript">                  <!-- Search Keywords --> 
-    <meta name="description" content="Full Node JS Framework">              <!-- Search Description -->
-    <meta name="author" content="Abdullah Khdir">                           <!-- Search Author -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  <!-- Width Adjustments for all screens -->
-    <!-- <meta http-equiv="refresh" content="60">                           refreshing the page every 60 seconds-->
+    <meta name="keywords" content="HTML, CSS, JavaScript, Node, NodeJS, Express, ExpressJS">  <!-- Search Keywords --> 
+    <meta name="description" content="Framework">                                             <!-- Search Description -->
+    <meta name="author" content="Abdullah Khdir">                                             <!-- Search Author -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">                    <!-- Width Adjustments for all screens -->
+    <!-- <meta http-equiv="refresh" content="60">                                             refreshing the page every 60 seconds-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="msapplication-tap-highlight" content="no">
-    <meta name="description" content="">
-    <title><%= nav_title %></title>
+    <title><%= typeof nav_title !== 'undefined' ? nav_title : '' %></title>
     <link href="/materialize/datatables.min.css" rel="stylesheet">
     <link href="/materialize/jqvmap.css" rel="stylesheet">
     <link href="/materialize/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">

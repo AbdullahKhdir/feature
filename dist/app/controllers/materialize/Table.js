@@ -78,7 +78,6 @@ module.exports = /** @class */ (function (_super) {
         _this.table = function () { return _this.route('get', '/fullscreen-table', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/tables/table', {
-                        page_title: 'Table',
                         nav_title: 'Table',
                         path: 'fullscreen-table',
                         root: 'tables'
@@ -95,7 +94,6 @@ module.exports = /** @class */ (function (_super) {
         _this.customTable = function () { return _this.route('get', '/custom-table/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/tables/custom', {
-                        page_title: 'Table',
                         nav_title: 'Table',
                         path: 'custom-table',
                         root: 'tables'

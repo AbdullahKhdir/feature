@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.login = function () { return _this.route('get', '/log-in/', _this.loginMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/login/login', {
-                        page_title: 'Login',
                         nav_title: 'Log In',
                         path: 'log-in',
                         root: 'account'

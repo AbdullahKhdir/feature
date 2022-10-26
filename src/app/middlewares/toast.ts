@@ -39,7 +39,8 @@ export function toast(req: Request, res: Response, next: NextFunction, app: any)
     res.locals['errored_inputs']      = errored_inputs;
     res.locals['post_data']           = post_data ?? {};
     res.locals['get_data']            = get_data;
-
+    res.locals['csrf']                = req.csrfToken();
+    
     app.locals.error               = error;
     app.locals.warning             = warning;
     app.locals.success             = success;

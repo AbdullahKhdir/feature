@@ -79,7 +79,7 @@ export = class LeageOfLegends extends BaseController{
     //**********\\
 
     corsTest = (): Router => this.route('get', '/cors/', {}, async (req: Request, res: Response, next: NextFunction) => {
-        return new JsonResponse('Success', {status: 'checked'}).sendAsJson(res);
+        return new JsonResponse(200, 'Success', {status: 'checked'}).sendAsJson(res);
     });
 
     /**
@@ -96,7 +96,7 @@ export = class LeageOfLegends extends BaseController{
             headers: {"X-Riot-Token": "RGAPI-40cea3f7-477d-4a5e-a801-af6a601addfc"}
         });
         const data = await response.json();
-        return new JsonResponse('Fetched successfully', data).sendAsJson(res);
+        return new JsonResponse(200, 'Fetched successfully', data).sendAsJson(res);
     });
 
     leagueLoginIn = (): Router => this.route('get', '/league-connect/', {}, async (req: Request, res: Response, next: NextFunction) => {
@@ -104,7 +104,6 @@ export = class LeageOfLegends extends BaseController{
             res,
             'LOL/login',
             {
-                page_title: 'Leage',
                 nav_title: 'Live In Game Events',
                 path: 'league-connect',
                 root: 'league'

@@ -60,7 +60,6 @@ export = class FinancialChart extends BaseController{
             res,
             'materialize/charts/financial',
             {
-                page_title: 'Financial Charts',
                 nav_title: 'Financial Charts',
                 path: 'financial-charts',
                 root: 'charts'

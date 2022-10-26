@@ -66,7 +66,6 @@ export = class DoughnutChart extends BaseController{
             res,
             'materialize/charts/doughnut',
             {
-                page_title: 'Doughnut Charts',
                 nav_title: 'Doughnut Charts',
                 path: 'doughnut-charts',
                 root: 'charts'
@@ -97,7 +96,7 @@ export = class DoughnutChart extends BaseController{
                         res,
                         'example/index',
                         {
-                            page_title: rows ?? 'Dynamic route',
+                            nav_title: rows ?? 'Dynamic route',
                             path: '/dynamic/',
                             product: rows
                         }

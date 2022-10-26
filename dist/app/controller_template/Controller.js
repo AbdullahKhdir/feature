@@ -75,7 +75,7 @@ module.exports = /** @class */ (function (_super) {
         _this.firstMethod = function () { return _this.route('get', '/get_exmaple', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'shop/orders', {
-                        page_title: 'My Orders',
+                        nav_title: 'My Orders',
                         path: '/orders/',
                         orders: []
                     })];
@@ -105,7 +105,7 @@ module.exports = /** @class */ (function (_super) {
                         // @ts-ignore 
                         var rows_1 = rows_1[0];
                         return _this.render(res, 'example/index', {
-                            page_title: rows_1 !== null && rows_1 !== void 0 ? rows_1 : 'Dynamic route',
+                            nav_title: rows_1 !== null && rows_1 !== void 0 ? rows_1 : 'Dynamic route',
                             path: '/dynamic/',
                             product: rows_1
                         });

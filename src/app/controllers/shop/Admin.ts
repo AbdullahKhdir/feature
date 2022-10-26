@@ -474,7 +474,7 @@ export = class Admin extends BaseController {
     });
     uploader = () => this.route('post', '/upload-image/', this._uploader(), async (req: Request, res: Response, next: NextFunction) => {
         const uploaded_file = JSON.stringify(req.getUploadedFiles());
-        return new JsonResponse('Success', {upload_object: uploaded_file}).sendAsJson(res);
+        return new JsonResponse(200, 'Success', {upload_object: uploaded_file}).sendAsJson(res);
     });
 
     //******************************\\

@@ -140,7 +140,7 @@ var ExpressResponse = /** @class */ (function () {
      * @returns Response
     */
     ExpressResponse.prototype.siteNotFound = function (res) {
-        return this.render(res, '404', { page_title: 'Page not found', path: '/404/' }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
+        return this.render(res, '404', { nav_title: 'Page not found', path: '/404/', csrf: res.req.csrfToken() }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
     };
     /**
      * @function onErrorValidation
@@ -216,14 +216,15 @@ var ExpressResponse = /** @class */ (function () {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    ExpressResponse.prototype.invalidCsrfResponse = function (res) {
+    ExpressResponse.prototype.invalidCsrfResponse = function (req, res) {
         return this.render(res, '404', {
-            page_title: 'Post request was interrupted!',
+            nav_title: 'Post request was interrupted!',
             path: '/404/',
             is_authenticated: null,
             error: 'Invalid CSRF token',
             warning: 'Please do not alter or delete the csrf token!',
-            success: null
+            success: null,
+            csrf: req.csrfToken(),
         }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
     };
     /**
@@ -238,20 +239,22 @@ var ExpressResponse = /** @class */ (function () {
         if (error === void 0) { error = ''; }
         if (config.configurations().environment === 'development') {
             return this.render(res, '404', {
-                page_title: 'Unexpected Error!',
+                res: 'Unexpected Error!',
                 path: '/404/',
                 is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                 error: error.toString(),
                 warning: error.toString(),
-                success: null
+                success: null,
+                csrf: res.req.csrfToken(),
             }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
         }
         else if (config.configurations().environment === 'production') {
             return this.render(res, '404', {
-                page_title: 'Unexpected Error!',
+                res: 'Unexpected Error!',
                 path: '/404/',
                 is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
-                warning: 'Please contact the support team!'
+                warning: 'Please contact the support team!',
+                csrf: res.req.csrfToken()
             }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
         }
         return res.end();

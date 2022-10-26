@@ -16,7 +16,9 @@ import ExpressSession from '../core/framework/ExpressSession.js';
 import { Singleton } from '../core/Singleton/Singleton.js';
 import Locals from '../core/utils/AppLocals.js';
 import { reqUtil } from './middlewares/request_utilities';
+import cache_control from '../core/middlewares/cache_control';
 import { toast } from './middlewares/toast';
+import morgan_logger from '../core/middlewares/morgan_logger.js';
 
 /**
  * @class Application
@@ -35,63 +37,41 @@ export = class Application extends BaseController {
     private app;
     private constructor() {
         super();
-        
+
         /*
         * Init The Application
         */
-        this.app            = this.express.getExpress();
-        this.body_parser    = Singleton.getBodyParser();
-        this.path           = Singleton.getPath();
-        this.sub_controller = this;
-        this.session        = ExpressSession.getExpressSession
-        
-        /*
-        * Using package compressor
-        */
-        this.app.use(Compression());
+       this.app            = this.express.getExpress();
+       this.body_parser    = Singleton.getBodyParser();
+       this.path           = Singleton.getPath();
+       this.sub_controller = this;
+       this.session        = ExpressSession.getExpressSession
 
         /*
         * Sets the following policies
-          ! contentSecurityPolicy
-          ! crossOriginEmbedderPolicy
-          ! crossOriginOpenerPolicy
-          ! crossOriginResourcePolicy
-          ! dnsPrefetchControl
-          ! expectCt
-          ! frameguard
-          ! hidePoweredBy
-          ! hsts
-          ! ieNoOpen 
-          ! noSniff
-          ! originAgentCluster 
-          ! permittedCrossDomainPolicies
-          ! referrerPolicy
-          ! xssFilter
+          ? contentSecurityPolicy
+          ? crossOriginEmbedderPolicy
+          ? crossOriginOpenerPolicy
+          ? crossOriginResourcePolicy
+          ? dnsPrefetchControl
+          ? expectCt
+          ? frameguard
+          ? hidePoweredBy
+          ? hsts
+          ? ieNoOpen 
+          ? noSniff
+          ? originAgentCluster 
+          ? permittedCrossDomainPolicies
+          ? referrerPolicy
+          ? xssFilter
         */
-        this.app.use(Helmet.contentSecurityPolicy({
-            useDefaults: true,
-            directives: {
-                // frameAncestors: ["'none'"],
-                frameAncestors: ["'self'", "google.com", "youtube.com", "https://www.paypal.com", 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                defaultSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                styleSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', "'unsafe-inline'", "https://*.paypal.com", 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', "'unsafe-inline'", 'https://www.paypal.com/sdk/js?client-id=Adm_n7iOm3r8oVa2I8CQ2A-Xl8cz-e-zl_ZSi7vKRxHcUC5-Xwqccu-7zlilIFUm0XGavzMIDeyyGGM9&currency=USD', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                imgSrc: ["'self'", "data: https:", "data: http:", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'data:', 'blob:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                connectSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'ws:', 'wss:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                frameSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'https://www.sandbox.paypal.com/', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                mediaSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'data:', 'blob:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                fontSrc: ["'self'", "https:", "data:", 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger']
-            },
-        }));
+        this.app.use(Helmet.contentSecurityPolicy(this.constants.CONTENT_SECURITY_POLICY));
         this.app.use(Helmet.crossOriginEmbedderPolicy());
         this.app.use(Helmet.crossOriginOpenerPolicy());
         this.app.use(Helmet.crossOriginResourcePolicy());
         this.app.use(Helmet.dnsPrefetchControl());
         this.app.use(Helmet.expectCt());
-        this.app.use(Helmet.frameguard({ //iframe topics
-            action: "SAMEORIGIN"
-            // action: "deny"
-        }));
+        this.app.use(Helmet.frameguard(this.constants.FRAME_GUARD));
         this.app.use(Helmet.hidePoweredBy());
         this.app.use(Helmet.hsts());
         this.app.use(Helmet.ieNoOpen());
@@ -100,68 +80,36 @@ export = class Application extends BaseController {
         this.app.use(Helmet.permittedCrossDomainPolicies());
         this.app.use(Helmet.referrerPolicy());
         this.app.use(Helmet.xssFilter());
+        
         /*
         * Setting Cache-Control Header
         */
-        this.app.use((req: Request, res: Response, next: NextFunction) => {
-            if (req.method == this.constants.REQUEST.TYPE.GET) {
-                if (typeof req.session !== 'undefined') {
-                    if (typeof req.session.is_authenticated !== 'undefined') {
-                        if (req.session.is_authenticated === true) {
-                            res.set('Cache-Control', 'private, no-cache, must-revalidate');
-                            return next();
-                        }
-                    }
-                }
-                res.set('Cache-Control', 'public, no-cache, must-revalidate');
-            } else {
-                res.set('Cache-Control', 'no-store');
-            }
-            next();
-        });
+        this.app.use(cache_control);
 
         /*
         * Enable Logger
         */
-        this.app.use(
-            Morgan(
-                'combined', 
-                {
-                    stream: this.file_system.createWriteStream(this.path.join(__dirname, '..' ,'access.log'), { flags: 'a' }),
-                    skip: (req, res) => res.statusCode <= this.constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST
-                }
-            )
-        );
+        this.app.use(morgan_logger);
 
+        /*
+        * To allow preflight requests on all http(s) methods*\
+        */
+        this.app.options('*', this.express.express_cors());
+        
         /*
         * CORS Configurations
         */
-        const allowedOrigins = ['https://localhost:8010'];
-
-        const cors_options: Cors.CorsOptions = {
-            origin: allowedOrigins,
-            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-        };
-        this.app.use(this.express.express_cors(cors_options));
+        this.app.use(this.express.express_cors(this.constants.CORS.CORS_OPTIONS));
 
         /*
         * Middleware To Set Static Public Folder
         */
-        const options = {
-            dotfiles: 'ignore',
-            etag: true,
-            extensions: ['ejs'],
-            fallthrough: true,
-            immutable: true,
-            index: false,
-            maxAge: '1d',
-            redirect: false,
-            setHeaders: function (res: any, path: any, stat: any) {
-                res.set('x-timestamp', Date.now())
-            }
-        }
-        
-        this.app.use(this.express.getExpress.static(this.path.join(__dirname, '..', 'app', 'public'), options));
+        this.app.use(
+            this.express.getExpress.static(
+                this.path.join(__dirname, '..', 'app', 'public'),
+                this.constants.EXPRESS.STATIC_OPTIONS
+            )
+        );
         
         /*
         * AUTO ESCAPE JSON
@@ -190,22 +138,27 @@ export = class Application extends BaseController {
         this.app.use(this.body_parser.urlencoded({extended: true}));
 
         /*
+        * Deploying apis
+        */
+        // @ts-ignore
+        Singleton.getApis().deployApi(this.app);
+
+        /*
         * Middleware To Initiate Mysql Session
         */
         const secret = Crypto.randomBytes(48).toString('base64');
-        const key    = Crypto.randomBytes(48).toString('base64');
-        this.app.use(this.session({
-            secret:            secret,
-            store:             Singleton.getDb().initiateSession(),
-            resave:            false,
-            saveUninitialized: false,
-            cookie: {
-                maxAge:        this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
-                secure:        true,
-                httpOnly:      true
-            }
-        }));
-
+        this.app.use(
+            this.session(
+                Object.assign(
+                    this.constants.EXPRESS.SESSION_OPTIONS, 
+                    {
+                        secret:            secret,
+                        store:             Singleton.getDb().initiateSession(),        
+                    }
+                )
+            )
+        );
+        
         /*
         * CSRF Enabled
         */
@@ -214,6 +167,11 @@ export = class Application extends BaseController {
             cookie:        this.constants.CSRF.cookie,
             ignoreMethods: this.constants.CSRF.ignoreMethods,
         }));
+
+        /*
+        * Using package compressor
+        */
+        this.app.use(Compression());
 
         /*
         * Registering Flash
@@ -251,8 +209,9 @@ export = class Application extends BaseController {
             //     'x-csrf-token': token,
             //     'x-xsrf-token': token
             // });
-            res.locals['csrf'] = token;
-            res.locals['is_authenticated'] = res.req.session.is_authenticated;
+            res.locals['csrf']                  = token;
+            this.app.locals['csrf']             = token;
+            res.locals['is_authenticated']      = res.req.session.is_authenticated;
             this.app.locals['is_authenticated'] = res.req.session.is_authenticated;
             next();
         });
@@ -261,6 +220,7 @@ export = class Application extends BaseController {
         * Middleware for saving cookie in the request
         */
         this.app.use((req: Request, res: Response, next: NextFunction) => {
+            const key       = Crypto.randomBytes(48).toString('base64');
             req.user_cookie = key;
             next();
         });
@@ -270,7 +230,7 @@ export = class Application extends BaseController {
         */
         this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
             if (err.code === this.constants.CSRF.errCode) {
-                this.invalidCsrfResponse(res);
+                this.invalidCsrfResponse(req, res);
             }
             if (err.code !== this.constants.CSRF.errCode)  {
                 return next(err);

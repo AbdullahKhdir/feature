@@ -421,7 +421,7 @@ module.exports = /** @class */ (function (_super) {
             var uploaded_file;
             return __generator(this, function (_a) {
                 uploaded_file = JSON.stringify(req.getUploadedFiles());
-                return [2 /*return*/, new JsonResponse_1.default('Success', { upload_object: uploaded_file }).sendAsJson(res)];
+                return [2 /*return*/, new JsonResponse_1.default(200, 'Success', { upload_object: uploaded_file }).sendAsJson(res)];
             });
         }); }); };
         //******************************\\

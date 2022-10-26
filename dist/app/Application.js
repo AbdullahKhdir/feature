@@ -26,13 +26,14 @@ var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var crypto_1 = __importDefault(require("crypto"));
 var csurf_1 = __importDefault(require("csurf"));
 var helmet_1 = __importDefault(require("helmet"));
-var morgan_1 = __importDefault(require("morgan"));
 var BaseController_js_1 = __importDefault(require("../core/controller/BaseController.js"));
 var ExpressSession_js_1 = __importDefault(require("../core/framework/ExpressSession.js"));
 var Singleton_js_1 = require("../core/Singleton/Singleton.js");
 var AppLocals_js_1 = __importDefault(require("../core/utils/AppLocals.js"));
 var request_utilities_1 = require("./middlewares/request_utilities");
+var cache_control_1 = __importDefault(require("../core/middlewares/cache_control"));
 var toast_1 = require("./middlewares/toast");
+var morgan_logger_js_1 = __importDefault(require("../core/middlewares/morgan_logger.js"));
 module.exports = /** @class */ (function (_super) {
     __extends(Application, _super);
     function Application() {
@@ -46,51 +47,30 @@ module.exports = /** @class */ (function (_super) {
         _this.sub_controller = _this;
         _this.session = ExpressSession_js_1.default.getExpressSession;
         /*
-        * Using package compressor
-        */
-        _this.app.use((0, compression_1.default)());
-        /*
         * Sets the following policies
-          ! contentSecurityPolicy
-          ! crossOriginEmbedderPolicy
-          ! crossOriginOpenerPolicy
-          ! crossOriginResourcePolicy
-          ! dnsPrefetchControl
-          ! expectCt
-          ! frameguard
-          ! hidePoweredBy
-          ! hsts
-          ! ieNoOpen
-          ! noSniff
-          ! originAgentCluster
-          ! permittedCrossDomainPolicies
-          ! referrerPolicy
-          ! xssFilter
+          ? contentSecurityPolicy
+          ? crossOriginEmbedderPolicy
+          ? crossOriginOpenerPolicy
+          ? crossOriginResourcePolicy
+          ? dnsPrefetchControl
+          ? expectCt
+          ? frameguard
+          ? hidePoweredBy
+          ? hsts
+          ? ieNoOpen
+          ? noSniff
+          ? originAgentCluster
+          ? permittedCrossDomainPolicies
+          ? referrerPolicy
+          ? xssFilter
         */
-        _this.app.use(helmet_1.default.contentSecurityPolicy({
-            useDefaults: true,
-            directives: {
-                // frameAncestors: ["'none'"],
-                frameAncestors: ["'self'", "google.com", "youtube.com", "https://www.paypal.com", 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                defaultSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                styleSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', "'unsafe-inline'", "https://*.paypal.com", 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                scriptSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', "'unsafe-inline'", 'https://www.paypal.com/sdk/js?client-id=Adm_n7iOm3r8oVa2I8CQ2A-Xl8cz-e-zl_ZSi7vKRxHcUC5-Xwqccu-7zlilIFUm0XGavzMIDeyyGGM9&currency=USD', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                imgSrc: ["'self'", "data: https:", "data: http:", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'data:', 'blob:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                connectSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'ws:', 'wss:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                frameSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'https://www.sandbox.paypal.com/', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                mediaSrc: ["'self'", "'unsafe-eval'", "'unsafe-inline'", 'google.com', 'youtube.com', 'paypal.com', 'data:', 'blob:', 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'],
-                fontSrc: ["'self'", "https:", "data:", 'https://*.paypal.com', 'https://*.paypal.cn', 'https://*.paypalobjects.com', 'https://objects.paypal.cn', 'https://www.recaptcha.net', 'https://www.gstatic.com', 'https://*.synchronycredit.com', 'https://synchronycredit.com', 'https://www.sandbox.paypal.com/xoplatform/logger/api/logger']
-            },
-        }));
+        _this.app.use(helmet_1.default.contentSecurityPolicy(_this.constants.CONTENT_SECURITY_POLICY));
         _this.app.use(helmet_1.default.crossOriginEmbedderPolicy());
         _this.app.use(helmet_1.default.crossOriginOpenerPolicy());
         _this.app.use(helmet_1.default.crossOriginResourcePolicy());
         _this.app.use(helmet_1.default.dnsPrefetchControl());
         _this.app.use(helmet_1.default.expectCt());
-        _this.app.use(helmet_1.default.frameguard({
-            action: "SAMEORIGIN"
-            // action: "deny"
-        }));
+        _this.app.use(helmet_1.default.frameguard(_this.constants.FRAME_GUARD));
         _this.app.use(helmet_1.default.hidePoweredBy());
         _this.app.use(helmet_1.default.hsts());
         _this.app.use(helmet_1.default.ieNoOpen());
@@ -102,56 +82,23 @@ module.exports = /** @class */ (function (_super) {
         /*
         * Setting Cache-Control Header
         */
-        _this.app.use(function (req, res, next) {
-            if (req.method == _this.constants.REQUEST.TYPE.GET) {
-                if (typeof req.session !== 'undefined') {
-                    if (typeof req.session.is_authenticated !== 'undefined') {
-                        if (req.session.is_authenticated === true) {
-                            res.set('Cache-Control', 'private, no-cache, must-revalidate');
-                            return next();
-                        }
-                    }
-                }
-                res.set('Cache-Control', 'public, no-cache, must-revalidate');
-            }
-            else {
-                res.set('Cache-Control', 'no-store');
-            }
-            next();
-        });
+        _this.app.use(cache_control_1.default);
         /*
         * Enable Logger
         */
-        _this.app.use((0, morgan_1.default)('combined', {
-            stream: _this.file_system.createWriteStream(_this.path.join(__dirname, '..', 'access.log'), { flags: 'a' }),
-            skip: function (req, res) { return res.statusCode <= _this.constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST; }
-        }));
+        _this.app.use(morgan_logger_js_1.default);
+        /*
+        * To allow preflight requests on all http(s) methods*\
+        */
+        _this.app.options('*', _this.express.express_cors());
         /*
         * CORS Configurations
         */
-        var allowedOrigins = ['https://localhost:8010'];
-        var cors_options = {
-            origin: allowedOrigins,
-            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-        };
-        _this.app.use(_this.express.express_cors(cors_options));
+        _this.app.use(_this.express.express_cors(_this.constants.CORS.CORS_OPTIONS));
         /*
         * Middleware To Set Static Public Folder
         */
-        var options = {
-            dotfiles: 'ignore',
-            etag: true,
-            extensions: ['ejs'],
-            fallthrough: true,
-            immutable: true,
-            index: false,
-            maxAge: '1d',
-            redirect: false,
-            setHeaders: function (res, path, stat) {
-                res.set('x-timestamp', Date.now());
-            }
-        };
-        _this.app.use(_this.express.getExpress.static(_this.path.join(__dirname, '..', 'app', 'public'), options));
+        _this.app.use(_this.express.getExpress.static(_this.path.join(__dirname, '..', 'app', 'public'), _this.constants.EXPRESS.STATIC_OPTIONS));
         /*
         * AUTO ESCAPE JSON
         */
@@ -174,21 +121,18 @@ module.exports = /** @class */ (function (_super) {
         _this.app.use(_this.body_parser.json());
         _this.app.use(_this.body_parser.urlencoded({ extended: true }));
         /*
+        * Deploying apis
+        */
+        // @ts-ignore
+        Singleton_js_1.Singleton.getApis().deployApi(_this.app);
+        /*
         * Middleware To Initiate Mysql Session
         */
         var secret = crypto_1.default.randomBytes(48).toString('base64');
-        var key = crypto_1.default.randomBytes(48).toString('base64');
-        _this.app.use(_this.session({
+        _this.app.use(_this.session(Object.assign(_this.constants.EXPRESS.SESSION_OPTIONS, {
             secret: secret,
             store: Singleton_js_1.Singleton.getDb().initiateSession(),
-            resave: false,
-            saveUninitialized: false,
-            cookie: {
-                maxAge: _this.constants.SESSION.DB_CONNECTION_SESSION_TIME_OUT,
-                secure: true,
-                httpOnly: true
-            }
-        }));
+        })));
         /*
         * CSRF Enabled
         */
@@ -197,6 +141,10 @@ module.exports = /** @class */ (function (_super) {
             cookie: _this.constants.CSRF.cookie,
             ignoreMethods: _this.constants.CSRF.ignoreMethods,
         }));
+        /*
+        * Using package compressor
+        */
+        _this.app.use((0, compression_1.default)());
         /*
         * Registering Flash
         */
@@ -231,6 +179,7 @@ module.exports = /** @class */ (function (_super) {
             //     'x-xsrf-token': token
             // });
             res.locals['csrf'] = token;
+            _this.app.locals['csrf'] = token;
             res.locals['is_authenticated'] = res.req.session.is_authenticated;
             _this.app.locals['is_authenticated'] = res.req.session.is_authenticated;
             next();
@@ -239,6 +188,7 @@ module.exports = /** @class */ (function (_super) {
         * Middleware for saving cookie in the request
         */
         _this.app.use(function (req, res, next) {
+            var key = crypto_1.default.randomBytes(48).toString('base64');
             req.user_cookie = key;
             next();
         });
@@ -247,7 +197,7 @@ module.exports = /** @class */ (function (_super) {
         */
         _this.app.use(function (err, req, res, next) {
             if (err.code === _this.constants.CSRF.errCode) {
-                _this.invalidCsrfResponse(res);
+                _this.invalidCsrfResponse(req, res);
             }
             if (err.code !== _this.constants.CSRF.errCode) {
                 return next(err);

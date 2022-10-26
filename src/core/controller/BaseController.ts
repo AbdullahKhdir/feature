@@ -4,6 +4,7 @@ import { NextFunction, Request, Response } from "express";
 import { Express } from "../framework/Express";
 import Routes from "../routes/Route";
 import { Singleton } from "../Singleton/Singleton";
+import Csrf from 'csurf';
 
 /**
  * @class BaseController
@@ -30,7 +31,7 @@ export = class BaseController extends Routes {
     /**
      * @function deployRoutes
      * @description
-     * * Will automatically scann the controllers
+     * * Will automatically scan the controllers
      * * directory and loop each controller file 
      * * and initiate new instance of each controller
      * * class and loop the methods array for any declared
@@ -117,6 +118,7 @@ export = class BaseController extends Routes {
      * @return void
      */
     undefinedRoutes(app: Express) {
+        Singleton.getConstantsInstance().removeMethod(); 
         let site_is_found                = false;
         let is_post_request_successful   = false;
         let is_put_request_successful    = false;
@@ -177,7 +179,7 @@ export = class BaseController extends Routes {
             if (this.__.isEmpty(route_exists)) {
                 return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render(
                     '404',
-                    {page_title: 'Page not found', path: '/404/'}
+                    {nav_title: 'Page not found', path: '/404/', csrf: req.csrfToken()}
                 );
             }
 
@@ -187,7 +189,7 @@ export = class BaseController extends Routes {
             } else {
                 return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render(
                     '404',
-                    {page_title: 'Page not found', path: '/404/'}
+                    {nav_title: 'Page not found', path: '/404/', csrf: req.csrfToken()}
                 );
             }
         }));
@@ -245,7 +247,7 @@ export = class BaseController extends Routes {
             if (this.__.isEmpty(route_exists)) {
                 return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!'}
+                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!', csrf: req.csrfToken()}
                 );
             }
             
@@ -255,7 +257,7 @@ export = class BaseController extends Routes {
             } else {
                 return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!'},
+                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!', csrf: req.csrfToken()},
                 );
             }
         }));
@@ -313,7 +315,7 @@ export = class BaseController extends Routes {
             if (this.__.isEmpty(route_exists)) {
                 return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!'},
+                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!', csrf: req.csrfToken()},
                 );
             }
             
@@ -323,7 +325,7 @@ export = class BaseController extends Routes {
             } else {
                 return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!'}
+                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!', csrf: req.csrfToken()}
                 );
             }
         }));
@@ -381,7 +383,7 @@ export = class BaseController extends Routes {
             if (this.__.isEmpty(route_exists)) {
                 return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!'}
+                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!', csrf: req.csrfToken()}
                 );
             }
             
@@ -391,7 +393,7 @@ export = class BaseController extends Routes {
             } else {
                 return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!'}
+                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!', csrf: req.csrfToken()}
                 );
             }
         }));
@@ -449,7 +451,7 @@ export = class BaseController extends Routes {
             if (this.__.isEmpty(route_exists)) {
                 return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!'}
+                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!', csrf: req.csrfToken()}
                 );
             }
             
@@ -459,7 +461,7 @@ export = class BaseController extends Routes {
             } else {
                 return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
                     '404',
-                    {page_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!'}
+                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!', csrf: req.csrfToken()}
                 );
             }
         }));

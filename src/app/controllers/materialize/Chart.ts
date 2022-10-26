@@ -63,7 +63,6 @@ export = class Chart extends BaseController{
             res,
             'materialize/pages/fixed-chart',
             {
-                page_title: 'Chart',
                 nav_title: 'Fixed Chart',
                 path: 'fixed-chart',
                 root: 'pages'

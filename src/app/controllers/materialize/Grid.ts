@@ -60,7 +60,6 @@ export = class Grid extends BaseController{
             res,
             'materialize/pages/grid',
             {
-                page_title: 'Grid',
                 nav_title: 'Grid',
                 path: 'grid',
                 root: 'pages'

@@ -65,7 +65,6 @@ export = class BarChart extends BaseController{
             res,
             'materialize/charts/bar',
             {
-                page_title: 'Bar Charts',
                 nav_title: 'Bar Charts',
                 path: 'bar-charts',
                 root: 'charts'

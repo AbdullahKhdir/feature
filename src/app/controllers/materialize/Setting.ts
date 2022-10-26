@@ -60,7 +60,6 @@ export = class Setting extends BaseController{
             res,
             'materialize/settings/settings',
             {
-                page_title: 'Settings',
                 nav_title: 'Settings',
                 path: 'settings',
                 root: 'account'

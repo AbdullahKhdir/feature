@@ -60,7 +60,6 @@ export = class Login extends BaseController{
             res,
             'materialize/login/login',
             {
-                page_title: 'Login',
                 nav_title: 'Log In',
                 path: 'log-in',
                 root: 'account'

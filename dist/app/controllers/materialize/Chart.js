@@ -78,7 +78,6 @@ module.exports = /** @class */ (function (_super) {
         _this.fixedCharts = function () { return _this.route('get', '/fixed-chart/', _this.fixedChartsMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/pages/fixed-chart', {
-                        page_title: 'Chart',
                         nav_title: 'Fixed Chart',
                         path: 'fixed-chart',
                         root: 'pages'

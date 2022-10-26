@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.interactiveChart = function () { return _this.route('get', '/interactive-charts/', _this.interactiveChartMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/charts/interactive', {
-                        page_title: 'Interactive Charts',
                         nav_title: 'Interactive Charts',
                         path: 'interactive-charts',
                         root: 'charts'

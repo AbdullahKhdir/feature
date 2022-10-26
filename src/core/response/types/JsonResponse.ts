@@ -16,11 +16,13 @@ export =  class JsonResponse extends ExpressResponse {
 
     protected data: any;
     protected _message: any;
-    constructor(message: any, data: any) {
+    protected code: number;
+    constructor(code = 200, message: any, data: any) {
         const _constants = Singleton.getConstants();
         super(_constants.HTTPS_STATUS.SUCCESS.OK, 'OK', message);
         this._message = message;
-        this.data    = data;
+        this.data     = data;
+        this.code     = code;
     }
  
     /**
@@ -32,7 +34,7 @@ export =  class JsonResponse extends ExpressResponse {
      * @returns Response
     */
     sendAsJson(res: Response) {
-       return super.renderAsJson(res, Object.assign({status_code: Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK}, {message: this.getMessage()}, {data: this.getData()}));
+       return super.renderAsJson(res, Object.assign({status_code: this.getCode() ?? Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK}, {message: this.getMessage()}, {data: this.getData()}));
     }
 
     /**
@@ -44,6 +46,18 @@ export =  class JsonResponse extends ExpressResponse {
     */
     getData() {
         return this.data;
+    }
+
+
+    /**
+     * @function getCode
+     * @description Gets the status code
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Object
+    */
+    getCode() {
+        return this.code;
     }
 
     /**

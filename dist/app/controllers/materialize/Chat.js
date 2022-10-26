@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.chat = function () { return _this.route('get', '/chat/', _this.chatMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/pages/chat', {
-                        page_title: 'Chat',
                         nav_title: 'Chat',
                         path: 'chat',
                         root: 'pages'

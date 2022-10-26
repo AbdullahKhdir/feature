@@ -60,7 +60,6 @@ export = class Dashboard extends BaseController{
             res,
             'materialize/pages/dashboard',
             {
-                page_title: 'Dashboard',
                 nav_title: 'Home',
                 path: 'dashboard',
                 root: 'pages'

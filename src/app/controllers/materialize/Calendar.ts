@@ -61,7 +61,6 @@ export = class Calendar extends BaseController{
             res,
             'materialize/calendar/calendar',
             {
-                page_title: 'Calendar',
                 nav_title: 'Calendar',
                 path: 'calendar',
                 root: 'calendar'

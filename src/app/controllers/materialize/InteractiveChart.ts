@@ -54,7 +54,6 @@ export = class InteractiveChart extends BaseController{
             res,
             'materialize/charts/interactive',
             {
-                page_title: 'Interactive Charts',
                 nav_title: 'Interactive Charts',
                 path: 'interactive-charts',
                 root: 'charts'

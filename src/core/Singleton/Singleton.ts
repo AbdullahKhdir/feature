@@ -7,6 +7,7 @@ import Uploader from "../../app/plugins/Uploader";
 import Constants from "../../app/utils/Constants";
 import Lodash from "../../app/utils/Lodash";
 import { uploader_config_options, uploader_options } from '../../core/utils/data_typs';
+import Api from '../api/Api';
 import Db from "../database/Db";
 import { Express } from "../framework/Express";
 import BodyParser from "../node/Bodyparser";
@@ -26,6 +27,7 @@ import Workerpool from "../worker_pool/workerpool";
 export class Singleton{
 
     private static instance: Singleton;
+    private static apis: Api;
     private constructor() {
     }
 
@@ -45,6 +47,16 @@ export class Singleton{
 
     public static getDbSession() : typeof mysql {
         return Db.getDbInstance().getMysqlInstance;
+    }
+
+    //**************************************************\\
+    //* API getter function *\\
+    //**************************************************\\
+    public static getApis() {
+        if (this.apis) {
+            return this.apis;
+        }
+        return this.apis = new Api();
     }
 
     //**************************************************\\
@@ -93,6 +105,10 @@ export class Singleton{
     //*****************************\\
     public static getConstants() {
         return Constants.getConstantsInstance();
+    }
+
+    public static getConstantsInstance() {
+        return Constants.instance();
     }
 
     //************************\\

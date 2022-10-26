@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.financialChart = function () { return _this.route('get', '/financial-charts/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/charts/financial', {
-                        page_title: 'Financial Charts',
                         nav_title: 'Financial Charts',
                         path: 'financial-charts',
                         root: 'charts'

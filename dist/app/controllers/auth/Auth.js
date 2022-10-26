@@ -322,7 +322,7 @@ module.exports = /** @class */ (function (_super) {
                 if (req.isGet()) {
                     res.noCacheNeeded();
                     return [2 /*return*/, this.render(res, 'shop/reset', {
-                            page_title: 'Reset Password',
+                            nav_title: 'Reset Password',
                             path: '/reset/'
                         })];
                 }
@@ -370,7 +370,7 @@ module.exports = /** @class */ (function (_super) {
                 })
                     .then(function (questions) {
                     return _this.render(res, 'shop/password_recovery', {
-                        page_title: 'Security Questions',
+                        nav_title: 'Security Questions',
                         path: '/security/',
                         questions: questions,
                         first_question: first_question ? questions[first_question - 1].question : '',
@@ -498,7 +498,7 @@ module.exports = /** @class */ (function (_super) {
                     })
                         .then(function (questions) {
                         return _this.render(res, 'shop/security', {
-                            page_title: 'Security Questions',
+                            nav_title: 'Security Questions',
                             path: '/security/',
                             questions: questions,
                             first_question: first_question ? questions[first_question - 1].question : '',
@@ -525,7 +525,7 @@ module.exports = /** @class */ (function (_super) {
                                 .then(function (questions) {
                                 if (typeof questions !== 'undefined') {
                                     return _this.render(res, 'shop/security', {
-                                        page_title: 'Security Questions',
+                                        nav_title: 'Security Questions',
                                         path: '/security/',
                                         questions: questions,
                                         first_question: first_question ? questions[first_question - 1].question : '',
@@ -548,7 +548,7 @@ module.exports = /** @class */ (function (_super) {
                             })
                                 .then(function (questions) {
                                 return _this.render(res, 'shop/security', {
-                                    page_title: 'Security Questions',
+                                    nav_title: 'Security Questions',
                                     path: '/security/',
                                     questions: questions,
                                     first_question: first_question ? questions[first_question - 1].question : '',
@@ -641,7 +641,7 @@ module.exports = /** @class */ (function (_super) {
                     return [2 /*return*/, this.redirect(res, '/reset')];
                 }
                 return [2 /*return*/, this.render(res, 'shop/password_reset', {
-                        page_title: 'Reset Password',
+                        nav_title: 'Reset Password',
                         path: '/password_reset/',
                         email: email
                     })];

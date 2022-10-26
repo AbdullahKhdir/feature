@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.setting = function () { return _this.route('get', '/settings/', _this.settingsMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/settings/settings', {
-                        page_title: 'Settings',
                         nav_title: 'Settings',
                         path: 'settings',
                         root: 'account'

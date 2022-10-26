@@ -25,11 +25,11 @@ export = class Constants {
             },
             HTTPS_STATUS: {
                 /*
-                    ? An informational response indicates that the request was received and understood.
-                    ? It is issued on a provisional basis while request processing continues. 
-                    ? It alerts the client to wait for a final response.
-                    ? The message consists only of the status line and optional header fields, and is terminated by an empty line. 
-                    */
+                ? An informational response indicates that the request was received and understood.
+                ? It is issued on a provisional basis while request processing continues. 
+                ? It alerts the client to wait for a final response.
+                ? The message consists only of the status line and optional header fields, and is terminated by an empty line. 
+                */
                 INFORMATIONAL_RESPONSE:{
                     CONTINUE:            100,
                     SWITCHING_PROTOCOLS: 101,
@@ -37,8 +37,8 @@ export = class Constants {
                     EARLY_HINTS:         103
                 },
                 /*
-                    ? This class of status codes indicates the action requested by the client was received, understood, and accepted 
-                    */
+                ? This class of status codes indicates the action requested by the client was received, understood, and accepted 
+                */
                 SUCCESS: {
                     OK:                            200,
                     CREATED:                       201,
@@ -52,9 +52,9 @@ export = class Constants {
                     IM_Used:                       226,
                 },
                 /*
-                    ? This class of status code indicates the client must take additional action to complete the request. 
-                    ? Many of these status codes are used in URL redirection 
-                    */
+                ? This class of status code indicates the client must take additional action to complete the request. 
+                ? Many of these status codes are used in URL redirection 
+                */
                 REDIRECTION: {
                     MULTIPLE_CHOICES:   300,
                     MOVED_PERMANENTLY:  301,
@@ -86,11 +86,11 @@ export = class Constants {
                     RANGE_NOT_SATISFIABLE:         416,
                     EXPECTATION_FAILED:            417,
                     /*
-                        ! his code was defined in 1998 as one of the traditional IETF April Fools' jokes, in RFC 2324, Hyper Text Coffee Pot Control Protocol,
-                        ! and is not expected to be implemented by actual HTTP servers. 
-                        ! The RFC specifies this code should be returned by teapots requested to brew coffee.
-                        ! This HTTP status is used as an Easter egg in some websites, such as Google.com's "I'm a teapot" easter egg
-                        */
+                    ! his code was defined in 1998 as one of the traditional IETF April Fools' jokes, in RFC 2324, Hyper Text Coffee Pot Control Protocol,
+                    ! and is not expected to be implemented by actual HTTP servers. 
+                    ! The RFC specifies this code should be returned by teapots requested to brew coffee.
+                    ! This HTTP status is used as an Easter egg in some websites, such as Google.com's "I'm a teapot" easter egg
+                    */
                     IM_A_TEAPOT:                     418,
                     MISDIRECTED_REQUEST:             421,
                     UNPROCESSABLE_ENTITY:            422,
@@ -119,6 +119,7 @@ export = class Constants {
                     NOT_EXTENDED:                    510,
                     NETWORK_AUTHENTICATION_REQUIRED: 511
                 },
+
                 UNOFFICIAL_CODES: {
                     PAGE_EXPIRED:                         419, //Laravel Framework
                     METHOD_FAILURE:                       420, //Spring Framework
@@ -135,8 +136,8 @@ export = class Constants {
 
                 },
                 /*
-                    ! Microsoft's Internet Information Services (IIS) web server expands the 4xx error space to signal errors with the client's request.
-                    */
+                ! Microsoft's Internet Information Services (IIS) web server expands the 4xx error space to signal errors with the client's request.
+                */
                 INTERNET_INFORMATION_SERVICES: {
                     LOGIN_TIME_OUT: 440,
                     RETRY_WITH:     449,
@@ -173,10 +174,10 @@ export = class Constants {
                     }
                 },
                 /*
-                    ! The following caching related warning codes are specified under RFC 7234.
-                    ! Unlike the other status codes above, these are not sent as the response status in the HTTP protocol, but as part of the "Warning" HTTP header.
-                    ! Since this header is often neither sent by servers nor acknowledged by clients, it was obsoleted by the HTTP Working Group with RFC 9111. 
-                    */
+                ! The following caching related warning codes are specified under RFC 7234.
+                ! Unlike the other status codes above, these are not sent as the response status in the HTTP protocol, but as part of the "Warning" HTTP header.
+                ! Since this header is often neither sent by servers nor acknowledged by clients, it was obsoleted by the HTTP Working Group with RFC 9111. 
+                */
                 CACHING_WARNING_CODES: {
                     RESPONSE_IS_STALE:                110,
                     REVALIDATION_FAILED:              111,
@@ -395,7 +396,7 @@ export = class Constants {
                 },
                 KILL_CODES: {
                     /*
-                    * To close the parent terminal. (is Handleable)
+                    * To close the parent terminal. (is Handy)
                     */
                     SIGHUP: '1',
                     
@@ -456,6 +457,234 @@ export = class Constants {
             UPLOADER_TYPES: {
                 DISK:   'diskStorage',
                 MEMORY: 'memoryStorage'
+            },
+            CONTENT_SECURITY_POLICY: {
+                useDefaults: true,
+                directives: {
+                    // frameAncestors: ["'none'"],
+                    frameAncestors: [
+                        "'self'",
+                        "google.com",
+                        "youtube.com",
+                        "https://www.paypal.com",
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ],
+                    defaultSrc: [
+                        "'self'",
+                        "'unsafe-eval'",
+                        "'unsafe-inline'",
+                        'google.com',
+                        'youtube.com',
+                        'https://*.paypal.com',
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ],
+                    styleSrc: [
+                        "'self'",
+                        "'unsafe-eval'",
+                        "'unsafe-inline'",
+                        'google.com',
+                        'youtube.com',
+                        "'unsafe-inline'",
+                        "https://*.paypal.com",
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ],
+                    scriptSrc: [
+                        "'self'",
+                        "'unsafe-eval'",
+                        "'unsafe-inline'",
+                        'google.com',
+                        'youtube.com',
+                        'paypal.com',
+                        "'unsafe-inline'",
+                        'https://www.paypal.com/sdk/',
+                        'https://*.paypal.com',
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ],
+                    imgSrc: [
+                        "'self'",
+                        "data: https:",
+                        "data: http:",
+                        "'unsafe-eval'",
+                        "'unsafe-inline'",
+                        'google.com',
+                        'youtube.com',
+                        'data:',
+                        'blob:',
+                        'https://*.paypal.com',
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ],
+                    connectSrc: [
+                        "'self'",
+                        "'unsafe-eval'",
+                        "'unsafe-inline'",
+                        'google.com',
+                        'youtube.com',
+                        'paypal.com',
+                        'ws:',
+                        'wss:',
+                        'https://*.paypal.com',
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ],
+                    frameSrc: [
+                        "'self'", 
+                        "'unsafe-eval'",
+                        "'unsafe-inline'",
+                        'google.com',
+                        'youtube.com',
+                        'paypal.com',
+                        'https://www.sandbox.paypal.com/',
+                        'https://*.paypal.com',
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ],
+                    mediaSrc: [
+                        "'self'",
+                        "'unsafe-eval'",
+                        "'unsafe-inline'",
+                        'google.com',
+                        'youtube.com',
+                        'paypal.com',
+                        'data:',
+                        'blob:',
+                        'https://*.paypal.com',
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ],
+                    fontSrc: [
+                        "'self'",
+                        "https:",
+                        "data:",
+                        'https://*.paypal.com',
+                        'https://*.paypal.cn',
+                        'https://*.paypalobjects.com',
+                        'https://objects.paypal.cn',
+                        'https://www.recaptcha.net',
+                        'https://www.gstatic.com',
+                        'https://*.synchronycredit.com',
+                        'https://synchronycredit.com',
+                        'https://www.sandbox.paypal.com/xoplatform/logger/api/logger'
+                    ]
+                }
+            },
+            FRAME_GUARD: {
+                //** enable <iframe> **\\
+                action: "SAMEORIGIN"
+            },
+            CORS: {
+                CORS_OPTIONS: {
+                    //********************************************\\
+                    //? Access-Control-Allow-Origin CORS header  ?\\
+                    //********************************************\\
+                    origin: ['https://localhost:8010', 'https://www.udemy.com'],
+                    //********************************************\\
+                    //? Access-Control-Allow-Methods CORS header ?\\
+                    //********************************************\\
+                    methods: [
+                        'GET',
+                        'POST',
+                        'PUT',
+                        'PATCH',
+                        'DELETE'
+                    ],
+                    //********************************************\\
+                    //? Access-Control-Allow-Headers CORS header ?\\
+                    allowedHeaders: ['Content-Type', 'Authorization'],
+                    //********************************************\\
+        
+                    //? Allow OPTIONS requests                   ?\\
+                    //? for asking permissions for               ?\\
+                    //? GET, POST, DELETE, PUT and PATCH         ?\\
+                    //? using "Access-Control-Request-Headers",  ?\\
+                    //? "Access-Control-Request-Method"          ?\\
+                    //? and "Origin"                             ?\\
+                    preflightContinue: true,
+                    //********************************************\\
+                    
+                    //? Provides a status code to use for        ?\\
+                    //? successful OPTIONS requests,             ?\\
+                    //? since some legacy browsers               ?\\
+                    //? (IE11, various SmartTVs) choke on 204    ?\\
+                    optionsSuccessStatus: 200
+                    //********************************************\\
+                }
+            },
+            EXPRESS: {
+                STATIC_OPTIONS: {
+                    dotfiles: 'ignore',
+                    etag: true,
+                    extensions: ['ejs'],
+                    fallthrough: true,
+                    immutable: true,
+                    index: false,
+                    maxAge: '1d',
+                    redirect: false,
+                    setHeaders: function (res: any, path: any, stat: any) {
+                        res.set('x-timestamp', Date.now())
+                    }
+                },
+                SESSION_OPTIONS: {
+                    resave:            false,
+                    saveUninitialized: false,
+                    cookie: {
+                        maxAge:        config.configurations().environment === 'production' ? 1000 * 60 * 60 * 1 : 1000 * 60 * 60 * 6, //? Every six hours (4 times a day)
+                        secure:        true,
+                        httpOnly:      true
+                    }
+                }
             }
         }
     }
@@ -474,6 +703,14 @@ export = class Constants {
         }
         this.constants_instance = new Constants();
         return this.constants_instance.getConstants
+    }
+
+
+    static instance() {
+        if (this.constants_instance) {
+            return this.constants_instance
+        }
+        return this.constants_instance = new Constants();
     }
 
     /**
@@ -525,5 +762,33 @@ export = class Constants {
         // @ts-ignore 
         this.constants = {};
         return !this.constants;
+    }
+
+    /**
+     * @function addMethod
+     * @description Adds http method to the ignore methods array for bypassing csrf token
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns boolean
+    */
+    addMethod(method: string) : boolean {
+        if (typeof method === 'string') {
+            if (method !== '') {
+                this.constants.CSRF.ignoreMethods.push(method)
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @function removeMethod
+     * @description Removes http method to the ignore methods array for bypassing csrf token
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns void
+    */
+    removeMethod() {
+        this.constants.CSRF.ignoreMethods.pop();
     }
 }

@@ -60,7 +60,6 @@ export = class LineChart extends BaseController{
             res,
             'materialize/charts/line',
             {
-                page_title: 'Line Charts',
                 nav_title: 'Line Charts',
                 path: 'line-charts',
                 root: 'charts'

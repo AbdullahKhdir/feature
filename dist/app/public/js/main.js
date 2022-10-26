@@ -259,21 +259,17 @@ $(document).ready(function() {
       const forms            = $('form');
       const token               = $('input#_csrf').val();
       let   url                 = ''
-      
+
       $.each(forms, function (index, form) {
-        if($(form).attr('method') === 'POST' 
-           || $(form).attr('method') === 'post'
-          || $(form).attr('method') === 'Post') {
-            url = $(form).attr('action');
-            if (typeof url === 'string' && url) {
-              if (url.endsWith('/')) {
-                url = url + `?_csrf=${token}`;
-              } else {
-                url = url + `/?_csrf=${token}`;
-              }
-              $(form).attr('action', url);
-            }
+        url = $(form).attr('action');
+        if (typeof url === 'string' && url) {
+          if (url.endsWith('/')) {
+            url = url + `?_csrf=${token}`;
+          } else {
+            url = url + `/?_csrf=${token}`;
           }
+          $(form).attr('action', url);
+        }
       });
     })(),
 
@@ -282,7 +278,7 @@ $(document).ready(function() {
       const token             = $('input#_csrf').val();
       if (is_upload_process !== 0 && token) {
         //* Defining all process needed variables *\\
-        var input = document.querySelector('#fileupload'); //? To control the value, on reselection or reseting *\\
+        var input = document.querySelector('#fileupload'); //? To control the value, on reselection or resetting *\\
         var max_upload_files = +$('.max-file-size').val(); //? To retrieve the max file size hidden inputs's value *\\
         var _url             = $('#upload-action-url').val(); //? To retrieve the upload (action) url*\\
         

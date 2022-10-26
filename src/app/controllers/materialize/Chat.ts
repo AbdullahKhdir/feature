@@ -60,7 +60,6 @@ export = class Chat extends BaseController{
             res,
             'materialize/pages/chat',
             {
-                page_title: 'Chat',
                 nav_title: 'Chat',
                 path: 'chat',
                 root: 'pages'

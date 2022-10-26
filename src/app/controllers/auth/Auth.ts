@@ -323,7 +323,7 @@ export = class Auth extends BaseController {
                 res,
                 'shop/reset',
                 {
-                    page_title: 'Reset Password',
+                    nav_title: 'Reset Password',
                     path : '/reset/'
                 }
             );
@@ -377,7 +377,7 @@ export = class Auth extends BaseController {
                 res,
                 'shop/password_recovery',
                 {
-                    page_title: 'Security Questions',
+                    nav_title: 'Security Questions',
                     path : '/security/',
                     questions,
                     first_question: first_question      ? questions[first_question - 1].question  : '',
@@ -506,7 +506,7 @@ export = class Auth extends BaseController {
                             res,
                             'shop/security',
                             {
-                                page_title: 'Security Questions',
+                                nav_title: 'Security Questions',
                                 path : '/security/',
                                 questions,
                                 first_question: first_question      ? questions[first_question - 1].question  : '',
@@ -536,7 +536,7 @@ export = class Auth extends BaseController {
                                 res,
                                 'shop/security',
                                 {
-                                    page_title: 'Security Questions',
+                                    nav_title: 'Security Questions',
                                     path : '/security/',
                                     questions,
                                     first_question: first_question      ? questions[first_question - 1].question  : '',
@@ -562,7 +562,7 @@ export = class Auth extends BaseController {
                             res,
                             'shop/security',
                             {
-                                page_title: 'Security Questions',
+                                nav_title: 'Security Questions',
                                 path : '/security/',
                                 questions,
                                 first_question: first_question      ? questions[first_question - 1].question  : '',
@@ -658,7 +658,7 @@ export = class Auth extends BaseController {
             res,
             'shop/password_reset',
             {
-                page_title: 'Reset Password',
+                nav_title: 'Reset Password',
                 path : '/password_reset/',
                 email: email
             }

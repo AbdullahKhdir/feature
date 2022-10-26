@@ -127,7 +127,7 @@ module.exports = /** @class */ (function (_super) {
         //**********\\
         _this.corsTest = function () { return _this.route('get', '/cors/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, new JsonResponse_1.default('Success', { status: 'checked' }).sendAsJson(res)];
+                return [2 /*return*/, new JsonResponse_1.default(200, 'Success', { status: 'checked' }).sendAsJson(res)];
             });
         }); }); };
         /**
@@ -152,14 +152,13 @@ module.exports = /** @class */ (function (_super) {
                         return [4 /*yield*/, response.json()];
                     case 2:
                         data = _a.sent();
-                        return [2 /*return*/, new JsonResponse_1.default('Fetched successfully', data).sendAsJson(res)];
+                        return [2 /*return*/, new JsonResponse_1.default(200, 'Fetched successfully', data).sendAsJson(res)];
                 }
             });
         }); }); };
         _this.leagueLoginIn = function () { return _this.route('get', '/league-connect/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'LOL/login', {
-                        page_title: 'Leage',
                         nav_title: 'Live In Game Events',
                         path: 'league-connect',
                         root: 'league'

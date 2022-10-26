@@ -62,7 +62,7 @@ export = class NameWillBeInsertedAutomaticall extends BaseController{
             res,
             'shop/orders',
             {
-                page_title: 'My Orders',
+                nav_title: 'My Orders',
                 path : '/orders/',
                 orders : []
             }
@@ -92,7 +92,7 @@ export = class NameWillBeInsertedAutomaticall extends BaseController{
                         res,
                         'example/index',
                         {
-                            page_title: rows ?? 'Dynamic route',
+                            nav_title: rows ?? 'Dynamic route',
                             path: '/dynamic/',
                             product: rows
                         }

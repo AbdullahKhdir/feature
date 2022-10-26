@@ -480,7 +480,7 @@ export = class Shop extends BaseController {
             res,
             'shop/checkout',
             {
-                page_title: 'Checkout',
+                nav_title: 'Checkout',
                 path : '/checkout/'
             }
         );
@@ -502,7 +502,7 @@ export = class Shop extends BaseController {
             res,
             'shop/checkout',
             {
-                page_title: 'Checkout',
+                nav_title: 'Checkout',
                 path : '/checkout/'
             }
         );
@@ -723,7 +723,11 @@ export = class Shop extends BaseController {
         }
         res.updatedContentAlways();
         let product_id = req.getDynamicParam('productId') ?? false;
-        const user_id = +req.getCurrentUser().id ?? false;
+        let user_id;
+        if (req.getCurrentUser()) {
+            user_id = +req.getCurrentUser().id ?? false;
+            
+        }
         if (!isNaN(product_id)) {
             product_id = +product_id;
             this.product.get({id: product_id, user_id: user_id})
@@ -735,7 +739,7 @@ export = class Shop extends BaseController {
                         res,
                         'shop/product-detail',
                         {
-                            page_title: product.title ?? 'Product Details',
+                            nav_title: product.title ?? 'Product Details',
                             path: '/products/',
                             product: product ?? []
                         }
@@ -749,7 +753,7 @@ export = class Shop extends BaseController {
             return this.render(
                 res,
                 '404',
-                {page_title: 'Page not found', path: '/404/'},
+                {nav_title: 'Page not found', path: '/404/'},
                 null,
                 this.constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
             );

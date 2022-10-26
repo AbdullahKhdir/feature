@@ -480,7 +480,7 @@ module.exports = /** @class */ (function (_super) {
                 }
                 res.updatedContentAlways();
                 return [2 /*return*/, this.render(res, 'shop/checkout', {
-                        page_title: 'Checkout',
+                        nav_title: 'Checkout',
                         path: '/checkout/'
                     })];
             });
@@ -499,7 +499,7 @@ module.exports = /** @class */ (function (_super) {
                 }
                 res.updatedContentAlways();
                 return [2 /*return*/, this.render(res, 'shop/checkout', {
-                        page_title: 'Checkout',
+                        nav_title: 'Checkout',
                         path: '/checkout/'
                     })];
             });
@@ -729,7 +729,9 @@ module.exports = /** @class */ (function (_super) {
                 }
                 res.updatedContentAlways();
                 product_id = (_a = req.getDynamicParam('productId')) !== null && _a !== void 0 ? _a : false;
-                user_id = (_b = +req.getCurrentUser().id) !== null && _b !== void 0 ? _b : false;
+                if (req.getCurrentUser()) {
+                    user_id = (_b = +req.getCurrentUser().id) !== null && _b !== void 0 ? _b : false;
+                }
                 if (!isNaN(product_id)) {
                     product_id = +product_id;
                     this.product.get({ id: product_id, user_id: user_id })
@@ -739,7 +741,7 @@ module.exports = /** @class */ (function (_super) {
                         if (rows) {
                             var product = rows[0];
                             return _this.render(res, 'shop/product-detail', {
-                                page_title: (_a = product.title) !== null && _a !== void 0 ? _a : 'Product Details',
+                                nav_title: (_a = product.title) !== null && _a !== void 0 ? _a : 'Product Details',
                                 path: '/products/',
                                 product: product !== null && product !== void 0 ? product : []
                             });
@@ -751,7 +753,7 @@ module.exports = /** @class */ (function (_super) {
                         .catch(function (err) { return _this.onError(res, err); });
                 }
                 else {
-                    return [2 /*return*/, this.render(res, '404', { page_title: 'Page not found', path: '/404/' }, null, this.constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND)];
+                    return [2 /*return*/, this.render(res, '404', { nav_title: 'Page not found', path: '/404/' }, null, this.constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND)];
                 }
                 return [2 /*return*/];
             });

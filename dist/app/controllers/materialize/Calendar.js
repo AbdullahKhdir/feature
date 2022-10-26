@@ -77,7 +77,6 @@ module.exports = /** @class */ (function (_super) {
         _this.calendar = function () { return _this.route('get', '/calendar/', _this.calendarMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.render(res, 'materialize/calendar/calendar', {
-                        page_title: 'Calendar',
                         nav_title: 'Calendar',
                         path: 'calendar',
                         root: 'calendar'

@@ -292,7 +292,7 @@ module.exports = /** @class */ (function (_super) {
                         // @ts-ignore 
                         var rows_4 = rows_4[0];
                         return _this.render(res, 'example/index', {
-                            page_title: rows_4 !== null && rows_4 !== void 0 ? rows_4 : 'Dynamic route',
+                            nav_title: rows_4 !== null && rows_4 !== void 0 ? rows_4 : 'Dynamic route',
                             path: '/dynamic/',
                             product: rows_4
                         });
@@ -323,7 +323,7 @@ module.exports = /** @class */ (function (_super) {
                         // @ts-ignore 
                         var rows_5 = rows_5[0];
                         return _this.render(res, 'example/index', {
-                            page_title: rows_5 !== null && rows_5 !== void 0 ? rows_5 : 'Dynamic route',
+                            nav_title: rows_5 !== null && rows_5 !== void 0 ? rows_5 : 'Dynamic route',
                             path: '/dynamic/',
                             product: rows_5
                         });

@@ -9,6 +9,7 @@ var PDFDocument_1 = __importDefault(require("../../app/plugins/PDFDocument"));
 var Uploader_1 = __importDefault(require("../../app/plugins/Uploader"));
 var Constants_1 = __importDefault(require("../../app/utils/Constants"));
 var Lodash_1 = __importDefault(require("../../app/utils/Lodash"));
+var Api_1 = __importDefault(require("../api/Api"));
 var Db_1 = __importDefault(require("../database/Db"));
 var Express_1 = require("../framework/Express");
 var Bodyparser_1 = __importDefault(require("../node/Bodyparser"));
@@ -40,6 +41,15 @@ var Singleton = /** @class */ (function () {
     };
     Singleton.getDbSession = function () {
         return Db_1.default.getDbInstance().getMysqlInstance;
+    };
+    //**************************************************\\
+    //* API getter function *\\
+    //**************************************************\\
+    Singleton.getApis = function () {
+        if (this.apis) {
+            return this.apis;
+        }
+        return this.apis = new Api_1.default();
     };
     //**************************************************\\
     //* Database and Express Sessions getter functions *\\
@@ -79,6 +89,9 @@ var Singleton = /** @class */ (function () {
     //*****************************\\
     Singleton.getConstants = function () {
         return Constants_1.default.getConstantsInstance();
+    };
+    Singleton.getConstantsInstance = function () {
+        return Constants_1.default.instance();
     };
     //************************\\
     //* Path getter function *\\

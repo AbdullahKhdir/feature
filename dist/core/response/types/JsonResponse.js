@@ -18,12 +18,14 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ExpressResponse_1 = require("../ExpressResponse");
 module.exports = /** @class */ (function (_super) {
     __extends(JsonResponse, _super);
-    function JsonResponse(message, data) {
+    function JsonResponse(code, message, data) {
+        if (code === void 0) { code = 200; }
         var _this = this;
         var _constants = Singleton_1.Singleton.getConstants();
         _this = _super.call(this, _constants.HTTPS_STATUS.SUCCESS.OK, 'OK', message) || this;
         _this._message = message;
         _this.data = data;
+        _this.code = code;
         return _this;
     }
     /**
@@ -35,7 +37,8 @@ module.exports = /** @class */ (function (_super) {
      * @returns Response
     */
     JsonResponse.prototype.sendAsJson = function (res) {
-        return _super.prototype.renderAsJson.call(this, res, Object.assign({ status_code: Singleton_1.Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK }, { message: this.getMessage() }, { data: this.getData() }));
+        var _a;
+        return _super.prototype.renderAsJson.call(this, res, Object.assign({ status_code: (_a = this.getCode()) !== null && _a !== void 0 ? _a : Singleton_1.Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK }, { message: this.getMessage() }, { data: this.getData() }));
     };
     /**
      * @function getData
@@ -46,6 +49,16 @@ module.exports = /** @class */ (function (_super) {
     */
     JsonResponse.prototype.getData = function () {
         return this.data;
+    };
+    /**
+     * @function getCode
+     * @description Gets the status code
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Object
+    */
+    JsonResponse.prototype.getCode = function () {
+        return this.code;
     };
     /**
      * @function getMessage

@@ -1,6 +1,6 @@
 'use strict';
 
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ReadStream } from 'node:fs';
 import * as config from '../config';
 import { Singleton } from '../Singleton/Singleton';
@@ -125,7 +125,7 @@ export abstract class ExpressResponse {
         return this.render(
             res,
             '404',
-            {page_title: 'Page not found', path: '/404/'},
+            {nav_title: 'Page not found', path: '/404/', csrf: res.req.csrfToken()},
             null,
             this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
         );
@@ -202,17 +202,18 @@ export abstract class ExpressResponse {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    invalidCsrfResponse(res: Response) : Response{
+    invalidCsrfResponse(req: Request, res: Response) : Response{
         return this.render(
             res,
             '404',
             {
-                page_title: 'Post request was interrupted!', 
+                nav_title: 'Post request was interrupted!', 
                 path: '/404/',
                 is_authenticated: null,
                 error:   'Invalid CSRF token',
                 warning: 'Please do not alter or delete the csrf token!',
-                success: null
+                success: null,
+                csrf: req.csrfToken(),
             },
             null,
             this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN
@@ -233,12 +234,13 @@ export abstract class ExpressResponse {
                 res,
                 '404',
                 {
-                    page_title: 'Unexpected Error!', 
+                    res: 'Unexpected Error!', 
                     path: '/404/',
                     is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                     error:   error.toString(),
                     warning: error.toString(),
-                    success: null
+                    success: null,
+                    csrf: res.req.csrfToken(),
                 },
                 null,
                 this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN
@@ -248,10 +250,11 @@ export abstract class ExpressResponse {
                 res,
                 '404',
                 {
-                    page_title: 'Unexpected Error!', 
+                    res: 'Unexpected Error!', 
                     path: '/404/',
                     is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
-                    warning: 'Please contact the support team!'
+                    warning: 'Please contact the support team!',
+                    csrf: res.req.csrfToken()
                 },
                 null,
                 this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN
