@@ -70,9 +70,9 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.getExmaple = function () { return _this.route('get', '/get_exmaple/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.getExmaple = function () { return _this.route('get', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, new JsonResponse_1.default(200, 'Success', { success: 'OK' }).sendAsJson(res)];
+                return [2 /*return*/, new JsonResponse_1.default(200, 'Success got', { success: 'OK' }).sendAsJson(res)];
             });
         }); }); };
         /**
@@ -82,16 +82,47 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.postExmaple = function () { return _this.route('post', '/get_exmaple/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var token;
+        _this.postExmaple = function () { return _this.route('post', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                token = req.csrfToken();
-                res.setHeader('x-xsrf-token', token);
-                res.setHeader('xsrf-token', token);
-                res.setHeader('x-csrf-token', token);
-                res.setHeader('csrf-Token', token);
-                res.setHeader('X-CSRF-TOKEN', token);
-                return [2 /*return*/, new JsonResponse_1.default(201, 'Success', { success: 'OK', id: new Date() }).sendAsJson(res)];
+                return [2 /*return*/, new JsonResponse_1.default(201, 'Success posted', { success: 'OK', id: new Date() }).sendAsJson(res)];
+            });
+        }); }); };
+        /**
+         * @function patchExmaple
+         * @description patchExmaple route
+         * @version 1.0.0
+         * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+         * @returns Response
+        */
+        _this.patchExmaple = function () { return _this.route('patch', '/get_examples/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new JsonResponse_1.default(201, 'Success patched', { success: 'OK', id: new Date() }).sendAsJson(res)];
+            });
+        }); }); };
+        /**
+         * @function putExmaple
+         * @description patchExmaple route
+         * @version 1.0.0
+         * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+         * @returns Response
+        */
+        _this.putExmaple = function () { return _this.route('put', '/get_examples/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                // return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
+                res.json({ status: 'OK' });
+                return [2 /*return*/];
+            });
+        }); }); };
+        /**
+         * @function putExmaple
+         * @description patchExmaple route
+         * @version 1.0.0
+         * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+         * @returns Response
+        */
+        _this.deleteExmaple = function () { return _this.route('delete', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new JsonResponse_1.default(201, 'Success deleted', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
         }); }); };
         //? ************************************************************** ?\\
@@ -104,6 +135,9 @@ module.exports = /** @class */ (function (_super) {
             //**********\\
             'getExmaple',
             'postExmaple',
+            'patchExmaple',
+            'putExmaple',
+            'deleteExmaple',
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\

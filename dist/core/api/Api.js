@@ -43,7 +43,6 @@ module.exports = /** @class */ (function (_super) {
      */
     Api.prototype.deployApi = function (app) {
         var _this = this;
-        Singleton_1.Singleton.getConstantsInstance().addMethod('POST');
         var directory_routes = this.path.join(__dirname, '..', '..', 'app', 'api');
         var methods_array = null;
         this.file_system.readdir(directory_routes, { withFileTypes: true }, function (err, files) {

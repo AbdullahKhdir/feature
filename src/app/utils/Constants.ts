@@ -651,7 +651,7 @@ export = class Constants {
                     //? using "Access-Control-Request-Headers",  ?\\
                     //? "Access-Control-Request-Method"          ?\\
                     //? and "Origin"                             ?\\
-                    preflightContinue: true,
+                    preflightContinue: false,
                     //********************************************\\
                     
                     //? Provides a status code to use for        ?\\
@@ -771,24 +771,38 @@ export = class Constants {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns boolean
     */
-    addMethod(method: string) : boolean {
-        if (typeof method === 'string') {
-            if (method !== '') {
-                this.constants.CSRF.ignoreMethods.push(method)
+    addHttpsMethods(methods: string | string[]) : boolean {
+        if (typeof methods === 'string') {
+            if (methods !== '') {
+                this.constants.CSRF.ignoreMethods.push(methods)
                 return true;
             }
+        } else if (typeof methods[Symbol.iterator] === 'function') {
+            methods.forEach((method) => {
+                this.constants.CSRF.ignoreMethods.push(method);
+            });
+            return true;
         }
         return false;
     }
 
     /**
      * @function removeMethod
+     * @async
      * @description Removes http method to the ignore methods array for bypassing csrf token
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns void
+     * @returns Promise<boolean>
     */
-    removeMethod() {
-        this.constants.CSRF.ignoreMethods.pop();
+    removeHttpsMethods(methods: string[]) {
+        if (typeof methods[Symbol.iterator] === 'function') {
+            methods.forEach((method) => {
+                this.constants.CSRF.ignoreMethods = this.constants.CSRF.ignoreMethods.filter((http_method) => {
+                    return http_method !== method
+                });
+            });
+            return Promise.resolve(true);
+        }
+        return Promise.reject(false);
     }
 }

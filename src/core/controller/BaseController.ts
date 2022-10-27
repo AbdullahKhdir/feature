@@ -118,7 +118,6 @@ export = class BaseController extends Routes {
      * @return void
      */
     undefinedRoutes(app: Express) {
-        Singleton.getConstantsInstance().removeMethod(); 
         let site_is_found                = false;
         let is_post_request_successful   = false;
         let is_put_request_successful    = false;

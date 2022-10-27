@@ -648,7 +648,7 @@ module.exports = /** @class */ (function () {
                     //? using "Access-Control-Request-Headers",  ?\\
                     //? "Access-Control-Request-Method"          ?\\
                     //? and "Origin"                             ?\\
-                    preflightContinue: true,
+                    preflightContinue: false,
                     //********************************************\\
                     //? Provides a status code to use for        ?\\
                     //? successful OPTIONS requests,             ?\\
@@ -767,24 +767,41 @@ module.exports = /** @class */ (function () {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns boolean
     */
-    Constants.prototype.addMethod = function (method) {
-        if (typeof method === 'string') {
-            if (method !== '') {
-                this.constants.CSRF.ignoreMethods.push(method);
+    Constants.prototype.addHttpsMethods = function (methods) {
+        var _this = this;
+        if (typeof methods === 'string') {
+            if (methods !== '') {
+                this.constants.CSRF.ignoreMethods.push(methods);
                 return true;
             }
+        }
+        else if (typeof methods[Symbol.iterator] === 'function') {
+            methods.forEach(function (method) {
+                _this.constants.CSRF.ignoreMethods.push(method);
+            });
+            return true;
         }
         return false;
     };
     /**
      * @function removeMethod
+     * @async
      * @description Removes http method to the ignore methods array for bypassing csrf token
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns void
+     * @returns Promise<boolean>
     */
-    Constants.prototype.removeMethod = function () {
-        this.constants.CSRF.ignoreMethods.pop();
+    Constants.prototype.removeHttpsMethods = function (methods) {
+        var _this = this;
+        if (typeof methods[Symbol.iterator] === 'function') {
+            methods.forEach(function (method) {
+                _this.constants.CSRF.ignoreMethods = _this.constants.CSRF.ignoreMethods.filter(function (http_method) {
+                    return http_method !== method;
+                });
+            });
+            return Promise.resolve(true);
+        }
+        return Promise.reject(false);
     };
     return Constants;
 }());

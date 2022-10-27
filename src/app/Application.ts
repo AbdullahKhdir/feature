@@ -19,6 +19,7 @@ import { reqUtil } from './middlewares/request_utilities';
 import cache_control from '../core/middlewares/cache_control';
 import { toast } from './middlewares/toast';
 import morgan_logger from '../core/middlewares/morgan_logger.js';
+import { REST_ENDPOINTS } from '../core/api/apis_endpoints/endpoints.js';
 
 /**
  * @class Application
@@ -138,12 +139,6 @@ export = class Application extends BaseController {
         this.app.use(this.body_parser.urlencoded({extended: true}));
 
         /*
-        * Deploying apis
-        */
-        // @ts-ignore
-        Singleton.getApis().deployApi(this.app);
-
-        /*
         * Middleware To Initiate Mysql Session
         */
         const secret = Crypto.randomBytes(48).toString('base64');
@@ -224,18 +219,6 @@ export = class Application extends BaseController {
             req.user_cookie = key;
             next();
         });
-
-        /*
-        * Middleware for rendering 404 page on invalid csrf token
-        */
-        this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-            if (err.code === this.constants.CSRF.errCode) {
-                this.invalidCsrfResponse(req, res);
-            }
-            if (err.code !== this.constants.CSRF.errCode)  {
-                return next(err);
-            }
-        })
         
         /*
         * Middleware populating file or files attribute on file upload's request
@@ -262,12 +245,56 @@ export = class Application extends BaseController {
         });
 
         /*
+        * Middleware for rendering 404 page on invalid csrf token
+        */
+        this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+            // todo api endpoints must not be csrf validated for a token
+            if (err.code === this.constants.CSRF.errCode) {
+                // let bypass = false;
+                // if (req.headers.referer || req.originalUrl || req.url) {
+                //     let is_referer_url     = '';
+                //     let is_originalUrl_url = '';
+                //     let is_url             = '';
+                //     // @ts-ignore
+                //     is_referer_url         = req.headers.referer;
+                //     is_url                 = req.url;
+                //     is_originalUrl_url     = req.originalUrl;
+                //     return REST_ENDPOINTS.forEach((endpoint) => {
+                //         console.log(endpoint)
+                //         console.log('is_referer_url', is_referer_url)
+                //         console.log('is_originalUrl_url', is_originalUrl_url)
+                //         console.log('is_url', is_url)
+                //         if (is_referer_url == endpoint
+                //             || is_originalUrl_url == endpoint
+                //             || is_url == endpoint) {
+                //             bypass = true;
+                //             return this.redirect(res, endpoint);
+                //         }
+                //     });
+                // }
+                // if (!bypass) {
+                //     this.invalidCsrfResponse(req, res);
+                // }
+                this.invalidCsrfResponse(req, res);
+                // next()
+            }
+            if (err.code !== this.constants.CSRF.errCode)  {
+                next(err);
+            }
+        })
+
+        /*
         * Routes 
         */
         this.app.set('case sensitive routing', false);
         this.app.set('strict routing', false);
         // @ts-ignore
         this.sub_controller.deployRoutes(this.app);
+        /*
+        * Deploying apis
+        */
+        // @ts-ignore
+        Singleton.getApis().deployApi(this.app);
         
         /*
         * Passing default and helpful properties to all templates

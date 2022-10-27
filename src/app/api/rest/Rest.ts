@@ -3,8 +3,12 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import BaseController                              from "../../../core/controller/BaseController";
 import {check}                                     from "express-validator";
-import JsonResponse from '../../../core/response/types/JsonResponse';
+import JsonResponse                                from '../../../core/response/types/JsonResponse';
 
+/*
+ ! The partner system of the api must be registered in the cors configs 
+ ! so that partner client reaches the api's endpoints 
+*/
 export = class Rest extends BaseController {
 
     //*****************************************************************\\
@@ -24,6 +28,9 @@ export = class Rest extends BaseController {
             //**********\\
             'getExmaple',
             'postExmaple',
+            'patchExmaple',
+            'putExmaple',
+            'deleteExmaple',
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\
@@ -52,8 +59,8 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getExmaple = (): Router => this.route('get', '/get_exmaple/', {}, async (req: Request, res: Response, next: NextFunction) => {
-        return new JsonResponse(200, 'Success', {success: 'OK'}).sendAsJson(res);
+    getExmaple = (): Router => this.route('get', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+        return new JsonResponse(200, 'Success got', {success: 'OK'}).sendAsJson(res);
     });
 
     /**
@@ -63,14 +70,42 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postExmaple = (): Router => this.route('post', '/get_exmaple/', {}, async (req: Request, res: Response, next: NextFunction) => {
-        const token = req.csrfToken(); 
-        res.setHeader('x-xsrf-token', token);
-        res.setHeader('xsrf-token', token);
-        res.setHeader('x-csrf-token', token);
-        res.setHeader('csrf-Token', token)
-        res.setHeader('X-CSRF-TOKEN', token);
-        return new JsonResponse(201, 'Success', {success: 'OK', id: new Date()}).sendAsJson(res);
+    postExmaple = (): Router => this.route('post', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+        return new JsonResponse(201, 'Success posted', {success: 'OK', id: new Date()}).sendAsJson(res);
+    });
+
+    /**
+     * @function patchExmaple
+     * @description patchExmaple route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    patchExmaple = (): Router => this.route('patch', '/get_examples/', {}, async (req: Request, res: Response, next: NextFunction) => {
+        return new JsonResponse(201, 'Success patched', {success: 'OK', id: new Date()}).sendAsJson(res);
+    });
+
+    /**
+     * @function putExmaple
+     * @description patchExmaple route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    putExmaple = (): Router => this.route('put', '/get_examples/', {}, async (req: Request, res: Response, next: NextFunction) => {
+        // return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
+        res.json({status: 'OK'});
+    });
+
+    /**
+     * @function putExmaple
+     * @description patchExmaple route
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @returns Response
+    */
+    deleteExmaple = (): Router => this.route('delete', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+        return new JsonResponse(201, 'Success deleted', {success: 'OK', id: new Date()}).sendAsJson(res);
     });
     
     protected firstDynMethodMiddleware() {

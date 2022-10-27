@@ -149,7 +149,6 @@ module.exports = /** @class */ (function (_super) {
      */
     BaseController.prototype.undefinedRoutes = function (app) {
         var _this = this;
-        Singleton_1.Singleton.getConstantsInstance().removeMethod();
         var site_is_found = false;
         var is_post_request_successful = false;
         var is_put_request_successful = false;

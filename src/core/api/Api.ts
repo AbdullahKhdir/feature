@@ -31,7 +31,7 @@ export = class Api extends Routes {
      * @function deployApi
      * @description
      * * Will automatically scan the api
-     * * directory and loop each api file 
+     * * directory and loop each api file
      * * and initiate new instance of each api
      * * class and loop the methods array for any declared
      * * endpoints that will be deployed by the app via express
@@ -41,7 +41,6 @@ export = class Api extends Routes {
      * @return void
      */
     deployApi(app: Express) {
-        Singleton.getConstantsInstance().addMethod('POST');
         let directory_routes = this.path.join(__dirname, '..', '..', 'app', 'api');
         let methods_array = null;
         this.file_system.readdir(directory_routes, { withFileTypes: true }, (err, files) => {
