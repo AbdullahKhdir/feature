@@ -64,6 +64,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var https_1 = __importDefault(require("https"));
 var os_1 = __importDefault(require("os"));
+var endpoints_1 = require("./core/api/apis_endpoints/endpoints");
 var config = __importStar(require("./core/config"));
 var Singleton_1 = require("./core/Singleton/Singleton");
 /**
@@ -78,6 +79,7 @@ var Server = /** @class */ (function () {
     function Server() {
         this.app = Singleton_1.Singleton.getExpressApp();
         this.constants = Singleton_1.Singleton.getConstants();
+        this.__ = Singleton_1.Singleton.getLodash();
         process.env['UV_THREADPOOL_SIZE'] = os_1.default.cpus().length.toString();
     }
     Server.getServerInstance = function () {
@@ -121,6 +123,40 @@ var Server = /** @class */ (function () {
                                 cert: cert.cert
                             };
                             port = Server.getServerInstance().port();
+                            //@ts-ignore
+                            this.app.use(function (err, req, res, next) {
+                                if (err.code === _this.constants.CSRF.errCode) {
+                                    return res
+                                        .status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN)
+                                        .render('404', {
+                                        nav_title: _this.__.capitalize(req.method) + ' request was interrupted!',
+                                        path: '/404/',
+                                        is_authenticated: null,
+                                        error: 'Invalid CSRF token',
+                                        warning: 'Please do not alter or delete the csrf token!',
+                                        success: null,
+                                    });
+                                }
+                                var _status = err.statusCode || _this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                                var message = err.message;
+                                var is_api_endpoint = false;
+                                endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                    var _a, _b, _c;
+                                    if (endpoints_1.ENDPOINTS.includes((_a = req.headers.referer) !== null && _a !== void 0 ? _a : '')
+                                        || endpoints_1.ENDPOINTS.includes((_b = req.originalUrl) !== null && _b !== void 0 ? _b : '')
+                                        || endpoints_1.ENDPOINTS.includes((_c = req.url) !== null && _c !== void 0 ? _c : '')) {
+                                        is_api_endpoint = true;
+                                    }
+                                });
+                                if (is_api_endpoint) {
+                                    return res.status(_status).json({ message: message });
+                                }
+                                else {
+                                    return res
+                                        .status(_status)
+                                        .render('404', { nav_title: 'Error occurred', path: '/404/', error: message });
+                                }
+                            });
                             server = https_1.default
                                 //@ts-ignore
                                 .createServer(httpsOptions, this.app).listen(port, function () {

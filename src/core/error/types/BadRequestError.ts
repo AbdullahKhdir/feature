@@ -13,8 +13,8 @@ import ApiError from "../ApiError";
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 module.exports = class BadRequestError extends ApiError {
-    constructor(message = 'Bad Request') {
-        super(Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST, message);
-        // TODO: render bad request error page
+    constructor(status_code?: number, message = 'Bad Request') {
+        super(status_code ? status_code : Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST, message);
+        // next error middleware will send or render the page
     }
  }

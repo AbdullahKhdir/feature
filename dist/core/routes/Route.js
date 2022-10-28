@@ -17,6 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var RuntimeException_1 = __importDefault(require("../exception/types/RuntimeException"));
 var ExpressResponse_1 = require("../response/ExpressResponse");
 var Singleton_1 = require("../Singleton/Singleton");
 var Promise_1 = __importDefault(require("../utils/Promise"));
@@ -74,16 +75,16 @@ module.exports = /** @class */ (function (_super) {
      */
     Routes.prototype.route = function (method, url, middleware, callback) {
         if (typeof method === 'undefined' || method === '' || method == null) {
-            method = 'Get';
+            return new RuntimeException_1.default('Route does not have an http method!');
         }
         if (typeof url === 'undefined' || url === '' || url == null) {
-            return this._().get('/404', (0, Promise_1.default)(callback));
+            return new RuntimeException_1.default('Route does not have an http url!');
         }
         if (typeof callback === 'undefined' || this.__.isString(callback) || callback == null) {
-            return this._().get('/404', (0, Promise_1.default)(callback));
+            return new RuntimeException_1.default('Route does not have a callback!');
         }
         if (typeof middleware !== 'object' && middleware.length <= 0 && typeof callback === 'function') {
-            return this._().get('/404', (0, Promise_1.default)(callback));
+            return new RuntimeException_1.default('Middlewares could not be implemented!');
         }
         var _middleware = [];
         for (var key in middleware) {
@@ -106,7 +107,7 @@ module.exports = /** @class */ (function (_super) {
         if (this.__.capitalize(method) === 'Delete' && !this.__.isEmpty(url) && typeof callback === 'function') {
             return this._().delete(url, _middleware, (0, Promise_1.default)(callback));
         }
-        return this._().get('/404');
+        return new RuntimeException_1.default('Route could not be deployed!');
     };
     return Routes;
 }(ExpressResponse_1.ExpressResponse));

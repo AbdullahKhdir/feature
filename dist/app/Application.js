@@ -140,9 +140,9 @@ module.exports = /** @class */ (function (_super) {
         //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
         _this.app.use(function (req, res, next) {
             var _a, _b, _c;
-            if (endpoints_js_1.REST_ENDPOINTS.includes((_a = req.headers.referer) !== null && _a !== void 0 ? _a : '')
-                || endpoints_js_1.REST_ENDPOINTS.includes((_b = req.originalUrl) !== null && _b !== void 0 ? _b : '')
-                || endpoints_js_1.REST_ENDPOINTS.includes((_c = req.url) !== null && _c !== void 0 ? _c : '')) {
+            if (endpoints_js_1.ENDPOINTS.includes((_a = req.headers.referer) !== null && _a !== void 0 ? _a : '')
+                || endpoints_js_1.ENDPOINTS.includes((_b = req.originalUrl) !== null && _b !== void 0 ? _b : '')
+                || endpoints_js_1.ENDPOINTS.includes((_c = req.url) !== null && _c !== void 0 ? _c : '')) {
                 return next();
             }
             CSRF(req, res, next);
@@ -223,18 +223,6 @@ module.exports = /** @class */ (function (_super) {
             next();
         });
         /*
-        * Middleware for rendering 404 page on invalid csrf token
-        */
-        _this.app.use(function (err, req, res, next) {
-            // todo api endpoints must not be csrf validated for a token
-            if (err.code === _this.constants.CSRF.errCode) {
-                _this.invalidCsrfResponse(req, res);
-            }
-            if (err.code !== _this.constants.CSRF.errCode) {
-                next(err);
-            }
-        });
-        /*
         * Routes
         */
         _this.app.set('case sensitive routing', false);
@@ -251,6 +239,19 @@ module.exports = /** @class */ (function (_super) {
         ? lasts for the life cycle of the application
         */
         _this.app.locals = Object.assign(_this.app.locals, AppLocals_js_1.default);
+        /*
+        * Middleware for rendering 404 page on invalid csrf token
+        */
+        _this.app.use(function (err, req, res, next) {
+            // todo separated invalid csrf page
+            // todo separated 404 page
+            // todo separated exceptions page (only during development)
+            // todo separated errors page (for dev and prod environments)
+            if (err.code === _this.constants.CSRF.errCode) {
+                return _this.invalidCsrfResponse(req, res);
+            }
+            next(err);
+        });
         return _this;
     }
     Object.defineProperty(Application, "getAppInstance", {

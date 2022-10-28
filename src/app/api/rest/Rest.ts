@@ -59,7 +59,7 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getExmaple = (): Router => this.route('get', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    getExmaple = () => this.route('get', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(200, 'Success got', {success: 'OK'}).sendAsJson(res);
     });
 
@@ -70,8 +70,9 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postExmaple = (): Router => this.route('post', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    postExmaple = () => this.route('post', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success posted', {success: 'OK', id: new Date()}).sendAsJson(res);
+        // return next(new Error('declined api endpoint post'));
     });
 
     /**
@@ -81,7 +82,7 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    patchExmaple = (): Router => this.route('patch', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    patchExmaple = () => this.route('patch', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success patched', {success: 'OK', id: new Date()}).sendAsJson(res);
     });
 
@@ -92,7 +93,7 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    putExmaple = (): Router => this.route('put', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    putExmaple = () => this.route('put', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
     });
 
@@ -103,7 +104,7 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteExmaple = (): Router => this.route('delete', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    deleteExmaple = () => this.route('delete', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success deleted', {success: 'OK', id: new Date()}).sendAsJson(res);
     });
     

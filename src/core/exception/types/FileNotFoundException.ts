@@ -1,5 +1,6 @@
 'use strict';
 
+import { Singleton } from "../../Singleton/Singleton";
 import ApiException  from "../ApiException";
 
 /**
@@ -11,8 +12,9 @@ import ApiException  from "../ApiException";
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 module.exports = class FileNotFoundException extends ApiException {
-    constructor(message = 'File not found exception') {
-        super('File not found exception', message);
-        // TODO: render bad request error page
+    constructor(message = 'File not found exception', status_code?: number) {
+        const _constants = Singleton.getConstants();
+        super(status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message);
+        // next error middleware will send or render the page
     }
  }

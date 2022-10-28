@@ -12,9 +12,9 @@ import ApiException from "../ApiException";
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 export = class SQLException extends ApiException {
-    constructor(message = 'SQL Exception') {
+    constructor(message = 'SQL Exception', status_code?: number) {
         const _constants = Singleton.getConstants();
-        super('SQL Exception', message);
-        // TODO: render bad request error page
+        super(status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message);
+        // next error middleware will send or render the page
     }
  }

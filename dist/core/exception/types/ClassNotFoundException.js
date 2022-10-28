@@ -17,13 +17,15 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var Singleton_1 = require("../../Singleton/Singleton");
 var ApiException_1 = __importDefault(require("../ApiException"));
 module.exports = /** @class */ (function (_super) {
     __extends(ClassNotFoundException, _super);
-    function ClassNotFoundException(message) {
+    function ClassNotFoundException(message, status_code) {
         if (message === void 0) { message = 'Class not found exception'; }
-        return _super.call(this, 'Class not found exception', message) || this;
-        // TODO: render bad request error page
+        var _constants = Singleton_1.Singleton.getConstants();
+        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
+        // next error middleware will send or render the page
     }
     return ClassNotFoundException;
 }(ApiException_1.default));

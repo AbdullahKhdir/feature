@@ -18,6 +18,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var Singleton_1 = require("../../Singleton/Singleton");
 var ApiError_1 = __importDefault(require("../ApiError"));
 /**
  * @class RangeError
@@ -29,10 +30,11 @@ var ApiError_1 = __importDefault(require("../ApiError"));
 */
 module.exports = /** @class */ (function (_super) {
     __extends(RangeError, _super);
-    function RangeError(message) {
+    function RangeError(status_code, message) {
         if (message === void 0) { message = 'Range error'; }
-        return _super.call(this, 'Range error', message) || this;
-        // TODO: render bad request error page
+        var _constants = Singleton_1.Singleton.getConstants();
+        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
+        // next error middleware will send or render the page
     }
     return RangeError;
 }(ApiError_1.default));

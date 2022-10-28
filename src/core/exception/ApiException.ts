@@ -9,9 +9,9 @@
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 export = class ApiException extends Error {
-    
-    constructor(type: any, message: any) {
-        const exception_msg = type + ': ' + message;
-        super(exception_msg);
+    constructor(status_code: number, message: any) {
+        let _super = super(message);
+        // @ts-ignore
+        _super.statusCode = status_code;
     }
  }

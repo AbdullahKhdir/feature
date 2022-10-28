@@ -78,7 +78,7 @@ export = class LeageOfLegends extends BaseController{
     //* Routes *\\
     //**********\\
 
-    corsTest = (): Router => this.route('get', '/cors/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    corsTest = () => this.route('get', '/cors/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(200, 'Success', {status: 'checked'}).sendAsJson(res);
     });
 
@@ -89,7 +89,7 @@ export = class LeageOfLegends extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns JsonResponse
     */
-    getSummonerInfos = (): Router => this.route('get', '/bySummonerName/:summonerName/', this.getSummonerInfosMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
+    getSummonerInfos = () => this.route('get', '/bySummonerName/:summonerName/', this.getSummonerInfosMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
         const summoner_name = req.getDynamicParam('summonerName');
         const response = await fetch(`https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summoner_name}`, {
             method: 'get',
@@ -99,7 +99,7 @@ export = class LeageOfLegends extends BaseController{
         return new JsonResponse(200, 'Fetched successfully', data).sendAsJson(res);
     });
 
-    leagueLoginIn = (): Router => this.route('get', '/league-connect/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    leagueLoginIn = () => this.route('get', '/league-connect/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return this.render(
             res,
             'LOL/login',
@@ -111,7 +111,7 @@ export = class LeageOfLegends extends BaseController{
         );
     });
 
-    leagueOnConnect = (): Router => this.route('POST', '/league-connect/', this.getSummonerInfosMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
+    leagueOnConnect = () => this.route('POST', '/league-connect/', this.getSummonerInfosMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }

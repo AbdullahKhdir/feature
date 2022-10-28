@@ -66,7 +66,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    products = (): Router => this.route('get', '/products/', {userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    products = () => this.route('get', '/products/', {userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
@@ -137,7 +137,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    index = (): Router => this.route('get', '/', {userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    index = () => this.route('get', '/', {userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
@@ -203,7 +203,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    cart = (): Router => this.route('get', '/cart/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    cart = () => this.route('get', '/cart/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
@@ -372,7 +372,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postCart = (): Router => this.route('post', '/cart/', this.cartMiddlewares(), async (req: Request, res: Response, next: NextFunction) => {
+    postCart = () => this.route('post', '/cart/', this.cartMiddlewares(), async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
@@ -474,7 +474,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getCheckout = (): Router => this.route('get', '/checkout/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    getCheckout = () => this.route('get', '/checkout/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
@@ -496,7 +496,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postCheckout = (): Router => this.route('post', '/checkout/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    postCheckout = () => this.route('post', '/checkout/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
@@ -518,7 +518,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    orders = (): Router => this.route('get', '/orders/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    orders = () => this.route('get', '/orders/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
@@ -597,7 +597,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postOrders = (): Router => this.route('post', '/create-order/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    postOrders = () => this.route('post', '/create-order/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
@@ -720,7 +720,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    dynProductInfo = (): Router => this.route('get', '/products/:productId/', {userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    dynProductInfo = () => this.route('get', '/products/:productId/', {userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isGet()) {
             return this.siteNotFound(res);
         }
@@ -770,7 +770,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteCartProducts = (): Router => this.route('post', '/cart/delete-items/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    deleteCartProducts = () => this.route('post', '/cart/delete-items/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
@@ -811,7 +811,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteCartProduct  = (): Router => this.route('post', '/cart/delete-item/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
+    deleteCartProduct  = () => this.route('post', '/cart/delete-item/', {isAuth, userSession}, async (req: Request, res: Response, next: NextFunction) => {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
@@ -856,7 +856,7 @@ export = class Shop extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getInvoice = (): Router => this.route('get', '/orders/invoice/:order_id/', this.orderInvoice(), async (req: Request, res: Response, next: NextFunction) => {
+    getInvoice = () => this.route('get', '/orders/invoice/:order_id/', this.orderInvoice(), async (req: Request, res: Response, next: NextFunction) => {
         // todo: check why route with params followed by slug "/orders/:order_id/invoice/" is not working or deployed
         const order_id = +req.getDynamicParam('order_id');
         const user     = req.getCurrentUser();

@@ -3,7 +3,7 @@
 import { Response } from 'express';
 import { Singleton } from '../../Singleton/Singleton';
 import { ExpressResponse } from '../ExpressResponse';
-
+        
 /**
  * @class JsonResponse
  * @constructor
@@ -16,13 +16,13 @@ export =  class JsonResponse extends ExpressResponse {
 
     protected data: any;
     protected _message: any;
-    protected code: number;
+    protected code: number | 500;
     constructor(code = 200, message: any, data: any) {
         const _constants = Singleton.getConstants();
         super(_constants.HTTPS_STATUS.SUCCESS.OK, 'OK', message);
-        this._message = message;
-        this.data     = data;
-        this.code     = code;
+        this._message  = message;
+        this.data      = data;
+        this.code      = code;
     }
  
     /**

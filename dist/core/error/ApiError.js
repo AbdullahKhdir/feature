@@ -14,14 +14,13 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var Singleton_1 = require("../Singleton/Singleton");
-module.exports = /** @class */ (function (_super) {
-    __extends(ApiError, _super);
-    function ApiError(type, message) {
+module.exports = /** @class */ (function (_super_1) {
+    __extends(ApiError, _super_1);
+    function ApiError(status_code, message) {
         var _this = this;
-        var error_msg_with_code = type + ': ' + message;
-        _this = _super.call(this, error_msg_with_code) || this;
-        _this.constants = Singleton_1.Singleton.getConstants();
+        var _super = _this = _super_1.call(this, message) || this;
+        // @ts-ignore
+        _super.statusCode = status_code;
         return _this;
     }
     return ApiError;

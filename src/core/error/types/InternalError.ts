@@ -1,5 +1,6 @@
 'use strict';
 
+import { Singleton } from "../../Singleton/Singleton";
 import ApiError from "../ApiError";
 
 /**
@@ -13,8 +14,9 @@ import ApiError from "../ApiError";
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 export = class InternalError extends ApiError {
-    constructor(message = 'Internal error') {
-        super('Internal error', message);
-        // TODO: render bad request error page
+    constructor(status_code?: number, message = 'Internal error') {
+        const _constants = Singleton.getConstants();
+        super(status_code ? status_code : _constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND, message);
+        // next error middleware will send or render the page
     }
  }

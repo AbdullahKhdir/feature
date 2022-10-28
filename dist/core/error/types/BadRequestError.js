@@ -31,10 +31,10 @@ var ApiError_1 = __importDefault(require("../ApiError"));
 */
 module.exports = /** @class */ (function (_super) {
     __extends(BadRequestError, _super);
-    function BadRequestError(message) {
+    function BadRequestError(status_code, message) {
         if (message === void 0) { message = 'Bad Request'; }
-        return _super.call(this, Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST, message) || this;
-        // TODO: render bad request error page
+        return _super.call(this, status_code ? status_code : Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST, message) || this;
+        // next error middleware will send or render the page
     }
     return BadRequestError;
 }(ApiError_1.default));

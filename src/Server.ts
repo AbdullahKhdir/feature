@@ -1,7 +1,9 @@
 'use strict';
 
 import https from 'https';
+import { NextFunction, Request, Response } from 'express';
 import OS from 'os';
+import { ENDPOINTS } from './core/api/apis_endpoints/endpoints';
 import * as config from './core/config';
 import { Singleton } from './core/Singleton/Singleton';
 
@@ -18,9 +20,11 @@ class Server {
     private static server_instance: Server;
     public app;
     public constants;
+    public __;
     private constructor() {
         this.app          = Singleton.getExpressApp();
         this.constants    = Singleton.getConstants();
+        this.__           = Singleton.getLodash();
         process.env['UV_THREADPOOL_SIZE'] = OS.cpus().length.toString();
     }
 
@@ -70,6 +74,47 @@ class Server {
                 //     cert: this.file_system.readFileSync('./certificates/example.cert.pem')
                 // }
                 let port = Server.getServerInstance().port();
+                //@ts-ignore
+                this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+                    if (err.code === this.constants.CSRF.errCode) {
+                        return res
+                        .status(this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN)
+                        .render(
+                            '404',
+                            {
+                                nav_title: this.__.capitalize(req.method) + ' request was interrupted!', 
+                                path: '/404/',
+                                is_authenticated: null,
+                                error:   'Invalid CSRF token',
+                                warning: 'Please do not alter or delete the csrf token!',
+                                success: null,
+                            }
+                        );
+                    }
+                    
+                    const _status       = err.statusCode || this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                    const message       = err.message;
+                    var is_api_endpoint = false;
+                    
+                    ENDPOINTS.forEach((endpoint: any) => {
+                        if (ENDPOINTS.includes(req.headers.referer ?? '')
+                        || ENDPOINTS.includes(req.originalUrl ?? '')
+                        || ENDPOINTS.includes(req.url ?? '')) {
+                            is_api_endpoint = true;
+                        }
+                    });
+
+                    if (is_api_endpoint) {
+                        return res.status(_status).json({message: message});
+                    } else {
+                        return res
+                        .status(_status)
+                        .render(
+                            '404',
+                            {nav_title: 'Error occurred', path: '/404/', error:   message},
+                        );
+                    }
+                });
                 const server = https
                                //@ts-ignore
                                .createServer(httpsOptions, this.app).listen(port, () => {

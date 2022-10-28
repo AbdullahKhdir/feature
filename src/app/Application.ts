@@ -5,7 +5,6 @@
 import Compression from 'compression';
 import ConnectFlash from 'connect-flash';
 import CookieParser from 'cookie-parser';
-import Cors from "cors";
 import Crypto from 'crypto';
 import Csrf from 'csurf';
 import { Express, NextFunction, Request, Response } from 'express';
@@ -19,7 +18,7 @@ import { reqUtil } from './middlewares/request_utilities';
 import cache_control from '../core/middlewares/cache_control';
 import { toast } from './middlewares/toast';
 import morgan_logger from '../core/middlewares/morgan_logger.js';
-import { REST_ENDPOINTS } from '../core/api/apis_endpoints/endpoints.js';
+import { ENDPOINTS } from '../core/api/apis_endpoints/endpoints.js';
 
 /**
  * @class Application
@@ -35,7 +34,7 @@ export = class Application extends BaseController {
     private body_parser;
     private session;
     private sub_controller;
-    private app;
+    protected app;
     private constructor() {
         super();
 
@@ -165,9 +164,9 @@ export = class Application extends BaseController {
 
         //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
         this.app.use((req: Request, res: Response, next: NextFunction) => {
-            if (REST_ENDPOINTS.includes(req.headers.referer ?? '')
-             || REST_ENDPOINTS.includes(req.originalUrl ?? '')
-             || REST_ENDPOINTS.includes(req.url ?? '')) {
+            if (ENDPOINTS.includes(req.headers.referer ?? '')
+             || ENDPOINTS.includes(req.originalUrl ?? '')
+             || ENDPOINTS.includes(req.url ?? '')) {
                 return next();
             }
             CSRF(req, res, next);
@@ -254,19 +253,7 @@ export = class Application extends BaseController {
             next();
         });
 
-        /*
-        * Middleware for rendering 404 page on invalid csrf token
-        */
-        this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-            // todo api endpoints must not be csrf validated for a token
-            if (err.code === this.constants.CSRF.errCode) {
-                this.invalidCsrfResponse(req, res);
-            }
-            if (err.code !== this.constants.CSRF.errCode)  {
-                next(err);
-            }
-        })
-
+        
         /*
         * Routes 
         */
@@ -280,12 +267,26 @@ export = class Application extends BaseController {
         */
         // @ts-ignore
         Singleton.getApis().deployApi(this.app);
-
+        
         /*
         * Passing default and helpful properties to all templates
         ? lasts for the life cycle of the application 
         */
         this.app.locals = Object.assign(this.app.locals, Locals);
+
+        /*
+        * Middleware for rendering 404 page on invalid csrf token
+        */
+        this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+            // todo separated invalid csrf page
+            // todo separated 404 page
+            // todo separated exceptions page (only during development)
+            // todo separated errors page (for dev and prod environments)
+            if (err.code === this.constants.CSRF.errCode) {
+                return this.invalidCsrfResponse(req, res);
+            }
+            next(err);
+        })
     }
 
     /**

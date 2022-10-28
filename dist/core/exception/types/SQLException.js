@@ -21,11 +21,11 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiException_1 = __importDefault(require("../ApiException"));
 module.exports = /** @class */ (function (_super) {
     __extends(SQLException, _super);
-    function SQLException(message) {
+    function SQLException(message, status_code) {
         if (message === void 0) { message = 'SQL Exception'; }
         var _constants = Singleton_1.Singleton.getConstants();
-        return _super.call(this, 'SQL Exception', message) || this;
-        // TODO: render bad request error page
+        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
+        // next error middleware will send or render the page
     }
     return SQLException;
 }(ApiException_1.default));

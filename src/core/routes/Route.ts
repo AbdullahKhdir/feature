@@ -1,6 +1,7 @@
 'use strict';
 
 import { Router } from 'express';
+import RuntimeException from '../exception/types/RuntimeException';
 import { ExpressResponse } from '../response/ExpressResponse';
 import { Singleton } from '../Singleton/Singleton';
 import asyncHandler from '../utils/Promise';
@@ -70,21 +71,21 @@ export = class Routes extends ExpressResponse{
      * @param {Function} callback
      * @return ExpressRoute
      */
-    route(method: string, url: string, middleware: any, callback: any) : Router {
+    route(method: string, url: string, middleware: any, callback: any) : Router | RuntimeException {
         if (typeof method === 'undefined' || method === '' || method == null) {
-            method = 'Get';
+            return new RuntimeException('Route does not have an http method!')
         }
 
         if (typeof url === 'undefined' || url === '' || url == null) {
-            return this._().get('/404', asyncHandler(callback));
+            return new RuntimeException('Route does not have an http url!')
         }
 
         if (typeof callback === 'undefined' || this.__.isString(callback) || callback == null) {
-            return this._().get('/404', asyncHandler(callback));
+            return new RuntimeException('Route does not have a callback!')
         }
 
         if (typeof middleware !== 'object' && middleware.length <= 0 && typeof callback === 'function') {
-            return this._().get('/404', asyncHandler(callback));
+            return new RuntimeException('Middlewares could not be implemented!')
         }
 
         const _middleware = [];
@@ -114,6 +115,6 @@ export = class Routes extends ExpressResponse{
         if (this.__.capitalize(method) === 'Delete' && !this.__.isEmpty(url) && typeof callback === 'function') {
             return this._().delete(url, _middleware, asyncHandler(callback));
         }
-        return this._().get('/404');
+        return new RuntimeException('Route could not be deployed!')
     }
 }

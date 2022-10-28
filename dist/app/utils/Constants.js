@@ -648,7 +648,7 @@ module.exports = /** @class */ (function () {
                     //? using "Access-Control-Request-Headers",  ?\\
                     //? "Access-Control-Request-Method"          ?\\
                     //? and "Origin"                             ?\\
-                    preflightContinue: false,
+                    preflightContinue: true,
                     //********************************************\\
                     //? Provides a status code to use for        ?\\
                     //? successful OPTIONS requests,             ?\\

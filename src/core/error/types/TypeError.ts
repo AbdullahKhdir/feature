@@ -1,6 +1,7 @@
 'use strict';
 
 
+import { Singleton } from "../../Singleton/Singleton";
 import ApiError  from "../ApiError";
 
 /**
@@ -15,8 +16,9 @@ import ApiError  from "../ApiError";
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 export = class TypeError extends ApiError {
-    constructor(message = 'Type error') {
-        super('Type error', message);
-        // TODO: render bad request error page
+    constructor(status_code?: number, message = 'Type error') {
+        const _constants = Singleton.getConstants();
+        super(status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message);
+        // next error middleware will send or render the page
     }
  }

@@ -14,11 +14,14 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-module.exports = /** @class */ (function (_super) {
-    __extends(ApiException, _super);
-    function ApiException(type, message) {
-        var exception_msg = type + ': ' + message;
-        return _super.call(this, exception_msg) || this;
+module.exports = /** @class */ (function (_super_1) {
+    __extends(ApiException, _super_1);
+    function ApiException(status_code, message) {
+        var _this = this;
+        var _super = _this = _super_1.call(this, message) || this;
+        // @ts-ignore
+        _super.statusCode = status_code;
+        return _this;
     }
     return ApiException;
 }(Error));

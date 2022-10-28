@@ -1,7 +1,5 @@
 'use strict';
 
-import { Singleton } from "../Singleton/Singleton";
-
 /**
  * @class ApiError
  * @constructor
@@ -11,11 +9,9 @@ import { Singleton } from "../Singleton/Singleton";
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 export = class ApiError extends Error {
-    
-    protected constants: any;
-    constructor(type: any, message: any) {
-        const error_msg_with_code = type + ': ' + message;
-        super(error_msg_with_code);
-        this.constants = Singleton.getConstants();
+    constructor(status_code: number, message: any) {
+        let _super = super(message);
+        // @ts-ignore
+        _super.statusCode = status_code;
     }
  }
