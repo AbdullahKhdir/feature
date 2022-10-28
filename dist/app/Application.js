@@ -34,6 +34,7 @@ var request_utilities_1 = require("./middlewares/request_utilities");
 var cache_control_1 = __importDefault(require("../core/middlewares/cache_control"));
 var toast_1 = require("./middlewares/toast");
 var morgan_logger_js_1 = __importDefault(require("../core/middlewares/morgan_logger.js"));
+var endpoints_js_1 = require("../core/api/apis_endpoints/endpoints.js");
 module.exports = /** @class */ (function (_super) {
     __extends(Application, _super);
     function Application() {
@@ -131,11 +132,21 @@ module.exports = /** @class */ (function (_super) {
         /*
         * CSRF Enabled
         */
-        _this.app.use((0, csurf_1.default)({
+        var CSRF = (0, csurf_1.default)({
             sessionKey: _this.constants.CSRF.sessionKey,
             cookie: _this.constants.CSRF.cookie,
             ignoreMethods: _this.constants.CSRF.ignoreMethods,
-        }));
+        });
+        //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
+        _this.app.use(function (req, res, next) {
+            var _a, _b, _c;
+            if (endpoints_js_1.REST_ENDPOINTS.includes((_a = req.headers.referer) !== null && _a !== void 0 ? _a : '')
+                || endpoints_js_1.REST_ENDPOINTS.includes((_b = req.originalUrl) !== null && _b !== void 0 ? _b : '')
+                || endpoints_js_1.REST_ENDPOINTS.includes((_c = req.url) !== null && _c !== void 0 ? _c : '')) {
+                return next();
+            }
+            CSRF(req, res, next);
+        });
         /*
         * Using package compressor
         */
@@ -165,7 +176,7 @@ module.exports = /** @class */ (function (_super) {
         * Send csrf token on every request along with the authentication status
         */
         _this.app.use(function (req, res, next) {
-            var token = req.csrfToken();
+            var token = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
             // res.set({
             //     'csrf-Token':   token,
             //     'X-CSRF-TOKEN': token,
@@ -217,33 +228,7 @@ module.exports = /** @class */ (function (_super) {
         _this.app.use(function (err, req, res, next) {
             // todo api endpoints must not be csrf validated for a token
             if (err.code === _this.constants.CSRF.errCode) {
-                // let bypass = false;
-                // if (req.headers.referer || req.originalUrl || req.url) {
-                //     let is_referer_url     = '';
-                //     let is_originalUrl_url = '';
-                //     let is_url             = '';
-                //     // @ts-ignore
-                //     is_referer_url         = req.headers.referer;
-                //     is_url                 = req.url;
-                //     is_originalUrl_url     = req.originalUrl;
-                //     return REST_ENDPOINTS.forEach((endpoint) => {
-                //         console.log(endpoint)
-                //         console.log('is_referer_url', is_referer_url)
-                //         console.log('is_originalUrl_url', is_originalUrl_url)
-                //         console.log('is_url', is_url)
-                //         if (is_referer_url == endpoint
-                //             || is_originalUrl_url == endpoint
-                //             || is_url == endpoint) {
-                //             bypass = true;
-                //             return this.redirect(res, endpoint);
-                //         }
-                //     });
-                // }
-                // if (!bypass) {
-                //     this.invalidCsrfResponse(req, res);
-                // }
                 _this.invalidCsrfResponse(req, res);
-                // next()
             }
             if (err.code !== _this.constants.CSRF.errCode) {
                 next(err);
@@ -257,7 +242,7 @@ module.exports = /** @class */ (function (_super) {
         // @ts-ignore
         _this.sub_controller.deployRoutes(_this.app);
         /*
-        * Deploying apis
+        * Deploying api's endpoints
         */
         // @ts-ignore
         Singleton_js_1.Singleton.getApis().deployApi(_this.app);

@@ -81,7 +81,7 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    patchExmaple = (): Router => this.route('patch', '/get_examples/', {}, async (req: Request, res: Response, next: NextFunction) => {
+    patchExmaple = (): Router => this.route('patch', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success patched', {success: 'OK', id: new Date()}).sendAsJson(res);
     });
 
@@ -92,9 +92,8 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    putExmaple = (): Router => this.route('put', '/get_examples/', {}, async (req: Request, res: Response, next: NextFunction) => {
-        // return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
-        res.json({status: 'OK'});
+    putExmaple = (): Router => this.route('put', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+        return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
     });
 
     /**

@@ -94,7 +94,7 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.patchExmaple = function () { return _this.route('patch', '/get_examples/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.patchExmaple = function () { return _this.route('patch', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(201, 'Success patched', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
@@ -106,11 +106,9 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.putExmaple = function () { return _this.route('put', '/get_examples/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.putExmaple = function () { return _this.route('put', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                // return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
-                res.json({ status: 'OK' });
-                return [2 /*return*/];
+                return [2 /*return*/, new JsonResponse_1.default(201, 'Success put', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
         }); }); };
         /**

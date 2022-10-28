@@ -1,5 +1,6 @@
 'use strict';
 
+import csurf from 'csurf';
 import { NextFunction, Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import BaseController from "../../../core/controller/BaseController";
@@ -27,6 +28,7 @@ export = class Shop extends BaseController {
     protected order_object: Order;
     protected cart_items_object: CartItem;
     protected order_items_object: OrderItem;
+    csrfProtection: any;
     constructor() {
         super();
         /**
@@ -51,6 +53,7 @@ export = class Shop extends BaseController {
         this.order_object       = new Order();
         this.cart_items_object  = new CartItem();
         this.order_items_object = new OrderItem();
+        this.csrfProtection     = csurf({ cookie: true });
     }
 
     //**********\\

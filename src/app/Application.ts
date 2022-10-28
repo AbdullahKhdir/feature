@@ -153,15 +153,25 @@ export = class Application extends BaseController {
                 )
             )
         );
-        
+
         /*
         * CSRF Enabled
         */
-        this.app.use(Csrf({
+        var CSRF = Csrf({
             sessionKey:    this.constants.CSRF.sessionKey,
             cookie:        this.constants.CSRF.cookie,
             ignoreMethods: this.constants.CSRF.ignoreMethods,
-        }));
+        });
+
+        //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            if (REST_ENDPOINTS.includes(req.headers.referer ?? '')
+             || REST_ENDPOINTS.includes(req.originalUrl ?? '')
+             || REST_ENDPOINTS.includes(req.url ?? '')) {
+                return next();
+            }
+            CSRF(req, res, next);
+        });
 
         /*
         * Using package compressor
@@ -196,7 +206,7 @@ export = class Application extends BaseController {
         * Send csrf token on every request along with the authentication status
         */
         this.app.use((req: Request, res: Response, next: NextFunction) => {
-            const token = req.csrfToken();
+            const token = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
             // res.set({
             //     'csrf-Token':   token,
             //     'X-CSRF-TOKEN': token,
@@ -250,33 +260,7 @@ export = class Application extends BaseController {
         this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
             // todo api endpoints must not be csrf validated for a token
             if (err.code === this.constants.CSRF.errCode) {
-                // let bypass = false;
-                // if (req.headers.referer || req.originalUrl || req.url) {
-                //     let is_referer_url     = '';
-                //     let is_originalUrl_url = '';
-                //     let is_url             = '';
-                //     // @ts-ignore
-                //     is_referer_url         = req.headers.referer;
-                //     is_url                 = req.url;
-                //     is_originalUrl_url     = req.originalUrl;
-                //     return REST_ENDPOINTS.forEach((endpoint) => {
-                //         console.log(endpoint)
-                //         console.log('is_referer_url', is_referer_url)
-                //         console.log('is_originalUrl_url', is_originalUrl_url)
-                //         console.log('is_url', is_url)
-                //         if (is_referer_url == endpoint
-                //             || is_originalUrl_url == endpoint
-                //             || is_url == endpoint) {
-                //             bypass = true;
-                //             return this.redirect(res, endpoint);
-                //         }
-                //     });
-                // }
-                // if (!bypass) {
-                //     this.invalidCsrfResponse(req, res);
-                // }
                 this.invalidCsrfResponse(req, res);
-                // next()
             }
             if (err.code !== this.constants.CSRF.errCode)  {
                 next(err);
@@ -289,13 +273,14 @@ export = class Application extends BaseController {
         this.app.set('case sensitive routing', false);
         this.app.set('strict routing', false);
         // @ts-ignore
-        this.sub_controller.deployRoutes(this.app);
+        this.sub_controller.deployRoutes(this.app);        
+        
         /*
-        * Deploying apis
+        * Deploying api's endpoints
         */
         // @ts-ignore
         Singleton.getApis().deployApi(this.app);
-        
+
         /*
         * Passing default and helpful properties to all templates
         ? lasts for the life cycle of the application 

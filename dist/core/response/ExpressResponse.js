@@ -140,7 +140,7 @@ var ExpressResponse = /** @class */ (function () {
      * @returns Response
     */
     ExpressResponse.prototype.siteNotFound = function (res) {
-        return this.render(res, '404', { nav_title: 'Page not found', path: '/404/', csrf: res.req.csrfToken() }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
+        return this.render(res, '404', { nav_title: 'Page not found', path: '/404/' }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
     };
     /**
      * @function onErrorValidation
@@ -224,7 +224,6 @@ var ExpressResponse = /** @class */ (function () {
             error: 'Invalid CSRF token',
             warning: 'Please do not alter or delete the csrf token!',
             success: null,
-            csrf: req.csrfToken(),
         }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
     };
     /**
@@ -245,7 +244,6 @@ var ExpressResponse = /** @class */ (function () {
                 error: error.toString(),
                 warning: error.toString(),
                 success: null,
-                csrf: res.req.csrfToken(),
             }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
         }
         else if (config.configurations().environment === 'production') {
@@ -254,7 +252,6 @@ var ExpressResponse = /** @class */ (function () {
                 path: '/404/',
                 is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                 warning: 'Please contact the support team!',
-                csrf: res.req.csrfToken()
             }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
         }
         return res.end();

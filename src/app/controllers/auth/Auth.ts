@@ -26,6 +26,7 @@ export = class Auth extends BaseController {
     protected user: User;
     protected security_questions: SecurityQuestion;
     protected user_security_questions: UserSecurityQuestion;
+    csrfProtection: any;
     constructor() {
         super();
         this.methods = [

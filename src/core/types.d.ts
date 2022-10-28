@@ -1,5 +1,6 @@
 declare namespace Express {
     export interface Request {
+        disableCSRF:          boolean;
         user:                 any;
         user_cookie:          any;
         props:                Function;

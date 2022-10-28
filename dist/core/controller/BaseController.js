@@ -204,14 +204,14 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', { nav_title: 'Page not found', path: '/404/', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', { nav_title: 'Page not found', path: '/404/' })];
                 }
                 if (site_is_found === true) {
                     next();
                     site_is_found = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', { nav_title: 'Page not found', path: '/404/', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', { nav_title: 'Page not found', path: '/404/' })];
                 }
                 return [2 /*return*/];
             });
@@ -265,14 +265,14 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!' })];
                 }
                 if (is_post_request_successful === true) {
                     next();
                     is_post_request_successful = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!' })];
                 }
                 return [2 /*return*/];
             });
@@ -326,14 +326,14 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!' })];
                 }
                 if (is_put_request_successful === true) {
                     next();
                     is_put_request_successful = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!' })];
                 }
                 return [2 /*return*/];
             });
@@ -387,14 +387,14 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!' })];
                 }
                 if (is_patch_request_successful === true) {
                     next();
                     is_patch_request_successful = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!' })];
                 }
                 return [2 /*return*/];
             });
@@ -448,14 +448,14 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!' })];
                 }
                 if (is_delete_request_successful === true) {
                     next();
                     is_delete_request_successful = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!', csrf: req.csrfToken() })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render('404', { nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!' })];
                 }
                 return [2 /*return*/];
             });

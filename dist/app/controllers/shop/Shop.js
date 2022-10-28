@@ -53,6 +53,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var csurf_1 = __importDefault(require("csurf"));
 var express_validator_1 = require("express-validator");
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
 var Singleton_1 = require("../../../core/Singleton/Singleton");
@@ -973,6 +974,7 @@ module.exports = /** @class */ (function (_super) {
         _this.order_object = new Order_1.default();
         _this.cart_items_object = new CartItem_1.default();
         _this.order_items_object = new OrderItem_1.default();
+        _this.csrfProtection = (0, csurf_1.default)({ cookie: true });
         return _this;
     }
     return Shop;
