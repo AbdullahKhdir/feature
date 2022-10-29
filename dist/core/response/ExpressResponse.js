@@ -27,6 +27,7 @@ exports.ExpressResponse = void 0;
 var node_fs_1 = require("node:fs");
 var config = __importStar(require("../config"));
 var Singleton_1 = require("../Singleton/Singleton");
+var _404_logic_1 = require("../utils/404-logic");
 /**
  * @class Response
  * @constructor
@@ -217,14 +218,16 @@ var ExpressResponse = /** @class */ (function () {
      * @returns Response
     */
     ExpressResponse.prototype.invalidCsrfResponse = function (req, res) {
-        return this.render(res, '404', {
-            nav_title: 'Post request was interrupted!',
-            path: '/404/',
-            is_authenticated: null,
-            error: 'Invalid CSRF token',
-            warning: 'Please do not alter or delete the csrf token!',
-            success: null,
-        }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
+        return this.render(res, '404', (0, _404_logic_1.csrf)(req), 
+        // {
+        //     nav_title: 'Post request was interrupted!', 
+        //     path: '/404/',
+        //     is_authenticated: null,
+        //     error:   'Invalid CSRF token',
+        //     warning: 'Please do not alter or delete the csrf token!',
+        //     success: null,
+        // },
+        null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
     };
     /**
      * @function onError
@@ -232,7 +235,6 @@ var ExpressResponse = /** @class */ (function () {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
-     // TODO: Create and design general error page
     */
     ExpressResponse.prototype.onError = function (res, error) {
         if (error === void 0) { error = ''; }

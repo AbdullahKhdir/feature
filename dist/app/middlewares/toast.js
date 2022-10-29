@@ -44,7 +44,7 @@ function toast(req, res, next, app) {
     app.locals.error = error;
     app.locals.warning = warning;
     app.locals.success = success;
-    app.locals.post_data = post_data;
+    app.locals.post_data = post_data || {};
     app.locals.get_data = get_data;
     req.props = function () { return _flash_array; };
     req.setProp = function (key, value) {

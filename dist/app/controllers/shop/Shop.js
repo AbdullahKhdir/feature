@@ -750,7 +750,7 @@ module.exports = /** @class */ (function (_super) {
                         .catch(function (err) { return _this.onError(res, err); });
                 }
                 else {
-                    return [2 /*return*/, this.render(res, '404', { nav_title: 'Page not found', path: '/404/' }, null, this.constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND)];
+                    return [2 /*return*/, this.siteNotFound(res)];
                 }
                 return [2 /*return*/];
             });

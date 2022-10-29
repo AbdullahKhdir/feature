@@ -6,6 +6,7 @@ import OS from 'os';
 import { ENDPOINTS } from './core/api/apis_endpoints/endpoints';
 import * as config from './core/config';
 import { Singleton } from './core/Singleton/Singleton';
+import { csrf, siteNotFound } from './core/utils/404-logic';
 
 /**
  * @class Server
@@ -77,19 +78,7 @@ class Server {
                 //@ts-ignore
                 this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
                     if (err.code === this.constants.CSRF.errCode) {
-                        return res
-                        .status(this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN)
-                        .render(
-                            '404',
-                            {
-                                nav_title: this.__.capitalize(req.method) + ' request was interrupted!', 
-                                path: '/404/',
-                                is_authenticated: null,
-                                error:   'Invalid CSRF token',
-                                warning: 'Please do not alter or delete the csrf token!',
-                                success: null,
-                            }
-                        );
+                        return res.status(this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN).render('404', csrf(req));
                     }
                     
                     const _status       = err.statusCode || this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
@@ -107,16 +96,11 @@ class Server {
                     if (is_api_endpoint) {
                         return res.status(_status).json({message: message});
                     } else {
-                        return res
-                        .status(_status)
-                        .render(
-                            '404',
-                            {nav_title: 'Error occurred', path: '/404/', error:   message},
-                        );
+                        return res.status(_status).render('404', siteNotFound(req));
                     }
-                });
+                })
+                                
                 const server = https
-                               //@ts-ignore
                                .createServer(httpsOptions, this.app).listen(port, () => {
                                     if (config.configurations().execution_point === this.constants.NPM) {
                                         console.log(

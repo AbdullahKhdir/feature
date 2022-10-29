@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { ReadStream } from 'node:fs';
 import * as config from '../config';
 import { Singleton } from '../Singleton/Singleton';
+import { csrf } from '../utils/404-logic';
 
 /**
  * @class Response
@@ -206,14 +207,15 @@ export abstract class ExpressResponse {
         return this.render(
             res,
             '404',
-            {
-                nav_title: 'Post request was interrupted!', 
-                path: '/404/',
-                is_authenticated: null,
-                error:   'Invalid CSRF token',
-                warning: 'Please do not alter or delete the csrf token!',
-                success: null,
-            },
+            csrf(req),
+            // {
+            //     nav_title: 'Post request was interrupted!', 
+            //     path: '/404/',
+            //     is_authenticated: null,
+            //     error:   'Invalid CSRF token',
+            //     warning: 'Please do not alter or delete the csrf token!',
+            //     success: null,
+            // },
             null,
             this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN
         );
@@ -225,7 +227,6 @@ export abstract class ExpressResponse {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
-     // TODO: Create and design general error page 
     */
     onError(res: Response, error: any = '') : Response {
         if (config.configurations().environment === 'development') {

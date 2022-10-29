@@ -55,6 +55,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var Route_1 = __importDefault(require("../routes/Route"));
 var Singleton_1 = require("../Singleton/Singleton");
+var _404_logic_1 = require("../utils/404-logic");
 module.exports = /** @class */ (function (_super) {
     __extends(BaseController, _super);
     function BaseController() {
@@ -204,14 +205,14 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', { nav_title: 'Page not found', path: '/404/' })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', (0, _404_logic_1.siteNotFound)(req))];
                 }
                 if (site_is_found === true) {
                     next();
                     site_is_found = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', { nav_title: 'Page not found', path: '/404/' })];
+                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', (0, _404_logic_1.siteNotFound)(req))];
                 }
                 return [2 /*return*/];
             });

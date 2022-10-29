@@ -1,5 +1,5 @@
 <main>
-    <input type="hidden" class="posted_data" id="posted_data" name="posted_data" value="<%= JSON.stringify(post_data) %>">
+    <input type="hidden" class="posted_data" id="posted_data" name="posted_data" value="<%= typeof post_data !== 'undefined' ? JSON.stringify(post_data) : {} %>">
     <% if (error) { %>
         <div style="display:none" class="user-message user-message--error"><%= error %></div>
     <% } %>
@@ -9,7 +9,7 @@
     <% if (success) { %>
             <div style="display:none" class="user-message user-message--success"><%= success %></div>
     <% } %>
-    <% if (errored_inputs) { %>
+    <% if (typeof errored_inputs !== 'undefined') { %>
             <input id="errored_inputs" class="errored_inputs" type="hidden" name="errored_inputs" value="<%= JSON.stringify(errored_inputs) %>">
     <% } %>
     <% if (typeof validation_errors !== 'undefined') { %>

@@ -67,6 +67,7 @@ var os_1 = __importDefault(require("os"));
 var endpoints_1 = require("./core/api/apis_endpoints/endpoints");
 var config = __importStar(require("./core/config"));
 var Singleton_1 = require("./core/Singleton/Singleton");
+var _404_logic_1 = require("./core/utils/404-logic");
 /**
  * @class Server
  * @constructor
@@ -126,16 +127,7 @@ var Server = /** @class */ (function () {
                             //@ts-ignore
                             this.app.use(function (err, req, res, next) {
                                 if (err.code === _this.constants.CSRF.errCode) {
-                                    return res
-                                        .status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN)
-                                        .render('404', {
-                                        nav_title: _this.__.capitalize(req.method) + ' request was interrupted!',
-                                        path: '/404/',
-                                        is_authenticated: null,
-                                        error: 'Invalid CSRF token',
-                                        warning: 'Please do not alter or delete the csrf token!',
-                                        success: null,
-                                    });
+                                    return res.status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN).render('404', (0, _404_logic_1.csrf)(req));
                                 }
                                 var _status = err.statusCode || _this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                                 var message = err.message;
@@ -151,13 +143,10 @@ var Server = /** @class */ (function () {
                                     return res.status(_status).json({ message: message });
                                 }
                                 else {
-                                    return res
-                                        .status(_status)
-                                        .render('404', { nav_title: 'Error occurred', path: '/404/', error: message });
+                                    return res.status(_status).render('404', (0, _404_logic_1.siteNotFound)(req));
                                 }
                             });
                             server = https_1.default
-                                //@ts-ignore
                                 .createServer(httpsOptions, this.app).listen(port, function () {
                                 if (config.configurations().execution_point === _this.constants.NPM) {
                                     console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');

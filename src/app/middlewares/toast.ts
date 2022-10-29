@@ -44,7 +44,7 @@ export function toast(req: Request, res: Response, next: NextFunction, app: any)
     app.locals.error               = error;
     app.locals.warning             = warning;
     app.locals.success             = success;
-    app.locals.post_data           = post_data;
+    app.locals.post_data           = post_data || {};
     app.locals.get_data            = get_data;
     
     req.props            = () => _flash_array;

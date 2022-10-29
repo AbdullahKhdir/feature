@@ -753,13 +753,7 @@ export = class Shop extends BaseController {
             })
             .catch((err: any) => this.onError(res, err));
         } else {
-            return this.render(
-                res,
-                '404',
-                {nav_title: 'Page not found', path: '/404/'},
-                null,
-                this.constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
-            );
+            return this.siteNotFound(res);
         }
     });
 

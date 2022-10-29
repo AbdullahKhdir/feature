@@ -9,16 +9,15 @@ import Crypto from 'crypto';
 import Csrf from 'csurf';
 import { Express, NextFunction, Request, Response } from 'express';
 import Helmet from 'helmet';
-import Morgan from 'morgan';
-import BaseController from '../core/controller/BaseController.js';
-import ExpressSession from '../core/framework/ExpressSession.js';
-import { Singleton } from '../core/Singleton/Singleton.js';
+import BaseController from '../core/controller/BaseController';
+import ExpressSession from '../core/framework/ExpressSession';
+import { Singleton } from '../core/Singleton/Singleton';
 import Locals from '../core/utils/AppLocals.js';
 import { reqUtil } from './middlewares/request_utilities';
 import cache_control from '../core/middlewares/cache_control';
 import { toast } from './middlewares/toast';
-import morgan_logger from '../core/middlewares/morgan_logger.js';
-import { ENDPOINTS } from '../core/api/apis_endpoints/endpoints.js';
+import morgan_logger from '../core/middlewares/morgan_logger';
+import { ENDPOINTS } from '../core/api/apis_endpoints/endpoints';
 
 /**
  * @class Application

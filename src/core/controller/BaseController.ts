@@ -5,6 +5,7 @@ import { Express } from "../framework/Express";
 import Routes from "../routes/Route";
 import { Singleton } from "../Singleton/Singleton";
 import Csrf from 'csurf';
+import { siteNotFound } from "../utils/404-logic";
 
 /**
  * @class BaseController
@@ -176,20 +177,14 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render(
-                    '404',
-                    {nav_title: 'Page not found', path: '/404/'}
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', siteNotFound(req));
             }
 
             if (site_is_found === true) {
                 next();
                 site_is_found = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render(
-                    '404',
-                    {nav_title: 'Page not found', path: '/404/'}
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', siteNotFound(req));
             }
         }));
         // @ts-ignore

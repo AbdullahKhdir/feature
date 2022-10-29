@@ -26,15 +26,15 @@ var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var crypto_1 = __importDefault(require("crypto"));
 var csurf_1 = __importDefault(require("csurf"));
 var helmet_1 = __importDefault(require("helmet"));
-var BaseController_js_1 = __importDefault(require("../core/controller/BaseController.js"));
-var ExpressSession_js_1 = __importDefault(require("../core/framework/ExpressSession.js"));
-var Singleton_js_1 = require("../core/Singleton/Singleton.js");
+var BaseController_1 = __importDefault(require("../core/controller/BaseController"));
+var ExpressSession_1 = __importDefault(require("../core/framework/ExpressSession"));
+var Singleton_1 = require("../core/Singleton/Singleton");
 var AppLocals_js_1 = __importDefault(require("../core/utils/AppLocals.js"));
 var request_utilities_1 = require("./middlewares/request_utilities");
 var cache_control_1 = __importDefault(require("../core/middlewares/cache_control"));
 var toast_1 = require("./middlewares/toast");
-var morgan_logger_js_1 = __importDefault(require("../core/middlewares/morgan_logger.js"));
-var endpoints_js_1 = require("../core/api/apis_endpoints/endpoints.js");
+var morgan_logger_1 = __importDefault(require("../core/middlewares/morgan_logger"));
+var endpoints_1 = require("../core/api/apis_endpoints/endpoints");
 module.exports = /** @class */ (function (_super) {
     __extends(Application, _super);
     function Application() {
@@ -43,10 +43,10 @@ module.exports = /** @class */ (function (_super) {
         * Init The Application
         */
         _this.app = _this.express.getExpress();
-        _this.body_parser = Singleton_js_1.Singleton.getBodyParser();
-        _this.path = Singleton_js_1.Singleton.getPath();
+        _this.body_parser = Singleton_1.Singleton.getBodyParser();
+        _this.path = Singleton_1.Singleton.getPath();
         _this.sub_controller = _this;
-        _this.session = ExpressSession_js_1.default.getExpressSession;
+        _this.session = ExpressSession_1.default.getExpressSession;
         /*
         * Sets the following policies
           ? contentSecurityPolicy
@@ -87,7 +87,7 @@ module.exports = /** @class */ (function (_super) {
         /*
         * Enable Logger
         */
-        _this.app.use(morgan_logger_js_1.default);
+        _this.app.use(morgan_logger_1.default);
         /*
         * To allow preflight requests on all http(s) methods*\
         */
@@ -127,7 +127,7 @@ module.exports = /** @class */ (function (_super) {
         var secret = crypto_1.default.randomBytes(48).toString('base64');
         _this.app.use(_this.session(Object.assign(_this.constants.EXPRESS.SESSION_OPTIONS, {
             secret: secret,
-            store: Singleton_js_1.Singleton.getDb().initiateSession(),
+            store: Singleton_1.Singleton.getDb().initiateSession(),
         })));
         /*
         * CSRF Enabled
@@ -139,9 +139,9 @@ module.exports = /** @class */ (function (_super) {
         });
         //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
         _this.app.use(function (req, res, next) {
-            if (endpoints_js_1.ENDPOINTS.includes(req.headers.referer || '')
-                || endpoints_js_1.ENDPOINTS.includes(req.originalUrl || '')
-                || endpoints_js_1.ENDPOINTS.includes(req.url || '')) {
+            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
                 return next();
             }
             CSRF(req, res, next);
@@ -232,7 +232,7 @@ module.exports = /** @class */ (function (_super) {
         * Deploying api's endpoints
         */
         // @ts-ignore
-        Singleton_js_1.Singleton.getApis().deployApi(_this.app);
+        Singleton_1.Singleton.getApis().deployApi(_this.app);
         /*
         * Passing default and helpful properties to all templates
         ? lasts for the life cycle of the application
@@ -278,4 +278,4 @@ module.exports = /** @class */ (function (_super) {
         configurable: true
     });
     return Application;
-}(BaseController_js_1.default));
+}(BaseController_1.default));
