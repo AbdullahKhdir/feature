@@ -208,7 +208,7 @@ export = class Admin extends BaseController {
             }
         );
                 
-        const product_id = +req.getDynamicParam('product_id') ?? false;
+        const product_id = +req.getDynamicParam('product_id') || false;
         const user_id    = +req.getCurrentUser().id;
         
         if (this.__.isNumber(user_id) && this.__.isNumber(product_id)) {
@@ -319,7 +319,7 @@ export = class Admin extends BaseController {
         const title       = this.__.capitalize(req.getFormPostedData('title'));
         const price       = req.getFormPostedData('price');
         const description = this.__.capitalize(req.getFormPostedData('description'));
-        const image       = req.getUploadedFile() ?? null;
+        const image       = req.getUploadedFile() || null;
         
         const values : any = {
             title: title,
@@ -551,7 +551,7 @@ export = class Admin extends BaseController {
                 res,
                 'admin/products',
                 {
-                    products: rows ?? [],
+                    products: rows || [],
                     nav_title: 'Admin Products',
                     path : '/admin/products/',
                     root: 'shop',

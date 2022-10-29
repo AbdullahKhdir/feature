@@ -141,10 +141,9 @@ var Server = /** @class */ (function () {
                                 var message = err.message;
                                 var is_api_endpoint = false;
                                 endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                    var _a, _b, _c;
-                                    if (endpoints_1.ENDPOINTS.includes((_a = req.headers.referer) !== null && _a !== void 0 ? _a : '')
-                                        || endpoints_1.ENDPOINTS.includes((_b = req.originalUrl) !== null && _b !== void 0 ? _b : '')
-                                        || endpoints_1.ENDPOINTS.includes((_c = req.url) !== null && _c !== void 0 ? _c : '')) {
+                                    if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                        || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                        || endpoints_1.ENDPOINTS.includes(req.url || '')) {
                                         is_api_endpoint = true;
                                     }
                                 });

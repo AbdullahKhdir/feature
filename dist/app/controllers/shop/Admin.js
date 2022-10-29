@@ -132,8 +132,7 @@ module.exports = /** @class */ (function (_super) {
         _this.editProduct = function () { return _this.route('get', '/admin/edit-product/:product_id/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var uploader_form, product_id, user_id;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
+            return __generator(this, function (_a) {
                 if (!req.isGet()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
@@ -146,7 +145,7 @@ module.exports = /** @class */ (function (_super) {
                     max_files: 1,
                     form_id: 'edit-product',
                 });
-                product_id = (_a = +req.getDynamicParam('product_id')) !== null && _a !== void 0 ? _a : false;
+                product_id = +req.getDynamicParam('product_id') || false;
                 user_id = +req.getCurrentUser().id;
                 if (this.__.isNumber(user_id) && this.__.isNumber(product_id)) {
                     this.product_object.get({ id: product_id, user_id: user_id })
@@ -251,8 +250,7 @@ module.exports = /** @class */ (function (_super) {
         _this.postEditedProduct = function () { return _this.route('post', '/admin/edit-product/:product_id/', _this.validatedEditProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var product_id, title, price, description, image, values, errors;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
+            return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
@@ -261,7 +259,7 @@ module.exports = /** @class */ (function (_super) {
                 title = this.__.capitalize(req.getFormPostedData('title'));
                 price = req.getFormPostedData('price');
                 description = this.__.capitalize(req.getFormPostedData('description'));
-                image = (_a = req.getUploadedFile()) !== null && _a !== void 0 ? _a : null;
+                image = req.getUploadedFile() || null;
                 values = {
                     title: title,
                     price: price,
@@ -501,7 +499,7 @@ module.exports = /** @class */ (function (_super) {
                 user_products
                     .then(function (rows) {
                     return _this.render(res, 'admin/products', {
-                        products: rows !== null && rows !== void 0 ? rows : [],
+                        products: rows || [],
                         nav_title: 'Admin Products',
                         path: '/admin/products/',
                         root: 'shop',

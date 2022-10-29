@@ -31,12 +31,11 @@ var dotenv_1 = __importDefault(require("dotenv"));
 var cmd = __importStar(require("./utils/CommandExecuter"));
 dotenv_1.default.config();
 function configurations() {
-    var _a, _b, _c, _d, _e;
     return {
         host: process.env['HOST'],
         port: process.env['DB_PORT'],
-        user: (_b = (_a = process.env['TEST_USERNAME']) !== null && _a !== void 0 ? _a : process.env['PRODUCTION_USERNAME']) !== null && _b !== void 0 ? _b : process.env['DEVELOPMENT_USERNAME'],
-        password: (_d = (_c = process.env['TEST_PASSWORD']) !== null && _c !== void 0 ? _c : process.env['PRODUCTION_PASSWORD']) !== null && _d !== void 0 ? _d : process.env['DEVELOPMENT_PASSWORD'],
+        user: process.env['TEST_USERNAME'] || process.env['PRODUCTION_USERNAME'] || process.env['DEVELOPMENT_USERNAME'],
+        password: process.env['TEST_PASSWORD'] || process.env['PRODUCTION_PASSWORD'] || process.env['DEVELOPMENT_PASSWORD'],
         database: process.env['DATABASE'],
         connectionLimit: process.env['CONNECTION_LIMIT'],
         encryption_key: '$2a$12$CAVyfpGSo.AbWgby9JNCXOf4rt7GFbxxSimczOqKvzrdCOAK5CT9u',
@@ -46,7 +45,7 @@ function configurations() {
         is_worker_pool_active: process.env['WORKER_POOL_ENABLED'] === "0" ? process.env['NODE_ENV'] === 'production' ? process.env['WORKER_POOL_ENABLED'] = "1" : process.env['WORKER_POOL_ENABLED'] = "0" : process.env['WORKER_POOL_ENABLED'],
         os: process.platform === 'darwin' ? 'MAC' : process.platform === 'linux' ? 'LINUX' : process.platform === 'win32' ? 'WINDOWS' : process.platform === 'freebsd' || process.platform === 'openbsd' || process.platform === 'sunos' ? 'UNIX' : 'UNKNOWN',
         socket_path: process.platform !== 'win32' ? cmd._mysqlSocket() : '',
-        execution_point: (_e = process.env['EXECUTION_POINT']) !== null && _e !== void 0 ? _e : ''
+        execution_point: process.env['EXECUTION_POINT'] || ''
     };
 }
 exports.configurations = configurations;

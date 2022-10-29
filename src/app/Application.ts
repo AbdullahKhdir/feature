@@ -164,9 +164,9 @@ export = class Application extends BaseController {
 
         //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
         this.app.use((req: Request, res: Response, next: NextFunction) => {
-            if (ENDPOINTS.includes(req.headers.referer ?? '')
-             || ENDPOINTS.includes(req.originalUrl ?? '')
-             || ENDPOINTS.includes(req.url ?? '')) {
+            if (ENDPOINTS.includes(req.headers.referer || '')
+             || ENDPOINTS.includes(req.originalUrl || '')
+             || ENDPOINTS.includes(req.url || '')) {
                 return next();
             }
             CSRF(req, res, next);

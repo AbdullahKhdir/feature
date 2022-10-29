@@ -377,8 +377,8 @@ module.exports = /** @class */ (function (_super) {
                         first_question_id: first_question ? questions[first_question - 1].id : '',
                         second_question: second_question ? questions[second_question - 1].question : '',
                         second_question_id: second_question ? questions[second_question - 1].id : '',
-                        first_answer: first_answer !== null && first_answer !== void 0 ? first_answer : '',
-                        second_answer: second_answer !== null && second_answer !== void 0 ? second_answer : '',
+                        first_answer: first_answer || '',
+                        second_answer: second_answer || '',
                         email: email
                     });
                 })
@@ -505,8 +505,8 @@ module.exports = /** @class */ (function (_super) {
                             first_question_id: first_question ? questions[first_question - 1].id : '',
                             second_question: second_question ? questions[second_question - 1].question : '',
                             second_question_id: second_question ? questions[second_question - 1].id : '',
-                            first_answer: first_answer !== null && first_answer !== void 0 ? first_answer : '',
-                            second_answer: second_answer !== null && second_answer !== void 0 ? second_answer : ''
+                            first_answer: first_answer || '',
+                            second_answer: second_answer || ''
                         });
                     })
                         .catch(function (err) { return _this.onError(res, err); });
@@ -532,8 +532,8 @@ module.exports = /** @class */ (function (_super) {
                                         first_question_id: first_question ? questions[first_question - 1].id : '',
                                         second_question: second_question ? questions[second_question - 1].question : '',
                                         second_question_id: second_question ? questions[second_question - 1].id : '',
-                                        first_answer: first_answer !== null && first_answer !== void 0 ? first_answer : '',
-                                        second_answer: second_answer !== null && second_answer !== void 0 ? second_answer : ''
+                                        first_answer: first_answer || '',
+                                        second_answer: second_answer || ''
                                     });
                                 }
                             }).catch(function (err) { return _this.onError(res, err); });
@@ -555,8 +555,8 @@ module.exports = /** @class */ (function (_super) {
                                     first_question_id: first_question ? questions[first_question - 1].id : '',
                                     second_question: second_question ? questions[second_question - 1].question : '',
                                     second_question_id: second_question ? questions[second_question - 1].id : '',
-                                    first_answer: first_answer !== null && first_answer !== void 0 ? first_answer : '',
-                                    second_answer: second_answer !== null && second_answer !== void 0 ? second_answer : ''
+                                    first_answer: first_answer || '',
+                                    second_answer: second_answer || ''
                                 });
                             })
                                 .catch(function (err) { return _this.onError(res, err); });

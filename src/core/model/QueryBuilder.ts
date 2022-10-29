@@ -287,8 +287,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -354,8 +354,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -423,8 +423,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -490,8 +490,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -559,8 +559,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -625,8 +625,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -694,8 +694,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -762,8 +762,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -822,8 +822,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model   = this._model;
         } else {
             table   = this.__.isEmpty(this._table) ? this._table : '';
@@ -856,8 +856,8 @@ export = class QueryBuilder {
         let model   = null;
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model   = this._model;
         } else {
             table   = this.__.isEmpty(this._table) ? this._table : '';
@@ -893,8 +893,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -948,8 +948,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1013,8 +1013,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1075,8 +1075,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1143,8 +1143,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1210,8 +1210,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1280,8 +1280,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1346,8 +1346,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1415,8 +1415,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1481,8 +1481,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1550,8 +1550,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1616,8 +1616,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1667,8 +1667,8 @@ export = class QueryBuilder {
         let model   = null;
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model   = this._model;
         } else {
             table   = this.__.isEmpty(this._table) ? this._table : '';
@@ -1704,8 +1704,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1758,8 +1758,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model   = this._model;
         } else {
             table   = this.__.isEmpty(this._table) ? this._table : '';
@@ -1801,8 +1801,8 @@ export = class QueryBuilder {
         }
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object  = Object.values(Object.keys(columns));
             model   = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1848,8 +1848,8 @@ export = class QueryBuilder {
         let model   = null;
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model   = this._model;
         } else {
             table   = this.__.isEmpty(this._table) ? this._table : '';
@@ -1877,8 +1877,8 @@ export = class QueryBuilder {
         let model   = null;
 
         if (this._model) {
-            table   = this._model.table ?? this._table;
-            columns = this._model.columns ?? this._columns;
+            table   = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model   = this._model;
         } else {
             table   = this.__.isEmpty(this._table) ? this._table : '';

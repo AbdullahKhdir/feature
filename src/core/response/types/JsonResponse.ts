@@ -34,7 +34,7 @@ export =  class JsonResponse extends ExpressResponse {
      * @returns Response
     */
     sendAsJson(res: Response) {
-       return super.renderAsJson(res, Object.assign({status_code: this.getCode() ?? Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK}, {message: this.getMessage()}, {data: this.getData()}));
+       return super.renderAsJson(res, Object.assign({status_code: this.getCode() || Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK}, {message: this.getMessage()}, {data: this.getData()}));
     }
 
     /**

@@ -484,7 +484,7 @@ class Person implements Greetable, AnotherInterface, CustomTypeAsInterface {
 
     greet(phrase: string) : void {     //must be implemented
         console.log(phrase + ' ' + this.name);
-        console.log(this.age ?? '');
+        console.log(this.age || '');
     }
 }
 

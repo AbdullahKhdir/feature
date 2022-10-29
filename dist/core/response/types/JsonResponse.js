@@ -37,8 +37,7 @@ module.exports = /** @class */ (function (_super) {
      * @returns Response
     */
     JsonResponse.prototype.sendAsJson = function (res) {
-        var _a;
-        return _super.prototype.renderAsJson.call(this, res, Object.assign({ status_code: (_a = this.getCode()) !== null && _a !== void 0 ? _a : Singleton_1.Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK }, { message: this.getMessage() }, { data: this.getData() }));
+        return _super.prototype.renderAsJson.call(this, res, Object.assign({ status_code: this.getCode() || Singleton_1.Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK }, { message: this.getMessage() }, { data: this.getData() }));
     };
     /**
      * @function getData

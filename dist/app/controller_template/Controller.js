@@ -94,9 +94,8 @@ module.exports = /** @class */ (function (_super) {
         _this.firstDynMethod = function () { return _this.route('get', '/dynamic/:firstDynamicInput', _this.firstDynMethodMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var dynamicInput;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
-                dynamicInput = (_a = +req.getDynamicParam('dynamicInput')) !== null && _a !== void 0 ? _a : false;
+            return __generator(this, function (_a) {
+                dynamicInput = +req.getDynamicParam('dynamicInput') || false;
                 this.exmaple_model.filter(dynamicInput)
                     // @ts-ignore 
                     .then(function (_a) {
@@ -105,7 +104,7 @@ module.exports = /** @class */ (function (_super) {
                         // @ts-ignore 
                         var rows_1 = rows_1[0];
                         return _this.render(res, 'example/index', {
-                            nav_title: rows_1 !== null && rows_1 !== void 0 ? rows_1 : 'Dynamic route',
+                            nav_title: rows_1 || 'Dynamic route',
                             path: '/dynamic/',
                             product: rows_1
                         });

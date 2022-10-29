@@ -247,7 +247,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.is = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -266,8 +265,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -309,7 +308,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.isNot = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -328,8 +326,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -373,7 +371,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.contains = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -392,8 +389,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -436,7 +433,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.notContains = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -455,8 +451,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -501,7 +497,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.startsWith = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -520,8 +515,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -564,7 +559,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.notStartsWith = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -583,8 +577,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -629,7 +623,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.endsWith = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -648,8 +641,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -692,7 +685,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.notEndsWith = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -711,8 +703,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -755,7 +747,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.custom = function (sub_query) {
-        var _a, _b;
         var table = null;
         var columns = null;
         var model = null;
@@ -765,8 +756,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model = this._model;
         }
         else {
@@ -792,13 +783,12 @@ module.exports = /** @class */ (function () {
      * @returns Boolean
     */
     QueryBuilder.prototype.reset = function () {
-        var _a, _b;
         var table = null;
         var columns = null;
         var model = null;
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model = this._model;
         }
         else {
@@ -820,7 +810,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.isNull = function (col) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -831,8 +820,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -871,7 +860,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.isNotNull = function (col) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -882,8 +870,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -925,7 +913,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.matchesPattern = function (col, regex) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -941,8 +928,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -982,7 +969,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.notMatchesPattern = function (col, regex) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -998,8 +984,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1042,7 +1028,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.matchesSearchTerm = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1061,8 +1046,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1105,7 +1090,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.notMatchesSearchTerm = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1124,8 +1108,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1170,7 +1154,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.from = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1189,8 +1172,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1232,7 +1215,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.to = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1251,8 +1233,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1296,7 +1278,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.isLessThan = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1315,8 +1296,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1358,7 +1339,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.isGreaterThan = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1377,8 +1357,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1422,7 +1402,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.isLessThanEqual = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1441,8 +1420,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1484,7 +1463,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.isGreaterThanEqual = function (col, value) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1503,8 +1481,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1545,13 +1523,12 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.where = function () {
-        var _a, _b;
         var table = null;
         var columns = null;
         var model = null;
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model = this._model;
         }
         else {
@@ -1573,7 +1550,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.groupBy = function (col) {
-        var _a, _b;
         var object = null;
         var table = null;
         var columns = null;
@@ -1584,8 +1560,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1624,7 +1600,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.having = function (condition) {
-        var _a, _b;
         var table = null;
         var columns = null;
         var model = null;
@@ -1634,8 +1609,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model = this._model;
         }
         else {
@@ -1664,7 +1639,6 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.orderBy = function (col, sort) {
-        var _a, _b;
         if (sort === void 0) { sort = 'ASC'; }
         var object = null;
         var table = null;
@@ -1676,8 +1650,8 @@ module.exports = /** @class */ (function () {
             }
         }
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             object = Object.values(Object.keys(columns));
             model = this._model;
             if (this.__.isEmpty(Object.keys(columns))) {
@@ -1715,13 +1689,12 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.nesting = function () {
-        var _a, _b;
         var table = null;
         var columns = null;
         var model = null;
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model = this._model;
         }
         else {
@@ -1742,13 +1715,12 @@ module.exports = /** @class */ (function () {
      * @returns QueryBuilder
     */
     QueryBuilder.prototype.closeNesting = function () {
-        var _a, _b;
         var table = null;
         var columns = null;
         var model = null;
         if (this._model) {
-            table = (_a = this._model.table) !== null && _a !== void 0 ? _a : this._table;
-            columns = (_b = this._model.columns) !== null && _b !== void 0 ? _b : this._columns;
+            table = this._model.table || this._table;
+            columns = this._model.columns || this._columns;
             model = this._model;
         }
         else {

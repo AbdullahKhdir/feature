@@ -97,9 +97,9 @@ class Server {
                     var is_api_endpoint = false;
                     
                     ENDPOINTS.forEach((endpoint: any) => {
-                        if (ENDPOINTS.includes(req.headers.referer ?? '')
-                        || ENDPOINTS.includes(req.originalUrl ?? '')
-                        || ENDPOINTS.includes(req.url ?? '')) {
+                        if (ENDPOINTS.includes(req.headers.referer || '')
+                        || ENDPOINTS.includes(req.originalUrl || '')
+                        || ENDPOINTS.includes(req.url || '')) {
                             is_api_endpoint = true;
                         }
                     });

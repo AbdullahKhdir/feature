@@ -157,7 +157,7 @@ module.exports = /** @class */ (function (_super) {
                         var paginator = Singleton_1.Singleton.getPagination().getRecords(req, rows, 12);
                         var records = paginator[0], current_page = paginator[1], pages = paginator[2], _paginator = paginator[3];
                         return _this.render(res, 'shop/index', {
-                            products: records !== null && records !== void 0 ? records : [],
+                            products: records || [],
                             nav_title: 'shop',
                             path: '/',
                             root: 'shop',
@@ -202,15 +202,14 @@ module.exports = /** @class */ (function (_super) {
         _this.cart = function () { return _this.route('get', '/cart/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var user_cart;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
+            return __generator(this, function (_a) {
                 if (!req.isGet()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.updatedContentAlways();
                 res.removeHeader("Cross-Origin-Resource-Policy");
                 res.removeHeader("Cross-Origin-Embedder-Policy");
-                user_cart = (_a = req.getCurrentUser().getCart()) !== null && _a !== void 0 ? _a : [];
+                user_cart = req.getCurrentUser().getCart() || [];
                 if (!user_cart) {
                     return [2 /*return*/, this.onError(res, new Error('User is not available'))];
                 }
@@ -369,13 +368,12 @@ module.exports = /** @class */ (function (_super) {
         _this.postCart = function () { return _this.route('post', '/cart/', _this.cartMiddlewares(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var errors, product_id, user_id;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
+            return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 errors = (0, express_validator_1.validationResult)(req);
-                product_id = (_a = req.getFormPostedData('product_id')) !== null && _a !== void 0 ? _a : '';
+                product_id = req.getFormPostedData('product_id') || '';
                 user_id = req.getCurrentUser().id;
                 if (errors.isEmpty()) {
                     // @ts-ignore 
@@ -723,28 +721,26 @@ module.exports = /** @class */ (function (_super) {
         _this.dynProductInfo = function () { return _this.route('get', '/products/:productId/', { userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var product_id, user_id;
             var _this = this;
-            var _a, _b;
-            return __generator(this, function (_c) {
+            return __generator(this, function (_a) {
                 if (!req.isGet()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.updatedContentAlways();
-                product_id = (_a = req.getDynamicParam('productId')) !== null && _a !== void 0 ? _a : false;
+                product_id = req.getDynamicParam('productId') || false;
                 if (req.getCurrentUser()) {
-                    user_id = (_b = +req.getCurrentUser().id) !== null && _b !== void 0 ? _b : false;
+                    user_id = +req.getCurrentUser().id || false;
                 }
                 if (!isNaN(product_id)) {
                     product_id = +product_id;
                     this.product.get({ id: product_id, user_id: user_id })
                         // @ts-ignore 
                         .then(function (rows) {
-                        var _a;
                         if (rows) {
                             var product = rows[0];
                             return _this.render(res, 'shop/product-detail', {
-                                nav_title: (_a = product.title) !== null && _a !== void 0 ? _a : 'Product Details',
+                                nav_title: product.title || 'Product Details',
                                 path: '/products/',
-                                product: product !== null && product !== void 0 ? product : []
+                                product: product || []
                             });
                         }
                         else {
@@ -769,12 +765,11 @@ module.exports = /** @class */ (function (_super) {
         _this.deleteCartProducts = function () { return _this.route('post', '/cart/delete-items/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var cart_item_product_id;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
+            return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
-                cart_item_product_id = (_a = req.getFormPostedData('product_items_id')) !== null && _a !== void 0 ? _a : false;
+                cart_item_product_id = req.getFormPostedData('product_items_id') || false;
                 if (cart_item_product_id) {
                     this.cart_items_object.get({ product_id: cart_item_product_id }).then(function (result) {
                         if (result) {
@@ -815,12 +810,11 @@ module.exports = /** @class */ (function (_super) {
         _this.deleteCartProduct = function () { return _this.route('post', '/cart/delete-item/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             var cart_item_product_id;
             var _this = this;
-            var _a;
-            return __generator(this, function (_b) {
+            return __generator(this, function (_a) {
                 if (!req.isPost()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
-                cart_item_product_id = (_a = req.getFormPostedData('product_id')) !== null && _a !== void 0 ? _a : false;
+                cart_item_product_id = req.getFormPostedData('product_id') || false;
                 if (cart_item_product_id) {
                     this.cart_items_object.get({ product_id: cart_item_product_id }).then(function (result) {
                         if (result) {

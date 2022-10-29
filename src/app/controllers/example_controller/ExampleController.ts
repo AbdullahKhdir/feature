@@ -252,7 +252,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     firstDynMethod = () => this.route('get', '/dynamic/:firstDynamicInput', this.firstDynMethodMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
-            const dynamicInput = +req.getDynamicParam('dynamicInput') ?? false;
+            const dynamicInput = +req.getDynamicParam('dynamicInput') || false;
             // @ts-ignore 
             this.exmaple_model.filter(dynamicInput).then(([rows, fields]) => {
                 if (rows) {
@@ -262,7 +262,7 @@ module.exports = class ExampleController extends BaseController{
                         res,
                         'example/index',
                         {
-                            nav_title: rows ?? 'Dynamic route',
+                            nav_title: rows || 'Dynamic route',
                             path: '/dynamic/',
                             product: rows
                         }
@@ -280,7 +280,7 @@ module.exports = class ExampleController extends BaseController{
      * @returns Response
     */
     secondDynMethod = () => this.route('get', '/dynamic_two/:secondDynamicInput', this.secondDynMethodMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
-        const dynamicInput = +req.getDynamicParam('dynamicInput') ?? false;
+        const dynamicInput = +req.getDynamicParam('dynamicInput') || false;
         this.exmaple_model.filter(dynamicInput)
         // @ts-ignore 
         .then(([rows, fields]) => {
@@ -291,7 +291,7 @@ module.exports = class ExampleController extends BaseController{
                     res,
                     'example/index',
                     {
-                        nav_title: rows ?? 'Dynamic route',
+                        nav_title: rows || 'Dynamic route',
                         path: '/dynamic/',
                         product: rows
                     }

@@ -22,11 +22,10 @@ module.exports = /** @class */ (function () {
         return this.instance;
     };
     Pagination.prototype.getCurrentPage = function (req) {
-        var _a;
         if (!req || typeof req === 'undefined') {
             return new LogicException_1.default('Request object must be givin as parameter!');
         }
-        var current_page = (_a = req.getQueryParam('page')) !== null && _a !== void 0 ? _a : false;
+        var current_page = req.getQueryParam('page') || false;
         var __ = Singleton_1.Singleton.getLodash();
         if (__.isNumber(current_page) || !__.isNaN(current_page)) {
             current_page = +current_page === 0 ? 1 : +current_page;

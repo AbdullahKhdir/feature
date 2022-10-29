@@ -38,7 +38,7 @@ export = class Pagination{
             return new LogicException('Request object must be givin as parameter!');
         }
 
-        let current_page = req.getQueryParam('page') ?? false;
+        let current_page = req.getQueryParam('page') || false;
         let __ = Singleton.getLodash();
         
         if (__.isNumber(current_page) || !__.isNaN(current_page)) {

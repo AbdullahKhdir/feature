@@ -385,8 +385,8 @@ export = class Auth extends BaseController {
                     first_question_id: first_question   ? questions[first_question - 1].id        : '',
                     second_question: second_question    ? questions[second_question - 1].question : '',
                     second_question_id: second_question ? questions[second_question - 1].id       : '',
-                    first_answer: first_answer ?? '',
-                    second_answer: second_answer ?? '',
+                    first_answer: first_answer || '',
+                    second_answer: second_answer || '',
                     email: email
                 }
             );
@@ -514,8 +514,8 @@ export = class Auth extends BaseController {
                                 first_question_id: first_question   ? questions[first_question - 1].id        : '',
                                 second_question: second_question    ? questions[second_question - 1].question : '',
                                 second_question_id: second_question ? questions[second_question - 1].id       : '',
-                                first_answer: first_answer ?? '',
-                                second_answer: second_answer ?? ''
+                                first_answer: first_answer || '',
+                                second_answer: second_answer || ''
                             }
                         );
                     })
@@ -544,8 +544,8 @@ export = class Auth extends BaseController {
                                     first_question_id: first_question   ? questions[first_question - 1].id : '',
                                     second_question: second_question    ? questions[second_question - 1].question : '',
                                     second_question_id: second_question ? questions[second_question - 1].id       : '',
-                                    first_answer: first_answer ?? '',
-                                    second_answer: second_answer ?? ''
+                                    first_answer: first_answer || '',
+                                    second_answer: second_answer || ''
                                 }
                             );
                         }
@@ -570,8 +570,8 @@ export = class Auth extends BaseController {
                                 first_question_id: first_question   ? questions[first_question - 1].id        : '',
                                 second_question: second_question    ? questions[second_question - 1].question : '',
                                 second_question_id: second_question ? questions[second_question - 1].id       : '',
-                                first_answer: first_answer ?? '',
-                                second_answer: second_answer ?? ''
+                                first_answer: first_answer || '',
+                                second_answer: second_answer || ''
                             }
                         );
                     })

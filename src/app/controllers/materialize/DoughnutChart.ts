@@ -85,7 +85,7 @@ export = class DoughnutChart extends BaseController{
      * @returns Response
     */
     firstDynMethod = () => this.route('get', '/dynamic/:firstDynamicInput', this.firstDynMethodMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
-            const dynamicInput = +req.getDynamicParam('dynamicInput') ?? false;
+            const dynamicInput = +req.getDynamicParam('dynamicInput') || false;
             this.exmaple_model.filter(dynamicInput)
             // @ts-ignore 
             .then(([rows, fields]) => {
@@ -96,7 +96,7 @@ export = class DoughnutChart extends BaseController{
                         res,
                         'example/index',
                         {
-                            nav_title: rows ?? 'Dynamic route',
+                            nav_title: rows || 'Dynamic route',
                             path: '/dynamic/',
                             product: rows
                         }

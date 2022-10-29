@@ -139,10 +139,9 @@ module.exports = /** @class */ (function (_super) {
         });
         //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
         _this.app.use(function (req, res, next) {
-            var _a, _b, _c;
-            if (endpoints_js_1.ENDPOINTS.includes((_a = req.headers.referer) !== null && _a !== void 0 ? _a : '')
-                || endpoints_js_1.ENDPOINTS.includes((_b = req.originalUrl) !== null && _b !== void 0 ? _b : '')
-                || endpoints_js_1.ENDPOINTS.includes((_c = req.url) !== null && _c !== void 0 ? _c : '')) {
+            if (endpoints_js_1.ENDPOINTS.includes(req.headers.referer || '')
+                || endpoints_js_1.ENDPOINTS.includes(req.originalUrl || '')
+                || endpoints_js_1.ENDPOINTS.includes(req.url || '')) {
                 return next();
             }
             CSRF(req, res, next);

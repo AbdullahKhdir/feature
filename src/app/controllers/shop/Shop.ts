@@ -158,7 +158,7 @@ export = class Shop extends BaseController {
                         res,
                         'shop/index',
                         {
-                            products: records ?? [],
+                            products: records || [],
                             nav_title: 'shop',
                             path: '/',
                             root: 'shop',
@@ -210,7 +210,7 @@ export = class Shop extends BaseController {
         res.updatedContentAlways();
         res.removeHeader("Cross-Origin-Resource-Policy")
         res.removeHeader("Cross-Origin-Embedder-Policy")
-        const user_cart = req.getCurrentUser().getCart() ?? [];
+        const user_cart = req.getCurrentUser().getCart() || [];
         if (!user_cart) {
             return this.onError(res, new Error('User is not available'))
         }
@@ -378,7 +378,7 @@ export = class Shop extends BaseController {
         }
 
         const errors = validationResult(req);
-        const product_id = req.getFormPostedData('product_id') ?? '';
+        const product_id = req.getFormPostedData('product_id') || '';
         const user_id    = req.getCurrentUser().id;
 
         if (errors.isEmpty()) {
@@ -725,10 +725,10 @@ export = class Shop extends BaseController {
             return this.siteNotFound(res);
         }
         res.updatedContentAlways();
-        let product_id = req.getDynamicParam('productId') ?? false;
+        let product_id = req.getDynamicParam('productId') || false;
         let user_id;
         if (req.getCurrentUser()) {
-            user_id = +req.getCurrentUser().id ?? false;
+            user_id = +req.getCurrentUser().id || false;
             
         }
         if (!isNaN(product_id)) {
@@ -742,9 +742,9 @@ export = class Shop extends BaseController {
                         res,
                         'shop/product-detail',
                         {
-                            nav_title: product.title ?? 'Product Details',
+                            nav_title: product.title || 'Product Details',
                             path: '/products/',
-                            product: product ?? []
+                            product: product || []
                         }
                     );
                 } else {
@@ -774,7 +774,7 @@ export = class Shop extends BaseController {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
-        const cart_item_product_id = req.getFormPostedData('product_items_id') ?? false;
+        const cart_item_product_id = req.getFormPostedData('product_items_id') || false;
         
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result: any) => {
@@ -815,7 +815,7 @@ export = class Shop extends BaseController {
         if (!req.isPost()) {
             return this.siteNotFound(res);
         }
-        const cart_item_product_id = req.getFormPostedData('product_id') ?? false;
+        const cart_item_product_id = req.getFormPostedData('product_id') || false;
         if (cart_item_product_id) {
             this.cart_items_object.get({product_id: cart_item_product_id}).then((result: any) => {
                 if (result) {
