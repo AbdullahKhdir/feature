@@ -1,10 +1,10 @@
 
-import { Request } from "express"
+import { Request, Response } from "express"
 
 type options = {
     nav_title?:          string;
     path?:               string;
-    is_authenticated?:   boolean | null;
+    is_authenticated?:   boolean;
     error?:              string | [] | null;
     warning?:            string | [] | null;
     success?:            string | [] | null;
@@ -17,16 +17,16 @@ type options = {
 
 const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1);
 
-export function csrf(req: Request, object: options = {}) {
+export function csrf(res: Response, object: options = {}) {
     let _object = {
-        nav_title: capitalize(req.method) + ' request was interrupted!', 
+        nav_title: '', 
         path: '/404/',
-        is_authenticated: null,
-        error:   'Invalid CSRF token',
-        warning: 'Please do not alter or delete the csrf token!',
+        is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+        error:   '',
+        warning: '',
         success: null,
         status_code: 403,
-        status_title: 'Invalid CSRF token',
+        status_title: 'Request was interrupted!',
         status_description: 'Please do not alter or delete the csrf token!',
         url: '/',
         label: 'Home'
@@ -34,55 +34,115 @@ export function csrf(req: Request, object: options = {}) {
     return Object.assign(_object, object);
 }
 
-export function siteNotFound(req: Request, object: options = {}) {
-    let _object = {
-        nav_title: '', 
-        path: '/404/',
-        is_authenticated: null,
-        error:   null,
-        warning: null,
-        success: null,
-        status_code: 404,
-        status_title: "UH OH! You're lost.",
-        status_description: `The page you are looking for does not exist.
-        How you got here is a mystery. But you can click the button below
-        to go back to the homepage.`,
-        url: '/',
-        label: 'Home'
-    };
+export function siteNotFound(res: Response, return_type: 'template' | 'json' = 'template', object: options = {}) {
+    let _object;
+    if (return_type === 'template') {
+        _object = {
+            nav_title: '', 
+            path: '/404/',
+            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+            error:   null,
+            warning: null,
+            success: null,
+            status_code: 404,
+            status_title: "UH OH! You're lost.",
+            status_description: `The page you are looking for does not exist.
+            How you got here is a mystery. But you can click the button below
+            to go back to the homepage.`,
+            url: '/',
+            label: 'Home'
+        };
+    } else {
+        _object = {
+            statusCode: 400,
+            message: 'Bad Request'
+        };
+    }
     return Object.assign(_object, object);
 }
 
-export function exception(req: Request, object: options = {}) {
-    let _object = {
-        nav_title: '', 
-        path: '/404/',
-        is_authenticated: false,
-        error:   null,
-        warning: null,
-        success: null,
-        status_code: 500,
-        status_title: "UH OH! Exception is thrown.",
-        status_description: `This message will only be seen from the developers.`,
-        url: '/',
-        label: 'Home'
-    };
+export function exception(res: Response, return_type: 'template' | 'json' = 'template', object: options = {}) {
+    var error_message = null;
+    if (object instanceof Error) {
+        error_message = object.message;
+    }
+    let _object;
+    if (return_type === 'template') {
+        _object = {
+            nav_title: '', 
+            path: '/404/',
+            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+            error:   null,
+            warning: null,
+            success: null,
+            status_code: 503,
+            status_title: "Exception is thrown.",
+            status_description: capitalize(error_message!) || `Please contact the support team!`,
+            url: '/',
+            label: 'Home'
+        };
+    } else {
+        _object = {
+            statusCode: 503,
+            message: capitalize(error_message!) || `Please contact the support team!`
+        };
+    }
     return Object.assign(_object, object);
 }
 
-export function error(req: Request, object: options = {}) {
-    let _object = {
-        nav_title: '', 
-        path: '/404/',
-        is_authenticated: false,
-        error:   null,
-        warning: null,
-        success: null,
-        status_code: 500,
-        status_title: "UH OH! Unexpected error has ocurred.",
-        status_description: `Please contact the support team.`,
-        url: '/',
-        label: 'Home'
-    };
+export function error(res: Response, return_type: 'template' | 'json' = 'template', object: options = {}) {
+    var error_message = null;
+    if (object instanceof Error) {
+        error_message = object.message;
+    }
+    let _object;
+    if (return_type === 'template') {
+        _object = {
+            nav_title: '', 
+            path: '/404/',
+            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+            error:   null,
+            warning: null,
+            success: null,
+            status_code: 500,
+            status_title: "Unexpected error",
+            status_description: capitalize(error_message!) || `Please contact the support team!`,
+            url: '/',
+            label: 'Home'
+        };
+    } else {
+        _object = {
+            statusCode: 500,
+            message: capitalize(error_message!) || `Please contact the support team!`
+        };
+    }
     return Object.assign(_object, object);
 }
+
+export function undefinedHttpRequest(res: Response, return_type: 'template' | 'json' = 'template', object: options = {}) {
+    // todo send the targeted object if the api endpoint was requested and a template if base was requested
+    let _object;
+    if (return_type === 'template') {
+        _object = {
+            nav_title: '',
+            path: '/404/',
+            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+            error:   null,
+            warning: null,
+            success: null,
+            status_code: 400,
+            status_title: "Bad Request",
+            status_description: `Wondering from where have you requested this url, but you can click the button below
+            to go back to the homepage.`,
+            url: '/',
+            label: 'Home'
+        };
+    } else {
+        _object = {
+            statusCode: 400,
+            message: 'Bad Request'
+        };
+    }
+    return Object.assign(_object, object);
+}
+

@@ -277,10 +277,6 @@ export = class Application extends BaseController {
         * Middleware for rendering 404 page on invalid csrf token
         */
         this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-            // todo separated invalid csrf page
-            // todo separated 404 page
-            // todo separated exceptions page (only during development)
-            // todo separated errors page (for dev and prod environments)
             if (err.code === this.constants.CSRF.errCode) {
                 return this.invalidCsrfResponse(req, res);
             }

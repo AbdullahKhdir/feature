@@ -123,11 +123,13 @@ $(document).ready(function() {
     */
     highlightInvalidUserInput: (() => {
       let errored_inputs = $('.errored_inputs').length  && $('.errored_inputs').val();
-      if (errored_inputs) {
-        errored_inputs = JSON.parse(errored_inputs);
-        if (Object.keys(errored_inputs).length > 0) {
-          for (const key in errored_inputs) {
-            $(`[name="${errored_inputs[key].toString()}"]`).addClass('invalid');
+      if (typeof errored_inputs !== 'undefined') {
+        if (typeof errored_inputs === "object") {
+          errored_inputs = JSON.parse(errored_inputs);
+          if (Object.keys(errored_inputs).length > 0) {
+            for (const key in errored_inputs) {
+              $(`[name="${errored_inputs[key].toString()}"]`).addClass('invalid');
+            }
           }
         }
       }

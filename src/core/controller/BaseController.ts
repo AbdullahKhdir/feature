@@ -5,7 +5,7 @@ import { Express } from "../framework/Express";
 import Routes from "../routes/Route";
 import { Singleton } from "../Singleton/Singleton";
 import Csrf from 'csurf';
-import { siteNotFound } from "../utils/404-logic";
+import { siteNotFound, undefinedHttpRequest } from "../utils/404-logic";
 
 /**
  * @class BaseController
@@ -177,14 +177,14 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', siteNotFound(req));
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', siteNotFound(res));
             }
 
             if (site_is_found === true) {
                 next();
                 site_is_found = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('404', siteNotFound(req));
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', siteNotFound(res));
             }
         }));
         // @ts-ignore
@@ -239,20 +239,16 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
-                    '404',
-                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!'}
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                // return next(siteNotFound(res, 'json'));
             }
             
             if (is_post_request_successful === true) {
                 next();
                 is_post_request_successful = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
-                    '404',
-                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support POST type requests!'},
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                //return next(siteNotFound(res, 'json'));
             }
         }));
         // @ts-ignore
@@ -307,20 +303,14 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
-                    '404',
-                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!'},
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
             }
             
             if (is_put_request_successful === true) {
                 next();
                 is_put_request_successful = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
-                    '404',
-                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PUT type requests!'}
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
             }
         }));
         // @ts-ignore
@@ -375,20 +365,14 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
-                    '404',
-                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!'}
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
             }
             
             if (is_patch_request_successful === true) {
                 next();
                 is_patch_request_successful = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
-                    '404',
-                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support PATCH type requests!'}
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res)                );
             }
         }));
         // @ts-ignore
@@ -443,20 +427,14 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
-                    '404',
-                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!'}
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
             }
             
             if (is_delete_request_successful === true) {
                 next();
                 is_delete_request_successful = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR).render(
-                    '404',
-                    {nav_title: 'Cannot post!', path: '/404/', onPost: 'Route does not support DELETE type requests!'}
-                );
+                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
             }
         }));
     }

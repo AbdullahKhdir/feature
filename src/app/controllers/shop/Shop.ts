@@ -143,7 +143,8 @@ export = class Shop extends BaseController {
         }
         res.noCacheNeeded();
         // TODO: Add public products
-
+        // return this.onError(res, {success: 'OK'});
+        // return new SQLException('SQL Error');
         /*
         * User specific products
         */

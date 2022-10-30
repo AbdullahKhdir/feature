@@ -242,10 +242,6 @@ module.exports = /** @class */ (function (_super) {
         * Middleware for rendering 404 page on invalid csrf token
         */
         _this.app.use(function (err, req, res, next) {
-            // todo separated invalid csrf page
-            // todo separated 404 page
-            // todo separated exceptions page (only during development)
-            // todo separated errors page (for dev and prod environments)
             if (err.code === _this.constants.CSRF.errCode) {
                 return _this.invalidCsrfResponse(req, res);
             }

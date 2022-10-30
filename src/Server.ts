@@ -75,10 +75,13 @@ class Server {
                 //     cert: this.file_system.readFileSync('./certificates/example.cert.pem')
                 // }
                 let port = Server.getServerInstance().port();
+                //****\\
+                //* Will be triggered only on errors or next(new Error('error message')) or next({error: 'checked'}) *\\
+                //****\\
                 //@ts-ignore
                 this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
                     if (err.code === this.constants.CSRF.errCode) {
-                        return res.status(this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN).render('404', csrf(req));
+                        return res.status(this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN).render('undefined_routes', csrf(res));
                     }
                     
                     const _status       = err.statusCode || this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
@@ -92,13 +95,13 @@ class Server {
                             is_api_endpoint = true;
                         }
                     });
-
+                    
                     if (is_api_endpoint) {
                         return res.status(_status).json({message: message});
                     } else {
-                        return res.status(_status).render('404', siteNotFound(req));
+                        return res.status(_status).render('undefined_routes', siteNotFound(res, 'json'));
                     }
-                })
+                });
                                 
                 const server = https
                                .createServer(httpsOptions, this.app).listen(port, () => {

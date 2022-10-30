@@ -77,3 +77,5 @@ gsap.to("#glassShine", {
   repeatDelay: 8,
   delay: 2
 });
+
+// $('i.material-icons.white-text').remove();

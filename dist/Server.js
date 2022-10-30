@@ -124,10 +124,13 @@ var Server = /** @class */ (function () {
                                 cert: cert.cert
                             };
                             port = Server.getServerInstance().port();
+                            //****\\
+                            //* Will be triggered only on errors or next(new Error('error message')) or next({error: 'checked'}) *\\
+                            //****\\
                             //@ts-ignore
                             this.app.use(function (err, req, res, next) {
                                 if (err.code === _this.constants.CSRF.errCode) {
-                                    return res.status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN).render('404', (0, _404_logic_1.csrf)(req));
+                                    return res.status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN).render('undefined_routes', (0, _404_logic_1.csrf)(res));
                                 }
                                 var _status = err.statusCode || _this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                                 var message = err.message;
@@ -143,7 +146,7 @@ var Server = /** @class */ (function () {
                                     return res.status(_status).json({ message: message });
                                 }
                                 else {
-                                    return res.status(_status).render('404', (0, _404_logic_1.siteNotFound)(req));
+                                    return res.status(_status).render('undefined_routes', (0, _404_logic_1.siteNotFound)(res, 'json'));
                                 }
                             });
                             server = https_1.default

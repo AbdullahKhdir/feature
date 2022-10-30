@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { ReadStream } from 'node:fs';
 import * as config from '../config';
 import { Singleton } from '../Singleton/Singleton';
-import { csrf } from '../utils/404-logic';
+import { csrf, siteNotFound, error as _error } from '../utils/404-logic';
 
 /**
  * @class Response
@@ -117,19 +117,13 @@ export abstract class ExpressResponse {
 
     /**
      * @function siteNotFound
-     * @description 404 html page
+     * @description undefined_routes html page
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
     siteNotFound(res: Response) : Response{
-        return this.render(
-            res,
-            '404',
-            {nav_title: 'Page not found', path: '/404/'},
-            null,
-            this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND
-        );
+        return this.render(res, 'undefined_routes', siteNotFound(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
     }
 
     /**
@@ -198,65 +192,27 @@ export abstract class ExpressResponse {
 
     /**
      * @function invalidCsrfResponse
-     * @description 404 html page for invalid csrf response
+     * @description undefined_routes html page for invalid csrf response
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
     invalidCsrfResponse(req: Request, res: Response) : Response{
-        return this.render(
-            res,
-            '404',
-            csrf(req),
-            // {
-            //     nav_title: 'Post request was interrupted!', 
-            //     path: '/404/',
-            //     is_authenticated: null,
-            //     error:   'Invalid CSRF token',
-            //     warning: 'Please do not alter or delete the csrf token!',
-            //     success: null,
-            // },
-            null,
-            this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN
-        );
+        return this.render(res, 'undefined_routes', csrf(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
     }
 
     /**
      * @function onError
-     * @description 404 html page on throwing an error
+     * @description undefined_routes html page on throwing an error
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
     onError(res: Response, error: any = '') : Response {
         if (config.configurations().environment === 'development') {
-            return this.render(
-                res,
-                '404',
-                {
-                    res: 'Unexpected Error!', 
-                    path: '/404/',
-                    is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
-                    error:   error.toString(),
-                    warning: error.toString(),
-                    success: null,
-                },
-                null,
-                this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN
-            );
+            return this.render(res, 'undefined_routes', _error(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
         } else if (config.configurations().environment === 'production') {
-            return this.render(
-                res,
-                '404',
-                {
-                    res: 'Unexpected Error!', 
-                    path: '/404/',
-                    is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
-                    warning: 'Please contact the support team!',
-                },
-                null,
-                this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN
-            );
+            return this.render(res, 'undefined_routes', _error(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
         }
         return res.end();
     }

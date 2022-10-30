@@ -135,13 +135,13 @@ var ExpressResponse = /** @class */ (function () {
     };
     /**
      * @function siteNotFound
-     * @description 404 html page
+     * @description undefined_routes html page
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
     ExpressResponse.prototype.siteNotFound = function (res) {
-        return this.render(res, '404', { nav_title: 'Page not found', path: '/404/' }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
+        return this.render(res, 'undefined_routes', (0, _404_logic_1.siteNotFound)(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
     };
     /**
      * @function onErrorValidation
@@ -212,26 +212,17 @@ var ExpressResponse = /** @class */ (function () {
     };
     /**
      * @function invalidCsrfResponse
-     * @description 404 html page for invalid csrf response
+     * @description undefined_routes html page for invalid csrf response
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
     ExpressResponse.prototype.invalidCsrfResponse = function (req, res) {
-        return this.render(res, '404', (0, _404_logic_1.csrf)(req), 
-        // {
-        //     nav_title: 'Post request was interrupted!', 
-        //     path: '/404/',
-        //     is_authenticated: null,
-        //     error:   'Invalid CSRF token',
-        //     warning: 'Please do not alter or delete the csrf token!',
-        //     success: null,
-        // },
-        null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
+        return this.render(res, 'undefined_routes', (0, _404_logic_1.csrf)(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
     };
     /**
      * @function onError
-     * @description 404 html page on throwing an error
+     * @description undefined_routes html page on throwing an error
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
@@ -239,22 +230,10 @@ var ExpressResponse = /** @class */ (function () {
     ExpressResponse.prototype.onError = function (res, error) {
         if (error === void 0) { error = ''; }
         if (config.configurations().environment === 'development') {
-            return this.render(res, '404', {
-                res: 'Unexpected Error!',
-                path: '/404/',
-                is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
-                error: error.toString(),
-                warning: error.toString(),
-                success: null,
-            }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
+            return this.render(res, 'undefined_routes', (0, _404_logic_1.error)(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
         }
         else if (config.configurations().environment === 'production') {
-            return this.render(res, '404', {
-                res: 'Unexpected Error!',
-                path: '/404/',
-                is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
-                warning: 'Please contact the support team!',
-            }, null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
+            return this.render(res, 'undefined_routes', (0, _404_logic_1.error)(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
         }
         return res.end();
     };
