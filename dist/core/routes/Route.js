@@ -17,6 +17,7 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var endpoints_1 = require("../api/apis_endpoints/endpoints");
 var RuntimeException_1 = __importDefault(require("../exception/types/RuntimeException"));
 var ExpressResponse_1 = require("../response/ExpressResponse");
 var Singleton_1 = require("../Singleton/Singleton");
@@ -72,7 +73,7 @@ module.exports = /** @class */ (function (_super) {
      * @param {Object} middleware
      * @param {Function} callback
      * @return ExpressRoute
-     */
+    */
     Routes.prototype.route = function (method, url, middleware, callback) {
         if (typeof method === 'undefined' || method === '' || method == null) {
             return new RuntimeException_1.default('Route does not have an http method!');
@@ -108,6 +109,24 @@ module.exports = /** @class */ (function (_super) {
             return this._().delete(url, _middleware, (0, Promise_1.default)(callback));
         }
         return new RuntimeException_1.default('Route could not be deployed!');
+    };
+    /**
+     * @function isApiEndpoint
+     * @description  check if the url matches a string of api endpoints array
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param {Request} req
+     * @return boolean
+     */
+    Routes.prototype.isApiEndpoint = function (req) {
+        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                return true;
+            }
+        });
+        return false;
     };
     return Routes;
 }(ExpressResponse_1.ExpressResponse));

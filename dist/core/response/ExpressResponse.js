@@ -230,6 +230,14 @@ var ExpressResponse = /** @class */ (function () {
     ExpressResponse.prototype.onError = function (res, error) {
         if (error === void 0) { error = ''; }
         if (config.configurations().environment === 'development') {
+            // todo 1-add next param 2-return next(new Error(JSON.stringify({error: ''}))) if it was object
+            // todo 1-add next param 2-return next(new Error(string)) if it was string
+            // todo with the statusCode
+            // todo example
+            // todo let err = new Error(JSON.stringify({error: 'Unexpected fallback error!'})))
+            // todo err.statusCode = 500
+            // todo return next(err)
+            // todo for both dev and prod environment
             return this.render(res, 'undefined_routes', (0, _404_logic_1.error)(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
         }
         else if (config.configurations().environment === 'production') {

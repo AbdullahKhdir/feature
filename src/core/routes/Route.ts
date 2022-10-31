@@ -1,10 +1,12 @@
 'use strict';
 
 import { Router } from 'express';
+import { ENDPOINTS } from '../api/apis_endpoints/endpoints';
 import RuntimeException from '../exception/types/RuntimeException';
 import { ExpressResponse } from '../response/ExpressResponse';
 import { Singleton } from '../Singleton/Singleton';
 import asyncHandler from '../utils/Promise';
+import {Request} from 'express';
 
 /**
  * @class Routes
@@ -70,7 +72,7 @@ export = class Routes extends ExpressResponse{
      * @param {Object} middleware
      * @param {Function} callback
      * @return ExpressRoute
-     */
+    */
     route(method: string, url: string, middleware: any, callback: any) : Router | RuntimeException {
         if (typeof method === 'undefined' || method === '' || method == null) {
             return new RuntimeException('Route does not have an http method!')
@@ -116,5 +118,24 @@ export = class Routes extends ExpressResponse{
             return this._().delete(url, _middleware, asyncHandler(callback));
         }
         return new RuntimeException('Route could not be deployed!')
+    }
+
+    /**
+     * @function isApiEndpoint
+     * @description  check if the url matches a string of api endpoints array
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param {Request} req
+     * @return boolean
+     */
+    isApiEndpoint(req: Request) : boolean {
+        ENDPOINTS.forEach((endpoint: any) => {
+            if (ENDPOINTS.includes(req.headers.referer || '')
+            || ENDPOINTS.includes(req.originalUrl || '')
+            || ENDPOINTS.includes(req.url || '')) {
+                return true;
+            }
+        });
+        return false;
     }
 }

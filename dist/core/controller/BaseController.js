@@ -205,14 +205,24 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', (0, _404_logic_1.siteNotFound)(res))];
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', (0, _404_logic_1.siteNotFound)(res))];
+                    }
                 }
                 if (site_is_found === true) {
                     next();
                     site_is_found = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', (0, _404_logic_1.siteNotFound)(res))];
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', (0, _404_logic_1.siteNotFound)(res))];
+                    }
                 }
                 return [2 /*return*/];
             });
@@ -266,16 +276,24 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
-                    // return next(siteNotFound(res, 'json'));
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    }
                 }
                 if (is_post_request_successful === true) {
                     next();
                     is_post_request_successful = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
-                    //return next(siteNotFound(res, 'json'));
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    }
                 }
                 return [2 /*return*/];
             });
@@ -329,14 +347,24 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    }
                 }
                 if (is_put_request_successful === true) {
                     next();
                     is_put_request_successful = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    }
                 }
                 return [2 /*return*/];
             });
@@ -390,14 +418,24 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    }
                 }
                 if (is_patch_request_successful === true) {
                     next();
                     is_patch_request_successful = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    }
                 }
                 return [2 /*return*/];
             });
@@ -451,14 +489,24 @@ module.exports = /** @class */ (function (_super) {
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    }
                 }
                 if (is_delete_request_successful === true) {
                     next();
                     is_delete_request_successful = false;
                 }
                 else {
-                    return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        return [2 /*return*/, next((0, _404_logic_1.undefinedHttpRequest)(res, 'json'))];
+                    }
+                    else {
+                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, _404_logic_1.undefinedHttpRequest)(res))];
+                    }
                 }
                 return [2 /*return*/];
             });

@@ -47,6 +47,10 @@ module.exports = /** @class */ (function (_super) {
         _this.path = Singleton_1.Singleton.getPath();
         _this.sub_controller = _this;
         _this.session = ExpressSession_1.default.getExpressSession;
+        _this.app.use(function (req, res, next) {
+            req.origin = req.headers.origin || req.get('origin');
+            next();
+        });
         /*
         * Sets the following policies
           ? contentSecurityPolicy
@@ -238,15 +242,6 @@ module.exports = /** @class */ (function (_super) {
         ? lasts for the life cycle of the application
         */
         _this.app.locals = Object.assign(_this.app.locals, AppLocals_js_1.default);
-        /*
-        * Middleware for rendering 404 page on invalid csrf token
-        */
-        _this.app.use(function (err, req, res, next) {
-            if (err.code === _this.constants.CSRF.errCode) {
-                return _this.invalidCsrfResponse(req, res);
-            }
-            next(err);
-        });
         return _this;
     }
     Object.defineProperty(Application, "getAppInstance", {

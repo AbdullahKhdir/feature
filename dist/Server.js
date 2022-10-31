@@ -146,7 +146,189 @@ var Server = /** @class */ (function () {
                                     return res.status(_status).json({ message: message });
                                 }
                                 else {
-                                    return res.status(_status).render('undefined_routes', (0, _404_logic_1.siteNotFound)(res, 'json'));
+                                    if (err) {
+                                        if (Object.keys('statusCode')) {
+                                            req.origin = req.headers.origin || req.get('origin');
+                                            // @ts-ignore
+                                            switch (err.statusCode) {
+                                                case 503:
+                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                            return res.status(_status).json({ statusCode: 503, message: 'Service is not available' });
+                                                        }
+                                                    });
+                                                    return res.status(_status)
+                                                        .render('undefined_routes', {
+                                                        nav_title: '',
+                                                        path: '/404/',
+                                                        is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                                        error: null,
+                                                        warning: null,
+                                                        success: null,
+                                                        status_code: 503,
+                                                        status_title: "Exception is thrown.",
+                                                        status_description: _this.__.capitalize(err.message || 'Please contact the support team!') || "Please contact the support team!",
+                                                        url: '/',
+                                                        label: 'Home'
+                                                    });
+                                                    break;
+                                                case 500:
+                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                            console.log('checked');
+                                                            return res.status(_status).json({ statusCode: 500, message: 'Internal Server Error' });
+                                                        }
+                                                    });
+                                                    return res.status(_status)
+                                                        .render('undefined_routes', {
+                                                        nav_title: '',
+                                                        path: '/404/',
+                                                        is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                                        error: null,
+                                                        warning: null,
+                                                        success: null,
+                                                        status_code: 500,
+                                                        status_title: "Unexpected error",
+                                                        status_description: _this.__.capitalize(err.message || 'Please contact the support team!') || "Please contact the support team!",
+                                                        url: '/',
+                                                        label: 'Home'
+                                                    });
+                                                    break;
+                                                case 400:
+                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                            return res.status(_status).json({ statusCode: 400, message: 'Bad Request' });
+                                                        }
+                                                    });
+                                                    return res.status(_status)
+                                                        .render('undefined_routes', {
+                                                        nav_title: '',
+                                                        path: '/404/',
+                                                        is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                                        error: null,
+                                                        warning: null,
+                                                        success: null,
+                                                        status_code: 400,
+                                                        status_title: "Bad Request",
+                                                        status_description: "Wondering from where have you requested this url, but you can click the button below\n                                            to go back to the homepage.",
+                                                        url: '/',
+                                                        label: 'Home'
+                                                    });
+                                                    break;
+                                                case 404:
+                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                            return res.status(_status).json({ statusCode: 404, message: 'Site Not Found!' });
+                                                        }
+                                                    });
+                                                    return res.status(_status)
+                                                        .render('undefined_routes', {
+                                                        nav_title: '',
+                                                        path: '/404/',
+                                                        is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                                        error: null,
+                                                        warning: null,
+                                                        success: null,
+                                                        status_code: 404,
+                                                        status_title: "UH OH! You're lost.",
+                                                        status_description: "The page you are looking for does not exist.\n                                            How you got here is a mystery. But you can click the button below\n                                            to go back to the homepage.",
+                                                        url: '/',
+                                                        label: 'Home'
+                                                    });
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    if (req.isPost()) {
+                                        return res.status(_status)
+                                            .render('undefined_routes', {
+                                            nav_title: '',
+                                            path: '/404/',
+                                            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                            error: null,
+                                            warning: null,
+                                            success: null,
+                                            status_code: 400,
+                                            status_title: "Bad Request",
+                                            status_description: "Wondering from where have you requested this url, but you can click the button below\n                                to go back to the homepage.",
+                                            url: '/',
+                                            label: 'Home'
+                                        });
+                                    }
+                                    else if (req.isGet()) {
+                                        return res.status(_status)
+                                            .render('undefined_routes', {
+                                            nav_title: '',
+                                            path: '/404/',
+                                            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                            error: null,
+                                            warning: null,
+                                            success: null,
+                                            status_code: 404,
+                                            status_title: "UH OH! You're lost.",
+                                            status_description: "The page you are looking for does not exist.\n                                    How you got here is a mystery. But you can click the button below\n                                    to go back to the homepage.",
+                                            url: '/',
+                                            label: 'Home'
+                                        });
+                                    }
+                                    else if (req.isPatch()) {
+                                        return res.status(_status)
+                                            .render('undefined_routes', {
+                                            nav_title: '',
+                                            path: '/404/',
+                                            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                            error: null,
+                                            warning: null,
+                                            success: null,
+                                            status_code: 400,
+                                            status_title: "Bad Request",
+                                            status_description: "Wondering from where have you requested this url, but you can click the button below\n                                to go back to the homepage.",
+                                            url: '/',
+                                            label: 'Home'
+                                        });
+                                    }
+                                    else if (req.isPut()) {
+                                        return res.status(_status)
+                                            .render('undefined_routes', {
+                                            nav_title: '',
+                                            path: '/404/',
+                                            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                            error: null,
+                                            warning: null,
+                                            success: null,
+                                            status_code: 400,
+                                            status_title: "Bad Request",
+                                            status_description: "Wondering from where have you requested this url, but you can click the button below\n                                to go back to the homepage.",
+                                            url: '/',
+                                            label: 'Home'
+                                        });
+                                    }
+                                    else if (req.isDelete()) {
+                                        return res.status(_status)
+                                            .render('undefined_routes', {
+                                            nav_title: '',
+                                            path: '/404/',
+                                            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                                            error: null,
+                                            warning: null,
+                                            success: null,
+                                            status_code: 400,
+                                            status_title: "Bad Request",
+                                            status_description: "Wondering from where have you requested this url, but you can click the button below\n                                to go back to the homepage.",
+                                            url: '/',
+                                            label: 'Home'
+                                        });
+                                    }
                                 }
                             });
                             server = https_1.default

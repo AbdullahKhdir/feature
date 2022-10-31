@@ -177,14 +177,22 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', siteNotFound(res));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', siteNotFound(res));
+                }
             }
 
             if (site_is_found === true) {
                 next();
                 site_is_found = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', siteNotFound(res));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', siteNotFound(res));
+                }
             }
         }));
         // @ts-ignore
@@ -239,16 +247,22 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
-                // return next(siteNotFound(res, 'json'));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                }
             }
             
             if (is_post_request_successful === true) {
                 next();
                 is_post_request_successful = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
-                //return next(siteNotFound(res, 'json'));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                }
             }
         }));
         // @ts-ignore
@@ -303,14 +317,22 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res)); 
+                }
             }
             
             if (is_put_request_successful === true) {
                 next();
                 is_put_request_successful = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                }
             }
         }));
         // @ts-ignore
@@ -365,14 +387,22 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                }
             }
             
             if (is_patch_request_successful === true) {
                 next();
                 is_patch_request_successful = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res)                );
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                }
             }
         }));
         // @ts-ignore
@@ -427,14 +457,22 @@ export = class BaseController extends Routes {
             });
 
             if (this.__.isEmpty(route_exists)) {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                }
             }
             
             if (is_delete_request_successful === true) {
                 next();
                 is_delete_request_successful = false;
             } else {
-                return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    return next(undefinedHttpRequest(res, 'json'));
+                } else {
+                    return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res));
+                }
             }
         }));
     }

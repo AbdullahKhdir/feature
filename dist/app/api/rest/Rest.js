@@ -82,7 +82,7 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.postExmaple = function () { return _this.route('post', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.postExmaple = function () { return _this.route('post', '/post_example', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(201, 'Success posted', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
@@ -94,33 +94,33 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.patchExmaple = function () { return _this.route('patch', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.patchExmaple = function () { return _this.route('patch', '/patch_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(201, 'Success patched', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
         }); }); };
         /**
          * @function putExmaple
-         * @description patchExmaple route
+         * @description putExmaple route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.putExmaple = function () { return _this.route('put', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.putExmaple = function () { return _this.route('put', '/put_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(201, 'Success put', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
         }); }); };
         /**
-         * @function putExmaple
-         * @description patchExmaple route
+         * @function deleteExmaple
+         * @description deleteExmaple route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.deleteExmaple = function () { return _this.route('delete', '/get_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.deleteExmaple = function () { return _this.route('delete', '/delete_example/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, new JsonResponse_1.default(201, 'Success deleted', { success: 'OK', id: new Date() }).sendAsJson(res)];
+                return [2 /*return*/, new JsonResponse_1.default(200, 'Success deleted', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
         }); }); };
         //? ************************************************************** ?\\

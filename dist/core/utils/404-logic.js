@@ -115,7 +115,6 @@ exports.error = error;
 function undefinedHttpRequest(res, return_type, object) {
     if (return_type === void 0) { return_type = 'template'; }
     if (object === void 0) { object = {}; }
-    // todo send the targeted object if the api endpoint was requested and a template if base was requested
     var _object;
     if (return_type === 'template') {
         _object = {

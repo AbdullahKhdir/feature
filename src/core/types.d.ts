@@ -1,5 +1,6 @@
 declare namespace Express {
     export interface Request {
+        origin:               any;
         user:                 any;
         user_cookie:          any;
         props:                Function;

@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <%- include('includes/updated/header.ejs', {root: '/404/'})%>
+    <%- include('includes/updated/header.ejs', {root: '/404/', nav_title: '', path: '/404/', status_code: typeof status_code === 'undefined' ? 404 : status_code })%>
     <%- include('includes/updated/toaster.ejs') %>
     <main>
         <div class="container"> 
@@ -267,10 +267,10 @@
                 </svg>
             </div>
             <div id="error-content" class="col-md-6 align-self-center">
-                <h1><%= status_code %></h1>
-                <h2><%= status_title %></h2>
-                <p><%= status_description %></p>
-                <a href="<%= url %>" class="inline-alignment btn card-image waves-effect waves-block waves-light"><%= label %></a>
+                <h1><%= typeof status_code === 'undefined' ? 404 : status_code %></h1>
+                <h2><%= typeof status_title === 'undefined' ? 'Not Found' : status_title %></h2>
+                <p><%=  typeof status_description === 'undefined' ? 'The requested page was not found, but you can go back home by clicking on the button below!' : status_description %></p>
+                <a href="<%= typeof url === 'undefined' ? '/' : url %>" class="inline-alignment btn card-image waves-effect waves-block waves-light"><%= typeof label === 'undefined' ? 'Home' : label %></a>
             </div>
             </div>
         </div>

@@ -4,6 +4,7 @@ import csurf from 'csurf';
 import { NextFunction, Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import BaseController from "../../../core/controller/BaseController";
+import SQLException from '../../../core/exception/types/SQLException';
 import { Singleton } from '../../../core/Singleton/Singleton';
 import userSession from "../../middlewares/init_user_session";
 import isAuth from "../../middlewares/is_auth";
@@ -143,8 +144,13 @@ export = class Shop extends BaseController {
         }
         res.noCacheNeeded();
         // TODO: Add public products
+        let err = new Error(JSON.stringify({success: 'OK'}));
+        // @ts-ignore
+        err.statusCode = 500;
+        return next(err);
         // return this.onError(res, {success: 'OK'});
-        // return new SQLException('SQL Error');
+        // return next(new SQLException('SQL Error'))
+        
         /*
         * User specific products
         */

@@ -40,12 +40,16 @@ export = class Application extends BaseController {
         /*
         * Init The Application
         */
-       this.app            = this.express.getExpress();
-       this.body_parser    = Singleton.getBodyParser();
-       this.path           = Singleton.getPath();
-       this.sub_controller = this;
-       this.session        = ExpressSession.getExpressSession
+        this.app            = this.express.getExpress();
+        this.body_parser    = Singleton.getBodyParser();
+        this.path           = Singleton.getPath();
+        this.sub_controller = this;
+        this.session        = ExpressSession.getExpressSession
 
+        this.app.use((req: Request, res: Response, next: NextFunction) => {
+            req.origin = req.headers.origin || req.get('origin');
+            next();
+        });
         /*
         * Sets the following policies
           ? contentSecurityPolicy
@@ -272,16 +276,6 @@ export = class Application extends BaseController {
         ? lasts for the life cycle of the application 
         */
         this.app.locals = Object.assign(this.app.locals, Locals);
-
-        /*
-        * Middleware for rendering 404 page on invalid csrf token
-        */
-        this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-            if (err.code === this.constants.CSRF.errCode) {
-                return this.invalidCsrfResponse(req, res);
-            }
-            next(err);
-        })
     }
 
     /**

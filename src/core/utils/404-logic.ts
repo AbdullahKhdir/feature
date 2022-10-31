@@ -120,7 +120,6 @@ export function error(res: Response, return_type: 'template' | 'json' = 'templat
 }
 
 export function undefinedHttpRequest(res: Response, return_type: 'template' | 'json' = 'template', object: options = {}) {
-    // todo send the targeted object if the api endpoint was requested and a template if base was requested
     let _object;
     if (return_type === 'template') {
         _object = {

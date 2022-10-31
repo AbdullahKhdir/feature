@@ -210,6 +210,14 @@ export abstract class ExpressResponse {
     */
     onError(res: Response, error: any = '') : Response {
         if (config.configurations().environment === 'development') {
+            // todo 1-add next param 2-return next(new Error(JSON.stringify({error: ''}))) if it was object
+            // todo 1-add next param 2-return next(new Error(string)) if it was string
+            // todo with the statusCode
+            // todo example
+            // todo let err = new Error(JSON.stringify({error: 'Unexpected fallback error!'})))
+            // todo err.statusCode = 500
+            // todo return next(err)
+            // todo for both dev and prod environment
             return this.render(res, 'undefined_routes', _error(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
         } else if (config.configurations().environment === 'production') {
             return this.render(res, 'undefined_routes', _error(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
