@@ -261,7 +261,7 @@ export = class Admin extends BaseController {
                     return this.redirect(res, '/products/');
                 }
             })
-            .catch((err: any) => this.onError(res, err));
+            .catch((err: any) => this.onError(res, next, err));
         } else {
             return this.redirect(res, '/');
         }
@@ -340,7 +340,7 @@ export = class Admin extends BaseController {
                     }
                 }
             })
-            .catch((err: any) => this.onError(res, err));
+            .catch((err: any) => this.onError(res, next, err));
         }
         
         const errors = validationResult(req);
@@ -351,7 +351,7 @@ export = class Admin extends BaseController {
                     if (result[0].affectedRows) {
                         return res.redirect('/admin/products/');
                     }
-                }).catch((err: any) => this.onError(res, err));
+                }).catch((err: any) => this.onError(res, next, err));
             }
         } else {
             return this.onErrorValidation(res, errors.array());
@@ -425,7 +425,7 @@ export = class Admin extends BaseController {
                 if (primary_key) {
                     return this.redirect(res, '/');
                 }
-            }).catch((err: any) => this.onError(res, err));
+            }).catch((err: any) => this.onError(res, next, err));
         } else {
             return this.onErrorValidation(res, errors.array());
         }
@@ -513,19 +513,19 @@ export = class Admin extends BaseController {
                             if (fs.existsSync(path)) {
                                 fs.unlink(path, (err: any) => {
                                     if (err) {
-                                        return this.onError(res, err);
+                                        return this.onError(res, next, err);
                                     }
                                     const id = rows[0].id;
                                     this.product_object.delete(id)
                                     .then((result: any) => {
                                         return this.redirect(res, '/admin/products/');
                                     })
-                                    .catch((err: any) => this.onError(res, err));
+                                    .catch((err: any) => this.onError(res, next, err));
                                 })
                             }
                         }
                     })
-                    .catch((err: any) => this.onError(res, err));
+                    .catch((err: any) => this.onError(res, next, err));
             }
         } else {
             return this.onErrorValidation(res, errors.array());
@@ -568,6 +568,6 @@ export = class Admin extends BaseController {
                 }
             );
         })
-        .catch((err: any) => this.onError(res, err));
+        .catch((err: any) => this.onError(res, next, err));
     });
 }

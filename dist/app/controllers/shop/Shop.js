@@ -112,7 +112,7 @@ module.exports = /** @class */ (function (_super) {
                             _paginator: _paginator
                         });
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     return [2 /*return*/, res.render('shop/product-list', {
@@ -172,7 +172,7 @@ module.exports = /** @class */ (function (_super) {
                             _paginator: _paginator
                         });
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     return [2 /*return*/, this.render(res, 'shop/index', {
@@ -211,7 +211,7 @@ module.exports = /** @class */ (function (_super) {
                 res.removeHeader("Cross-Origin-Embedder-Policy");
                 user_cart = req.getCurrentUser().getCart() || [];
                 if (!user_cart) {
-                    return [2 /*return*/, this.onError(res, new Error('User is not available'))];
+                    return [2 /*return*/, this.onError(res, next, new Error('User is not available'))];
                 }
                 user_cart
                     .then(function (rows) {
@@ -294,7 +294,7 @@ module.exports = /** @class */ (function (_super) {
                                                 session_id: data.session().id
                                             });
                                         })
-                                            .catch(function (err) { return _this.onError(res, err); });
+                                            .catch(function (err) { return _this.onError(res, next, err); });
                                     }
                                 }
                                 else {
@@ -316,7 +316,7 @@ module.exports = /** @class */ (function (_super) {
                                     });
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                         else {
                             return _this.render(res, 'shop/cart', {
@@ -354,7 +354,7 @@ module.exports = /** @class */ (function (_super) {
                         });
                     }
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -392,7 +392,7 @@ module.exports = /** @class */ (function (_super) {
                                             return _this.redirect(res, '/cart/');
                                         }
                                     }))
-                                        .catch(function (err) { return _this.onError(res, err); });
+                                        .catch(function (err) { return _this.onError(res, next, err); });
                                 }
                                 else {
                                     var cart_item_params = {
@@ -407,10 +407,10 @@ module.exports = /** @class */ (function (_super) {
                                             return _this.redirect(res, '/cart/');
                                         }
                                     })
-                                        .catch(function (err) { return _this.onError(res, err); });
+                                        .catch(function (err) { return _this.onError(res, next, err); });
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                         else {
                             var cart_params = {
@@ -434,7 +434,7 @@ module.exports = /** @class */ (function (_super) {
                                                     return _this.redirect(res, '/cart/');
                                                 }
                                             }))
-                                                .catch(function (err) { return _this.onError(res, err); });
+                                                .catch(function (err) { return _this.onError(res, next, err); });
                                         }
                                         else {
                                             var cart_item_params = {
@@ -449,15 +449,15 @@ module.exports = /** @class */ (function (_super) {
                                                     return _this.redirect(res, '/cart/');
                                                 }
                                             })
-                                                .catch(function (err) { return _this.onError(res, err); });
+                                                .catch(function (err) { return _this.onError(res, next, err); });
                                         }
                                     })
-                                        .catch(function (err) { return _this.onError(res, err); });
+                                        .catch(function (err) { return _this.onError(res, next, err); });
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
-                    }).catch(function (err) { return _this.onError(res, err); });
+                    }).catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     return [2 /*return*/, this.onErrorValidation(res, errors.array())];
@@ -567,19 +567,19 @@ module.exports = /** @class */ (function (_super) {
                                         ]
                                     });
                                 })
-                                    .catch(function (err) { return _this.onError(res, err); });
+                                    .catch(function (err) { return _this.onError(res, next, err); });
                             }
                             else {
                                 return _this.redirect(res, '/cart');
                             }
                         })
-                            .catch(function (err) { return _this.onError(res, err); });
+                            .catch(function (err) { return _this.onError(res, next, err); });
                     }
                     else {
                         return _this.redirect(res, '/cart');
                     }
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -606,7 +606,7 @@ module.exports = /** @class */ (function (_super) {
                                     return product.getProducts;
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                     }
                 })
@@ -633,7 +633,7 @@ module.exports = /** @class */ (function (_super) {
                                                         }
                                                     }
                                                 })
-                                                    .catch(function (err) { return _this.onError(res, err); });
+                                                    .catch(function (err) { return _this.onError(res, next, err); });
                                             }
                                             else if (typeof order_items_rows !== 'undefined') {
                                                 order_items_rows.forEach(function (order_items_row) {
@@ -653,13 +653,13 @@ module.exports = /** @class */ (function (_super) {
                                                                 }
                                                             }
                                                         })
-                                                            .catch(function (err) { return _this.onError(res, err); });
+                                                            .catch(function (err) { return _this.onError(res, next, err); });
                                                     })
-                                                        .catch(function (err) { return _this.onError(res, err); });
+                                                        .catch(function (err) { return _this.onError(res, next, err); });
                                                 });
                                             }
                                         })
-                                            .catch(function (err) { return _this.onError(res, err); });
+                                            .catch(function (err) { return _this.onError(res, next, err); });
                                     }
                                 });
                             }
@@ -690,24 +690,24 @@ module.exports = /** @class */ (function (_super) {
                                                                 }
                                                             }
                                                         })
-                                                            .catch(function (err) { return _this.onError(res, err); });
+                                                            .catch(function (err) { return _this.onError(res, next, err); });
                                                     }
                                                     if (!res.headersSent) {
                                                         return _this.redirect(res, '/orders/');
                                                     }
                                                 })
-                                                    .catch(function (err) { return _this.onError(res, err); });
+                                                    .catch(function (err) { return _this.onError(res, next, err); });
                                             }
                                         });
                                     }
                                 })
-                                    .catch(function (err) { return _this.onError(res, err); });
+                                    .catch(function (err) { return _this.onError(res, next, err); });
                             }
                         })
-                            .catch(function (err) { return _this.onError(res, err); });
+                            .catch(function (err) { return _this.onError(res, next, err); });
                     }
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -747,7 +747,7 @@ module.exports = /** @class */ (function (_super) {
                             return _this.siteNotFound(res);
                         }
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     return [2 /*return*/, this.siteNotFound(res)];
@@ -784,16 +784,16 @@ module.exports = /** @class */ (function (_super) {
                                                     return _this.redirect(res, '/cart/');
                                                 }
                                             })
-                                                .catch(function (err) { return _this.onError(res, err); });
+                                                .catch(function (err) { return _this.onError(res, next, err); });
                                         }
                                         else {
                                             return _this.redirect(res, '/cart/');
                                         }
                                     })
-                                        .catch(function (err) { return _this.onError(res, err); });
+                                        .catch(function (err) { return _this.onError(res, next, err); });
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                     });
                 }
@@ -825,7 +825,7 @@ module.exports = /** @class */ (function (_super) {
                                         return _this.redirect(res, '/cart/');
                                     }
                                 })
-                                    .catch(function (err) { return _this.onError(res, err); });
+                                    .catch(function (err) { return _this.onError(res, next, err); });
                             }
                             else {
                                 _this.cart_items_object.delete({ product_id: cart_item_product_id })
@@ -834,11 +834,11 @@ module.exports = /** @class */ (function (_super) {
                                         return _this.redirect(res, '/cart/');
                                     }
                                 })
-                                    .catch(function (err) { return _this.onError(res, err); });
+                                    .catch(function (err) { return _this.onError(res, next, err); });
                             }
                         }
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 return [2 /*return*/];
             });
@@ -864,7 +864,7 @@ module.exports = /** @class */ (function (_super) {
                 order_id = +req.getDynamicParam('order_id');
                 user = req.getCurrentUser();
                 if (!this.__.isNumber(order_id)) {
-                    return [2 /*return*/, this.onError(res, 'Please do not alter the link!')];
+                    return [2 /*return*/, this.onError(res, next, 'Please do not alter the link!')];
                 }
                 if (Object.keys(user).length === 0 || this.__.isEmpty(user)) {
                     return [2 /*return*/, this.redirect(res, '/')];
@@ -921,17 +921,17 @@ module.exports = /** @class */ (function (_super) {
                                             }
                                         }
                                     })
-                                        .catch(function (err) { return _this.onError(res, err); });
+                                        .catch(function (err) { return _this.onError(res, next, err); });
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                     }
                     else {
                         return _this.siteNotFound(res);
                     }
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };

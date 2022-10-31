@@ -103,7 +103,7 @@ export = class DoughnutChart extends BaseController{
                     );
                 }
             })
-            .catch((err: any) => this.onError(res, err));
+            .catch((err: any) => this.onError(res, next, err));
     });
 
     //! **************************** !\\

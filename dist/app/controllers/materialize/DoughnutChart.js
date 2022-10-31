@@ -114,7 +114,7 @@ module.exports = /** @class */ (function (_super) {
                         });
                     }
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };

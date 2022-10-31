@@ -149,6 +149,7 @@ var Server = /** @class */ (function () {
                                     if (err) {
                                         if (Object.keys('statusCode')) {
                                             req.origin = req.headers.origin || req.get('origin');
+                                            err.statusCode = err.statusCode ? err.statusCode : 500;
                                             // @ts-ignore
                                             switch (err.statusCode) {
                                                 case 503:

@@ -131,7 +131,7 @@ module.exports = /** @class */ (function (_super) {
                                         req.session.currentUser = rows;
                                         req.session.save(function (err) {
                                             if (err) {
-                                                return _this.onError(res, err);
+                                                return _this.onError(res, next, err);
                                             }
                                             if (!res.headersSent) {
                                                 req.session.is_authenticated = true;
@@ -149,7 +149,7 @@ module.exports = /** @class */ (function (_super) {
                                                         return _this.redirect(res, '/security');
                                                     }
                                                 })
-                                                    .catch(function (err) { return _this.onError(res, err); });
+                                                    .catch(function (err) { return _this.onError(res, next, err); });
                                             }
                                         });
                                     }
@@ -159,14 +159,14 @@ module.exports = /** @class */ (function (_super) {
                                     return _this.redirect(res, '/login');
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                         else {
                             req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
                             return _this.redirect(res, '/login');
                         }
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     return [2 /*return*/, this.onErrorValidation(res, errors.array())];
@@ -233,16 +233,16 @@ module.exports = /** @class */ (function (_super) {
                                         return _this.redirect(res, '/security');
                                     }
                                 })
-                                    .catch(function (err) { return _this.onError(res, err); });
+                                    .catch(function (err) { return _this.onError(res, next, err); });
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                         else {
                             req.setProp('error', 'Email is already registered!');
                             return _this.redirect(res, '/login');
                         }
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     return [2 /*return*/, this.onErrorValidation(res, errors.array())];
@@ -266,7 +266,7 @@ module.exports = /** @class */ (function (_super) {
                 res.onLogOut(req.user_cookie);
                 req.session.destroy(function (err) {
                     if (err) {
-                        return _this.onError(res, err);
+                        return _this.onError(res, next, err);
                     }
                     return _this.redirect(res, '/login');
                 });
@@ -306,7 +306,7 @@ module.exports = /** @class */ (function (_super) {
                         return _this.redirect(res, '/reset');
                     }
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -382,7 +382,7 @@ module.exports = /** @class */ (function (_super) {
                         email: email
                     });
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -452,15 +452,15 @@ module.exports = /** @class */ (function (_super) {
                                     return _this.redirect(res, '/signup');
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                         else {
                             return _this.redirect(res, '/signup');
                         }
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -509,7 +509,7 @@ module.exports = /** @class */ (function (_super) {
                             second_answer: second_answer || ''
                         });
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     this.user_security_questions.filter({ user_id: req.getCurrentUser().id })
@@ -536,7 +536,7 @@ module.exports = /** @class */ (function (_super) {
                                         second_answer: second_answer || ''
                                     });
                                 }
-                            }).catch(function (err) { return _this.onError(res, err); });
+                            }).catch(function (err) { return _this.onError(res, next, err); });
                         }
                         else {
                             _this.security_questions
@@ -559,10 +559,10 @@ module.exports = /** @class */ (function (_super) {
                                     second_answer: second_answer || ''
                                 });
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         }
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 return [2 /*return*/];
             });
@@ -610,11 +610,11 @@ module.exports = /** @class */ (function (_super) {
                                 return _this.redirect(res, '/');
                             }
                         })
-                            .catch(function (err) { return _this.onError(res, err); });
+                            .catch(function (err) { return _this.onError(res, next, err); });
                         ;
                     }
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -695,12 +695,12 @@ module.exports = /** @class */ (function (_super) {
                                     return _this.redirect(res, '/login');
                                 }
                             })
-                                .catch(function (err) { return _this.onError(res, err); });
+                                .catch(function (err) { return _this.onError(res, next, err); });
                         })
-                            .catch(function (err) { return _this.onError(res, err); });
+                            .catch(function (err) { return _this.onError(res, next, err); });
                     }
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };

@@ -1,8 +1,10 @@
 'use strict';
 
-import { Request, Response } from 'express';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import { ReadStream } from 'node:fs';
 import * as config from '../config';
+import ApiError from '../error/ApiError';
+import ApiException from '../exception/ApiException';
 import { Singleton } from '../Singleton/Singleton';
 import { csrf, siteNotFound, error as _error } from '../utils/404-logic';
 
@@ -208,19 +210,77 @@ export abstract class ExpressResponse {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    onError(res: Response, error: any = '') : Response {
+    onError(res: Response, next: NextFunction, error: Error | ApiException | string | object, should_parse: boolean = false) : Response | void {
         if (config.configurations().environment === 'development') {
-            // todo 1-add next param 2-return next(new Error(JSON.stringify({error: ''}))) if it was object
-            // todo 1-add next param 2-return next(new Error(string)) if it was string
-            // todo with the statusCode
-            // todo example
-            // todo let err = new Error(JSON.stringify({error: 'Unexpected fallback error!'})))
-            // todo err.statusCode = 500
-            // todo return next(err)
-            // todo for both dev and prod environment
-            return this.render(res, 'undefined_routes', _error(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
+            let _error = error;
+            var _keys: string | boolean | number  = '';
+            if (typeof error === 'string') {
+                if (should_parse) {
+                    error = JSON.parse(error);    
+                }
+                return next(error);
+            } if (error instanceof Error) {
+                // @ts-ignore
+                error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+                error.message    = error instanceof Error ? JSON.stringify(error.message) : _keys;
+                return next(error);
+                // for (let key in error) {
+                //     if (Object.prototype.hasOwnProperty.call(error, key)) {
+                //         // @ts-ignore
+                //         _keys += error[key] + '_';
+                //     }
+                // }
+                // error_message = error instanceof Error ? error.message : _keys;
+                // return next(new Error(`${_keys}`));
+            }
+            
+            return this.render(res, 'undefined_routes', {
+                nav_title: '', 
+                path: '/404/',
+                is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                error:   null,
+                warning: null,
+                success: null,
+                status_code: 500,
+                status_title: "Unexpected error",
+                status_description: Singleton.getLodash().capitalize(error_message!) || `Please contact the support team!`,
+                url: '/',
+                label: 'Home'
+            }, null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);                
         } else if (config.configurations().environment === 'production') {
-            return this.render(res, 'undefined_routes', _error(res, error), null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
+            var error_message = '';
+            if ((error instanceof Error || error) && error !instanceof ApiException) {
+                // @ts-ignore
+                _error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR ;
+                let _error = error;
+                var _keys: string | boolean | number  = '';
+                error_message = error.message;
+                if (typeof error === 'string') {
+                    return next(new Error(error));
+                } else if (typeof error === 'object') {
+                    for (const key in error) {
+                        if (Object.prototype.hasOwnProperty.call(_error, key)) {
+                            // @ts-ignore
+                            _keys += _error[key] + '_';
+                        }
+                    }
+                    return next(new Error(`${_keys}`));
+                }
+            }
+            
+            return this.render(res, 'undefined_routes', {
+                nav_title: '', 
+                path: '/404/',
+                is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                error:   null,
+                warning: null,
+                success: null,
+                status_code: 500,
+                status_title: "Unexpected error",
+                status_description: Singleton.getLodash().capitalize(error_message!) || `Please contact the support team!`,
+                url: '/',
+                label: 'Home'
+            }, null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
         }
         return res.end();
     }

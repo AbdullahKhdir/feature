@@ -141,7 +141,7 @@ export = class Auth extends BaseController {
                                 req.session.currentUser = rows;
                                 req.session.save((err: any) => {
                                     if (err) {
-                                        return this.onError(res, err)
+                                        return this.onError(res, next, err)
                                     }
                                     if (!res.headersSent) {
                                         req.session.is_authenticated = true;
@@ -161,7 +161,7 @@ export = class Auth extends BaseController {
                                                 return this.redirect(res, '/security');
                                             }
                                         })
-                                        .catch((err: any) => this.onError(res, err))
+                                        .catch((err: any) => this.onError(res, next, err))
                                     }
                                 });
                             }
@@ -170,13 +170,13 @@ export = class Auth extends BaseController {
                             return this.redirect(res, '/login');
                         }
                     })
-                    .catch(err => this.onError(res, err))
+                    .catch(err => this.onError(res, next, err))
                 } else {
                     req.setProp('error', 'Email or password are not correct!, Please insert a valid data or sign up!');
                     return this.redirect(res, '/login');
                 }
             })
-            .catch((err: any) => this.onError(res, err))
+            .catch((err: any) => this.onError(res, next, err))
         } else {
             return this.onErrorValidation(res, errors.array())
         }
@@ -241,15 +241,15 @@ export = class Auth extends BaseController {
                                     return this.redirect(res, '/security');
                                 }
                             })
-                            .catch((err: any) => this.onError(res, err));
+                            .catch((err: any) => this.onError(res, next, err));
                         })
-                        .catch(err => this.onError(res, err));
+                        .catch(err => this.onError(res, next, err));
                 } else {
                     req.setProp('error', 'Email is already registered!');
                     return this.redirect(res, '/login');
                 }
             })
-            .catch((err: any) => this.onError(res, err))
+            .catch((err: any) => this.onError(res, next, err))
         } else {
             return this.onErrorValidation(res, errors.array())
         }
@@ -269,7 +269,7 @@ export = class Auth extends BaseController {
         res.onLogOut(req.user_cookie);
         req.session.destroy((err: any) => {
             if (err) {
-                return this.onError(res, err);
+                return this.onError(res, next, err);
             }
             return this.redirect(res, '/login');
         });
@@ -307,7 +307,7 @@ export = class Auth extends BaseController {
                 return this.redirect(res, '/reset')
             }
         })
-        .catch((err: any) => this.onError(res, err));
+        .catch((err: any) => this.onError(res, next, err));
     });
 
     /**
@@ -391,7 +391,7 @@ export = class Auth extends BaseController {
                 }
             );
         })
-        .catch((err: any) => this.onError(res, err));
+        .catch((err: any) => this.onError(res, next, err));
     });
 
     /**
@@ -462,14 +462,14 @@ export = class Auth extends BaseController {
                             return this.redirect(res, '/signup');
                         }
                     })
-                    .catch((err: any) => this.onError(res, err));
+                    .catch((err: any) => this.onError(res, next, err));
                 } else {
                     return this.redirect(res, '/signup');
                 }
             })
-            .catch((err: any) => this.onError(res, err));
+            .catch((err: any) => this.onError(res, next, err));
         })
-        .catch((err: any) => this.onError(res, err));
+        .catch((err: any) => this.onError(res, next, err));
     });
 
     /**
@@ -519,7 +519,7 @@ export = class Auth extends BaseController {
                             }
                         );
                     })
-                    .catch((err: any) => this.onError(res, err));
+                    .catch((err: any) => this.onError(res, next, err));
         } else {
             this.user_security_questions.filter({user_id: req.getCurrentUser().id})
             .then(result => {
@@ -549,7 +549,7 @@ export = class Auth extends BaseController {
                                 }
                             );
                         }
-                    }).catch((err: any) => this.onError(res, err));
+                    }).catch((err: any) => this.onError(res, next, err));
                 } else {
                     this.security_questions
                     .filter()
@@ -575,10 +575,10 @@ export = class Auth extends BaseController {
                             }
                         );
                     })
-                    .catch((err: any) => this.onError(res, err));
+                    .catch((err: any) => this.onError(res, next, err));
                 }
             })
-            .catch((err: any) => this.onError(res, err));
+            .catch((err: any) => this.onError(res, next, err));
         }
     });
 
@@ -627,10 +627,10 @@ export = class Auth extends BaseController {
                         return this.redirect(res, '/');
                     }
                 })
-                .catch((err: any) => this.onError(res, err));;
+                .catch((err: any) => this.onError(res, next, err));;
             }
         })
-        .catch((err: any) => this.onError(res, err));
+        .catch((err: any) => this.onError(res, next, err));
     });
 
     /**
@@ -717,12 +717,12 @@ export = class Auth extends BaseController {
                                 return this.redirect(res, '/login');
                             }
                         })
-                        .catch((err: any) => this.onError(res, err))
+                        .catch((err: any) => this.onError(res, next, err))
                     })
-                    .catch(err => this.onError(res, err))
+                    .catch(err => this.onError(res, next, err))
             }
         })
-        .catch((err: any) => this.onError(res, err))
+        .catch((err: any) => this.onError(res, next, err))
     });
 
     //**************************************************************************

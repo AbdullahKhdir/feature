@@ -4,6 +4,8 @@ import csurf from 'csurf';
 import { NextFunction, Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import BaseController from "../../../core/controller/BaseController";
+import InternalError from '../../../core/error/types/InternalError';
+import SyntaxError from '../../../core/error/types/SyntaxError';
 import SQLException from '../../../core/exception/types/SQLException';
 import { Singleton } from '../../../core/Singleton/Singleton';
 import userSession from "../../middlewares/init_user_session";
@@ -107,7 +109,7 @@ export = class Shop extends BaseController {
                         }
                     );
                 })
-                .catch((err: any) => this.onError(res, err));
+                .catch((err: any) => this.onError(res, next, err));
         } else {
             return res.render(
                 'shop/product-list',
@@ -149,9 +151,13 @@ export = class Shop extends BaseController {
         // // @ts-ignore
         // err.statusCode = 500;
         // return next(err);
-        // return this.onError(res, {success: 'OK'}); //Must be edited
+        //todo test all eligibility of calling the constructor of each error type to make sure the server send the right template response
         
-        // return next(new SQLException('SQL Error')) //Works
+        // return this.onError(res, next, new Error('Error'));          //Works
+        // return this.onError(res, next, new Error("OK"), true);       //Works
+        // return next(new InternalError(500, 'Internal Server Error')) //Works
+        // return next(new SQLException('SQL Error'))                   //Works
+        // return next(new BadRequestError('SQL Error'))                //To be tested with the rest to error types
         
         /*
         * User specific products
@@ -183,7 +189,7 @@ export = class Shop extends BaseController {
                         }
                     );
                 })
-                .catch((err: any) => this.onError(res, err)); 
+                .catch((err: any) => this.onError(res, next, err)); 
         } else {
             return this.render(
                 res,
@@ -221,7 +227,7 @@ export = class Shop extends BaseController {
         res.removeHeader("Cross-Origin-Embedder-Policy")
         const user_cart = req.getCurrentUser().getCart() || [];
         if (!user_cart) {
-            return this.onError(res, new Error('User is not available'))
+            return this.onError(res, next, new Error('User is not available'))
         }
         user_cart
         .then((rows: any) => {
@@ -302,7 +308,7 @@ export = class Shop extends BaseController {
                                         }
                                     );
                                 })
-                                .catch((err: any) => this.onError(res, err));
+                                .catch((err: any) => this.onError(res, next, err));
                             }
                         } else {
                             // return this.redirect(res, '/', this.constants.HTTPS_STATUS.REDIRECTION.SEE_OTHER);
@@ -327,7 +333,7 @@ export = class Shop extends BaseController {
                             );
                         }
                     })
-                    .catch((err: any) => this.onError(res, err));
+                    .catch((err: any) => this.onError(res, next, err));
                 } else {
                     return this.render(
                         res,
@@ -371,7 +377,7 @@ export = class Shop extends BaseController {
                 );
             }
         })
-        .catch((err: any) => this.onError(res, err));
+        .catch((err: any) => this.onError(res, next, err));
     });
 
     /**
@@ -407,7 +413,7 @@ export = class Shop extends BaseController {
                                     return this.redirect(res, '/cart/');
                                 }
                             }))
-                            .catch((err: any) => this.onError(res, err));
+                            .catch((err: any) => this.onError(res, next, err));
                         } else {
                             const cart_item_params = {
                                 cart_id: +cart_id,
@@ -421,10 +427,10 @@ export = class Shop extends BaseController {
                                     return this.redirect(res, '/cart/');
                                 }
                             })
-                            .catch((err: any) => this.onError(res, err));
+                            .catch((err: any) => this.onError(res, next, err));
                         }
                     })
-                    .catch((err: any) => this.onError(res, err));  
+                    .catch((err: any) => this.onError(res, next, err));  
                 } else {
                     const cart_params = {
                         user_id: user_id
@@ -448,7 +454,7 @@ export = class Shop extends BaseController {
                                             return this.redirect(res, '/cart/');
                                         }
                                     }))
-                                    .catch((err: any) => this.onError(res, err));
+                                    .catch((err: any) => this.onError(res, next, err));
                                 } else {
                                     const cart_item_params = {
                                         cart_id: +id,
@@ -462,15 +468,15 @@ export = class Shop extends BaseController {
                                             return this.redirect(res, '/cart/');
                                         }
                                     })
-                                    .catch((err: any) => this.onError(res, err));
+                                    .catch((err: any) => this.onError(res, next, err));
                                 }
                             })
-                            .catch((err: any) => this.onError(res, err));  
+                            .catch((err: any) => this.onError(res, next, err));  
                         }
                     })
-                    .catch((err: any) => this.onError(res, err));
+                    .catch((err: any) => this.onError(res, next, err));
                 }
-            }).catch((err: any) => this.onError(res, err));
+            }).catch((err: any) => this.onError(res, next, err));
         } else {
             return this.onErrorValidation(res, errors.array())
         }
@@ -586,17 +592,17 @@ export = class Shop extends BaseController {
                                 }
                             );
                         })
-                        .catch((err: any) => this.onError(res, err));
+                        .catch((err: any) => this.onError(res, next, err));
                     } else {
                         return this.redirect(res, '/cart');
                     }
                 })
-                .catch((err: any) => this.onError(res, err));
+                .catch((err: any) => this.onError(res, next, err));
             } else {
                 return this.redirect(res, '/cart');
             }
         })
-        .catch((err: any) => this.onError(res, err));
+        .catch((err: any) => this.onError(res, next, err));
     });
 
     /**
@@ -620,7 +626,7 @@ export = class Shop extends BaseController {
                             return product.getProducts;
                         }
                     })
-                    .catch((err: any) => this.onError(res, err));
+                    .catch((err: any) => this.onError(res, next, err));
                 }
             }
         })
@@ -647,7 +653,7 @@ export = class Shop extends BaseController {
                                                 }
                                             }
                                         })
-                                        .catch((err: any) => this.onError(res, err));
+                                        .catch((err: any) => this.onError(res, next, err));
                                     } else if (typeof order_items_rows !== 'undefined') {
                                         order_items_rows.forEach((order_items_row: any) => {
                                             this.order_items_object.filter({id: order_items_row.id})
@@ -666,13 +672,13 @@ export = class Shop extends BaseController {
                                                         }
                                                     }
                                                 })
-                                                .catch((err: any) => this.onError(res, err));
+                                                .catch((err: any) => this.onError(res, next, err));
                                             })
-                                            .catch((err: any) => this.onError(res, err));
+                                            .catch((err: any) => this.onError(res, next, err));
                                         });
                                     }
                                 })
-                                .catch((err: any) => this.onError(res, err)); 
+                                .catch((err: any) => this.onError(res, next, err)); 
                             }
                         });
                     } else {
@@ -702,24 +708,24 @@ export = class Shop extends BaseController {
                                                         }
                                                     }
                                                 })
-                                                .catch((err: any) => this.onError(res, err));
+                                                .catch((err: any) => this.onError(res, next, err));
                                             }
                                             if (!res.headersSent) {
                                                 return this.redirect(res, '/orders/');
                                             }
                                         })
-                                        .catch((err: any) => this.onError(res, err));  
+                                        .catch((err: any) => this.onError(res, next, err));  
                                     }
                                 });
                             }
                         })
-                        .catch((err: any) => this.onError(res, err));
+                        .catch((err: any) => this.onError(res, next, err));
                     }
                 })
-                .catch((err: any) => this.onError(res, err));
+                .catch((err: any) => this.onError(res, next, err));
             }
         })
-        .catch((err: any) => this.onError(res, err));
+        .catch((err: any) => this.onError(res, next, err));
     });
 
     /**
@@ -760,7 +766,7 @@ export = class Shop extends BaseController {
                     return this.siteNotFound(res);
                 }
             })
-            .catch((err: any) => this.onError(res, err));
+            .catch((err: any) => this.onError(res, next, err));
         } else {
             return this.siteNotFound(res);
         }
@@ -793,15 +799,15 @@ export = class Shop extends BaseController {
                                                 return this.redirect(res, '/cart/');
                                             }
                                         })
-                                        .catch((err: any) => this.onError(res, err));
+                                        .catch((err: any) => this.onError(res, next, err));
                                     } else {
                                         return this.redirect(res, '/cart/');
                                     }
                                 })
-                                .catch((err: any) => this.onError(res, err));
+                                .catch((err: any) => this.onError(res, next, err));
                             }
                         })
-                        .catch((err: any) => this.onError(res, err));
+                        .catch((err: any) => this.onError(res, next, err));
                 }
             });
         }
@@ -829,7 +835,7 @@ export = class Shop extends BaseController {
                                     return this.redirect(res, '/cart/');
                                 }
                             })
-                            .catch((err: any) => this.onError(res, err));
+                            .catch((err: any) => this.onError(res, next, err));
                     } else {
                         this.cart_items_object.delete({product_id: cart_item_product_id})
                             .then((result: any) => {
@@ -837,11 +843,11 @@ export = class Shop extends BaseController {
                                     return this.redirect(res, '/cart/');
                                 }
                             })
-                            .catch((err: any) => this.onError(res, err));
+                            .catch((err: any) => this.onError(res, next, err));
                     }
                 }
             })
-            .catch((err: any) => this.onError(res, err));
+            .catch((err: any) => this.onError(res, next, err));
         }
     });
 
@@ -865,7 +871,7 @@ export = class Shop extends BaseController {
         const user     = req.getCurrentUser();
         
         if (!this.__.isNumber(order_id)) {
-            return this.onError(res, 'Please do not alter the link!')
+            return this.onError(res, next, 'Please do not alter the link!')
         }
 
         if (Object.keys(user).length === 0 || this.__.isEmpty(user)) {
@@ -925,16 +931,16 @@ export = class Shop extends BaseController {
                                     }
                                 }
                             })
-                            .catch((err: any) => this.onError(res, err));
+                            .catch((err: any) => this.onError(res, next, err));
                         }
                     })
-                    .catch((err: any) => this.onError(res, err));
+                    .catch((err: any) => this.onError(res, next, err));
                 }
             } else {
                 return this.siteNotFound(res)
             }
         })
-        .catch(err => this.onError(res, err));
+        .catch(err => this.onError(res, next, err));
     });
 
     //**************************************************************************

@@ -194,7 +194,7 @@ module.exports = /** @class */ (function (_super) {
                             return _this.redirect(res, '/products/');
                         }
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     return [2 /*return*/, this.redirect(res, '/')];
@@ -278,7 +278,7 @@ module.exports = /** @class */ (function (_super) {
                             }
                         }
                     })
-                        .catch(function (err) { return _this.onError(res, err); });
+                        .catch(function (err) { return _this.onError(res, next, err); });
                 }
                 errors = (0, express_validator_1.validationResult)(req);
                 if (errors.isEmpty()) {
@@ -288,7 +288,7 @@ module.exports = /** @class */ (function (_super) {
                             if (result[0].affectedRows) {
                                 return res.redirect('/admin/products/');
                             }
-                        }).catch(function (err) { return _this.onError(res, err); });
+                        }).catch(function (err) { return _this.onError(res, next, err); });
                     }
                 }
                 else {
@@ -366,7 +366,7 @@ module.exports = /** @class */ (function (_super) {
                         if (primary_key) {
                             return _this.redirect(res, '/');
                         }
-                    }).catch(function (err) { return _this.onError(res, err); });
+                    }).catch(function (err) { return _this.onError(res, next, err); });
                 }
                 else {
                     return [2 /*return*/, this.onErrorValidation(res, errors.array())];
@@ -459,19 +459,19 @@ module.exports = /** @class */ (function (_super) {
                                 if (fs.existsSync(path)) {
                                     fs.unlink(path, function (err) {
                                         if (err) {
-                                            return _this.onError(res, err);
+                                            return _this.onError(res, next, err);
                                         }
                                         var id = rows[0].id;
                                         _this.product_object.delete(id)
                                             .then(function (result) {
                                             return _this.redirect(res, '/admin/products/');
                                         })
-                                            .catch(function (err) { return _this.onError(res, err); });
+                                            .catch(function (err) { return _this.onError(res, next, err); });
                                     });
                                 }
                             }
                         })
-                            .catch(function (err) { return _this.onError(res, err); });
+                            .catch(function (err) { return _this.onError(res, next, err); });
                     }
                 }
                 else {
@@ -515,7 +515,7 @@ module.exports = /** @class */ (function (_super) {
                         ]
                     });
                 })
-                    .catch(function (err) { return _this.onError(res, err); });
+                    .catch(function (err) { return _this.onError(res, next, err); });
                 return [2 /*return*/];
             });
         }); }); };
