@@ -144,12 +144,14 @@ export = class Shop extends BaseController {
         }
         res.noCacheNeeded();
         // TODO: Add public products
-        let err = new Error(JSON.stringify({success: 'OK'}));
-        // @ts-ignore
-        err.statusCode = 500;
-        return next(err);
-        // return this.onError(res, {success: 'OK'});
-        // return next(new SQLException('SQL Error'))
+        
+        // let err = new Error(JSON.stringify({success: 'OK'}));
+        // // @ts-ignore
+        // err.statusCode = 500;
+        // return next(err);
+        // return this.onError(res, {success: 'OK'}); //Must be edited
+        
+        // return next(new SQLException('SQL Error')) //Works
         
         /*
         * User specific products

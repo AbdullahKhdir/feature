@@ -143,17 +143,53 @@ module.exports = /** @class */ (function (_super) {
          * @returns Response
         */
         _this.index = function () { return _this.route('get', '/', { userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var err, user_products;
+            var user_products;
             var _this = this;
             return __generator(this, function (_a) {
                 if (!req.isGet()) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.noCacheNeeded();
-                err = new Error(JSON.stringify({ success: 'OK' }));
-                // @ts-ignore
-                err.statusCode = 500;
-                return [2 /*return*/, next(err)];
+                user_products = req.getCurrentUser() ? req.getCurrentUser().getProducts() : false;
+                if (typeof user_products === 'object') {
+                    user_products
+                        .then(function (rows) {
+                        var paginator = Singleton_1.Singleton.getPagination().getRecords(req, rows, 12);
+                        var records = paginator[0], current_page = paginator[1], pages = paginator[2], _paginator = paginator[3];
+                        return _this.render(res, 'shop/index', {
+                            products: records || [],
+                            nav_title: 'shop',
+                            path: '/',
+                            root: 'shop',
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                }
+                            ],
+                            pages: pages,
+                            current_page: current_page,
+                            _paginator: _paginator
+                        });
+                    })
+                        .catch(function (err) { return _this.onError(res, err); });
+                }
+                else {
+                    return [2 /*return*/, this.render(res, 'shop/index', {
+                            products: [],
+                            nav_title: 'shop',
+                            path: '/',
+                            success: res.locals['success'],
+                            root: 'shop',
+                            breadcrumbs: [
+                                {
+                                    title: 'Shop',
+                                    url: '/'
+                                }
+                            ]
+                        })];
+                }
+                return [2 /*return*/];
             });
         }); }); };
         /**
