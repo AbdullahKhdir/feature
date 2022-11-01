@@ -21,7 +21,7 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiError_1 = __importDefault(require("../ApiError"));
 module.exports = /** @class */ (function (_super) {
     __extends(SiteNotFound, _super);
-    function SiteNotFound(statusCode, message) {
+    function SiteNotFound(message, statusCode) {
         if (message === void 0) { message = 'Site Not Found'; }
         var _constants = Singleton_1.Singleton.getConstants();
         var status_code = statusCode ? statusCode : _constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND;

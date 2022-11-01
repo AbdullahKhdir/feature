@@ -12,11 +12,12 @@ import ApiError from "../ApiError";
  * This occurs when the JS engine is overwhelmed by too many recursions, too many switch cases, etc
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+ //? Usage:                                           *\\
+ //* return next(new InternalError('Internal Error')) *\\
 */
 export = class InternalError extends ApiError {
-    constructor(status_code?: number, message = 'Internal error') {
+    constructor(message = 'Internal error', status_code?: number) {
         const _constants = Singleton.getConstants();
-        super(status_code ? status_code : _constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND, message);
-        // next error middleware will send or render the page
+        super(status_code ? status_code : Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message);
     }
- }
+}

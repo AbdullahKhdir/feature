@@ -17,24 +17,13 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 var Singleton_1 = require("../../Singleton/Singleton");
 var ApiError_1 = __importDefault(require("../ApiError"));
-/**
- * @class BadRequestError
- * @constructor
- * @extends ApiError
- * @description The 400 Bad Request Error is an HTTP response status code indicating
- *  that the server was unable to process the request sent by the client
- * @version 1.0.0
- * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
 module.exports = /** @class */ (function (_super) {
     __extends(BadRequestError, _super);
-    function BadRequestError(status_code, message) {
+    function BadRequestError(message, status_code) {
         if (message === void 0) { message = 'Bad Request'; }
         return _super.call(this, status_code ? status_code : Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST, message) || this;
-        // next error middleware will send or render the page
     }
     return BadRequestError;
 }(ApiError_1.default));

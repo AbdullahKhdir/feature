@@ -374,8 +374,6 @@ export = class Db extends ExpressMysqlSession{
                                                     if (err) {
                                                         return console.log('Unable to scan directory: ' + err);
                                                     }
-                                                    // Todo: test behavior
-                                                    // if (typeof promises_identifier === 'undefined') {
                                                     if (typeof promises_identifier! === 'undefined') {
                                                         var promises_identifier : any= {};
                                                     }
@@ -491,8 +489,6 @@ export = class Db extends ExpressMysqlSession{
                                         if (err) {
                                             return console.log('Unable to scan directory: ' + err);
                                         } 
-                                        //Todo: second checkpoint to test
-                                        // if (typeof promises_identifier === 'undefined') {
                                         if (typeof promises_identifier! === 'undefined') {
                                             var promises_identifier : any = {};
                                         }

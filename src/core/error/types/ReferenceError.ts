@@ -13,7 +13,7 @@ import ApiError  from "../ApiError";
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 export = class ReferenceError extends ApiError {
-    constructor(status_code?: number, message = 'Reference error') {
+    constructor(message = 'Reference error', status_code?: number) {
         const _constants = Singleton.getConstants();
         super(status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message);
         // next error middleware will send or render the page

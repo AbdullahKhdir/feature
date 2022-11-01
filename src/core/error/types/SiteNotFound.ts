@@ -12,7 +12,7 @@ import ApiError from "../ApiError";
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 export = class SiteNotFound extends ApiError {
-    constructor(statusCode?: number, message = 'Site Not Found') {
+    constructor(message = 'Site Not Found', statusCode?: number) {
         const _constants = Singleton.getConstants();
         const status_code = statusCode ? statusCode : _constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND;
         super(status_code, message);

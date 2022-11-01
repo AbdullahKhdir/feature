@@ -21,11 +21,9 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiError_1 = __importDefault(require("../ApiError"));
 module.exports = /** @class */ (function (_super) {
     __extends(EvalError, _super);
-    function EvalError(status_code, message) {
+    function EvalError(message, status_code) {
         if (message === void 0) { message = 'Eval error'; }
-        var _constants = Singleton_1.Singleton.getConstants();
-        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND, message) || this;
-        // next error middleware will send or render the page
+        return _super.call(this, status_code ? status_code : Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
     }
     return EvalError;
 }(ApiError_1.default));

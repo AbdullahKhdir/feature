@@ -210,34 +210,27 @@ export abstract class ExpressResponse {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    onError(res: Response, next: NextFunction, error: Error | ApiException | string | object, should_parse: boolean = false) : Response | void {
+    onError(res: Response, next: NextFunction, error: Error | string | {message: string; statusCode: 400 | 404 | 500 | 503}) : Response | void {
         if (config.configurations().environment === 'development') {
-            let _error = error;
-            var _keys: string | boolean | number  = '';
             if (typeof error === 'string') {
-                if (should_parse) {
-                    error = JSON.parse(error);    
-                }
-                return next(error);
-            } if (error instanceof Error) {
+                let _error = new Error(error);
+                //@ts-ignore
+                _error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                return next(_error);
+            } else if (error instanceof Error) {
                 // @ts-ignore
-                error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
-                error.message    = error instanceof Error ? JSON.stringify(error.message) : _keys;
+                error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                 return next(error);
-                // for (let key in error) {
-                //     if (Object.prototype.hasOwnProperty.call(error, key)) {
-                //         // @ts-ignore
-                //         _keys += error[key] + '_';
-                //     }
-                // }
-                // error_message = error instanceof Error ? error.message : _keys;
-                // return next(new Error(`${_keys}`));
+            } else if (typeof error === 'object' && typeof error !== 'string' 
+                && typeof error !== 'function' && typeof error !== 'boolean' 
+                && typeof error !== 'number') {
+                return next(error);
             }
             
             return this.render(res, 'undefined_routes', {
                 nav_title: '', 
                 path: '/404/',
-                is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                is_authenticated: res?.req?.session?.is_authenticated,
                 error:   null,
                 warning: null,
                 success: null,
@@ -249,29 +242,23 @@ export abstract class ExpressResponse {
             }, null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);                
         } else if (config.configurations().environment === 'production') {
             var error_message = '';
-            if ((error instanceof Error || error) && error !instanceof ApiException) {
+            if (error instanceof Error && error !instanceof ApiException) {
                 // @ts-ignore
-                _error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR ;
-                let _error = error;
-                var _keys: string | boolean | number  = '';
-                error_message = error.message;
-                if (typeof error === 'string') {
-                    return next(new Error(error));
-                } else if (typeof error === 'object') {
-                    for (const key in error) {
-                        if (Object.prototype.hasOwnProperty.call(_error, key)) {
-                            // @ts-ignore
-                            _keys += _error[key] + '_';
-                        }
-                    }
-                    return next(new Error(`${_keys}`));
-                }
+                error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                return next(error);
+            } else if (error !instanceof ApiException && typeof error === 'string') {
+                let _error = new Error(error);
+                //@ts-ignore
+                _error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                return next(_error);
+            } else if (error !instanceof ApiException && typeof error === 'object') {
+                return next(error);
             }
             
             return this.render(res, 'undefined_routes', {
                 nav_title: '', 
                 path: '/404/',
-                is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                is_authenticated: res?.req?.session?.is_authenticated,
                 error:   null,
                 warning: null,
                 success: null,

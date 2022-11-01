@@ -27,6 +27,8 @@ var ApiException_1 = __importDefault(require("../ApiException"));
  * @description This is used to identify When file is not found
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+ //? Usage:                                                             *\\
+ //* return next(new FileNotFoundException('File Not Found Exception')) *\\
 */
 module.exports = /** @class */ (function (_super) {
     __extends(FileNotFoundException, _super);
@@ -34,7 +36,6 @@ module.exports = /** @class */ (function (_super) {
         if (message === void 0) { message = 'File not found exception'; }
         var _constants = Singleton_1.Singleton.getConstants();
         return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
-        // next error middleware will send or render the page
     }
     return FileNotFoundException;
 }(ApiException_1.default));

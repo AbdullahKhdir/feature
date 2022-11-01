@@ -4,9 +4,9 @@ import csurf from 'csurf';
 import { NextFunction, Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import BaseController from "../../../core/controller/BaseController";
+import BadRequestError from '../../../core/error/types/BadRequestError';
+import EvalError from '../../../core/error/types/EvalError';
 import InternalError from '../../../core/error/types/InternalError';
-import SyntaxError from '../../../core/error/types/SyntaxError';
-import SQLException from '../../../core/exception/types/SQLException';
 import { Singleton } from '../../../core/Singleton/Singleton';
 import userSession from "../../middlewares/init_user_session";
 import isAuth from "../../middlewares/is_auth";
@@ -145,20 +145,7 @@ export = class Shop extends BaseController {
             return this.siteNotFound(res);
         }
         res.noCacheNeeded();
-        // TODO: Add public products
-        
-        // let err = new Error(JSON.stringify({success: 'OK'}));
-        // // @ts-ignore
-        // err.statusCode = 500;
-        // return next(err);
-        //todo test all eligibility of calling the constructor of each error type to make sure the server send the right template response
-        
-        // return this.onError(res, next, new Error('Error'));          //Works
-        // return this.onError(res, next, new Error("OK"), true);       //Works
-        // return next(new InternalError(500, 'Internal Server Error')) //Works
-        // return next(new SQLException('SQL Error'))                   //Works
-        // return next(new BadRequestError('SQL Error'))                //To be tested with the rest to error types
-        
+        // TODO: Add public products        
         /*
         * User specific products
         */

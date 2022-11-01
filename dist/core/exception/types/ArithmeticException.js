@@ -25,7 +25,6 @@ module.exports = /** @class */ (function (_super) {
         if (message === void 0) { message = 'Arithmetic exception'; }
         var _constants = Singleton_1.Singleton.getConstants();
         return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
-        // next error middleware will send or render the page
     }
     return ArithmeticException;
 }(ApiException_1.default));

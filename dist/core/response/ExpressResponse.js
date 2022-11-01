@@ -231,35 +231,29 @@ var ExpressResponse = /** @class */ (function () {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    ExpressResponse.prototype.onError = function (res, next, error, should_parse) {
-        if (should_parse === void 0) { should_parse = false; }
+    ExpressResponse.prototype.onError = function (res, next, error) {
+        var _a, _b, _c, _d;
         if (config.configurations().environment === 'development') {
-            var _error_1 = error;
-            var _keys = '';
             if (typeof error === 'string') {
-                if (should_parse) {
-                    error = JSON.parse(error);
-                }
-                return next(error);
+                var _error_1 = new Error(error);
+                //@ts-ignore
+                _error_1.statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                return next(_error_1);
             }
-            if (error instanceof Error) {
+            else if (error instanceof Error) {
                 // @ts-ignore
                 error.statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
-                error.message = error instanceof Error ? JSON.stringify(error.message) : _keys;
                 return next(error);
-                // for (let key in error) {
-                //     if (Object.prototype.hasOwnProperty.call(error, key)) {
-                //         // @ts-ignore
-                //         _keys += error[key] + '_';
-                //     }
-                // }
-                // error_message = error instanceof Error ? error.message : _keys;
-                // return next(new Error(`${_keys}`));
+            }
+            else if (typeof error === 'object' && typeof error !== 'string'
+                && typeof error !== 'function' && typeof error !== 'boolean'
+                && typeof error !== 'number') {
+                return next(error);
             }
             return this.render(res, 'undefined_routes', {
                 nav_title: '',
                 path: '/404/',
-                is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                is_authenticated: (_b = (_a = res === null || res === void 0 ? void 0 : res.req) === null || _a === void 0 ? void 0 : _a.session) === null || _b === void 0 ? void 0 : _b.is_authenticated,
                 error: null,
                 warning: null,
                 success: null,
@@ -272,29 +266,24 @@ var ExpressResponse = /** @class */ (function () {
         }
         else if (config.configurations().environment === 'production') {
             var error_message = '';
-            if ((error instanceof Error || error) && error instanceof ApiException_1.default) {
+            if (error instanceof Error && error instanceof ApiException_1.default) {
                 // @ts-ignore
+                error.statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                return next(error);
+            }
+            else if (error instanceof ApiException_1.default && typeof error === 'string') {
+                var _error_2 = new Error(error);
+                //@ts-ignore
                 _error_2.statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
-                var _error_2 = error;
-                var _keys = '';
-                error_message = error.message;
-                if (typeof error === 'string') {
-                    return next(new Error(error));
-                }
-                else if (typeof error === 'object') {
-                    for (var key in error) {
-                        if (Object.prototype.hasOwnProperty.call(_error_2, key)) {
-                            // @ts-ignore
-                            _keys += _error_2[key] + '_';
-                        }
-                    }
-                    return next(new Error("".concat(_keys)));
-                }
+                return next(_error_2);
+            }
+            else if (error instanceof ApiException_1.default && typeof error === 'object') {
+                return next(error);
             }
             return this.render(res, 'undefined_routes', {
                 nav_title: '',
                 path: '/404/',
-                is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+                is_authenticated: (_d = (_c = res === null || res === void 0 ? void 0 : res.req) === null || _c === void 0 ? void 0 : _c.session) === null || _d === void 0 ? void 0 : _d.is_authenticated,
                 error: null,
                 warning: null,
                 success: null,

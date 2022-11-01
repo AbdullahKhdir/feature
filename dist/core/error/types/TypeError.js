@@ -21,7 +21,7 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiError_1 = __importDefault(require("../ApiError"));
 module.exports = /** @class */ (function (_super) {
     __extends(TypeError, _super);
-    function TypeError(status_code, message) {
+    function TypeError(message, status_code) {
         if (message === void 0) { message = 'Type error'; }
         var _constants = Singleton_1.Singleton.getConstants();
         return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;

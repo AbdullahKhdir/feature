@@ -61,8 +61,9 @@ export = class Rest extends BaseController {
      * @returns Response
     */
     getExmaple = () => this.route('get', '/get_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
+        // return this.onError(res, next, 'declined api endpoint post');
+        // return next(new Error('declined api endpoint get'));
         return new JsonResponse(200, 'Success got', {success: 'OK'}).sendAsJson(res);
-        // todo return next(new Error('declined api endpoint post')); this.onError(res, 'declined api endpoint post' or {error: 'declined api endpoint post'})
     });
 
     /**
@@ -74,7 +75,6 @@ export = class Rest extends BaseController {
     */
     postExmaple = () => this.route('post', '/post_example', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success posted', {success: 'OK', id: new Date()}).sendAsJson(res);
-        // todo return next(new Error('declined api endpoint post')); this.onError(res, 'declined api endpoint post' or {error: 'declined api endpoint post'})
     });
 
     /**
@@ -86,7 +86,6 @@ export = class Rest extends BaseController {
     */
     patchExmaple = () => this.route('patch', '/patch_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success patched', {success: 'OK', id: new Date()}).sendAsJson(res);
-        // todo return next(new Error('declined api endpoint post')); this.onError(res, 'declined api endpoint post' or {error: 'declined api endpoint post'})
     });
 
     /**
@@ -98,7 +97,6 @@ export = class Rest extends BaseController {
     */
     putExmaple = () => this.route('put', '/put_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
-        // todo return next(new Error('declined api endpoint post')); this.onError(res, 'declined api endpoint post' or {error: 'declined api endpoint post'})
     });
 
     /**
@@ -110,7 +108,6 @@ export = class Rest extends BaseController {
     */
     deleteExmaple = () => this.route('delete', '/delete_example/', {}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(200, 'Success deleted', {success: 'OK', id: new Date()}).sendAsJson(res);
-        // todo return next(new Error('declined api endpoint post')); this.onError(res, 'declined api endpoint post' or {error: 'declined api endpoint post'})
     });
     
     protected firstDynMethodMiddleware() {
