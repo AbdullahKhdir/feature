@@ -31,7 +31,7 @@ var node_fs_1 = require("node:fs");
 var config = __importStar(require("../config"));
 var ApiException_1 = __importDefault(require("../exception/ApiException"));
 var Singleton_1 = require("../Singleton/Singleton");
-var _404_logic_1 = require("../utils/404-logic");
+var undefined_routes_logic_1 = require("../utils/undefined-routes-logic");
 /**
  * @class Response
  * @constructor
@@ -145,7 +145,7 @@ var ExpressResponse = /** @class */ (function () {
      * @returns Response
     */
     ExpressResponse.prototype.siteNotFound = function (res) {
-        return this.render(res, 'undefined_routes', (0, _404_logic_1.siteNotFound)(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
+        return this.render(res, 'undefined_routes', (0, undefined_routes_logic_1.siteNotFound)(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
     };
     /**
      * @function onErrorValidation
@@ -222,7 +222,7 @@ var ExpressResponse = /** @class */ (function () {
      * @returns Response
     */
     ExpressResponse.prototype.invalidCsrfResponse = function (req, res) {
-        return this.render(res, 'undefined_routes', (0, _404_logic_1.csrf)(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
+        return this.render(res, 'undefined_routes', (0, undefined_routes_logic_1.csrf)(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
     };
     /**
      * @function onError
@@ -252,7 +252,7 @@ var ExpressResponse = /** @class */ (function () {
             }
             return this.render(res, 'undefined_routes', {
                 nav_title: '',
-                path: '/404/',
+                path: '/undefined_routes/',
                 is_authenticated: (_b = (_a = res === null || res === void 0 ? void 0 : res.req) === null || _a === void 0 ? void 0 : _a.session) === null || _b === void 0 ? void 0 : _b.is_authenticated,
                 error: null,
                 warning: null,
@@ -282,7 +282,7 @@ var ExpressResponse = /** @class */ (function () {
             }
             return this.render(res, 'undefined_routes', {
                 nav_title: '',
-                path: '/404/',
+                path: '/undefined_routes/',
                 is_authenticated: (_d = (_c = res === null || res === void 0 ? void 0 : res.req) === null || _c === void 0 ? void 0 : _c.session) === null || _d === void 0 ? void 0 : _d.is_authenticated,
                 error: null,
                 warning: null,

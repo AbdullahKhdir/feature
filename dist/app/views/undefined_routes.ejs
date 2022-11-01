@@ -1,13 +1,13 @@
 <%- include('includes/updated/head.ejs', {nav_title: ''}) %>
-<link href="/css/404.css" rel="stylesheet">
+<link href="/css/undefined_routes.css" rel="stylesheet">
 <script type="text/javascript" src="../materialize/js/init.js" defer></script>
 <script type="text/javascript" src="../plugins/Gsap/gsap.min.js" defer></script>
-<script type="text/javascript" src="../js/404.js" defer></script>
+<script type="text/javascript" src="../js/undefined_routes.js" defer></script>
 <%- include('includes/updated/script.ejs') %>
 </head>
 
 <body>
-    <%- include('includes/updated/header.ejs', {root: '/404/', nav_title: '', path: '/404/', status_code: typeof status_code === 'undefined' ? 404 : status_code })%>
+    <%- include('includes/updated/header.ejs', {root: '/undefined_routes/', nav_title: '', path: '/undefined_routes/', status_code: typeof status_code === 'undefined' ? 500 : status_code })%>
     <%- include('includes/updated/toaster.ejs') %>
     <main>
         <div class="container"> 

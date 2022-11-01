@@ -20,8 +20,8 @@ const capitalize = (s: string) => s && s[0].toUpperCase() + s.slice(1);
 export function csrf(res: Response, object: options = {}) {
     let _object = {
         nav_title: '', 
-        path: '/404/',
-        is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+        path: '/undefined_routes/',
+        is_authenticated: res?.req?.session?.is_authenticated,
         error:   '',
         warning: '',
         success: null,
@@ -39,8 +39,8 @@ export function siteNotFound(res: Response, return_type: 'template' | 'json' = '
     if (return_type === 'template') {
         _object = {
             nav_title: '', 
-            path: '/404/',
-            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+            path: '/undefined_routes/',
+            is_authenticated: res?.req?.session?.is_authenticated,
             error:   null,
             warning: null,
             success: null,
@@ -70,8 +70,8 @@ export function exception(res: Response, return_type: 'template' | 'json' = 'tem
     if (return_type === 'template') {
         _object = {
             nav_title: '', 
-            path: '/404/',
-            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+            path: '/undefined_routes/',
+            is_authenticated: res?.req?.session?.is_authenticated,
             error:   null,
             warning: null,
             success: null,
@@ -99,8 +99,8 @@ export function error(res: Response, return_type: 'template' | 'json' = 'templat
     if (return_type === 'template') {
         _object = {
             nav_title: '', 
-            path: '/404/',
-            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+            path: '/undefined_routes/',
+            is_authenticated: res?.req?.session?.is_authenticated,
             error:   null,
             warning: null,
             success: null,
@@ -124,8 +124,8 @@ export function undefinedHttpRequest(res: Response, return_type: 'template' | 'j
     if (return_type === 'template') {
         _object = {
             nav_title: '',
-            path: '/404/',
-            is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
+            path: '/undefined_routes/',
+            is_authenticated: res?.req?.session?.is_authenticated,
             error:   null,
             warning: null,
             success: null,

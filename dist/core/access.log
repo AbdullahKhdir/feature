@@ -903,3 +903,5 @@
 ::1 - - [01/Nov/2022:17:12:28 +0000] "GET /get_example HTTP/1.1" 500 40 "https://www.udemy.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
 ::1 - - [01/Nov/2022:17:13:35 +0000] "GET /get_example HTTP/1.1" 500 40 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
 ::1 - - [01/Nov/2022:17:13:39 +0000] "GET /get_example HTTP/1.1" 500 40 "https://www.udemy.com/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
+::1 - - [01/Nov/2022:17:31:12 +0000] "GET /security HTTP/1.1" 500 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"
+::1 - - [01/Nov/2022:17:33:05 +0000] "GET /security HTTP/1.1" 500 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36"

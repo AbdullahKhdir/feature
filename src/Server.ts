@@ -6,7 +6,7 @@ import OS from 'os';
 import { ENDPOINTS } from './core/api/apis_endpoints/endpoints';
 import * as config from './core/config';
 import { Singleton } from './core/Singleton/Singleton';
-import { csrf } from './core/utils/404-logic';
+import { csrf } from './core/utils/undefined-routes-logic';
 
 /**
  * @class Server
@@ -117,7 +117,7 @@ class Server {
                                         return res.status(_status)
                                         .render('undefined_routes', {
                                             nav_title: '', 
-                                            path: '/404/',
+                                            path: '/undefined_routes/',
                                             is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                             error:   null,
                                             warning: null,
@@ -142,7 +142,7 @@ class Server {
                                         return res.status(_status)
                                         .render('undefined_routes', {
                                             nav_title: '', 
-                                            path: '/404/',
+                                            path: '/undefined_routes/',
                                             is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                             error:   null,
                                             warning: null,
@@ -166,7 +166,7 @@ class Server {
                                         return res.status(_status)
                                         .render('undefined_routes', {
                                             nav_title: '',
-                                            path: '/404/',
+                                            path: '/undefined_routes/',
                                             is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                             error:   null,
                                             warning: null,
@@ -191,7 +191,7 @@ class Server {
                                         return res.status(_status)
                                         .render('undefined_routes', {
                                             nav_title: '', 
-                                            path: '/404/',
+                                            path: '/undefined_routes/',
                                             is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                             error:   null,
                                             warning: null,
@@ -214,7 +214,7 @@ class Server {
                             return res.status(_status)
                             .render('undefined_routes', {
                                 nav_title: '',
-                                path: '/404/',
+                                path: '/undefined_routes/',
                                 is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                 error:   null,
                                 warning: null,
@@ -230,7 +230,7 @@ class Server {
                             return res.status(_status)
                                 .render('undefined_routes', {
                                     nav_title: '', 
-                                    path: '/404/',
+                                    path: '/undefined_routes/',
                                     is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                     error:   null,
                                     warning: null,
@@ -247,7 +247,7 @@ class Server {
                             return res.status(_status)
                             .render('undefined_routes', {
                                 nav_title: '',
-                                path: '/404/',
+                                path: '/undefined_routes/',
                                 is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                 error:   null,
                                 warning: null,
@@ -263,7 +263,7 @@ class Server {
                             return res.status(_status)
                             .render('undefined_routes', {
                                 nav_title: '',
-                                path: '/404/',
+                                path: '/undefined_routes/',
                                 is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                 error:   null,
                                 warning: null,
@@ -279,7 +279,7 @@ class Server {
                             return res.status(_status)
                             .render('undefined_routes', {
                                 nav_title: '',
-                                path: '/404/',
+                                path: '/undefined_routes/',
                                 is_authenticated: res ? res.req ? res.req.session ? res.req.session.is_authenticated ? res.req.session.is_authenticated : false : false : false : false,
                                 error:   null,
                                 warning: null,

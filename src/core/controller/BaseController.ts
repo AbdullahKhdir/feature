@@ -5,7 +5,7 @@ import { Express } from "../framework/Express";
 import Routes from "../routes/Route";
 import { Singleton } from "../Singleton/Singleton";
 import Csrf from 'csurf';
-import { siteNotFound, undefinedHttpRequest } from "../utils/404-logic";
+import { siteNotFound, undefinedHttpRequest } from "../utils/undefined-routes-logic";
 
 /**
  * @class BaseController

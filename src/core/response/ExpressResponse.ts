@@ -6,7 +6,7 @@ import * as config from '../config';
 import ApiError from '../error/ApiError';
 import ApiException from '../exception/ApiException';
 import { Singleton } from '../Singleton/Singleton';
-import { csrf, siteNotFound, error as _error } from '../utils/404-logic';
+import { csrf, siteNotFound, error as _error } from '../utils/undefined-routes-logic';
 
 /**
  * @class Response
@@ -229,7 +229,7 @@ export abstract class ExpressResponse {
             
             return this.render(res, 'undefined_routes', {
                 nav_title: '', 
-                path: '/404/',
+                path: '/undefined_routes/',
                 is_authenticated: res?.req?.session?.is_authenticated,
                 error:   null,
                 warning: null,
@@ -257,7 +257,7 @@ export abstract class ExpressResponse {
             
             return this.render(res, 'undefined_routes', {
                 nav_title: '', 
-                path: '/404/',
+                path: '/undefined_routes/',
                 is_authenticated: res?.req?.session?.is_authenticated,
                 error:   null,
                 warning: null,
