@@ -366,7 +366,6 @@ export = class Constants {
                     SITE_IS_FROZEN:                       530,
                     NETWORK_READ_TIMEOUT_ERROR:           598,
                     NETWORK_CONNECT_TIMEOUT_ERROR:        599,
-
                 },
                 /*
                 ! Microsoft's Internet Information Services (IIS) web server expands the 4xx error space to signal errors with the client's request.

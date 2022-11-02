@@ -210,7 +210,7 @@ export abstract class ExpressResponse {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    onError(res: Response, next: NextFunction, error: Error | string | {message: string; statusCode: 400 | 404 | 500 | 503}) : Response | void {
+    onError(res: Response, next: NextFunction, error: Error | string | {message: string; statusCode: number}) : Response | void {
         if (config.configurations().environment === 'development') {
             if (typeof error === 'string') {
                 let _error = new Error(error);
@@ -219,7 +219,7 @@ export abstract class ExpressResponse {
                 return next(_error);
             } else if (error instanceof Error) {
                 // @ts-ignore
-                error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                error.statusCode = error.statusCode ? error.statusCode : Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                 return next(error);
             } else if (typeof error === 'object' && typeof error !== 'string' 
                 && typeof error !== 'function' && typeof error !== 'boolean' 

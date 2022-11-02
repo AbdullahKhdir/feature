@@ -242,7 +242,7 @@ var ExpressResponse = /** @class */ (function () {
             }
             else if (error instanceof Error) {
                 // @ts-ignore
-                error.statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                error.statusCode = error.statusCode ? error.statusCode : Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                 return next(error);
             }
             else if (typeof error === 'object' && typeof error !== 'string'

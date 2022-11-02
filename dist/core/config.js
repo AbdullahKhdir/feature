@@ -38,7 +38,7 @@ function configurations() {
         password: process.env['TEST_PASSWORD'] || process.env['PRODUCTION_PASSWORD'] || process.env['DEVELOPMENT_PASSWORD'],
         database: process.env['DATABASE'],
         connectionLimit: process.env['CONNECTION_LIMIT'],
-        encryption_key: '$2a$12$CAVyfpGSo.AbWgby9JNCXOf4rt7GFbxxSimczOqKvzrdCOAK5CT9u',
+        encryption_key: process.env['ENCRYPTION_KEY'] || '',
         environment: process.env['NODE_ENV'],
         server_port: process.env['PORT'],
         migration: process.env['MIGRATION'],
@@ -46,7 +46,9 @@ function configurations() {
         os: process.platform === 'darwin' ? 'MAC' : process.platform === 'linux' ? 'LINUX' : process.platform === 'win32' ? 'WINDOWS' : process.platform === 'freebsd' || process.platform === 'openbsd' || process.platform === 'sunos' ? 'UNIX' : 'UNKNOWN',
         socket_path: process.platform !== 'win32' ? cmd._mysqlSocket() : '',
         execution_point: process.env['EXECUTION_POINT'] || '',
-        domain_name: process.env['DOMAIN_NAME'] || ''
+        domain_name: process.env['DOMAIN_NAME'] || '',
+        support_team_email: process.env['SUPPORT_TEAM_EMAIL'] || '',
+        api_authentication_secret: process.env['API_AUTHENTICATION_SECRET'] || '',
     };
 }
 exports.configurations = configurations;

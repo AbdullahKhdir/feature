@@ -75,6 +75,7 @@ export = class Shop extends BaseController {
         }
         res.noCacheNeeded();
         // TODO: Add public products
+        
         /*
         * User specific products 
         */
