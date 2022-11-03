@@ -9,14 +9,12 @@ import User from "../../models/shop/User";
 import UserSecurityQuestion from "../../models/shop/UserSecurityQuestion";
 import jwt from 'jsonwebtoken';
 import * as config from '../../../core/config';
-import SQLException from '../../../core/exception/types/SQLException';
 
 /*
  ! The partner system of the api must be registered in the cors configs 
  ! so that partner client reaches the api's endpoints 
 */
 export = class Rest extends BaseController {
-    // todo: explore all potential possibilities of requesting all the registered endpoints accordingly (root logic)
     //*****************************************************************\\
     //? CONSTRUCTOR FOR INITIALIZING ALL THE NECESSARY CONFIGURATIONS ?\\
     //*****************************************************************\\
@@ -51,8 +49,6 @@ export = class Rest extends BaseController {
         this.user = new User();
         this.user_security_questions = new UserSecurityQuestion();
 
-        
-
         //*********************\\
         //* PROJECT CONSTANTS *\\
         //*********************\\
@@ -69,8 +65,8 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getExmaple = () => this.route('get', '/get_example/', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
-        // return this.onError(res, next, 'declined api endpoint post');
+    getExmaple = () => this.route('get', '/get_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
+        return this.onError(res, next, 'declined api endpoint post');
         // return next(new Error('declined api endpoint get'));
         return new JsonResponse(200, 'Success got', {success: 'OK'}).sendAsJson(res);
     });
@@ -93,8 +89,8 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    patchExmaple = () => this.route('patch', '/patch_example/', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
-        return new JsonResponse(201, 'Success patched', {success: 'OK', id: new Date()}).sendAsJson(res);
+    patchExmaple = () => this.route('patch', '/patch_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
+        return new JsonResponse(201, 'Success patched', {success: 'OK', origin: req.origin, user_infos: req.user, uid: new Date()}).sendAsJson(res);
     });
 
     /**
@@ -104,7 +100,7 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    putExmaple = () => this.route('put', '/put_example/', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
+    putExmaple = () => this.route('put', '/put_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
     });
 
@@ -115,7 +111,7 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    deleteExmaple = () => this.route('delete', '/delete_example/', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
+    deleteExmaple = () => this.route('delete', '/delete_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(200, 'Success deleted', {success: 'OK', id: new Date()}).sendAsJson(res);
     });
 
@@ -127,7 +123,7 @@ export = class Rest extends BaseController {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    postAuthenticate          = () => this.route('post', '/api-login', this.validatedLogin(), async (req: Request, res: Response, next: NextFunction) => {
+    postAuthenticate = () => this.route('post', '/api-login', this.validatedLogin(), async (req: Request, res: Response, next: NextFunction) => {
         const errors          = validationResult(req);
         const email           = req.getFormPostedData('email');
         const password        = req.getFormPostedData('password');
@@ -147,7 +143,7 @@ export = class Rest extends BaseController {
                 .then(do_match => {
                     if (do_match) {
                         if (typeof rows !== 'undefined') {
-                            const token = jwt.sign({email: email}, config.configurations().api_authentication_secret, {expiresIn: '1h'});
+                            const token = jwt.sign({user: rows}, config.configurations().api_authentication_secret, {expiresIn: '1h'});
                             return new JsonResponse(
                                 this.constants.HTTPS_STATUS.SUCCESS.OK,
                                 'Logged in',
@@ -180,7 +176,7 @@ export = class Rest extends BaseController {
     //******************************\\
     //* Sign in middleware         *\\
     //******************************\\
-    protected validatedLogin  = () => ({
+    protected validatedLogin = () => ({
         validate_email: check('email').isEmail().withMessage('Please enter a valid email!').bail(),
         validate_password: check('password').not().isEmpty().withMessage('Please enter your password!').bail()
     })
@@ -188,7 +184,7 @@ export = class Rest extends BaseController {
     //******************************\\
     //* Sign in middleware         *\\
     //******************************\\
-    protected isApiUserLoggedIn  = (req: Request, res: Response, next: NextFunction) : Error | void => {
+    protected isApiUserLoggedIn = (req: Request, res: Response, next: NextFunction) : Error | void => {
         const AUTHORIZATION_HEADER = req.get('Authorization');
         
         if (!AUTHORIZATION_HEADER) {
@@ -199,7 +195,6 @@ export = class Rest extends BaseController {
         }
 
         const TOKEN       = AUTHORIZATION_HEADER.split(' ')[1];
-        
         if (TOKEN) {
             let decoded_token: any;
             try {
@@ -218,7 +213,7 @@ export = class Rest extends BaseController {
                 throw _error;
             }
 
-            req.user = decoded_token.email;
+            req.user = decoded_token.user;
             return next();
         }
     }

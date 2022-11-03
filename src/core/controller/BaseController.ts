@@ -4,7 +4,6 @@ import { NextFunction, Request, Response } from "express";
 import { Express } from "../framework/Express";
 import Routes from "../routes/Route";
 import { Singleton } from "../Singleton/Singleton";
-import Csrf from 'csurf';
 import { siteNotFound, undefinedHttpRequest } from "../utils/undefined-routes-logic";
 
 /**
@@ -310,16 +309,17 @@ export = class BaseController extends Routes {
                     }
                 }
                 
-                if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                if (predefined_direction_from_route === requested_path_in_browser && route.methods.put) {
                     route_exists = 'true';
                     is_put_request_successful = true;
                 }
             });
-
             if (this.__.isEmpty(route_exists)) {
                 if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                    console.log('here')
                     return next(undefinedHttpRequest(res, 'json'));
                 } else {
+                    console.log('or here')
                     return res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', undefinedHttpRequest(res)); 
                 }
             }
@@ -380,7 +380,7 @@ export = class BaseController extends Routes {
                     }
                 }
                 
-                if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                if (predefined_direction_from_route === requested_path_in_browser && route.methods.patch) {
                     route_exists = 'true';
                     is_patch_request_successful = true;
                 }
@@ -450,7 +450,7 @@ export = class BaseController extends Routes {
                     }
                 }
                 
-                if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                if (predefined_direction_from_route === requested_path_in_browser && route.methods.delete) {
                     route_exists = 'true';
                     is_delete_request_successful = true;
                 }

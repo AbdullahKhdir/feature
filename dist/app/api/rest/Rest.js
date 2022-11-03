@@ -98,11 +98,9 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.getExmaple = function () { return _this.route('get', '/get_example/', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.getExmaple = function () { return _this.route('get', '/get_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                // return this.onError(res, next, 'declined api endpoint post');
-                // return next(new Error('declined api endpoint get'));
-                return [2 /*return*/, new JsonResponse_1.default(200, 'Success got', { success: 'OK' }).sendAsJson(res)];
+                return [2 /*return*/, this.onError(res, next, 'declined api endpoint post')];
             });
         }); }); };
         /**
@@ -124,9 +122,9 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.patchExmaple = function () { return _this.route('patch', '/patch_example/', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.patchExmaple = function () { return _this.route('patch', '/patch_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, new JsonResponse_1.default(201, 'Success patched', { success: 'OK', id: new Date() }).sendAsJson(res)];
+                return [2 /*return*/, new JsonResponse_1.default(201, 'Success patched', { success: 'OK', origin: req.origin, user_infos: req.user, uid: new Date() }).sendAsJson(res)];
             });
         }); }); };
         /**
@@ -136,7 +134,7 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.putExmaple = function () { return _this.route('put', '/put_example/', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.putExmaple = function () { return _this.route('put', '/put_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(201, 'Success put', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
@@ -148,7 +146,7 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.deleteExmaple = function () { return _this.route('delete', '/delete_example/', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.deleteExmaple = function () { return _this.route('delete', '/delete_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(200, 'Success deleted', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
@@ -178,7 +176,7 @@ module.exports = /** @class */ (function (_super) {
                             .then(function (do_match) {
                             if (do_match) {
                                 if (typeof rows !== 'undefined') {
-                                    var token = jsonwebtoken_1.default.sign({ email: email }, config.configurations().api_authentication_secret, { expiresIn: '1h' });
+                                    var token = jsonwebtoken_1.default.sign({ user: rows }, config.configurations().api_authentication_secret, { expiresIn: '1h' });
                                     return new JsonResponse_1.default(_this.constants.HTTPS_STATUS.SUCCESS.OK, 'Logged in', { success: 'OK', status_code: _this.constants.HTTPS_STATUS.SUCCESS.OK, token: token }).sendAsJson(res);
                                 }
                             }
@@ -236,7 +234,7 @@ module.exports = /** @class */ (function (_super) {
                     _error.statusCode = _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED;
                     throw _error;
                 }
-                req.user = decoded_token.email;
+                req.user = decoded_token.user;
                 return next();
             }
         };

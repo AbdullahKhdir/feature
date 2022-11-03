@@ -835,7 +835,6 @@ var Server = /** @class */ (function () {
                                                         if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
                                                             || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
                                                             || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            console.log('checked');
                                                             return res.status(_status).json({ statusCode: SERVER_1.INTERNAL_SERVER_ERROR, message: 'Internal Server Error!' });
                                                         }
                                                     });
@@ -859,7 +858,6 @@ var Server = /** @class */ (function () {
                                                         if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
                                                             || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
                                                             || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            console.log('checked');
                                                             return res.status(_status).json({ statusCode: SERVER_1.NOT_IMPLEMENTED, message: 'Not implemented Error!' });
                                                         }
                                                     });
@@ -883,7 +881,6 @@ var Server = /** @class */ (function () {
                                                         if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
                                                             || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
                                                             || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            console.log('checked');
                                                             return res.status(_status).json({ statusCode: SERVER_1.BAD_GATEWAY, message: 'Bad Gateway Error!' });
                                                         }
                                                     });

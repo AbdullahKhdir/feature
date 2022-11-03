@@ -107,6 +107,7 @@ class Server {
                                 const INTERNET_INFORMATION_SERVICES = Singleton.getConstants().HTTPS_STATUS.INTERNET_INFORMATION_SERVICES;
                                 req.origin = req.headers.origin || req.get('origin');
                                 err.statusCode = err.statusCode ? err.statusCode : 500;
+                                
                                 // @ts-ignore
                                 switch (err.statusCode) {
                                     //***************************************\\
@@ -846,7 +847,6 @@ class Server {
                                             if (ENDPOINTS.includes(req.headers.referer || '')
                                             || ENDPOINTS.includes(req.originalUrl || '')
                                             || ENDPOINTS.includes(req.url || '')) {
-                                                console.log('checked')
                                                 return res.status(_status).json({statusCode: SERVER.INTERNAL_SERVER_ERROR, message: 'Internal Server Error!'});
                                             }
                                         });
@@ -871,7 +871,6 @@ class Server {
                                             if (ENDPOINTS.includes(req.headers.referer || '')
                                             || ENDPOINTS.includes(req.originalUrl || '')
                                             || ENDPOINTS.includes(req.url || '')) {
-                                                console.log('checked')
                                                 return res.status(_status).json({statusCode: SERVER.NOT_IMPLEMENTED, message: 'Not implemented Error!'});
                                             }
                                         });
@@ -896,7 +895,6 @@ class Server {
                                             if (ENDPOINTS.includes(req.headers.referer || '')
                                             || ENDPOINTS.includes(req.originalUrl || '')
                                             || ENDPOINTS.includes(req.url || '')) {
-                                                console.log('checked')
                                                 return res.status(_status).json({statusCode: SERVER.BAD_GATEWAY, message: 'Bad Gateway Error!'});
                                             }
                                         });

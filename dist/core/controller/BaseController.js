@@ -341,16 +341,18 @@ module.exports = /** @class */ (function (_super) {
                             is_put_request_successful = true;
                         }
                     }
-                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.put) {
                         route_exists = 'true';
                         is_put_request_successful = true;
                     }
                 });
                 if (this.__.isEmpty(route_exists)) {
                     if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
+                        console.log('here');
                         return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
                     }
                     else {
+                        console.log('or here');
                         return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
                     }
                 }
@@ -412,7 +414,7 @@ module.exports = /** @class */ (function (_super) {
                             is_patch_request_successful = true;
                         }
                     }
-                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.patch) {
                         route_exists = 'true';
                         is_patch_request_successful = true;
                     }
@@ -483,7 +485,7 @@ module.exports = /** @class */ (function (_super) {
                             is_delete_request_successful = true;
                         }
                     }
-                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
+                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.delete) {
                         route_exists = 'true';
                         is_delete_request_successful = true;
                     }
