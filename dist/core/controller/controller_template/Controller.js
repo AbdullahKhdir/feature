@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -54,10 +53,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-// @ts-ignore 
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
-var express_validator_1 = require("express-validator"); //? EXPRESS VALIDATOR ?\\
-var ExampleModel_1 = __importDefault(require("../models/example_model/ExampleModel"));
 module.exports = /** @class */ (function (_super) {
     __extends(NameWillBeInsertedAutomatically, _super);
     function NameWillBeInsertedAutomatically() {
@@ -92,25 +88,7 @@ module.exports = /** @class */ (function (_super) {
          * @returns Response
         */
         _this.firstDynMethod = function () { return _this.route('get', '/dynamic/:firstDynamicInput', _this.firstDynMethodMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var dynamicInput;
-            var _this = this;
             return __generator(this, function (_a) {
-                dynamicInput = +req.getDynamicParam('dynamicInput') || false;
-                this.exmaple_model.filter(dynamicInput)
-                    // @ts-ignore 
-                    .then(function (_a) {
-                    var rows = _a[0], fields = _a[1];
-                    if (rows) {
-                        // @ts-ignore 
-                        var rows_1 = rows_1[0];
-                        return _this.render(res, 'example/index', {
-                            nav_title: rows_1 || 'Dynamic route',
-                            path: '/dynamic/',
-                            product: rows_1
-                        });
-                    }
-                })
-                    .catch(function (err) { return _this.onError(res, err); });
                 return [2 /*return*/];
             });
         }); }); };
@@ -127,15 +105,13 @@ module.exports = /** @class */ (function (_super) {
             //* DYNAMIC Routes *\\
             //******************\\
         ];
+        return _this;
         //***************\\
         //* INIT MODELS *\\
         //***************\\
         //*********************\\
         //* PROJECT CONSTANTS *\\
         //*********************\\
-        // this.constants
-        _this.exmaple_model = new ExampleModel_1.default();
-        return _this;
     }
     //! **************************** !\\
     //* Process protected functions  *\\
@@ -148,11 +124,7 @@ module.exports = /** @class */ (function (_super) {
         return {
             //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
             //! IMPORTANT THE ORDER MATTERS !\\
-            is_authenticated: function (req, res, next) { next(); },
-            validate: (0, express_validator_1.check)('firstDynamicInput') //* SECOND VALIDATE BODY, PARAM COOKIE OR HEADER *\\
-                .isEmpty()
-                .bail()
-                .withMessage('Dynamic param must not be empty!')
+            is_authenticated: function (req, res, next) { next(); }, //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
         };
     };
     ;

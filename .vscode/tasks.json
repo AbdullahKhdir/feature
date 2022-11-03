@@ -24,6 +24,16 @@
             "problemMatcher": []
         },
         {
+            "label": "API Controller - create api controller",
+            "type": "shell",
+            "command": "sh create_api_controller.sh",
+            "group": "build",
+            "options": {
+                "cwd": "${workspaceFolder}/src/core/api/"
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Sass Compile",
             "type": "shell",
             "command": "npx sass --update -c --verbose dist/app/public/sass:dist/app/public/css --style=compressed",

@@ -31,23 +31,23 @@ fi
 
 if [ -z "$FOLDER_NAME" ]
 then
-    FILE_NAME="$BASEDIR/../../app/controllers/$CONTROLLER_NAME"
+    FILE_NAME="$BASEDIR/../../app/api/$CONTROLLER_NAME"
 else
-    FILE_NAME="$BASEDIR/../../app/controllers/$FOLDER_NAME/$CONTROLLER_NAME"
+    FILE_NAME="$BASEDIR/../../app/api/$FOLDER_NAME/$CONTROLLER_NAME"
 fi
 
-DIR="$BASEDIR/../../app/controllers/$FOLDER_NAME/";
+DIR="$BASEDIR/../../app/api/$FOLDER_NAME/";
 
 if [ ! -d "$DIR" ]
 then
     mkdir -p $DIR
 fi
 
-echo -e "//***********************************************************\n//* CONTROLLER: $CONTROLLER_NAME\n//***********************************************************\n//* AUTHOR: $USER_NAME <$USER_EMAIL>\n//* BRANCH: $GIT_BRANCH\n//***********************************************************\n" > $FILE_NAME;
-cat $BASEDIR/../../core/controller/controller_template/Controller.ts >> $FILE_NAME;
+echo -e "//**************************************************************\n//* API CONTROLLER: $CONTROLLER_NAME\n//**************************************************************\n//* AUTHOR: $USER_NAME <$USER_EMAIL>\n//* BRANCH: $GIT_BRANCH\n//**************************************************************\n" > $FILE_NAME;
+cat $BASEDIR/../../core/api/api_controller_template/ApiController.ts >> $FILE_NAME;
 
 CONTROLLER_CLASS_NAME=${CONTROLLER_NAME%.ts}
-ex -s -c "%s/NameWillBeInsertedAutomatically/$CONTROLLER_CLASS_NAME/|x" $FILE_NAME
+ex -s -c "%s/ApiControllerNameWillBeUpdatedAutomatically/$CONTROLLER_CLASS_NAME/|x" $FILE_NAME
 
-echo "New controller $CONTROLLER_CLASS_NAME created!";
+echo "New api controller $CONTROLLER_CLASS_NAME created!";
 echo code $FILE_NAME;

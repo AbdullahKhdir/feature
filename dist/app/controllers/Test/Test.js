@@ -1,3 +1,9 @@
+//***********************************************************
+//* CONTROLLER: Test.ts
+//***********************************************************
+//* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
+//* BRANCH: features/Migrate
+//***********************************************************
 // @ts-nocheck
 'use strict';
 var __extends = (this && this.__extends) || (function () {
@@ -57,10 +63,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 // @ts-ignore 
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
 var express_validator_1 = require("express-validator"); //? EXPRESS VALIDATOR ?\\
-var ExampleModel_1 = __importDefault(require("../models/example_model/ExampleModel"));
+var ExampleModel_1 = __importDefault(require("../../../app/models/example_model/ExampleModel"));
 module.exports = /** @class */ (function (_super) {
-    __extends(NameWillBeInsertedAutomatically, _super);
-    function NameWillBeInsertedAutomatically() {
+    __extends(Testy, _super);
+    function Testy() {
         var _this = _super.call(this) || this;
         //**********\\
         //* Routes *\\
@@ -144,7 +150,7 @@ module.exports = /** @class */ (function (_super) {
     //* firstDynMethod Middleware *\\
     //? SHOULD BE PROTECTED       ?\\
     //* ************************* *\\
-    NameWillBeInsertedAutomatically.prototype.firstDynMethodMiddleware = function () {
+    Testy.prototype.firstDynMethodMiddleware = function () {
         return {
             //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
             //! IMPORTANT THE ORDER MATTERS !\\
@@ -156,5 +162,5 @@ module.exports = /** @class */ (function (_super) {
         };
     };
     ;
-    return NameWillBeInsertedAutomatically;
+    return Testy;
 }(BaseController_1.default));

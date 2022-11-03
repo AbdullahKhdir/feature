@@ -79,14 +79,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var JsonResponse_1 = __importDefault(require("../../../core/response/types/JsonResponse"));
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var express_validator_1 = require("express-validator");
-var User_1 = __importDefault(require("../../models/shop/User"));
-var UserSecurityQuestion_1 = __importDefault(require("../../models/shop/UserSecurityQuestion"));
+var User_1 = __importDefault(require("../../../app/models/shop/User"));
+var UserSecurityQuestion_1 = __importDefault(require("../../../app/models/shop/UserSecurityQuestion"));
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var config = __importStar(require("../../../core/config"));
 var Api_1 = __importDefault(require("../../../core/api/Api"));
 module.exports = /** @class */ (function (_super) {
-    __extends(Rest, _super);
-    function Rest() {
+    __extends(ApiControllerNameWillBeUpdatedAutomatically, _super);
+    function ApiControllerNameWillBeUpdatedAutomatically() {
         var _this = _super.call(this) || this;
         //**********\\
         //* Routes *\\
@@ -266,5 +266,5 @@ module.exports = /** @class */ (function (_super) {
         //* PROJECT CONSTANTS *\\
         //*********************\\
     }
-    return Rest;
+    return ApiControllerNameWillBeUpdatedAutomatically;
 }(Api_1.default));

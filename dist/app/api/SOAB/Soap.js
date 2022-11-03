@@ -1,3 +1,9 @@
+//**************************************************************
+//* API CONTROLLER: Soab.ts
+//**************************************************************
+//* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
+//* BRANCH: features/Migrate
+//**************************************************************
 'use strict';
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -76,17 +82,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var JsonResponse_1 = __importDefault(require("../../../core/response/types/JsonResponse"));
+var JsonResponse_1 = __importDefault(require("../../../core/response/types/JsonResponse")); //! PATH MUST BE EDITED !\\
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
 var express_validator_1 = require("express-validator");
-var User_1 = __importDefault(require("../../models/shop/User"));
-var UserSecurityQuestion_1 = __importDefault(require("../../models/shop/UserSecurityQuestion"));
+var User_1 = __importDefault(require("../../../app/models/shop/User")); //! PATH MUST BE EDITED !\\
+var UserSecurityQuestion_1 = __importDefault(require("../../../app/models/shop/UserSecurityQuestion")); //! PATH MUST BE EDITED !\\
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-var config = __importStar(require("../../../core/config"));
-var Api_1 = __importDefault(require("../../../core/api/Api"));
+var config = __importStar(require("../../../core/config")); //! PATH MUST BE EDITED !\\
+var Api_1 = __importDefault(require("../../../core/api/Api")); //! PATH MUST BE EDITED !\\
 module.exports = /** @class */ (function (_super) {
-    __extends(Rest, _super);
-    function Rest() {
+    __extends(Soab, _super);
+    function Soab() {
         var _this = _super.call(this) || this;
         //**********\\
         //* Routes *\\
@@ -266,5 +272,5 @@ module.exports = /** @class */ (function (_super) {
         //* PROJECT CONSTANTS *\\
         //*********************\\
     }
-    return Rest;
+    return Soab;
 }(Api_1.default));

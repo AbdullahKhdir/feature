@@ -4,8 +4,8 @@ import { NextFunction, Request, Response, Router } from 'express';
 import JsonResponse                                from '../../../core/response/types/JsonResponse';
 import becrypt from 'bcryptjs';
 import { check, validationResult } from 'express-validator';
-import User from "../../models/shop/User";
-import UserSecurityQuestion from "../../models/shop/UserSecurityQuestion";
+import User from "../../../app/models/shop/User";
+import UserSecurityQuestion from "../../../app/models/shop/UserSecurityQuestion";
 import jwt from 'jsonwebtoken';
 import * as config from '../../../core/config';
 import Api from '../../../core/api/Api';
@@ -13,8 +13,9 @@ import Api from '../../../core/api/Api';
 /*
  ! The partner system of the api must be registered in the cors configs 
  ! so that partner client reaches the api's endpoints 
+ ? PLEASE READ API PRINCIPLES BEFORE IMPLEMENTING THE API (IN THE Api CLASS ↓↓)
 */
-export = class Rest extends Api {
+export = class ApiControllerNameWillBeUpdatedAutomatically extends Api {
     //*****************************************************************\\
     //? CONSTRUCTOR FOR INITIALIZING ALL THE NECESSARY CONFIGURATIONS ?\\
     //*****************************************************************\\
@@ -130,7 +131,7 @@ export = class Rest extends Api {
 
         if (errors.isEmpty()) {
             this.user.get({email: email})
-            .then((rows) => {
+            .then((rows: any) => {
                 if (typeof rows === 'undefined' || rows == null || this.__.isEmpty(rows) || rows.length === 0) {
                     return new JsonResponse(
                         this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED,
