@@ -73,6 +73,7 @@ module.exports = /** @class */ (function (_super) {
      * @param {Object} middleware
      * @param {Function} callback
      * @return ExpressRoute
+     * todo add api endpoints dynamically on route initiation (ERROR: Headers already sent digesting)
     */
     Routes.prototype.route = function (method, url, middleware, callback) {
         if (typeof method === 'undefined' || method === '' || method == null) {

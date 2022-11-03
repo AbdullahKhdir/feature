@@ -72,6 +72,7 @@ export = class Routes extends ExpressResponse{
      * @param {Object} middleware
      * @param {Function} callback
      * @return ExpressRoute
+     * todo add api endpoints dynamically on route initiation (ERROR: Headers already sent digesting)
     */
     route(method: string, url: string, middleware: any, callback: any) : Router | RuntimeException {
         if (typeof method === 'undefined' || method === '' || method == null) {
