@@ -596,6 +596,7 @@ module.exports = /** @class */ (function (_super) {
                                         _limit = " LIMIT ".concat(limit.toString());
                                         sql += _limit;
                                     }
+                                    console.log(sql);
                                     return [4 /*yield*/, this.db.executeModelQuery(sql)
                                             .then(function (_a) {
                                             var rows = _a[0], fields = _a[1];

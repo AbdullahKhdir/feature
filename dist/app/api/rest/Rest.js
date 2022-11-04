@@ -102,7 +102,7 @@ module.exports = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 return [2 /*return*/, this.onError(res, next, 'declined api endpoint post')];
             });
-        }); }); };
+        }); }, true); };
         /**
          * @function postExmaple
          * @description postExmaple route
@@ -114,7 +114,7 @@ module.exports = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(201, 'Success posted', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
-        }); }); };
+        }); }, true); };
         /**
          * @function patchExmaple
          * @description patchExmaple route
@@ -126,7 +126,7 @@ module.exports = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(201, 'Success patched', { success: 'OK', origin: req.origin, user_infos: req.user, uid: new Date() }).sendAsJson(res)];
             });
-        }); }); };
+        }); }, true); };
         /**
          * @function putExmaple
          * @description putExmaple route
@@ -138,7 +138,7 @@ module.exports = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(201, 'Success put', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
-        }); }); };
+        }); }, true); };
         /**
          * @function deleteExmaple
          * @description deleteExmaple route
@@ -150,7 +150,7 @@ module.exports = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new JsonResponse_1.default(200, 'Success deleted', { success: 'OK', id: new Date() }).sendAsJson(res)];
             });
-        }); }); };
+        }); }, true); };
         /**
          * @function postAuthenticate
          * @description Check user's authentication's infos
@@ -196,7 +196,7 @@ module.exports = /** @class */ (function (_super) {
                 }
                 return [2 /*return*/];
             });
-        }); }); };
+        }); }, true); };
         //******************************\\
         //* Sign in middleware         *\\
         //******************************\\

@@ -73,9 +73,9 @@ module.exports = /** @class */ (function (_super) {
      * @param {Object} middleware
      * @param {Function} callback
      * @return ExpressRoute
-     * todo add api endpoints dynamically on route initiation (ERROR: Headers already sent digesting)
     */
-    Routes.prototype.route = function (method, url, middleware, callback) {
+    Routes.prototype.route = function (method, url, middleware, callback, is_api_endpoint) {
+        if (is_api_endpoint === void 0) { is_api_endpoint = false; }
         if (typeof method === 'undefined' || method === '' || method == null) {
             return new RuntimeException_1.default('Route does not have an http method!');
         }
@@ -93,6 +93,9 @@ module.exports = /** @class */ (function (_super) {
             if (Object.hasOwnProperty.call(middleware, key)) {
                 _middleware.push(middleware[key]);
             }
+        }
+        if (is_api_endpoint) {
+            endpoints_1.ENDPOINTS.push(url);
         }
         if (this.__.capitalize(method) === 'Get' && !this.__.isEmpty(url) && typeof callback === 'function') {
             return this._().get(url, _middleware, (0, Promise_1.default)(callback));
@@ -118,7 +121,7 @@ module.exports = /** @class */ (function (_super) {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {Request} req
      * @return boolean
-     */
+    */
     Routes.prototype.isApiEndpoint = function (req) {
         endpoints_1.ENDPOINTS.forEach(function (endpoint) {
             if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')

@@ -46,7 +46,7 @@ class Server {
             (async () => {
                 // create a certificate authority
                 const ca = await mkcert.createCA({
-                  organization: 'Node School',
+                  organization: 'Node',
                   countryCode:  'DE',
                   state:        'Bavaria',
                   locality:     'Nuremberg',
@@ -75,10 +75,9 @@ class Server {
                 //     cert: this.file_system.readFileSync('./certificates/example.cert.pem')
                 // }
                 let port = Server.getServerInstance().port();
-                //****\\
-                //* Will be triggered only on errors or next(new Error('error message')) or next({error: 'checked'}) *\\
-                //****\\
-                //@ts-ignore
+                //****************************************************************************************************\\
+                //* Will be triggered only on errors or next(new Error('error message')) or next({error: 'message'}) *\\
+                //****************************************************************************************************\\
                 this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
                     if (err.code === this.constants.CSRF.errCode) {
                         return res.status(this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN).render('undefined_routes', csrf(res));
@@ -108,7 +107,6 @@ class Server {
                                 req.origin = req.headers.origin || req.get('origin');
                                 err.statusCode = err.statusCode ? err.statusCode : 500;
                                 
-                                // @ts-ignore
                                 switch (err.statusCode) {
                                     //***************************************\\
                                     //*************CLIENT ERRORS*************\\
@@ -1591,21 +1589,21 @@ class Server {
                             });
                         } else if (req.isGet()) {
                             return res.status(_status)
-                                .render('undefined_routes', {
-                                    nav_title: '', 
-                                    path: '/undefined_routes/',
-                                    is_authenticated: res?.req?.session?.is_authenticated,
-                                    error:   null,
-                                    warning: null,
-                                    success: null,
-                                    status_code: 404,
-                                    status_title: "UH OH! You're lost.",
-                                    status_description: `The page you are looking for does not exist.
-                                    How you got here is a mystery. But you can click the button below
-                                    to go back to the homepage.`,
-                                    url: '/',
-                                    label: 'Home'
-                                });
+                            .render('undefined_routes', {
+                                nav_title: '', 
+                                path: '/undefined_routes/',
+                                is_authenticated: res?.req?.session?.is_authenticated,
+                                error:   null,
+                                warning: null,
+                                success: null,
+                                status_code: 404,
+                                status_title: "UH OH! You're lost.",
+                                status_description: `The page you are looking for does not exist.
+                                How you got here is a mystery. But you can click the button below
+                                to go back to the homepage.`,
+                                url: '/',
+                                label: 'Home'
+                            });
                         } else if (req.isPatch()) {
                             return res.status(_status)
                             .render('undefined_routes', {
@@ -1662,11 +1660,11 @@ class Server {
                                .createServer(httpsOptions, this.app).listen(port, () => {
                                     if (config.configurations().execution_point === this.constants.NPM) {
                                         console.log(
-                                            '\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m'
+                                            '\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m'
                                         );
                                     } else if (config.configurations().execution_point === this.constants.PM2) {
                                         console.log(
-                                            '\u001b[' + 94 + 'm' + 'Running PM2..!' + '\u001b[0m'
+                                            '\u001b[' + 94 + 'm' + 'Running On Load Balancer PM2..!' + '\u001b[0m'
                                         );
                                         console.log(
                                             '\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m'
@@ -1674,10 +1672,10 @@ class Server {
                                         (<any> process).send('ready');
                                     } else {
                                         console.log(
-                                            '\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m'
+                                            '\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m'
                                         );
                                     }
-                                    console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + ', Using TS!' + '\u001b[0m');
+                                    console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + ', Using TypeScript!' + '\u001b[0m');
                                 });
                 return server;
             })();

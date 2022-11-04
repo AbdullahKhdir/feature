@@ -72,9 +72,8 @@ export = class Routes extends ExpressResponse{
      * @param {Object} middleware
      * @param {Function} callback
      * @return ExpressRoute
-     * todo add api endpoints dynamically on route initiation (ERROR: Headers already sent digesting)
     */
-    route(method: string, url: string, middleware: any, callback: any) : Router | RuntimeException {
+    route(method: string, url: string, middleware: any, callback: any, is_api_endpoint: boolean = false) : any {
         if (typeof method === 'undefined' || method === '' || method == null) {
             return new RuntimeException('Route does not have an http method!')
         }
@@ -91,17 +90,20 @@ export = class Routes extends ExpressResponse{
             return new RuntimeException('Middlewares could not be implemented!')
         }
 
-        const _middleware = [];
+        var _middleware: Array<any> = [];
         for (const key in middleware) {
             if (Object.hasOwnProperty.call(middleware, key)) {
                 _middleware.push(middleware[key]);
             }
         }
 
+        if (is_api_endpoint) {
+            ENDPOINTS.push(url)
+        }
+
         if (this.__.capitalize(method) === 'Get' && !this.__.isEmpty(url) && typeof callback === 'function') {
             return this._().get(url, _middleware, asyncHandler(callback));
         }
-        
 
         if (this.__.capitalize(method) === 'Post' && !this.__.isEmpty(url) && typeof callback === 'function') {
             return this._().post(url, _middleware, asyncHandler(callback));
@@ -118,6 +120,7 @@ export = class Routes extends ExpressResponse{
         if (this.__.capitalize(method) === 'Delete' && !this.__.isEmpty(url) && typeof callback === 'function') {
             return this._().delete(url, _middleware, asyncHandler(callback));
         }
+
         return new RuntimeException('Route could not be deployed!')
     }
 
@@ -128,7 +131,7 @@ export = class Routes extends ExpressResponse{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {Request} req
      * @return boolean
-     */
+    */
     isApiEndpoint(req: Request) : boolean {
         ENDPOINTS.forEach((endpoint: any) => {
             if (ENDPOINTS.includes(req.headers.referer || '')

@@ -4,9 +4,6 @@ import csurf from 'csurf';
 import { NextFunction, Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import BaseController from "../../../core/controller/BaseController";
-import BadRequestError from '../../../core/error/types/BadRequestError';
-import EvalError from '../../../core/error/types/EvalError';
-import InternalError from '../../../core/error/types/InternalError';
 import { Singleton } from '../../../core/Singleton/Singleton';
 import userSession from "../../middlewares/init_user_session";
 import isAuth from "../../middlewares/is_auth";
@@ -15,6 +12,7 @@ import CartItem from "../../models/shop/CartItem";
 import Order from "../../models/shop/Order";
 import OrderItem from "../../models/shop/OrderItem";
 import Product from "../../models/shop/Product";
+import User from '../../models/shop/User';
 
 /**
  * @class Shop
@@ -146,6 +144,12 @@ export = class Shop extends BaseController {
             return this.siteNotFound(res);
         }
         res.noCacheNeeded();
+
+        // let user = new User();
+        // let result = await user.filter('id = 2');
+        // // console.log(result)
+        // let products = await result['product_user_id'];
+        // console.log(products)
         // TODO: Add public products        
         /*
         * User specific products
@@ -183,7 +187,7 @@ export = class Shop extends BaseController {
                 res,
                 'shop/index',
                 {
-                    products: [],
+                    products: [], //Object.values(products)[0]
                     nav_title: 'shop',
                     path: '/',
                     success: res.locals['success'],

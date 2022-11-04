@@ -617,7 +617,7 @@ export = class BaseModel extends QueryBuilder {
                                 var _limit = ` LIMIT ${limit.toString()}`;
                                 sql += _limit;
                             }
-                            
+                            console.log(sql)
                             return await this.db.executeModelQuery(sql)
                             .then(([rows, fields]) => {
                                 if (!this.__.isEmpty(rows)) {

@@ -69,7 +69,7 @@ export = class Rest extends Api {
         return this.onError(res, next, 'declined api endpoint post');
         // return next(new Error('declined api endpoint get'));
         return new JsonResponse(200, 'Success got', {success: 'OK'}).sendAsJson(res);
-    });
+    }, true);
 
     /**
      * @function postExmaple
@@ -80,7 +80,7 @@ export = class Rest extends Api {
     */
     postExmaple = () => this.route('post', '/post_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success posted', {success: 'OK', id: new Date()}).sendAsJson(res);
-    });
+    }, true);
 
     /**
      * @function patchExmaple
@@ -91,7 +91,7 @@ export = class Rest extends Api {
     */
     patchExmaple = () => this.route('patch', '/patch_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success patched', {success: 'OK', origin: req.origin, user_infos: req.user, uid: new Date()}).sendAsJson(res);
-    });
+    }, true);
 
     /**
      * @function putExmaple
@@ -102,7 +102,7 @@ export = class Rest extends Api {
     */
     putExmaple = () => this.route('put', '/put_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(201, 'Success put', {success: 'OK', id: new Date()}).sendAsJson(res);
-    });
+    }, true);
 
     /**
      * @function deleteExmaple
@@ -113,7 +113,7 @@ export = class Rest extends Api {
     */
     deleteExmaple = () => this.route('delete', '/delete_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
         return new JsonResponse(200, 'Success deleted', {success: 'OK', id: new Date()}).sendAsJson(res);
-    });
+    }, true);
 
 
     /**
@@ -171,7 +171,7 @@ export = class Rest extends Api {
                 }
             ).sendAsJson(res);
         }
-    });
+    }, true);
 
     //******************************\\
     //* Sign in middleware         *\\
