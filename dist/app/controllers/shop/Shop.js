@@ -64,6 +64,7 @@ var CartItem_1 = __importDefault(require("../../models/shop/CartItem"));
 var Order_1 = __importDefault(require("../../models/shop/Order"));
 var OrderItem_1 = __importDefault(require("../../models/shop/OrderItem"));
 var Product_1 = __importDefault(require("../../models/shop/Product"));
+var User_1 = __importDefault(require("../../models/shop/User"));
 module.exports = /** @class */ (function (_super) {
     __extends(Shop, _super);
     function Shop() {
@@ -965,6 +966,7 @@ module.exports = /** @class */ (function (_super) {
         ];
         _this.product = new Product_1.default();
         _this.cart_object = new Cart_1.default();
+        _this.user = new User_1.default();
         _this.order_object = new Order_1.default();
         _this.cart_items_object = new CartItem_1.default();
         _this.order_items_object = new OrderItem_1.default();

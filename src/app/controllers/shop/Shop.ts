@@ -28,6 +28,7 @@ export = class Shop extends BaseController {
     protected cart_object: Cart;
     protected order_object: Order;
     protected cart_items_object: CartItem;
+    protected user: User;
     protected order_items_object: OrderItem;
     csrfProtection: any;
     constructor() {
@@ -51,6 +52,7 @@ export = class Shop extends BaseController {
         ];
         this.product            = new Product();
         this.cart_object        = new Cart();
+        this.user               = new User();
         this.order_object       = new Order();
         this.cart_items_object  = new CartItem();
         this.order_items_object = new OrderItem();
@@ -145,9 +147,9 @@ export = class Shop extends BaseController {
         }
         res.noCacheNeeded();
 
-        // let user = new User();
-        // let result = await user.filter('id = 2');
-        // // console.log(result)
+        // TODO A MAJOR ISSUE WITH THE CORE BASE MODEL, SOLUTION IS REQUIRED TO PROCEED 
+        // let result = await this.user._filter({first_name: 'Abdullah'});
+        // console.log(result)
         // let products = await result['product_user_id'];
         // console.log(products)
         // TODO: Add public products        
