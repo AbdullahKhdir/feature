@@ -147,11 +147,9 @@ export = class Shop extends BaseController {
         }
         res.noCacheNeeded();
 
-        // TODO A MAJOR ISSUE WITH THE CORE BASE MODEL, SOLUTION IS REQUIRED TO PROCEED 
-        // let result = await this.user._filter({first_name: 'Abdullah'});
-        // console.log(result)
+        // let result = await this.user.filter({id: 2});
         // let products = await result['product_user_id'];
-        // console.log(products)
+        
         // TODO: Add public products        
         /*
         * User specific products
@@ -159,31 +157,31 @@ export = class Shop extends BaseController {
         const user_products   = req.getCurrentUser() ? req.getCurrentUser().getProducts(): false;
         if (typeof user_products === 'object') {
             user_products
-                .then((rows: any) => {
-                    const paginator = Singleton.getPagination().getRecords(req, rows, 12);
-                    let [records, current_page, pages, _paginator] = paginator;
-                    
-                    return this.render(
-                        res,
-                        'shop/index',
-                        {
-                            products: records || [],
-                            nav_title: 'shop',
-                            path: '/',
-                            root: 'shop',
-                            breadcrumbs: [
-                                {
-                                    title: 'Shop',
-                                    url: '/'
-                                }
-                            ],
-                            pages,
-                            current_page,
-                            _paginator
-                        }
-                    );
-                })
-                .catch((err: any) => this.onError(res, next, err)); 
+            .then((rows: any) => {
+                const paginator = Singleton.getPagination().getRecords(req, rows, 12);
+                let [records, current_page, pages, _paginator] = paginator;
+                
+                return this.render(
+                    res,
+                    'shop/index',
+                    {
+                        products: records || [],
+                        nav_title: 'shop',
+                        path: '/',
+                        root: 'shop',
+                        breadcrumbs: [
+                            {
+                                title: 'Shop',
+                                url: '/'
+                            }
+                        ],
+                        pages,
+                        current_page,
+                        _paginator
+                    }
+                );
+            })
+            .catch((err: any) => this.onError(res, next, err)); 
         } else {
             return this.render(
                 res,

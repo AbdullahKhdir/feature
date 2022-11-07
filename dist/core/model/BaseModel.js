@@ -553,565 +553,14 @@ module.exports = /** @class */ (function (_super) {
      * @param {String} limit
      * @param {String} table
      * @returns Promise
+     // TODO modify all crud methods to be asynchronous
     */
     BaseModel.prototype.filter = function (sql_query, limit, table) {
-        var _this = this;
-        if (sql_query === void 0) { sql_query = null; }
-        if (limit === void 0) { limit = null; }
-        if (table === void 0) { table = this.__table; }
-        if (this.__.isEmpty(table)) {
-            return Promise.reject(new BadMethodCallException_1.default('Table must not be empty!'));
-        }
-        if (table !== undefined && table !== null) {
-            return this._validateTable(table)
-                .then(function (result) {
-                if (!result) {
-                    return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")));
-                }
-                if (_this.__.isEmpty(sql_query) || sql_query == null || typeof sql_query === 'undefined') {
-                    return _this.all(table);
-                }
-                if (_this.__.isObject(sql_query) && _this.__.isEmpty(table) === false) {
-                    var where_clause_1 = '';
-                    for (var key in sql_query) {
-                        if (Object.hasOwnProperty.call(sql_query, key)) {
-                            // @ts-ignore
-                            where_clause_1 = where_clause_1 + key + ' = ' + _this._mysql.escape(sql_query[key]) + ' AND ';
-                        }
-                    }
-                    if (_this.__.isString(where_clause_1) && !_this.__.isEmpty(where_clause_1)) {
-                        var where_clause_length = where_clause_1.length;
-                        where_clause_1 = where_clause_1.substring(0, where_clause_length - 4);
-                    }
-                    where_clause_1 = _this._mysql.escape(where_clause_1);
-                    where_clause_1 = where_clause_1.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                        var sql, _limit;
-                        var _this = this;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    sql = "SELECT * FROM ".concat(table, " WHERE ").concat(where_clause_1, " ORDER BY ID ASC");
-                                    if (limit != null && !this.__.isNaN(limit)) {
-                                        _limit = " LIMIT ".concat(limit.toString());
-                                        sql += _limit;
-                                    }
-                                    return [4 /*yield*/, this.db.executeModelQuery(sql)
-                                            .then(function (_a) {
-                                            var rows = _a[0], fields = _a[1];
-                                            if (!_this.__.isEmpty(rows)) {
-                                                var _loop_1 = function (key) {
-                                                    // @ts-ignore 
-                                                    rows['reverse_table_name'] = table;
-                                                    var column_name = key;
-                                                    if (typeof _this.columns[column_name].references !== 'undefined') {
-                                                        var is_constraint_1 = _this.columns[column_name].references;
-                                                        var constraint_table_1 = _this.columns[column_name].references.table;
-                                                        if (typeof _this.columns[column_name].references.column !== 'undefined') {
-                                                            // @ts-ignore 
-                                                            rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                var _this = this;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = is_constraint_1.name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_1, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
-                                                                                    .then(function (_a) {
-                                                                                    var rows = _a[0], fields = _a[1];
-                                                                                    return rows;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_1, "\"! \n Error: ").concat(err))); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        }
-                                                        else {
-                                                            // @ts-ignore 
-                                                            rows[column_name] = _this.getTablePrimaryKey(constraint_table_1)
-                                                                // @ts-ignore 
-                                                                .then(function (id) {
-                                                                return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                    var _a;
-                                                                    var _b;
-                                                                    return __generator(this, function (_c) {
-                                                                        switch (_c.label) {
-                                                                            case 0:
-                                                                                _b = {};
-                                                                                _a = is_constraint_1.name;
-                                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_1, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
-                                                                                        .then(function (_a) {
-                                                                                        var rows = _a[0], fields = _a[1];
-                                                                                        return rows;
-                                                                                    })
-                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(id, "\" does not exist in table \"").concat(constraint_table_1, "\"! \n Error: ").concat(err))); })];
-                                                                            case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                    _b)];
-                                                                        }
-                                                                    });
-                                                                }); })();
-                                                            })
-                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                        }
-                                                    }
-                                                };
-                                                for (var key in _this.columns) {
-                                                    _loop_1(key);
-                                                }
-                                                return rows;
-                                            }
-                                        })
-                                            .then(function (rows) {
-                                            if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                                var _loop_2 = function (key) {
-                                                    var reverse_table = _this.reverse_references[key].table;
-                                                    var reverse_col = _this.reverse_references[key].column;
-                                                    var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                        _this.reverse_references[key].setting.where_column : '';
-                                                    var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                        _this.reverse_references[key].setting.where_table : '';
-                                                    var reverse_name = key;
-                                                    if (typeof rows !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
-                                                            // @ts-ignore 
-                                                            .then(function (id) {
-                                                            // @ts-ignore 
-                                                            if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                                // @ts-ignore 
-                                                                if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                    return _this.getTablePrimaryKey(where_tbl)
-                                                                        .then(function (_id) {
-                                                                        var _statement = where_tbl && where_col && reverse_table ?
-                                                                            'SELECT * FROM ' + reverse_table + ' ' +
-                                                                                'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
-                                                                                'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                                // @ts-ignore 
-                                                                                'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
-                                                                                ')' : '';
-                                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            var _a;
-                                                                            var _b;
-                                                                            return __generator(this, function (_c) {
-                                                                                switch (_c.label) {
-                                                                                    case 0:
-                                                                                        _b = {};
-                                                                                        _a = reverse_name;
-                                                                                        return [4 /*yield*/, this.db.executeModelQuery(_statement)
-                                                                                                .then(function (_a) {
-                                                                                                var results = _a[0], fields = _a[1];
-                                                                                                return results;
-                                                                                            })
-                                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                            _b)];
-                                                                                }
-                                                                            });
-                                                                        }); })();
-                                                                    })
-                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                                }
-                                                            }
-                                                            else {
-                                                                return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                    var _a;
-                                                                    var _b;
-                                                                    return __generator(this, function (_c) {
-                                                                        switch (_c.label) {
-                                                                            case 0:
-                                                                                _b = {};
-                                                                                _a = reverse_name;
-                                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                                        .then(function (_a) {
-                                                                                        var results = _a[0], fields = _a[1];
-                                                                                        return results;
-                                                                                    })
-                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                            case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                    _b)];
-                                                                        }
-                                                                    });
-                                                                }); })();
-                                                            }
-                                                        })
-                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                    }
-                                                    else {
-                                                        return "continue";
-                                                    }
-                                                };
-                                                for (var key in _this.reverse_references) {
-                                                    _loop_2(key);
-                                                }
-                                            }
-                                            return rows;
-                                        })
-                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                case 1: return [2 /*return*/, _a.sent()];
-                            }
-                        });
-                    }); })();
-                }
-                if (_this.__.isString(sql_query) && !_this.__.isEmpty(table)) {
-                    // @ts-ignore
-                    sql_query = _this._mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                    var sql_1 = "SELECT * FROM ".concat(table, " WHERE ").concat(sql_query, " ORDER BY ID ASC");
-                    if (limit != null && !_this.__.isNaN(limit)) {
-                        var _limit = " LIMIT ".concat(limit.toString());
-                        sql_1 += _limit;
-                    }
-                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                        var _this = this;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, this.db.executeModelQuery(sql_1)
-                                        .then(function (_a) {
-                                        var rows = _a[0], fields = _a[1];
-                                        if (!_this.__.isEmpty(rows)) {
-                                            var _loop_3 = function (key) {
-                                                // @ts-ignore 
-                                                rows['reverse_table_name'] = table;
-                                                var column_name = key;
-                                                var is_constraint = _this.columns[column_name].references;
-                                                if (typeof is_constraint !== 'undefined') {
-                                                    var constraint_table_2 = _this.columns[column_name].references.table;
-                                                    if (typeof _this.columns[column_name].references.column !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _a;
-                                                            var _b;
-                                                            var _this = this;
-                                                            return __generator(this, function (_c) {
-                                                                switch (_c.label) {
-                                                                    case 0:
-                                                                        _b = {};
-                                                                        _a = is_constraint.name;
-                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_2, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
-                                                                                .then(function (_a) {
-                                                                                var rows = _a[0], fields = _a[1];
-                                                                                return rows;
-                                                                            })
-                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_2, "\"! \n Error: ").concat(err))); })];
-                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                            _b)];
-                                                                }
-                                                            });
-                                                        }); })();
-                                                    }
-                                                    else {
-                                                        // @ts-ignore 
-                                                        rows[column_name] = _this.getTablePrimaryKey(constraint_table_2)
-                                                            .then(function (id) {
-                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = is_constraint.name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_2, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
-                                                                                    .then(function (_a) {
-                                                                                    var rows = _a[0], fields = _a[1];
-                                                                                    return rows;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        })
-                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                    }
-                                                }
-                                            };
-                                            for (var key in _this.columns) {
-                                                _loop_3(key);
-                                            }
-                                            return rows;
-                                        }
-                                    })
-                                        .then(function (rows) {
-                                        if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                            var _loop_4 = function (key) {
-                                                var reverse_table = _this.reverse_references[key].table;
-                                                var reverse_col = _this.reverse_references[key].column;
-                                                var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                    _this.reverse_references[key].setting.where_column : '';
-                                                var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                    _this.reverse_references[key].setting.where_table : '';
-                                                var reverse_name = key;
-                                                if (typeof rows !== 'undefined') {
-                                                    // @ts-ignore 
-                                                    rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
-                                                        .then(function (id) {
-                                                        if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                            // @ts-ignore 
-                                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                return _this.getTablePrimaryKey(where_tbl)
-                                                                    .then(function (_id) {
-                                                                    var _statement = where_tbl && where_col && reverse_table ?
-                                                                        'SELECT * FROM ' + reverse_table + ' ' +
-                                                                            'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
-                                                                            'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                            // @ts-ignore 
-                                                                            'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
-                                                                            ')' : '';
-                                                                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                        var _a;
-                                                                        var _b;
-                                                                        return __generator(this, function (_c) {
-                                                                            switch (_c.label) {
-                                                                                case 0:
-                                                                                    _b = {};
-                                                                                    _a = reverse_name;
-                                                                                    return [4 /*yield*/, this.db.executeModelQuery(_statement)
-                                                                                            .then(function (_a) {
-                                                                                            var results = _a[0], fields = _a[1];
-                                                                                            return results;
-                                                                                        })
-                                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                                case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                        _b)];
-                                                                            }
-                                                                        });
-                                                                    }); })();
-                                                                })
-                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                            }
-                                                        }
-                                                        else {
-                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = reverse_name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                                    .then(function (_a) {
-                                                                                    var results = _a[0], fields = _a[1];
-                                                                                    return results;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        }
-                                                    })
-                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                }
-                                                else {
-                                                    return "continue";
-                                                }
-                                            };
-                                            for (var key in _this.reverse_references) {
-                                                _loop_4(key);
-                                            }
-                                        }
-                                        return rows;
-                                    })
-                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                case 1: return [2 /*return*/, _a.sent()];
-                            }
-                        });
-                    }); })();
-                }
-                if (!_this.__.isNaN(sql_query) && _this.__.isString(sql_query)) {
-                    sql_query = +sql_query;
-                }
-                if (!_this.__.isNaN(sql_query) && _this.__.isEmpty(table) === false) {
-                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                        var sql, _limit;
-                        var _this = this;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    sql = "SELECT * FROM ".concat(table, " where id = ? ORDER BY ID ASC");
-                                    if (limit != null && !this.__.isNaN(limit)) {
-                                        _limit = " LIMIT ".concat(limit.toString());
-                                        sql += _limit;
-                                    }
-                                    return [4 /*yield*/, this.db.executeModelQuery(sql, [sql_query])
-                                            .then(function (_a) {
-                                            var rows = _a[0], fields = _a[1];
-                                            if (!_this.__.isEmpty(rows)) {
-                                                var _loop_5 = function (key) {
-                                                    // @ts-ignore 
-                                                    rows['reverse_table_name'] = table;
-                                                    var column_name = key;
-                                                    var is_constraint = _this.columns[column_name].references;
-                                                    if (typeof is_constraint !== 'undefined') {
-                                                        var constraint_table_3 = _this.columns[column_name].references.table;
-                                                        if (typeof _this.columns[column_name].references.column !== 'undefined') {
-                                                            // @ts-ignore 
-                                                            rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                var _this = this;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = is_constraint.name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_3, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
-                                                                                    .then(function (_a) {
-                                                                                    var rows = _a[0], fields = _a[1];
-                                                                                    return rows;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_3, "\"! \n Error: ").concat(err))); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        }
-                                                        else {
-                                                            // @ts-ignore 
-                                                            rows[column_name] = _this.getTablePrimaryKey(constraint_table_3)
-                                                                .then(function (id) {
-                                                                return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                    var _a;
-                                                                    var _b;
-                                                                    return __generator(this, function (_c) {
-                                                                        switch (_c.label) {
-                                                                            case 0:
-                                                                                _b = {};
-                                                                                _a = is_constraint.name;
-                                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_3, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
-                                                                                        .then(function (_a) {
-                                                                                        var rows = _a[0], fields = _a[1];
-                                                                                        return rows;
-                                                                                    })
-                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                            case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                    _b)];
-                                                                        }
-                                                                    });
-                                                                }); })();
-                                                            })
-                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                        }
-                                                    }
-                                                };
-                                                for (var key in _this.columns) {
-                                                    _loop_5(key);
-                                                }
-                                                return rows;
-                                            }
-                                        })
-                                            .then(function (rows) {
-                                            if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                                var _loop_6 = function (key) {
-                                                    var reverse_table = _this.reverse_references[key].table;
-                                                    var reverse_col = _this.reverse_references[key].column;
-                                                    var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                        _this.reverse_references[key].setting.where_column : '';
-                                                    var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                        _this.reverse_references[key].setting.where_table : '';
-                                                    var reverse_name = key;
-                                                    if (typeof rows !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
-                                                            .then(function (id) {
-                                                            if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                                // @ts-ignore 
-                                                                if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                    return _this.getTablePrimaryKey(where_tbl)
-                                                                        .then(function (_id) {
-                                                                        var _statement = where_tbl && where_col && reverse_table ?
-                                                                            'SELECT * FROM ' + reverse_table + ' ' +
-                                                                                'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
-                                                                                'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                                // @ts-ignore 
-                                                                                'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
-                                                                                ')' : '';
-                                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                            var _a;
-                                                                            var _b;
-                                                                            return __generator(this, function (_c) {
-                                                                                switch (_c.label) {
-                                                                                    case 0:
-                                                                                        _b = {};
-                                                                                        _a = reverse_name;
-                                                                                        return [4 /*yield*/, this.db.executeModelQuery(_statement)
-                                                                                                .then(function (_a) {
-                                                                                                var results = _a[0], fields = _a[1];
-                                                                                                return results;
-                                                                                            })
-                                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                            _b)];
-                                                                                }
-                                                                            });
-                                                                        }); })();
-                                                                    })
-                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                                }
-                                                            }
-                                                            else {
-                                                                return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                    var _a;
-                                                                    var _b;
-                                                                    return __generator(this, function (_c) {
-                                                                        switch (_c.label) {
-                                                                            case 0:
-                                                                                _b = {};
-                                                                                _a = reverse_name;
-                                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                                        .then(function (_a) {
-                                                                                        var results = _a[0], fields = _a[1];
-                                                                                        return results;
-                                                                                    })
-                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                            case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                    _b)];
-                                                                        }
-                                                                    });
-                                                                }); })();
-                                                            }
-                                                        })
-                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                    }
-                                                    else {
-                                                        return "continue";
-                                                    }
-                                                };
-                                                for (var key in _this.reverse_references) {
-                                                    _loop_6(key);
-                                                }
-                                            }
-                                            return rows;
-                                        })
-                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                case 1: return [2 /*return*/, _a.sent()];
-                            }
-                        });
-                    }); })();
-                }
-            })
-                .then(function (rows) {
-                return rows;
-            })
-                .catch(function () { return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!"))); });
-        }
-        return Promise.reject(new SQLException_1.default('Query could not be executed!'));
-    };
-    // TODO modify all crud methods to be asynchronous 
-    BaseModel.prototype._filter = function (sql_query, limit, table) {
         if (sql_query === void 0) { sql_query = null; }
         if (limit === void 0) { limit = null; }
         if (table === void 0) { table = this.__table; }
         return __awaiter(this, void 0, void 0, function () {
-            var is_valid_table, where_clause, key, where_clause_length, sql, _limit, sql, _limit, sql, _limit;
+            var is_valid_table, where_clause, key, where_clause_length, sql_1, _limit, sql_2, _limit, _table_id, error_1, sql, _limit;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -1120,12 +569,12 @@ module.exports = /** @class */ (function (_super) {
                         return [4 /*yield*/, Promise.reject(new BadMethodCallException_1.default('Table must not be empty!'))];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2:
-                        if (!(table !== undefined && table !== null)) return [3 /*break*/, 14];
+                        if (!(table !== undefined && table !== null)) return [3 /*break*/, 18];
                         return [4 /*yield*/, this._validateTable(table)];
                     case 3:
                         is_valid_table = _a.sent();
-                        if (!(is_valid_table === true)) return [3 /*break*/, 12];
-                        if (!(this.__.isEmpty(sql_query) || sql_query == null || typeof sql_query === 'undefined')) return [3 /*break*/, 5];
+                        if (!(is_valid_table === true)) return [3 /*break*/, 16];
+                        if (!(sql_query == null || typeof sql_query === 'undefined')) return [3 /*break*/, 5];
                         return [4 /*yield*/, this.all(table)];
                     case 4: return [2 /*return*/, _a.sent()];
                     case 5:
@@ -1143,22 +592,22 @@ module.exports = /** @class */ (function (_super) {
                         }
                         where_clause = this._mysql.escape(where_clause);
                         where_clause = where_clause.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                        sql = "SELECT * FROM ".concat(table, " WHERE ").concat(where_clause, " ORDER BY ID ASC");
+                        sql_1 = "SELECT * FROM ".concat(table, " WHERE ").concat(where_clause, " ORDER BY ID ASC");
                         if (limit != null && !this.__.isNaN(limit)) {
                             _limit = " LIMIT ".concat(limit.toString());
-                            sql += _limit;
+                            sql_1 += _limit;
                         }
-                        return [4 /*yield*/, this.db.executeModelQuery(sql)
+                        return [4 /*yield*/, this.db.executeModelQuery(sql_1)
                                 .then(function (_a) {
                                 var rows = _a[0], fields = _a[1];
                                 if (!_this.__.isEmpty(rows)) {
-                                    var _loop_7 = function (key) {
+                                    var _loop_1 = function (key) {
                                         // @ts-ignore 
                                         rows['reverse_table_name'] = table;
                                         var column_name = key;
                                         if (typeof _this.columns[column_name].references !== 'undefined') {
-                                            var is_constraint_2 = _this.columns[column_name].references;
-                                            var constraint_table_4 = _this.columns[column_name].references.table;
+                                            var is_constraint_1 = _this.columns[column_name].references;
+                                            var constraint_table_1 = _this.columns[column_name].references.table;
                                             if (typeof _this.columns[column_name].references.column !== 'undefined') {
                                                 // @ts-ignore 
                                                 rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -1169,13 +618,13 @@ module.exports = /** @class */ (function (_super) {
                                                         switch (_c.label) {
                                                             case 0:
                                                                 _b = {};
-                                                                _a = is_constraint_2.name;
-                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_4, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
+                                                                _a = is_constraint_1.name;
+                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_1, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
                                                                         .then(function (_a) {
                                                                         var rows = _a[0], fields = _a[1];
                                                                         return rows;
                                                                     })
-                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_4, "\"! \n Error: ").concat(err))); })];
+                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_1, "\"! \n Error: ").concat(err))); })];
                                                             case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
                                                                     _b)];
                                                         }
@@ -1184,7 +633,7 @@ module.exports = /** @class */ (function (_super) {
                                             }
                                             else {
                                                 // @ts-ignore 
-                                                rows[column_name] = _this.getTablePrimaryKey(constraint_table_4)
+                                                rows[column_name] = _this.getTablePrimaryKey(constraint_table_1)
                                                     // @ts-ignore 
                                                     .then(function (id) {
                                                     return (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -1194,13 +643,13 @@ module.exports = /** @class */ (function (_super) {
                                                             switch (_c.label) {
                                                                 case 0:
                                                                     _b = {};
-                                                                    _a = is_constraint_2.name;
-                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_4, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
+                                                                    _a = is_constraint_1.name;
+                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_1, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
                                                                             .then(function (_a) {
                                                                             var rows = _a[0], fields = _a[1];
                                                                             return rows;
                                                                         })
-                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(id, "\" does not exist in table \"").concat(constraint_table_4, "\"! \n Error: ").concat(err))); })];
+                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(id, "\" does not exist in table \"").concat(constraint_table_1, "\"! \n Error: ").concat(err))); })];
                                                                 case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
                                                                         _b)];
                                                             }
@@ -1212,14 +661,14 @@ module.exports = /** @class */ (function (_super) {
                                         }
                                     };
                                     for (var key in _this.columns) {
-                                        _loop_7(key);
+                                        _loop_1(key);
                                     }
                                     return rows;
                                 }
                             })
                                 .then(function (rows) {
                                 if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                    var _loop_8 = function (key) {
+                                    var _loop_2 = function (key) {
                                         var reverse_table = _this.reverse_references[key].table;
                                         var reverse_col = _this.reverse_references[key].column;
                                         var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
@@ -1228,11 +677,8 @@ module.exports = /** @class */ (function (_super) {
                                             _this.reverse_references[key].setting.where_table : '';
                                         var reverse_name = key;
                                         if (typeof rows !== 'undefined') {
-                                            // @ts-ignore 
                                             rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
-                                                // @ts-ignore 
                                                 .then(function (id) {
-                                                // @ts-ignore 
                                                 if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
                                                     // @ts-ignore 
                                                     if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
@@ -1269,15 +715,9 @@ module.exports = /** @class */ (function (_super) {
                                                     }
                                                 }
                                                 else {
-                                                    // console.log(sql_query)
-                                                    // console.log(reverse_table)
                                                     return _this.getTablePrimaryKey(reverse_table)
                                                         .then(function (TABLE_ID) {
-                                                        // TODO MAJOR ISSUE THE REVERSE REFERENCES ARE NOT BEING CORRECTLY POPULATED
-                                                        // TODO DUE TO A MISSING OF AN IMPORTANT DYNAMIC PARAMETER WHICH IS THE VALUE   
-                                                        // TODO OF A PRIMARY KEY OF A (RANDOM) TABLE
-                                                        // TODO eg. A USE CASE WOULD BE USER ID AS PERMANENT SOLUTION    
-                                                        var sql = "SELECT * FROM ".concat(reverse_table, " where ").concat(TABLE_ID, " = ").concat(sql_query[TABLE_ID]);
+                                                        var sql = "SELECT * FROM ".concat(reverse_table, " where ").concat(reverse_col, " = ").concat(rows[0][TABLE_ID]);
                                                         return (function () { return __awaiter(_this, void 0, void 0, function () {
                                                             var _a;
                                                             var _b;
@@ -1308,7 +748,7 @@ module.exports = /** @class */ (function (_super) {
                                         }
                                     };
                                     for (var key in _this.reverse_references) {
-                                        _loop_8(key);
+                                        _loop_2(key);
                                     }
                                 }
                                 return rows;
@@ -1316,25 +756,25 @@ module.exports = /** @class */ (function (_super) {
                                 .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
                     case 6: return [2 /*return*/, _a.sent()];
                     case 7:
-                        if (!(this.__.isString(sql_query) && !this.__.isEmpty(table))) return [3 /*break*/, 9];
+                        if (!(this.__.isString(sql_query) && !this.__.isEmpty(table) && this.__.isNaN(sql_query))) return [3 /*break*/, 9];
                         // @ts-ignore
                         sql_query = this._mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                        sql = "SELECT * FROM ".concat(table, " WHERE ").concat(sql_query, " ORDER BY ID ASC");
+                        sql_2 = "SELECT * FROM ".concat(table, " WHERE ").concat(sql_query, " ORDER BY ID ASC");
                         if (limit != null && !this.__.isNaN(limit)) {
                             _limit = " LIMIT ".concat(limit.toString());
-                            sql += _limit;
+                            sql_2 += _limit;
                         }
-                        return [4 /*yield*/, this.db.executeModelQuery(sql)
+                        return [4 /*yield*/, this.db.executeModelQuery(sql_2)
                                 .then(function (_a) {
                                 var rows = _a[0], fields = _a[1];
                                 if (!_this.__.isEmpty(rows)) {
-                                    var _loop_9 = function (key) {
+                                    var _loop_3 = function (key) {
                                         // @ts-ignore 
                                         rows['reverse_table_name'] = table;
                                         var column_name = key;
                                         var is_constraint = _this.columns[column_name].references;
                                         if (typeof is_constraint !== 'undefined') {
-                                            var constraint_table_5 = _this.columns[column_name].references.table;
+                                            var constraint_table_2 = _this.columns[column_name].references.table;
                                             if (typeof _this.columns[column_name].references.column !== 'undefined') {
                                                 // @ts-ignore 
                                                 rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -1346,12 +786,12 @@ module.exports = /** @class */ (function (_super) {
                                                             case 0:
                                                                 _b = {};
                                                                 _a = is_constraint.name;
-                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_5, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
+                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_2, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
                                                                         .then(function (_a) {
                                                                         var rows = _a[0], fields = _a[1];
                                                                         return rows;
                                                                     })
-                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_5, "\"! \n Error: ").concat(err))); })];
+                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_2, "\"! \n Error: ").concat(err))); })];
                                                             case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
                                                                     _b)];
                                                         }
@@ -1360,7 +800,7 @@ module.exports = /** @class */ (function (_super) {
                                             }
                                             else {
                                                 // @ts-ignore 
-                                                rows[column_name] = _this.getTablePrimaryKey(constraint_table_5)
+                                                rows[column_name] = _this.getTablePrimaryKey(constraint_table_2)
                                                     .then(function (id) {
                                                     return (function () { return __awaiter(_this, void 0, void 0, function () {
                                                         var _a;
@@ -1370,7 +810,7 @@ module.exports = /** @class */ (function (_super) {
                                                                 case 0:
                                                                     _b = {};
                                                                     _a = is_constraint.name;
-                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_5, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
+                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_2, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
                                                                             .then(function (_a) {
                                                                             var rows = _a[0], fields = _a[1];
                                                                             return rows;
@@ -1387,14 +827,14 @@ module.exports = /** @class */ (function (_super) {
                                         }
                                     };
                                     for (var key in _this.columns) {
-                                        _loop_9(key);
+                                        _loop_3(key);
                                     }
                                     return rows;
                                 }
                             })
                                 .then(function (rows) {
                                 if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                    var _loop_10 = function (key) {
+                                    var _loop_4 = function (key) {
                                         var reverse_table = _this.reverse_references[key].table;
                                         var reverse_col = _this.reverse_references[key].column;
                                         var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
@@ -1403,11 +843,9 @@ module.exports = /** @class */ (function (_super) {
                                             _this.reverse_references[key].setting.where_table : '';
                                         var reverse_name = key;
                                         if (typeof rows !== 'undefined') {
-                                            // @ts-ignore 
                                             rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
                                                 .then(function (id) {
                                                 if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                    // @ts-ignore 
                                                     if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
                                                         return _this.getTablePrimaryKey(where_tbl)
                                                             .then(function (_id) {
@@ -1415,7 +853,6 @@ module.exports = /** @class */ (function (_super) {
                                                                 'SELECT * FROM ' + reverse_table + ' ' +
                                                                     'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
                                                                     'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                    // @ts-ignore 
                                                                     'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
                                                                     ')' : '';
                                                             return (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -1442,25 +879,30 @@ module.exports = /** @class */ (function (_super) {
                                                     }
                                                 }
                                                 else {
-                                                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                        var _a;
-                                                        var _b;
-                                                        return __generator(this, function (_c) {
-                                                            switch (_c.label) {
-                                                                case 0:
-                                                                    _b = {};
-                                                                    _a = reverse_name;
-                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                            .then(function (_a) {
-                                                                            var results = _a[0], fields = _a[1];
-                                                                            return results;
-                                                                        })
-                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                        _b)];
-                                                            }
-                                                        });
-                                                    }); })();
+                                                    return _this.getTablePrimaryKey(reverse_table)
+                                                        .then(function (TABLE_ID) {
+                                                        var sql = "SELECT * FROM ".concat(reverse_table, " where ").concat(reverse_col, " = ").concat(rows[0][TABLE_ID]);
+                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            var _a;
+                                                            var _b;
+                                                            return __generator(this, function (_c) {
+                                                                switch (_c.label) {
+                                                                    case 0:
+                                                                        _b = {};
+                                                                        _a = reverse_name;
+                                                                        return [4 /*yield*/, this.db.executeModelQuery(sql)
+                                                                                .then(function (_a) {
+                                                                                var results = _a[0], fields = _a[1];
+                                                                                return results;
+                                                                            })
+                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                            _b)];
+                                                                }
+                                                            });
+                                                        }); })();
+                                                    })
+                                                        .catch(function (err) { return Promise.reject(err); });
                                                 }
                                             })
                                                 .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
@@ -1470,7 +912,7 @@ module.exports = /** @class */ (function (_super) {
                                         }
                                     };
                                     for (var key in _this.reverse_references) {
-                                        _loop_10(key);
+                                        _loop_4(key);
                                     }
                                 }
                                 return rows;
@@ -1481,8 +923,20 @@ module.exports = /** @class */ (function (_super) {
                         if (!this.__.isNaN(sql_query) && this.__.isString(sql_query)) {
                             sql_query = +sql_query;
                         }
-                        if (!(!this.__.isNaN(sql_query) && this.__.isEmpty(table) === false)) return [3 /*break*/, 11];
-                        sql = "SELECT * FROM ".concat(table, " where id = ? ORDER BY ID ASC");
+                        if (!(!this.__.isNaN(sql_query) && !this.__.isEmpty(table))) return [3 /*break*/, 15];
+                        _table_id = void 0;
+                        _a.label = 10;
+                    case 10:
+                        _a.trys.push([10, 12, , 13]);
+                        return [4 /*yield*/, this.getTablePrimaryKey(table)];
+                    case 11:
+                        _table_id = _a.sent();
+                        return [3 /*break*/, 13];
+                    case 12:
+                        error_1 = _a.sent();
+                        return [2 /*return*/, Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")))];
+                    case 13:
+                        sql = "SELECT * FROM ".concat(table, " where ").concat('id', " = ? ORDER BY ID ASC");
                         if (limit != null && !this.__.isNaN(limit)) {
                             _limit = " LIMIT ".concat(limit.toString());
                             sql += _limit;
@@ -1491,13 +945,13 @@ module.exports = /** @class */ (function (_super) {
                                 .then(function (_a) {
                                 var rows = _a[0], fields = _a[1];
                                 if (!_this.__.isEmpty(rows)) {
-                                    var _loop_11 = function (key) {
+                                    var _loop_5 = function (key) {
                                         // @ts-ignore 
                                         rows['reverse_table_name'] = table;
                                         var column_name = key;
                                         var is_constraint = _this.columns[column_name].references;
                                         if (typeof is_constraint !== 'undefined') {
-                                            var constraint_table_6 = _this.columns[column_name].references.table;
+                                            var constraint_table_3 = _this.columns[column_name].references.table;
                                             if (typeof _this.columns[column_name].references.column !== 'undefined') {
                                                 // @ts-ignore 
                                                 rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -1509,12 +963,12 @@ module.exports = /** @class */ (function (_super) {
                                                             case 0:
                                                                 _b = {};
                                                                 _a = is_constraint.name;
-                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_6, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
+                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_3, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
                                                                         .then(function (_a) {
                                                                         var rows = _a[0], fields = _a[1];
                                                                         return rows;
                                                                     })
-                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_6, "\"! \n Error: ").concat(err))); })];
+                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_3, "\"! \n Error: ").concat(err))); })];
                                                             case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
                                                                     _b)];
                                                         }
@@ -1523,7 +977,7 @@ module.exports = /** @class */ (function (_super) {
                                             }
                                             else {
                                                 // @ts-ignore 
-                                                rows[column_name] = _this.getTablePrimaryKey(constraint_table_6)
+                                                rows[column_name] = _this.getTablePrimaryKey(constraint_table_3)
                                                     .then(function (id) {
                                                     return (function () { return __awaiter(_this, void 0, void 0, function () {
                                                         var _a;
@@ -1533,7 +987,7 @@ module.exports = /** @class */ (function (_super) {
                                                                 case 0:
                                                                     _b = {};
                                                                     _a = is_constraint.name;
-                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_6, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
+                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_3, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
                                                                             .then(function (_a) {
                                                                             var rows = _a[0], fields = _a[1];
                                                                             return rows;
@@ -1550,14 +1004,14 @@ module.exports = /** @class */ (function (_super) {
                                         }
                                     };
                                     for (var key in _this.columns) {
-                                        _loop_11(key);
+                                        _loop_5(key);
                                     }
-                                    return rows;
                                 }
+                                return rows;
                             })
                                 .then(function (rows) {
                                 if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                    var _loop_12 = function (key) {
+                                    var _loop_6 = function (key) {
                                         var reverse_table = _this.reverse_references[key].table;
                                         var reverse_col = _this.reverse_references[key].column;
                                         var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
@@ -1566,11 +1020,9 @@ module.exports = /** @class */ (function (_super) {
                                             _this.reverse_references[key].setting.where_table : '';
                                         var reverse_name = key;
                                         if (typeof rows !== 'undefined') {
-                                            // @ts-ignore 
                                             rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
                                                 .then(function (id) {
                                                 if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                    // @ts-ignore 
                                                     if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
                                                         return _this.getTablePrimaryKey(where_tbl)
                                                             .then(function (_id) {
@@ -1578,7 +1030,6 @@ module.exports = /** @class */ (function (_super) {
                                                                 'SELECT * FROM ' + reverse_table + ' ' +
                                                                     'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
                                                                     'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                    // @ts-ignore 
                                                                     'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
                                                                     ')' : '';
                                                             return (function () { return __awaiter(_this, void 0, void 0, function () {
@@ -1605,25 +1056,30 @@ module.exports = /** @class */ (function (_super) {
                                                     }
                                                 }
                                                 else {
-                                                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                        var _a;
-                                                        var _b;
-                                                        return __generator(this, function (_c) {
-                                                            switch (_c.label) {
-                                                                case 0:
-                                                                    _b = {};
-                                                                    _a = reverse_name;
-                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                            .then(function (_a) {
-                                                                            var results = _a[0], fields = _a[1];
-                                                                            return results;
-                                                                        })
-                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                        _b)];
-                                                            }
-                                                        });
-                                                    }); })();
+                                                    return _this.getTablePrimaryKey(reverse_table)
+                                                        .then(function (TABLE_ID) {
+                                                        var sql = "SELECT * FROM ".concat(reverse_table, " where ").concat(reverse_col, " = ").concat(rows[0][TABLE_ID]);
+                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            var _a;
+                                                            var _b;
+                                                            return __generator(this, function (_c) {
+                                                                switch (_c.label) {
+                                                                    case 0:
+                                                                        _b = {};
+                                                                        _a = reverse_name;
+                                                                        return [4 /*yield*/, this.db.executeModelQuery(sql)
+                                                                                .then(function (_a) {
+                                                                                var results = _a[0], fields = _a[1];
+                                                                                return results;
+                                                                            })
+                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                            _b)];
+                                                                }
+                                                            });
+                                                        }); })();
+                                                    })
+                                                        .catch(function (err) { return Promise.reject(err); });
                                                 }
                                             })
                                                 .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
@@ -1633,18 +1089,18 @@ module.exports = /** @class */ (function (_super) {
                                         }
                                     };
                                     for (var key in _this.reverse_references) {
-                                        _loop_12(key);
+                                        _loop_6(key);
                                     }
                                 }
                                 return rows;
                             })
                                 .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                    case 10: return [2 /*return*/, _a.sent()];
-                    case 11: return [3 /*break*/, 14];
-                    case 12: return [4 /*yield*/, Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")))];
-                    case 13: return [2 /*return*/, _a.sent()];
-                    case 14: return [4 /*yield*/, Promise.reject(new SQLException_1.default('Query could not be executed!'))];
-                    case 15: return [2 /*return*/, _a.sent()];
+                    case 14: return [2 /*return*/, _a.sent()];
+                    case 15: return [3 /*break*/, 18];
+                    case 16: return [4 /*yield*/, Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")))];
+                    case 17: return [2 /*return*/, _a.sent()];
+                    case 18: return [4 /*yield*/, Promise.reject(new SQLException_1.default('Query could not be executed!'))];
+                    case 19: return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -1659,312 +1115,237 @@ module.exports = /** @class */ (function (_super) {
      * @returns Promise
     */
     BaseModel.prototype.get = function (sql_query, table) {
-        var _this = this;
         if (table === void 0) { table = this.__table; }
-        // if (this.model) {
-        //     var _model = Singleton.getModel(this.model.toString())
-        //     // console.log(_model._columns);
-        //     // console.log(this._columns);
-        //     this.columns = _model._columns;
-        //     // console.log(this.columns);
-        // }
-        if (this.__.isEmpty(table)) {
-            return Promise.reject(new BadMethodCallException_1.default('Table must not be empty!'));
-        }
-        if (table !== undefined && table !== null) {
-            return this._validateTable(table)
-                .then(function (result) {
-                if (!result) {
-                    return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")));
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                // if (this.model) {
+                //     var _model = Singleton.getModel(this.model.toString())
+                //     // console.log(_model._columns);
+                //     // console.log(this._columns);
+                //     this.columns = _model._columns;
+                //     // console.log(this.columns);
+                // }
+                if (this.__.isEmpty(table)) {
+                    return [2 /*return*/, Promise.reject(new BadMethodCallException_1.default('Table must not be empty!'))];
                 }
-                if (_this.__.isObject(sql_query) && _this.__.isEmpty(table) === false) {
-                    var where_clause_2 = '';
-                    for (var key in sql_query) {
-                        if (Object.hasOwnProperty.call(sql_query, key)) {
-                            // @ts-ignore 
-                            where_clause_2 = where_clause_2 + key + ' = ' + _this._mysql.escape(sql_query[key]) + ' AND ';
-                        }
-                    }
-                    if (_this.__.isString(where_clause_2) && !_this.__.isEmpty(where_clause_2)) {
-                        var where_clause_length = where_clause_2.length;
-                        where_clause_2 = where_clause_2.substring(0, where_clause_length - 4);
-                    }
-                    where_clause_2 = _this._mysql.escape(where_clause_2);
-                    where_clause_2 = where_clause_2.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                        var _this = this;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(table, " WHERE ").concat(where_clause_2, " ORDER BY ID ASC LIMIT 1"))
-                                        .then(function (_a) {
-                                        var rows = _a[0], fields = _a[1];
-                                        if (!_this.__.isEmpty(rows)) {
-                                            var _loop_13 = function (key) {
-                                                // @ts-ignore 
-                                                rows['reverse_table_name'] = table;
-                                                var column_name = key;
-                                                var is_constraint = _this.columns[column_name].references;
-                                                if (typeof is_constraint !== 'undefined') {
-                                                    var constraint_table_7 = _this.columns[column_name].references.table;
-                                                    if (typeof _this.columns[column_name].references.column !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _a;
-                                                            var _b;
-                                                            var _this = this;
-                                                            return __generator(this, function (_c) {
-                                                                switch (_c.label) {
-                                                                    case 0:
-                                                                        _b = {};
-                                                                        _a = is_constraint.name;
-                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_7, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
-                                                                                .then(function (_a) {
-                                                                                var rows = _a[0], fields = _a[1];
-                                                                                return rows;
-                                                                            })
-                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_7, "\"! \n Error: ").concat(err))); })];
-                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                            _b)];
-                                                                }
-                                                            });
-                                                        }); })();
-                                                    }
-                                                    else {
-                                                        // @ts-ignore 
-                                                        rows[column_name] = _this.getTablePrimaryKey(constraint_table_7)
-                                                            .then(function (id) {
-                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = is_constraint.name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_7, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
-                                                                                    .then(function (_a) {
-                                                                                    var rows = _a[0], fields = _a[1];
-                                                                                    return rows;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        })
-                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                    }
-                                                }
-                                            };
-                                            for (var key in _this.columns) {
-                                                _loop_13(key);
-                                            }
-                                            return rows;
-                                        }
-                                    })
-                                        .then(function (rows) {
-                                        if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                            var _loop_14 = function (key) {
-                                                var reverse_table = _this.reverse_references[key].table;
-                                                var reverse_col = _this.reverse_references[key].column;
-                                                var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                    _this.reverse_references[key].setting.where_column : '';
-                                                var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                    _this.reverse_references[key].setting.where_table : '';
-                                                var reverse_name = key;
-                                                if (typeof rows !== 'undefined') {
-                                                    // @ts-ignore 
-                                                    rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
-                                                        .then(function (id) {
-                                                        if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                if (table !== undefined && table !== null) {
+                    return [2 /*return*/, this._validateTable(table)
+                            .then(function (result) {
+                            if (!result) {
+                                return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")));
+                            }
+                            if (_this.__.isObject(sql_query) && _this.__.isEmpty(table) === false) {
+                                var where_clause_1 = '';
+                                for (var key in sql_query) {
+                                    if (Object.hasOwnProperty.call(sql_query, key)) {
+                                        // @ts-ignore 
+                                        where_clause_1 = where_clause_1 + key + ' = ' + _this._mysql.escape(sql_query[key]) + ' AND ';
+                                    }
+                                }
+                                if (_this.__.isString(where_clause_1) && !_this.__.isEmpty(where_clause_1)) {
+                                    var where_clause_length = where_clause_1.length;
+                                    where_clause_1 = where_clause_1.substring(0, where_clause_length - 4);
+                                }
+                                where_clause_1 = _this._mysql.escape(where_clause_1);
+                                where_clause_1 = where_clause_1.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
+                                return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(table, " WHERE ").concat(where_clause_1, " ORDER BY ID ASC LIMIT 1"))
+                                                    .then(function (_a) {
+                                                    var rows = _a[0], fields = _a[1];
+                                                    if (!_this.__.isEmpty(rows)) {
+                                                        var _loop_7 = function (key) {
                                                             // @ts-ignore 
-                                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                return _this.getTablePrimaryKey(where_tbl)
-                                                                    .then(function (_id) {
-                                                                    var _statement = where_tbl && where_col && reverse_table ?
-                                                                        'SELECT * FROM ' + reverse_table + ' ' +
-                                                                            'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
-                                                                            'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                            // @ts-ignore 
-                                                                            'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
-                                                                            ')' : '';
-                                                                    return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            rows['reverse_table_name'] = table;
+                                                            var column_name = key;
+                                                            var is_constraint = _this.columns[column_name].references;
+                                                            if (typeof is_constraint !== 'undefined') {
+                                                                var constraint_table_4 = _this.columns[column_name].references.table;
+                                                                if (typeof _this.columns[column_name].references.column !== 'undefined') {
+                                                                    // @ts-ignore 
+                                                                    rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _b;
+                                                                        var _this = this;
                                                                         return __generator(this, function (_c) {
                                                                             switch (_c.label) {
                                                                                 case 0:
                                                                                     _b = {};
-                                                                                    _a = reverse_name;
-                                                                                    return [4 /*yield*/, this.db.executeModelQuery(_statement)
+                                                                                    _a = is_constraint.name;
+                                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_4, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
                                                                                             .then(function (_a) {
-                                                                                            var results = _a[0], fields = _a[1];
-                                                                                            return results;
+                                                                                            var rows = _a[0], fields = _a[1];
+                                                                                            return rows;
                                                                                         })
-                                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_4, "\"! \n Error: ").concat(err))); })];
                                                                                 case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
                                                                                         _b)];
                                                                             }
                                                                         });
                                                                     }); })();
+                                                                }
+                                                                else {
+                                                                    // @ts-ignore 
+                                                                    rows[column_name] = _this.getTablePrimaryKey(constraint_table_4)
+                                                                        .then(function (id) {
+                                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _a;
+                                                                            var _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0:
+                                                                                        _b = {};
+                                                                                        _a = is_constraint.name;
+                                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_4, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
+                                                                                                .then(function (_a) {
+                                                                                                var rows = _a[0], fields = _a[1];
+                                                                                                return rows;
+                                                                                            })
+                                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                            _b)];
+                                                                                }
+                                                                            });
+                                                                        }); })();
+                                                                    })
+                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                                }
+                                                            }
+                                                        };
+                                                        for (var key in _this.columns) {
+                                                            _loop_7(key);
+                                                        }
+                                                        return rows;
+                                                    }
+                                                })
+                                                    .then(function (rows) {
+                                                    if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
+                                                        var _loop_8 = function (key) {
+                                                            var reverse_table = _this.reverse_references[key].table;
+                                                            var reverse_col = _this.reverse_references[key].column;
+                                                            var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
+                                                                _this.reverse_references[key].setting.where_column : '';
+                                                            var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
+                                                                _this.reverse_references[key].setting.where_table : '';
+                                                            var reverse_name = key;
+                                                            if (typeof rows !== 'undefined') {
+                                                                rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
+                                                                    .then(function (id) {
+                                                                    if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                                        // @ts-ignore 
+                                                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
+                                                                            return _this.getTablePrimaryKey(where_tbl)
+                                                                                .then(function (_id) {
+                                                                                var _statement = where_tbl && where_col && reverse_table ?
+                                                                                    'SELECT * FROM ' + reverse_table + ' ' +
+                                                                                        'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
+                                                                                        'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
+                                                                                        // @ts-ignore 
+                                                                                        'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
+                                                                                        ')' : '';
+                                                                                return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                    var _a;
+                                                                                    var _b;
+                                                                                    return __generator(this, function (_c) {
+                                                                                        switch (_c.label) {
+                                                                                            case 0:
+                                                                                                _b = {};
+                                                                                                _a = reverse_name;
+                                                                                                return [4 /*yield*/, this.db.executeModelQuery(_statement)
+                                                                                                        .then(function (_a) {
+                                                                                                        var results = _a[0], fields = _a[1];
+                                                                                                        return results;
+                                                                                                    })
+                                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                            case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                                    _b)];
+                                                                                        }
+                                                                                    });
+                                                                                }); })();
+                                                                            })
+                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                                        }
+                                                                    }
+                                                                    else {
+                                                                        return _this.getTablePrimaryKey(reverse_table)
+                                                                            .then(function (TABLE_ID) {
+                                                                            var sql = "SELECT * FROM ".concat(reverse_table, " where ").concat(reverse_col, " = ").concat(rows[0][TABLE_ID]);
+                                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                var _a;
+                                                                                var _b;
+                                                                                return __generator(this, function (_c) {
+                                                                                    switch (_c.label) {
+                                                                                        case 0:
+                                                                                            _b = {};
+                                                                                            _a = reverse_name;
+                                                                                            return [4 /*yield*/, this.db.executeModelQuery(sql)
+                                                                                                    .then(function (_a) {
+                                                                                                    var results = _a[0], fields = _a[1];
+                                                                                                    return results;
+                                                                                                })
+                                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                                _b)];
+                                                                                    }
+                                                                                });
+                                                                            }); })();
+                                                                        })
+                                                                            .catch(function (err) { return Promise.reject(err); });
+                                                                    }
                                                                 })
                                                                     .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
                                                             }
+                                                            else {
+                                                                return "continue";
+                                                            }
+                                                        };
+                                                        for (var key in _this.reverse_references) {
+                                                            _loop_8(key);
                                                         }
-                                                        else {
-                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = reverse_name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                                    .then(function (_a) {
-                                                                                    var results = _a[0], fields = _a[1];
-                                                                                    return results;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        }
-                                                    })
-                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                }
-                                                else {
-                                                    return "continue";
-                                                }
-                                            };
-                                            for (var key in _this.reverse_references) {
-                                                _loop_14(key);
-                                            }
+                                                    }
+                                                    return rows;
+                                                })
+                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                            case 1: return [2 /*return*/, _a.sent()];
                                         }
-                                        return rows;
-                                    })
-                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                case 1: return [2 /*return*/, _a.sent()];
+                                    });
+                                }); })();
                             }
-                        });
-                    }); })();
-                }
-                if (_this.__.isString(sql_query) && !_this.__.isEmpty(table) && _this.__.isNaN(sql_query)) {
-                    sql_query = _this._mysql.escape(sql_query);
-                    sql_query = sql_query.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                        var _this = this;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, this.db.executeModelQuery("\n                            SELECT * \n                            FROM ".concat(table, " \n                            where ").concat(sql_query, "\n                            ORDER BY ID ASC LIMIT 1\n                            "))
-                                        .then(function (_a) {
-                                        var rows = _a[0], fields = _a[1];
-                                        if (!_this.__.isEmpty(rows)) {
-                                            var _loop_15 = function (key) {
-                                                // @ts-ignore 
-                                                rows['reverse_table_name'] = table;
-                                                var column_name = key;
-                                                var is_constraint = _this.columns[column_name].references;
-                                                if (typeof is_constraint !== 'undefined') {
-                                                    var constraint_table_8 = _this.columns[column_name].references.table;
-                                                    if (typeof _this.columns[column_name].references.column !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _a;
-                                                            var _b;
-                                                            return __generator(this, function (_c) {
-                                                                switch (_c.label) {
-                                                                    case 0:
-                                                                        _b = {};
-                                                                        _a = is_constraint.name;
-                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_8, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
-                                                                                .then(function (_a) {
-                                                                                var rows = _a[0], fields = _a[1];
-                                                                                return rows;
-                                                                            })
-                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                            _b)];
-                                                                }
-                                                            });
-                                                        }); })();
-                                                    }
-                                                    else {
-                                                        // @ts-ignore 
-                                                        rows[column_name] = _this.getTablePrimaryKey(constraint_table_8)
-                                                            .then(function (id) {
-                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = is_constraint.name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_8, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
-                                                                                    .then(function (_a) {
-                                                                                    var rows = _a[0], fields = _a[1];
-                                                                                    return rows;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        })
-                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                    }
-                                                }
-                                            };
-                                            for (var key in _this.columns) {
-                                                _loop_15(key);
-                                            }
-                                            return rows;
-                                        }
-                                    })
-                                        .then(function (rows) {
-                                        if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                            var _loop_16 = function (key) {
-                                                var reverse_table = _this.reverse_references[key].table;
-                                                var reverse_col = _this.reverse_references[key].column;
-                                                var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                    _this.reverse_references[key].setting.where_column : '';
-                                                var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                    _this.reverse_references[key].setting.where_table : '';
-                                                var reverse_name = key;
-                                                if (typeof rows !== 'undefined') {
-                                                    // @ts-ignore 
-                                                    rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
-                                                        .then(function (id) {
-                                                        // @ts-ignore 
-                                                        if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                            if (_this.__.isString(sql_query) && !_this.__.isEmpty(table) && _this.__.isNaN(sql_query)) {
+                                sql_query = _this._mysql.escape(sql_query);
+                                sql_query = sql_query.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
+                                return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, this.db.executeModelQuery("\n                            SELECT * \n                            FROM ".concat(table, " \n                            where ").concat(sql_query, "\n                            ORDER BY ID ASC LIMIT 1\n                            "))
+                                                    .then(function (_a) {
+                                                    var rows = _a[0], fields = _a[1];
+                                                    if (!_this.__.isEmpty(rows)) {
+                                                        var _loop_9 = function (key) {
                                                             // @ts-ignore 
-                                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                return _this.getTablePrimaryKey(where_tbl)
-                                                                    .then(function (_id) {
-                                                                    var _statement = where_tbl && where_col && reverse_table ?
-                                                                        'SELECT * FROM ' + reverse_table + ' ' +
-                                                                            'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
-                                                                            'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                            // @ts-ignore 
-                                                                            'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
-                                                                            ')' : '';
-                                                                    return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            rows['reverse_table_name'] = table;
+                                                            var column_name = key;
+                                                            var is_constraint = _this.columns[column_name].references;
+                                                            if (typeof is_constraint !== 'undefined') {
+                                                                var constraint_table_5 = _this.columns[column_name].references.table;
+                                                                if (typeof _this.columns[column_name].references.column !== 'undefined') {
+                                                                    // @ts-ignore 
+                                                                    rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _b;
                                                                         return __generator(this, function (_c) {
                                                                             switch (_c.label) {
                                                                                 case 0:
                                                                                     _b = {};
-                                                                                    _a = reverse_name;
-                                                                                    return [4 /*yield*/, this.db.executeModelQuery(_statement)
+                                                                                    _a = is_constraint.name;
+                                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_5, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
                                                                                             .then(function (_a) {
-                                                                                            var results = _a[0], fields = _a[1];
-                                                                                            return results;
+                                                                                            var rows = _a[0], fields = _a[1];
+                                                                                            return rows;
                                                                                         })
                                                                                             .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
                                                                                 case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
@@ -1972,220 +1353,312 @@ module.exports = /** @class */ (function (_super) {
                                                                             }
                                                                         });
                                                                     }); })();
+                                                                }
+                                                                else {
+                                                                    // @ts-ignore 
+                                                                    rows[column_name] = _this.getTablePrimaryKey(constraint_table_5)
+                                                                        .then(function (id) {
+                                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _a;
+                                                                            var _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0:
+                                                                                        _b = {};
+                                                                                        _a = is_constraint.name;
+                                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_5, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
+                                                                                                .then(function (_a) {
+                                                                                                var rows = _a[0], fields = _a[1];
+                                                                                                return rows;
+                                                                                            })
+                                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                            _b)];
+                                                                                }
+                                                                            });
+                                                                        }); })();
+                                                                    })
+                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                                }
+                                                            }
+                                                        };
+                                                        for (var key in _this.columns) {
+                                                            _loop_9(key);
+                                                        }
+                                                        return rows;
+                                                    }
+                                                })
+                                                    .then(function (rows) {
+                                                    if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
+                                                        var _loop_10 = function (key) {
+                                                            var reverse_table = _this.reverse_references[key].table;
+                                                            var reverse_col = _this.reverse_references[key].column;
+                                                            var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
+                                                                _this.reverse_references[key].setting.where_column : '';
+                                                            var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
+                                                                _this.reverse_references[key].setting.where_table : '';
+                                                            var reverse_name = key;
+                                                            if (typeof rows !== 'undefined') {
+                                                                rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
+                                                                    .then(function (id) {
+                                                                    if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                                        // @ts-ignore 
+                                                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
+                                                                            return _this.getTablePrimaryKey(where_tbl)
+                                                                                .then(function (_id) {
+                                                                                var _statement = where_tbl && where_col && reverse_table ?
+                                                                                    'SELECT * FROM ' + reverse_table + ' ' +
+                                                                                        'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
+                                                                                        'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
+                                                                                        // @ts-ignore 
+                                                                                        'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
+                                                                                        ')' : '';
+                                                                                return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                    var _a;
+                                                                                    var _b;
+                                                                                    return __generator(this, function (_c) {
+                                                                                        switch (_c.label) {
+                                                                                            case 0:
+                                                                                                _b = {};
+                                                                                                _a = reverse_name;
+                                                                                                return [4 /*yield*/, this.db.executeModelQuery(_statement)
+                                                                                                        .then(function (_a) {
+                                                                                                        var results = _a[0], fields = _a[1];
+                                                                                                        return results;
+                                                                                                    })
+                                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                            case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                                    _b)];
+                                                                                        }
+                                                                                    });
+                                                                                }); })();
+                                                                            })
+                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                                        }
+                                                                    }
+                                                                    else {
+                                                                        return _this.getTablePrimaryKey(reverse_table)
+                                                                            .then(function (TABLE_ID) {
+                                                                            var sql = "SELECT * FROM ".concat(reverse_table, " where ").concat(reverse_col, " = ").concat(rows[0][TABLE_ID]);
+                                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                var _a;
+                                                                                var _b;
+                                                                                return __generator(this, function (_c) {
+                                                                                    switch (_c.label) {
+                                                                                        case 0:
+                                                                                            _b = {};
+                                                                                            _a = reverse_name;
+                                                                                            return [4 /*yield*/, this.db.executeModelQuery(sql)
+                                                                                                    .then(function (_a) {
+                                                                                                    var results = _a[0], fields = _a[1];
+                                                                                                    return results;
+                                                                                                })
+                                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                                _b)];
+                                                                                    }
+                                                                                });
+                                                                            }); })();
+                                                                        })
+                                                                            .catch(function (err) { return Promise.reject(err); });
+                                                                    }
                                                                 })
                                                                     .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
                                                             }
+                                                            else {
+                                                                return "continue";
+                                                            }
+                                                        };
+                                                        for (var key in _this.reverse_references) {
+                                                            _loop_10(key);
                                                         }
-                                                        else {
-                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = reverse_name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                                    .then(function (_a) {
-                                                                                    var results = _a[0], fields = _a[1];
-                                                                                    return results;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        }
-                                                    })
-                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                }
-                                                else {
-                                                    return "continue";
-                                                }
-                                            };
-                                            for (var key in _this.reverse_references) {
-                                                _loop_16(key);
-                                            }
+                                                    }
+                                                    return rows;
+                                                })
+                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                            case 1: return [2 /*return*/, _a.sent()];
                                         }
-                                        return rows;
-                                    })
-                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                case 1: return [2 /*return*/, _a.sent()];
+                                    });
+                                }); })();
                             }
-                        });
-                    }); })();
-                }
-                if (!_this.__.isNaN(sql_query) && _this.__.isString(sql_query)) {
-                    sql_query = +sql_query;
-                }
-                if (!_this.__.isNaN(sql_query) && _this.__.isEmpty(table) === false) {
-                    return (function () { return __awaiter(_this, void 0, void 0, function () {
-                        var _this = this;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0: return [4 /*yield*/, this.db.executeModelQuery("\n                                SELECT * \n                                FROM ".concat(table, " \n                                where id = ?\n                                ORDER BY ID ASC LIMIT 1\n                            "), [sql_query])
-                                        .then(function (_a) {
-                                        var rows = _a[0], fields = _a[1];
-                                        if (!_this.__.isEmpty(rows)) {
-                                            var _loop_17 = function (key) {
-                                                // @ts-ignore 
-                                                rows['reverse_table_name'] = table;
-                                                var column_name = key;
-                                                var is_constraint = _this.columns[column_name].references;
-                                                if (typeof is_constraint !== 'undefined') {
-                                                    var constraint_table_9 = _this.columns[column_name].references.table;
-                                                    if (typeof _this.columns[column_name].references.column !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _a;
-                                                            var _b;
-                                                            var _this = this;
-                                                            return __generator(this, function (_c) {
-                                                                switch (_c.label) {
-                                                                    case 0:
-                                                                        _b = {};
-                                                                        _a = is_constraint.name;
-                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_9, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
-                                                                                .then(function (_a) {
-                                                                                var rows = _a[0], fields = _a[1];
-                                                                                return rows;
-                                                                            })
-                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_9, "\"! \n Error: ").concat(err))); })];
-                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                            _b)];
-                                                                }
-                                                            });
-                                                        }); })();
-                                                    }
-                                                    else {
-                                                        // @ts-ignore 
-                                                        rows[column_name] = _this.getTablePrimaryKey(constraint_table_9)
-                                                            .then(function (id) {
-                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = is_constraint.name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_9, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
-                                                                                    .then(function (_a) {
-                                                                                    var rows = _a[0], fields = _a[1];
-                                                                                    return rows;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
-                                                                    }
-                                                                });
-                                                            }); })();
-                                                        })
-                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                    }
-                                                }
-                                            };
-                                            for (var key in _this.columns) {
-                                                _loop_17(key);
-                                            }
-                                            return rows;
-                                        }
-                                    })
-                                        .then(function (rows) {
-                                        if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                            var _loop_18 = function (key) {
-                                                var reverse_table = _this.reverse_references[key].table;
-                                                var reverse_col = _this.reverse_references[key].column;
-                                                var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                    _this.reverse_references[key].setting.where_column : '';
-                                                var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                    _this.reverse_references[key].setting.where_table : '';
-                                                var reverse_name = key;
-                                                if (typeof rows !== 'undefined') {
-                                                    // @ts-ignore 
-                                                    rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
-                                                        .then(function (id) {
-                                                        if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                            if (!_this.__.isNaN(sql_query) && _this.__.isString(sql_query)) {
+                                sql_query = +sql_query;
+                            }
+                            if (!_this.__.isNaN(sql_query) && _this.__.isEmpty(table) === false) {
+                                return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                    var _this = this;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0: return [4 /*yield*/, this.db.executeModelQuery("\n                                SELECT * \n                                FROM ".concat(table, " \n                                where id = ?\n                                ORDER BY ID ASC LIMIT 1\n                            "), [sql_query])
+                                                    .then(function (_a) {
+                                                    var rows = _a[0], fields = _a[1];
+                                                    if (!_this.__.isEmpty(rows)) {
+                                                        var _loop_11 = function (key) {
                                                             // @ts-ignore 
-                                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                return _this.getTablePrimaryKey(where_tbl)
-                                                                    .then(function (_id) {
-                                                                    var _statement = where_tbl && where_col && reverse_table ?
-                                                                        'SELECT * FROM ' + reverse_table + ' ' +
-                                                                            'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
-                                                                            'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                            // @ts-ignore 
-                                                                            'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
-                                                                            ')' : '';
-                                                                    return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                            rows['reverse_table_name'] = table;
+                                                            var column_name = key;
+                                                            var is_constraint = _this.columns[column_name].references;
+                                                            if (typeof is_constraint !== 'undefined') {
+                                                                var constraint_table_6 = _this.columns[column_name].references.table;
+                                                                if (typeof _this.columns[column_name].references.column !== 'undefined') {
+                                                                    // @ts-ignore 
+                                                                    rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
                                                                         var _a;
                                                                         var _b;
+                                                                        var _this = this;
                                                                         return __generator(this, function (_c) {
                                                                             switch (_c.label) {
                                                                                 case 0:
                                                                                     _b = {};
-                                                                                    _a = reverse_name;
-                                                                                    return [4 /*yield*/, this.db.executeModelQuery(_statement)
+                                                                                    _a = is_constraint.name;
+                                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_6, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
                                                                                             .then(function (_a) {
-                                                                                            var results = _a[0], fields = _a[1];
-                                                                                            return results;
+                                                                                            var rows = _a[0], fields = _a[1];
+                                                                                            return rows;
                                                                                         })
-                                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_6, "\"! \n Error: ").concat(err))); })];
                                                                                 case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
                                                                                         _b)];
                                                                             }
                                                                         });
                                                                     }); })();
-                                                                }).catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                                }
+                                                                else {
+                                                                    // @ts-ignore 
+                                                                    rows[column_name] = _this.getTablePrimaryKey(constraint_table_6)
+                                                                        .then(function (id) {
+                                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _a;
+                                                                            var _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0:
+                                                                                        _b = {};
+                                                                                        _a = is_constraint.name;
+                                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_6, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
+                                                                                                .then(function (_a) {
+                                                                                                var rows = _a[0], fields = _a[1];
+                                                                                                return rows;
+                                                                                            })
+                                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                            _b)];
+                                                                                }
+                                                                            });
+                                                                        }); })();
+                                                                    })
+                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                                }
                                                             }
+                                                        };
+                                                        for (var key in _this.columns) {
+                                                            _loop_11(key);
                                                         }
-                                                        else {
-                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                                var _a;
-                                                                var _b;
-                                                                return __generator(this, function (_c) {
-                                                                    switch (_c.label) {
-                                                                        case 0:
-                                                                            _b = {};
-                                                                            _a = reverse_name;
-                                                                            return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                                    .then(function (_a) {
-                                                                                    var results = _a[0], fields = _a[1];
-                                                                                    return results;
-                                                                                })
-                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                                _b)];
+                                                    }
+                                                    return rows;
+                                                })
+                                                    .then(function (rows) {
+                                                    if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
+                                                        var _loop_12 = function (key) {
+                                                            var reverse_table = _this.reverse_references[key].table;
+                                                            var reverse_col = _this.reverse_references[key].column;
+                                                            var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
+                                                                _this.reverse_references[key].setting.where_column : '';
+                                                            var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
+                                                                _this.reverse_references[key].setting.where_table : '';
+                                                            var reverse_name = key;
+                                                            if (typeof rows !== 'undefined') {
+                                                                rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
+                                                                    .then(function (id) {
+                                                                    if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                                        // @ts-ignore 
+                                                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
+                                                                            return _this.getTablePrimaryKey(where_tbl)
+                                                                                .then(function (_id) {
+                                                                                var _statement = where_tbl && where_col && reverse_table ?
+                                                                                    'SELECT * FROM ' + reverse_table + ' ' +
+                                                                                        'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
+                                                                                        'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
+                                                                                        // @ts-ignore 
+                                                                                        'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
+                                                                                        ')' : '';
+                                                                                return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                    var _a;
+                                                                                    var _b;
+                                                                                    return __generator(this, function (_c) {
+                                                                                        switch (_c.label) {
+                                                                                            case 0:
+                                                                                                _b = {};
+                                                                                                _a = reverse_name;
+                                                                                                return [4 /*yield*/, this.db.executeModelQuery(_statement)
+                                                                                                        .then(function (_a) {
+                                                                                                        var results = _a[0], fields = _a[1];
+                                                                                                        return results;
+                                                                                                    })
+                                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                            case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                                    _b)];
+                                                                                        }
+                                                                                    });
+                                                                                }); })();
+                                                                            })
+                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                                        }
                                                                     }
-                                                                });
-                                                            }); })();
+                                                                    else {
+                                                                        return _this.getTablePrimaryKey(reverse_table)
+                                                                            .then(function (TABLE_ID) {
+                                                                            var sql = "SELECT * FROM ".concat(reverse_table, " where ").concat(reverse_col, " = ").concat(rows[0][TABLE_ID]);
+                                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                var _a;
+                                                                                var _b;
+                                                                                return __generator(this, function (_c) {
+                                                                                    switch (_c.label) {
+                                                                                        case 0:
+                                                                                            _b = {};
+                                                                                            _a = reverse_name;
+                                                                                            return [4 /*yield*/, this.db.executeModelQuery(sql)
+                                                                                                    .then(function (_a) {
+                                                                                                    var results = _a[0], fields = _a[1];
+                                                                                                    return results;
+                                                                                                })
+                                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                                _b)];
+                                                                                    }
+                                                                                });
+                                                                            }); })();
+                                                                        })
+                                                                            .catch(function (err) { return Promise.reject(err); });
+                                                                    }
+                                                                })
+                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                            }
+                                                            else {
+                                                                return "continue";
+                                                            }
+                                                        };
+                                                        for (var key in _this.reverse_references) {
+                                                            _loop_12(key);
                                                         }
-                                                    }).catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                }
-                                                else {
-                                                    return "continue";
-                                                }
-                                            };
-                                            for (var key in _this.reverse_references) {
-                                                _loop_18(key);
-                                            }
+                                                    }
+                                                    return rows;
+                                                })
+                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                            case 1: return [2 /*return*/, _a.sent()];
                                         }
-                                        return rows;
-                                    })
-                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                case 1: return [2 /*return*/, _a.sent()];
+                                    });
+                                }); })();
                             }
-                        });
-                    }); })();
+                        })
+                            .then(function (result) {
+                            return result;
+                        })
+                            .catch(function () { return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!"))); })];
                 }
-            })
-                .then(function (result) {
-                return result;
-            })
-                .catch(function () { return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!"))); });
-        }
-        return Promise.reject(new SQLException_1.default('Query could not be executed!'));
+                return [2 /*return*/, Promise.reject(new SQLException_1.default('Query could not be executed!'))];
+            });
+        });
     };
     /**
      * @function all
@@ -2196,181 +1669,191 @@ module.exports = /** @class */ (function (_super) {
      * @returns Promise
     */
     BaseModel.prototype.all = function (table) {
-        var _this = this;
         if (table === void 0) { table = this.__table; }
-        if (this.__.isEmpty(table) && !this.__.isString(table)) {
-            return Promise.reject(new BadMethodCallException_1.default('Table must not be empty!'));
-        }
-        if (table !== undefined && table !== null) {
-            return this._validateTable(table)
-                .then(function (result) {
-                if (!result) {
-                    return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")));
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (this.__.isEmpty(table) && !this.__.isString(table)) {
+                    return [2 /*return*/, Promise.reject(new BadMethodCallException_1.default('Table must not be empty!'))];
                 }
-                return (function () { return __awaiter(_this, void 0, void 0, function () {
-                    var _this = this;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, this.db.executeModelQuery("\n                    SELECT * \n                    FROM ".concat(table, " \n                    ORDER BY ID ASC\n                    "))
-                                    .then(function (_a) {
-                                    var rows = _a[0], fields = _a[1];
-                                    if (!_this.__.isEmpty(rows)) {
-                                        var _loop_19 = function (key) {
-                                            // @ts-ignore 
-                                            rows['reverse_table_name'] = table;
-                                            var column_name = key;
-                                            var is_constraint = _this.columns[column_name].references;
-                                            if (typeof is_constraint !== 'undefined') {
-                                                var constraint_table_10 = _this.columns[column_name].references.table;
-                                                if (typeof _this.columns[column_name].references.column !== 'undefined') {
-                                                    // @ts-ignore 
-                                                    rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                        var _a;
-                                                        var _b;
-                                                        var _this = this;
-                                                        return __generator(this, function (_c) {
-                                                            switch (_c.label) {
-                                                                case 0:
-                                                                    _b = {};
-                                                                    _a = is_constraint.name;
-                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_10, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
-                                                                            .then(function (_a) {
-                                                                            var rows = _a[0], fields = _a[1];
-                                                                            return rows;
-                                                                        })
-                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_10, "\"! \n Error: ").concat(err))); })];
-                                                                case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                        _b)];
-                                                            }
-                                                        });
-                                                    }); })();
-                                                }
-                                                else {
-                                                    // @ts-ignore 
-                                                    rows[column_name] = _this.getTablePrimaryKey(constraint_table_10)
-                                                        .then(function (id) {
-                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _a;
-                                                            var _b;
-                                                            return __generator(this, function (_c) {
-                                                                switch (_c.label) {
-                                                                    case 0:
-                                                                        _b = {};
-                                                                        _a = is_constraint.name;
-                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_10, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
-                                                                                .then(function (_a) {
-                                                                                var rows = _a[0], fields = _a[1];
-                                                                                return rows;
-                                                                            })
-                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                            _b)];
-                                                                }
-                                                            });
-                                                        }); })();
-                                                    }).catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                                }
-                                            }
-                                        };
-                                        for (var key in _this.columns) {
-                                            _loop_19(key);
-                                        }
-                                        return rows;
-                                    }
-                                })
-                                    .then(function (rows) {
-                                    if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
-                                        var _loop_20 = function (key) {
-                                            var reverse_table = _this.reverse_references[key].table;
-                                            var reverse_col = _this.reverse_references[key].column;
-                                            var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                _this.reverse_references[key].setting.where_column : '';
-                                            var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
-                                                _this.reverse_references[key].setting.where_table : '';
-                                            var reverse_name = key;
-                                            if (typeof rows !== 'undefined') {
-                                                // @ts-ignore 
-                                                rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
-                                                    .then(function (id) {
-                                                    if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                if (table !== undefined && table !== null) {
+                    return [2 /*return*/, this._validateTable(table)
+                            .then(function (result) {
+                            if (!result) {
+                                return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")));
+                            }
+                            return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                var _this = this;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0: return [4 /*yield*/, this.db.executeModelQuery("\n                    SELECT * \n                    FROM ".concat(table, " \n                    ORDER BY ID ASC\n                    "))
+                                                .then(function (_a) {
+                                                var rows = _a[0], fields = _a[1];
+                                                if (!_this.__.isEmpty(rows)) {
+                                                    var _loop_13 = function (key) {
                                                         // @ts-ignore 
-                                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
-                                                            return _this.getTablePrimaryKey(where_tbl)
-                                                                .then(function (_id) {
-                                                                var _statement = where_tbl && where_col && reverse_table ?
-                                                                    'SELECT * FROM ' + reverse_table + ' ' +
-                                                                        'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
-                                                                        'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
-                                                                        // @ts-ignore 
-                                                                        'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
-                                                                        ')' : '';
-                                                                return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                        rows['reverse_table_name'] = table;
+                                                        var column_name = key;
+                                                        var is_constraint = _this.columns[column_name].references;
+                                                        if (typeof is_constraint !== 'undefined') {
+                                                            var constraint_table_7 = _this.columns[column_name].references.table;
+                                                            if (typeof _this.columns[column_name].references.column !== 'undefined') {
+                                                                // @ts-ignore 
+                                                                rows[column_name] = (function () { return __awaiter(_this, void 0, void 0, function () {
                                                                     var _a;
                                                                     var _b;
+                                                                    var _this = this;
                                                                     return __generator(this, function (_c) {
                                                                         switch (_c.label) {
                                                                             case 0:
                                                                                 _b = {};
-                                                                                _a = reverse_name;
-                                                                                return [4 /*yield*/, this.db.executeModelQuery(_statement)
+                                                                                _a = is_constraint.name;
+                                                                                return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_7, " where ").concat(this.columns[column_name].references.column, " = '").concat(rows[0][column_name], "'"))
                                                                                         .then(function (_a) {
-                                                                                        var results = _a[0], fields = _a[1];
-                                                                                        return results;
+                                                                                        var rows = _a[0], fields = _a[1];
+                                                                                        return rows;
                                                                                     })
-                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                        .catch(function (err) { return Promise.reject(new SQLException_1.default("Column \"".concat(_this.columns[column_name].references.column, "\" does not exist in table \"").concat(constraint_table_7, "\"! \n Error: ").concat(err))); })];
                                                                             case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
                                                                                     _b)];
                                                                         }
                                                                     });
                                                                 }); })();
-                                                            }).catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                            }
+                                                            else {
+                                                                // @ts-ignore 
+                                                                rows[column_name] = _this.getTablePrimaryKey(constraint_table_7)
+                                                                    .then(function (id) {
+                                                                    return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                        var _a;
+                                                                        var _b;
+                                                                        return __generator(this, function (_c) {
+                                                                            switch (_c.label) {
+                                                                                case 0:
+                                                                                    _b = {};
+                                                                                    _a = is_constraint.name;
+                                                                                    return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(constraint_table_7, " where ").concat(id, " = '").concat(rows[0][column_name], "'"))
+                                                                                            .then(function (_a) {
+                                                                                            var rows = _a[0], fields = _a[1];
+                                                                                            return rows;
+                                                                                        })
+                                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                        _b)];
+                                                                            }
+                                                                        });
+                                                                    }); })();
+                                                                }).catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                            }
                                                         }
+                                                    };
+                                                    for (var key in _this.columns) {
+                                                        _loop_13(key);
                                                     }
-                                                    else {
-                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
-                                                            var _a;
-                                                            var _b;
-                                                            return __generator(this, function (_c) {
-                                                                switch (_c.label) {
-                                                                    case 0:
-                                                                        _b = {};
-                                                                        _a = reverse_name;
-                                                                        return [4 /*yield*/, this.db.executeModelQuery("SELECT * FROM ".concat(reverse_table))
-                                                                                .then(function (_a) {
-                                                                                var results = _a[0], fields = _a[1];
-                                                                                return results;
-                                                                            })
-                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
-                                                                            _b)];
+                                                }
+                                                return rows;
+                                            })
+                                                .then(function (rows) {
+                                                if (typeof _this.reverse_references === 'object' && typeof _this.reverse_references !== 'undefined') {
+                                                    var _loop_14 = function (key) {
+                                                        var reverse_table = _this.reverse_references[key].table;
+                                                        var reverse_col = _this.reverse_references[key].column;
+                                                        var where_col = typeof _this.reverse_references[key].setting !== 'undefined' ?
+                                                            _this.reverse_references[key].setting.where_column : '';
+                                                        var where_tbl = typeof _this.reverse_references[key].setting !== 'undefined' ?
+                                                            _this.reverse_references[key].setting.where_table : '';
+                                                        var reverse_name = key;
+                                                        if (typeof rows !== 'undefined') {
+                                                            rows[reverse_name] = _this.getTablePrimaryKey(reverse_table)
+                                                                .then(function (id) {
+                                                                if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                                    // @ts-ignore 
+                                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !_this.__.isEmpty(typeof rows[0][where_col])) {
+                                                                        return _this.getTablePrimaryKey(where_tbl)
+                                                                            .then(function (_id) {
+                                                                            var _statement = where_tbl && where_col && reverse_table ?
+                                                                                'SELECT * FROM ' + reverse_table + ' ' +
+                                                                                    'WHERE ' + reverse_table + '.' + reverse_col + ' IN (' +
+                                                                                    'SELECT ' + _id + ' FROM ' + where_tbl + ' ' +
+                                                                                    // @ts-ignore 
+                                                                                    'WHERE ' + where_col + ' = ' + rows[0][where_col] + ' ' +
+                                                                                    ')' : '';
+                                                                            return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                                var _a;
+                                                                                var _b;
+                                                                                return __generator(this, function (_c) {
+                                                                                    switch (_c.label) {
+                                                                                        case 0:
+                                                                                            _b = {};
+                                                                                            _a = reverse_name;
+                                                                                            return [4 /*yield*/, this.db.executeModelQuery(_statement)
+                                                                                                    .then(function (_a) {
+                                                                                                    var results = _a[0], fields = _a[1];
+                                                                                                    return results;
+                                                                                                })
+                                                                                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                        case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                                _b)];
+                                                                                    }
+                                                                                });
+                                                                            }); })();
+                                                                        })
+                                                                            .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                                    }
                                                                 }
-                                                            });
-                                                        }); })();
+                                                                else {
+                                                                    return _this.getTablePrimaryKey(reverse_table)
+                                                                        .then(function (TABLE_ID) {
+                                                                        var sql = "SELECT * FROM ".concat(reverse_table, " where ").concat(reverse_col, " = ").concat(rows[0][TABLE_ID]);
+                                                                        return (function () { return __awaiter(_this, void 0, void 0, function () {
+                                                                            var _a;
+                                                                            var _b;
+                                                                            return __generator(this, function (_c) {
+                                                                                switch (_c.label) {
+                                                                                    case 0:
+                                                                                        _b = {};
+                                                                                        _a = reverse_name;
+                                                                                        return [4 /*yield*/, this.db.executeModelQuery(sql)
+                                                                                                .then(function (_a) {
+                                                                                                var results = _a[0], fields = _a[1];
+                                                                                                return results;
+                                                                                            })
+                                                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                                                                    case 1: return [2 /*return*/, (_b[_a] = _c.sent(),
+                                                                                            _b)];
+                                                                                }
+                                                                            });
+                                                                        }); })();
+                                                                    })
+                                                                        .catch(function (err) { return Promise.reject(err); });
+                                                                }
+                                                            })
+                                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
+                                                        }
+                                                        else {
+                                                            return "continue";
+                                                        }
+                                                    };
+                                                    for (var key in _this.reverse_references) {
+                                                        _loop_14(key);
                                                     }
-                                                }).catch(function (err) { return Promise.reject(new SQLException_1.default(err)); });
-                                            }
-                                            else {
-                                                return "continue";
-                                            }
-                                        };
-                                        for (var key in _this.reverse_references) {
-                                            _loop_20(key);
-                                        }
+                                                }
+                                                return rows;
+                                            })
+                                                .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
+                                        case 1: return [2 /*return*/, _a.sent()];
                                     }
-                                    return rows;
-                                })
-                                    .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
-                            case 1: return [2 /*return*/, _a.sent()];
-                        }
-                    });
-                }); })();
-            })
-                .then(function (result) {
-                return result;
-            })
-                .catch(function () { return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!"))); });
-        }
-        return Promise.reject(new SQLException_1.default('Query could not be executed!'));
+                                });
+                            }); })();
+                        })
+                            .then(function (result) {
+                            return result;
+                        })
+                            .catch(function () { return Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!"))); })];
+                }
+                return [2 /*return*/, Promise.reject(new SQLException_1.default('Query could not be executed!'))];
+            });
+        });
     };
     /**
      * @function create

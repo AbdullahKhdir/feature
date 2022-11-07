@@ -580,731 +580,371 @@ export = class BaseModel extends QueryBuilder {
      * @param {String} limit
      * @param {String} table
      * @returns Promise
+     // TODO modify all crud methods to be asynchronous 
     */
-    filter(sql_query: any = null, limit: number | string | null = null, table = this.__table) : Promise<any> {
-        if (this.__.isEmpty(table)) {
-            return Promise.reject(new BadMethodCallException('Table must not be empty!'));
-        }
-
-        if (table !== undefined && table !== null) {
-                return this._validateTable(table)
-                .then((result: any) => {
-                    if (!result) {
-                        return Promise.reject(new SQLException(`The Table ${table} does not exist in the database!`));
-                    }
-                    if (this.__.isEmpty(sql_query) || sql_query == null || typeof sql_query === 'undefined') {
-                        return this.all(table);
-                    }
-                    
-                    if (this.__.isObject(sql_query) && this.__.isEmpty(table) === false) {
-                        let where_clause: any = '';
-                        for (const key in sql_query) {
-                            if (Object.hasOwnProperty.call(sql_query, key)) {
-                                // @ts-ignore
-                                where_clause = where_clause + key + ' = ' + this._mysql.escape(sql_query[key]) + ' AND ';
-                            }
-                        }
-                        if (this.__.isString(where_clause) && !this.__.isEmpty(where_clause)) {
-                            const where_clause_length = where_clause.length;
-                            where_clause = where_clause.substring(0, where_clause_length - 4);
-                        }
-                        where_clause = this._mysql.escape(where_clause)
-                        where_clause =  where_clause.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                        
-                        return (async () => {
-                            let sql = `SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC`;
-                            if (limit != null && !this.__.isNaN(limit)) {
-                                var _limit = ` LIMIT ${limit.toString()}`;
-                                sql += _limit;
-                            }
-                            
-                            return await this.db.executeModelQuery(sql)
-                            .then(([rows, fields]) => {
-                                if (!this.__.isEmpty(rows)) {
-                                    for (const key in this.columns) {
-                                        // @ts-ignore 
-                                        rows['reverse_table_name'] = table;
-                                        let column_name = key;
-                                        if (typeof this.columns[column_name].references !== 'undefined') {
-                                            let is_constraint    = this.columns[column_name].references;
-                                            let constraint_table = this.columns[column_name].references.table;
-                                            if (typeof this.columns[column_name].references.column !== 'undefined') {
-                                                // @ts-ignore 
-                                                rows[column_name] = (async () => {
-                                                    return {// @ts-ignore 
-                                                        [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
-                                                                                .then(([rows, fields]) => rows)
-                                                                                .catch((err: any) => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
-                                                    }
-                                                })(); 
-                                            } else {
-                                                // @ts-ignore 
-                                                rows[column_name]    = this.getTablePrimaryKey(constraint_table)
-                                                // @ts-ignore 
-                                                .then((id) => {
-                                                    return (async () => {
-                                                        return {// @ts-ignore 
-                                                            [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
-                                                                                .then(([rows, fields]) => rows)
-                                                                                .catch((err: any) => Promise.reject(new SQLException(`Column "${id}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
-                                                        }
-                                                    })()
-                                                })
-                                                .catch((err: any) => Promise.reject(new SQLException(err)));
-                                            }
-                                        }
-                                    }
-                                    return rows;
-                                }
-                            })
-                            .then(rows => {
-                                if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                    for (const key in this.reverse_references) {
-                                        let reverse_table = this.reverse_references[key].table;
-                                        let reverse_col   = this.reverse_references[key].column;
-                                        let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                        this.reverse_references[key].setting.where_column : '';
-                                        let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                        this.reverse_references[key].setting.where_table : '';
-                                        let reverse_name  = key;
-                                        if (typeof rows !== 'undefined') {
-                                            // @ts-ignore 
-                                            rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                            // @ts-ignore 
-                                            .then((id) =>
-                                                {
-                                                    // @ts-ignore 
-                                                    if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                            return this.getTablePrimaryKey(where_tbl)
-                                                            .then((_id) => {
-                                                                const _statement = where_tbl && where_col && reverse_table ? 
-                                                                                'SELECT * FROM '+reverse_table+' '+
-                                                                                'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                                'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                                // @ts-ignore 
-                                                                                'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                                ')' : '';
-                                                                return (async () => {
-                                                                    return {
-                                                                        [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                    .then(([results, fields]) => results)
-                                                                                    .catch(err => Promise.reject(new SQLException(err)))
-                                                                    }
-                                                                })()
-                                                            })
-                                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                                        }
-                                                    } else {
-                                                        return (async () => {
-                                                            return {
-                                                                [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
-                                                                            .then(([results, fields]) => results)
-                                                                            .catch(err => Promise.reject(new SQLException(err)))
-                                                            }
-                                                        })()
-                                                    }
-                                                }
-                                            )
-                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                        } else {
-                                            continue;   
-                                        }
-                                    }
-                                }
-                                return rows;
-                            })
-                            .catch(err => Promise.reject(new SQLException(err)))
-                        })()
-                    }
-            
-                    if (this.__.isString(sql_query) && !this.__.isEmpty(table)) {
-                        // @ts-ignore
-                        sql_query = this._mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                        let sql = `SELECT * FROM ${table} WHERE ${sql_query} ORDER BY ID ASC`;
-                        if (limit != null && !this.__.isNaN(limit)) {
-                            var _limit = ` LIMIT ${limit.toString()}`;
-                            sql += _limit;
-                        }
-                        
-                        return (async () => {
-                            return await this.db.executeModelQuery(sql)
-                            .then(([rows, fields]) => {
-                                if (!this.__.isEmpty(rows)) {
-                                    for (const key in this.columns) {
-                                        // @ts-ignore 
-                                        rows['reverse_table_name'] = table; 
-                                        let column_name = key;
-                                        let is_constraint = this.columns[column_name].references;
-                                        if (typeof is_constraint !== 'undefined') {
-                                            let constraint_table = this.columns[column_name].references.table;
-                                            if (typeof this.columns[column_name].references.column !== 'undefined') {
-                                                // @ts-ignore 
-                                                rows[column_name] = (async () => {
-                                                    return {// @ts-ignore 
-                                                        [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
-                                                                                .then(([rows, fields]) => rows)
-                                                                                .catch(err => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
-                                                    }
-                                                })(); 
-                                            } else {
-                                                // @ts-ignore 
-                                                rows[column_name] = this.getTablePrimaryKey(constraint_table)
-                                                .then((id) => {
-                                                    return (async () => {
-                                                        return {// @ts-ignore 
-                                                            [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
-                                                                                .then(([rows, fields]) => rows)
-                                                                                .catch(err => Promise.reject(new SQLException(err)))
-                                                        }
-                                                    })()
-                                                })
-                                                .catch((err: any) => Promise.reject(new SQLException(err)));
-                                            }
-                                        }
-                                    }
-                                    return rows;
-                                }
-                            })
-                            .then(rows => {
-                                if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                    for (const key in this.reverse_references) {
-                                        let reverse_table = this.reverse_references[key].table;
-                                        let reverse_col   = this.reverse_references[key].column;
-                                        let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                        this.reverse_references[key].setting.where_column : '';
-                                        let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                        this.reverse_references[key].setting.where_table : '';
-                                        let reverse_name  = key;
-                                        if (typeof rows !== 'undefined') {
-                                            // @ts-ignore 
-                                            rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                            .then((id) =>
-                                                {   // @ts-ignore 
-                                                    if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                            return this.getTablePrimaryKey(where_tbl)
-                                                            .then((_id) => {
-                                                                const _statement = where_tbl && where_col && reverse_table ? 
-                                                                                'SELECT * FROM '+reverse_table+' '+
-                                                                                'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                                'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                                // @ts-ignore 
-                                                                                'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                                ')' : '';
-                                                                return (async () => {
-                                                                    return {
-                                                                        [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                    .then(([results, fields]) => results)
-                                                                                    .catch(err => Promise.reject(new SQLException(err)))
-                                                                    }
-                                                                })()
-                                                            })
-                                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                                        }
-                                                    } else {
-                                                        return (async () => {
-                                                            return {
-                                                                [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
-                                                                            .then(([results, fields]) => results)
-                                                                            .catch(err => Promise.reject(new SQLException(err)))
-                                                            }
-                                                        })()
-                                                    }
-                                                }
-                                            )
-                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                        } else {
-                                            continue;   
-                                        }
-                                    }
-                                }
-                                return rows;
-                            })
-                            .catch(err => Promise.reject(new SQLException(err)))
-                        })()
-                    }
-            
-                    if (!this.__.isNaN(sql_query) && this.__.isString(sql_query)) {
-                        sql_query = +sql_query;
-                    }
-                    
-                    if (!this.__.isNaN(sql_query) && this.__.isEmpty(table) === false) {
-                        return (async () => {
-                            let sql = `SELECT * FROM ${table} where id = ? ORDER BY ID ASC`;
-                            if (limit != null && !this.__.isNaN(limit)) {
-                                var _limit = ` LIMIT ${limit.toString()}`;
-                                sql += _limit;
-                            }
-                            return await this.db.executeModelQuery(sql, [sql_query])
-                            .then(([rows, fields]) => {
-                                if (!this.__.isEmpty(rows)) {
-                                    for (const key in this.columns) {
-                                        // @ts-ignore 
-                                        rows['reverse_table_name'] = table; 
-                                        let column_name = key;
-                                        let is_constraint = this.columns[column_name].references;
-                                        if (typeof is_constraint !== 'undefined') {
-                                            let constraint_table = this.columns[column_name].references.table;
-                                            if (typeof this.columns[column_name].references.column !== 'undefined') {
-                                                // @ts-ignore 
-                                                rows[column_name] = (async () => {
-                                                    return {// @ts-ignore 
-                                                        [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
-                                                                                .then(([rows, fields]) => rows)
-                                                                                .catch(err => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
-                                                    }
-                                                })(); 
-                                            } else {
-                                                // @ts-ignore 
-                                                rows[column_name] = this.getTablePrimaryKey(constraint_table)
-                                                .then((id) => {
-                                                    return (async () => {
-                                                        return {// @ts-ignore 
-                                                            [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
-                                                                                .then(([rows, fields]) => rows)
-                                                                                .catch(err => Promise.reject(new SQLException(err)))
-                                                        }
-                                                    })()
-                                                })
-                                                .catch((err: any) => Promise.reject(new SQLException(err)));
-                                            }
-                                        }
-                                    }
-                                    return rows;
-                                }
-                            })
-                            .then(rows => {
-                                if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                    for (const key in this.reverse_references) {
-                                        let reverse_table = this.reverse_references[key].table;
-                                        let reverse_col   = this.reverse_references[key].column;
-                                        let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                        this.reverse_references[key].setting.where_column : '';
-                                        let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                        this.reverse_references[key].setting.where_table : '';
-                                        let reverse_name  = key;
-                                        if (typeof rows !== 'undefined') {
-                                            // @ts-ignore 
-                                            rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                            .then((id) =>
-                                                {   // @ts-ignore 
-                                                    if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                        // @ts-ignore 
-                                                        if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                            return this.getTablePrimaryKey(where_tbl)
-                                                            .then((_id) => {
-                                                                const _statement = where_tbl && where_col && reverse_table ? 
-                                                                                'SELECT * FROM '+reverse_table+' '+
-                                                                                'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                                'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                                // @ts-ignore 
-                                                                                'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                                ')' : '';
-                                                                return (async () => {
-                                                                    return {
-                                                                        [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                    .then(([results, fields]) => results)
-                                                                                    .catch(err => Promise.reject(new SQLException(err)))
-                                                                    }
-                                                                })()
-                                                            })
-                                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                                        }
-                                                    } else {
-                                                        return (async () => {
-                                                            return {
-                                                                [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
-                                                                            .then(([results, fields]) => results)
-                                                                            .catch(err => Promise.reject(new SQLException(err)))
-                                                            }
-                                                        })()
-                                                    }
-                                                }
-                                            )
-                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                        } else {
-                                            continue;   
-                                        }
-                                    }
-                                }
-                                return rows;
-                            })
-                            .catch(err => Promise.reject(new SQLException(err)))
-                        })()
-                    }
-                })
-                .then(rows => {
-                    return rows;
-                })
-                .catch(() => Promise.reject(new SQLException(`The Table ${table} does not exist in the database!`)));
-        }
-        return Promise.reject(new SQLException('Query could not be executed!'));
-    }
-
-
-    // TODO modify all crud methods to be asynchronous 
-    async _filter(sql_query: any = null, limit: number | string | null = null, table = this.__table) {
+    async filter(sql_query: any = null, limit: number | string | null = null, table = this.__table) {
         if (this.__.isEmpty(table)) {
             return await Promise.reject(new BadMethodCallException('Table must not be empty!'));
         }
 
         if (table !== undefined && table !== null) {
-                const is_valid_table = await this._validateTable(table)
-                if (is_valid_table === true) {
-                    if (this.__.isEmpty(sql_query) || sql_query == null || typeof sql_query === 'undefined') {
-                        return await this.all(table);
+            const is_valid_table = await this._validateTable(table)
+            if (is_valid_table === true) {
+                if (sql_query == null || typeof sql_query === 'undefined') {
+                    return await this.all(table);
+                }
+
+                if (this.__.isObject(sql_query) && this.__.isEmpty(table) === false) {
+                    
+                    let where_clause: any = '';
+                    for (const key in sql_query) {
+                        if (Object.hasOwnProperty.call(sql_query, key)) {
+                            // @ts-ignore
+                            where_clause = where_clause + key + ' = ' + this._mysql.escape(sql_query[key]) + ' AND ';
+                        }
+                    }
+                    if (this.__.isString(where_clause) && !this.__.isEmpty(where_clause)) {
+                        const where_clause_length = where_clause.length;
+                        where_clause = where_clause.substring(0, where_clause_length - 4);
+                    }
+                    where_clause = this._mysql.escape(where_clause)
+                    where_clause =  where_clause.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
+                    
+                    let sql = `SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC`;
+                    if (limit != null && !this.__.isNaN(limit)) {
+                        var _limit = ` LIMIT ${limit.toString()}`;
+                        sql += _limit;
                     }
                     
-                    if (this.__.isObject(sql_query) && this.__.isEmpty(table) === false) {
-                        let where_clause: any = '';
-                        for (const key in sql_query) {
-                            if (Object.hasOwnProperty.call(sql_query, key)) {
-                                // @ts-ignore
-                                where_clause = where_clause + key + ' = ' + this._mysql.escape(sql_query[key]) + ' AND ';
-                            }
-                        }
-                        if (this.__.isString(where_clause) && !this.__.isEmpty(where_clause)) {
-                            const where_clause_length = where_clause.length;
-                            where_clause = where_clause.substring(0, where_clause_length - 4);
-                        }
-                        where_clause = this._mysql.escape(where_clause)
-                        where_clause =  where_clause.replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                        
-                        let sql = `SELECT * FROM ${table} WHERE ${where_clause} ORDER BY ID ASC`;
-                        if (limit != null && !this.__.isNaN(limit)) {
-                            var _limit = ` LIMIT ${limit.toString()}`;
-                            sql += _limit;
-                        }
-                        
-                        return await this.db.executeModelQuery(sql)
-                        .then(([rows, fields]) => {
-                            if (!this.__.isEmpty(rows)) {
-                                for (const key in this.columns) {
-                                    // @ts-ignore 
-                                    rows['reverse_table_name'] = table;
-                                    let column_name = key;
-                                    if (typeof this.columns[column_name].references !== 'undefined') {
-                                        let is_constraint    = this.columns[column_name].references;
-                                        let constraint_table = this.columns[column_name].references.table;
-                                        if (typeof this.columns[column_name].references.column !== 'undefined') {
-                                            // @ts-ignore 
-                                            rows[column_name] = (async () => {
+                    return await this.db.executeModelQuery(sql)
+                    .then(([rows, fields]) => {
+                        if (!this.__.isEmpty(rows)) {
+                            for (const key in this.columns) {
+                                // @ts-ignore 
+                                rows['reverse_table_name'] = table;
+                                let column_name = key;
+                                if (typeof this.columns[column_name].references !== 'undefined') {
+                                    let is_constraint    = this.columns[column_name].references;
+                                    let constraint_table = this.columns[column_name].references.table;
+                                    if (typeof this.columns[column_name].references.column !== 'undefined') {
+                                        // @ts-ignore 
+                                        rows[column_name] = (async () => {
+                                            return {// @ts-ignore 
+                                                [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
+                                                                        .then(([rows, fields]) => rows)
+                                                                        .catch((err: any) => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
+                                            }
+                                        })(); 
+                                    } else {
+                                        // @ts-ignore 
+                                        rows[column_name]    = this.getTablePrimaryKey(constraint_table)
+                                        // @ts-ignore 
+                                        .then((id) => {
+                                            return (async () => {
                                                 return {// @ts-ignore 
-                                                    [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
-                                                                            .then(([rows, fields]) => rows)
-                                                                            .catch((err: any) => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
+                                                    [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
+                                                                        .then(([rows, fields]) => rows)
+                                                                        .catch((err: any) => Promise.reject(new SQLException(`Column "${id}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
                                                 }
-                                            })(); 
-                                        } else {
-                                            // @ts-ignore 
-                                            rows[column_name]    = this.getTablePrimaryKey(constraint_table)
-                                            // @ts-ignore 
-                                            .then((id) => {
-                                                return (async () => {
-                                                    return {// @ts-ignore 
-                                                        [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
-                                                                            .then(([rows, fields]) => rows)
-                                                                            .catch((err: any) => Promise.reject(new SQLException(`Column "${id}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
-                                                    }
-                                                })()
-                                            })
-                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                        }
+                                            })()
+                                        })
+                                        .catch((err: any) => Promise.reject(new SQLException(err)));
                                     }
                                 }
-                                return rows;
                             }
-                        })
-                        .then(rows => {
-                            if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                for (const key in this.reverse_references) {
-                                    let reverse_table = this.reverse_references[key].table;
-                                    let reverse_col   = this.reverse_references[key].column;
-                                    let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                    this.reverse_references[key].setting.where_column : '';
-                                    let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                    this.reverse_references[key].setting.where_table : '';
-                                    let reverse_name  = key;
-                                    if (typeof rows !== 'undefined') {
-                                        // @ts-ignore 
-                                        rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                        // @ts-ignore 
-                                        .then((id) =>
-                                            {
+                            return rows;
+                        }
+                    })
+                    .then((rows: any) => {
+                        if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
+                            for (const key in this.reverse_references) {
+                                let reverse_table = this.reverse_references[key].table;
+                                let reverse_col   = this.reverse_references[key].column;
+                                let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                this.reverse_references[key].setting.where_column : '';
+                                let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                this.reverse_references[key].setting.where_table : '';
+                                let reverse_name  = key;
+                                if (typeof rows !== 'undefined') {
+                                    rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
+                                    .then((id) =>
+                                        {
+                                            if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
                                                 // @ts-ignore 
-                                                if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                    // @ts-ignore 
-                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                        return this.getTablePrimaryKey(where_tbl)
-                                                        .then((_id) => {
-                                                            const _statement = where_tbl && where_col && reverse_table ? 
-                                                                            'SELECT * FROM '+reverse_table+' '+
-                                                                            'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                            'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                            // @ts-ignore 
-                                                                            'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                            ')' : '';
-                                                            return (async () => {
-                                                                return {
-                                                                    [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                .then(([results, fields]) => results)
-                                                                                .catch(err => Promise.reject(new SQLException(err)))
-                                                                }
-                                                            })()
-                                                        })
-                                                        .catch((err: any) => Promise.reject(new SQLException(err)));
-                                                    }
-                                                } else {
-                                                    // console.log(sql_query)
-                                                    // console.log(reverse_table)
-                                                    return this.getTablePrimaryKey(reverse_table)
-                                                    .then((TABLE_ID: string) => {
-                                                        // TODO MAJOR ISSUE THE REVERSE REFERENCES ARE NOT BEING CORRECTLY POPULATED
-                                                        // TODO DUE TO A MISSING OF AN IMPORTANT DYNAMIC PARAMETER WHICH IS THE VALUE   
-                                                        // TODO OF A PRIMARY KEY OF A (RANDOM) TABLE
-                                                        // TODO eg. A USE CASE WOULD BE USER ID AS PERMANENT SOLUTION    
-                                                        const sql = `SELECT * FROM ${reverse_table} where ${TABLE_ID} = ${sql_query[TABLE_ID]}`;
+                                                if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
+                                                    return this.getTablePrimaryKey(where_tbl)
+                                                    .then((_id) => {
+                                                        const _statement = where_tbl && where_col && reverse_table ? 
+                                                                        'SELECT * FROM '+reverse_table+' '+
+                                                                        'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
+                                                                        'SELECT '+_id+' FROM '+where_tbl+' '+
+                                                                        // @ts-ignore 
+                                                                        'WHERE '+where_col+' = '+rows[0][where_col]+' '+
+                                                                        ')' : '';
                                                         return (async () => {
                                                             return {
-                                                                [reverse_name]: await this.db.executeModelQuery(sql)
+                                                                [reverse_name]: await this.db.executeModelQuery(_statement) 
                                                                             .then(([results, fields]) => results)
                                                                             .catch(err => Promise.reject(new SQLException(err)))
                                                             }
                                                         })()
                                                     })
-                                                    .catch(err => Promise.reject(err));
+                                                    .catch((err: any) => Promise.reject(new SQLException(err)));
                                                 }
-                                            }
-                                        )
-                                        .catch((err: any) => Promise.reject(new SQLException(err)));
-                                    } else {
-                                        continue;   
-                                    }
-                                }
-                            }
-                            return rows;
-                        })
-                        .catch(err => Promise.reject(new SQLException(err)))
-                    }
-            
-                    if (this.__.isString(sql_query) && !this.__.isEmpty(table)) {
-                        // @ts-ignore
-                        sql_query = this._mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
-                        let sql = `SELECT * FROM ${table} WHERE ${sql_query} ORDER BY ID ASC`;
-                        if (limit != null && !this.__.isNaN(limit)) {
-                            var _limit = ` LIMIT ${limit.toString()}`;
-                            sql += _limit;
-                        }
-                        
-                        return await this.db.executeModelQuery(sql)
-                        .then(([rows, fields]) => {
-                            if (!this.__.isEmpty(rows)) {
-                                for (const key in this.columns) {
-                                    // @ts-ignore 
-                                    rows['reverse_table_name'] = table; 
-                                    let column_name = key;
-                                    let is_constraint = this.columns[column_name].references;
-                                    if (typeof is_constraint !== 'undefined') {
-                                        let constraint_table = this.columns[column_name].references.table;
-                                        if (typeof this.columns[column_name].references.column !== 'undefined') {
-                                            // @ts-ignore 
-                                            rows[column_name] = (async () => {
-                                                return {// @ts-ignore 
-                                                    [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
-                                                                            .then(([rows, fields]) => rows)
-                                                                            .catch(err => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
-                                                }
-                                            })(); 
-                                        } else {
-                                            // @ts-ignore 
-                                            rows[column_name] = this.getTablePrimaryKey(constraint_table)
-                                            .then((id) => {
-                                                return (async () => {
-                                                    return {// @ts-ignore 
-                                                        [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
-                                                                            .then(([rows, fields]) => rows)
-                                                                            .catch(err => Promise.reject(new SQLException(err)))
-                                                    }
-                                                })()
-                                            })
-                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                        }
-                                    }
-                                }
-                                return rows;
-                            }
-                        })
-                        .then(rows => {
-                            if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                for (const key in this.reverse_references) {
-                                    let reverse_table = this.reverse_references[key].table;
-                                    let reverse_col   = this.reverse_references[key].column;
-                                    let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                    this.reverse_references[key].setting.where_column : '';
-                                    let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                    this.reverse_references[key].setting.where_table : '';
-                                    let reverse_name  = key;
-                                    if (typeof rows !== 'undefined') {
-                                        // @ts-ignore 
-                                        rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                        .then((id) =>
-                                            {   // @ts-ignore 
-                                                if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                    // @ts-ignore 
-                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                        return this.getTablePrimaryKey(where_tbl)
-                                                        .then((_id) => {
-                                                            const _statement = where_tbl && where_col && reverse_table ? 
-                                                                            'SELECT * FROM '+reverse_table+' '+
-                                                                            'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                            'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                            // @ts-ignore 
-                                                                            'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                            ')' : '';
-                                                            return (async () => {
-                                                                return {
-                                                                    [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                .then(([results, fields]) => results)
-                                                                                .catch(err => Promise.reject(new SQLException(err)))
-                                                                }
-                                                            })()
-                                                        })
-                                                        .catch((err: any) => Promise.reject(new SQLException(err)));
-                                                    }
-                                                } else {
+                                            } else {
+                                                return this.getTablePrimaryKey(reverse_table)
+                                                .then((TABLE_ID: string) => {
+                                                    const sql = `SELECT * FROM ${reverse_table} where ${reverse_col} = ${rows[0][TABLE_ID]}`;
                                                     return (async () => {
                                                         return {
-                                                            [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
+                                                            [reverse_name]: await this.db.executeModelQuery(sql)
                                                                         .then(([results, fields]) => results)
                                                                         .catch(err => Promise.reject(new SQLException(err)))
                                                         }
                                                     })()
-                                                }
+                                                })
+                                                .catch(err => Promise.reject(err));
                                             }
-                                        )
-                                        .catch((err: any) => Promise.reject(new SQLException(err)));
-                                    } else {
-                                        continue;   
-                                    }
+                                        }
+                                    )
+                                    .catch((err: any) => Promise.reject(new SQLException(err)));
+                                } else {
+                                    continue;   
                                 }
                             }
-                            return rows;
-                        })
-                        .catch(err => Promise.reject(new SQLException(err)));
-                    }
-            
-                    if (!this.__.isNaN(sql_query) && this.__.isString(sql_query)) {
-                        sql_query = +sql_query;
+                        }
+                        return rows;
+                    })
+                    .catch(err => Promise.reject(new SQLException(err)))
+                }
+        
+                if (this.__.isString(sql_query) && !this.__.isEmpty(table) && this.__.isNaN(sql_query)) {
+                    // @ts-ignore
+                    sql_query = this._mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
+                    let sql = `SELECT * FROM ${table} WHERE ${sql_query} ORDER BY ID ASC`;
+                    if (limit != null && !this.__.isNaN(limit)) {
+                        var _limit = ` LIMIT ${limit.toString()}`;
+                        sql += _limit;
                     }
                     
-                    if (!this.__.isNaN(sql_query) && this.__.isEmpty(table) === false) {
-                        let sql = `SELECT * FROM ${table} where id = ? ORDER BY ID ASC`;
-                        if (limit != null && !this.__.isNaN(limit)) {
-                            var _limit = ` LIMIT ${limit.toString()}`;
-                            sql += _limit;
-                        }
-                        return await this.db.executeModelQuery(sql, [sql_query])
-                        .then(([rows, fields]) => {
-                            if (!this.__.isEmpty(rows)) {
-                                for (const key in this.columns) {
-                                    // @ts-ignore 
-                                    rows['reverse_table_name'] = table; 
-                                    let column_name = key;
-                                    let is_constraint = this.columns[column_name].references;
-                                    if (typeof is_constraint !== 'undefined') {
-                                        let constraint_table = this.columns[column_name].references.table;
-                                        if (typeof this.columns[column_name].references.column !== 'undefined') {
-                                            // @ts-ignore 
-                                            rows[column_name] = (async () => {
-                                                return {// @ts-ignore 
-                                                    [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
-                                                                            .then(([rows, fields]) => rows)
-                                                                            .catch(err => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
-                                                }
-                                            })(); 
-                                        } else {
-                                            // @ts-ignore 
-                                            rows[column_name] = this.getTablePrimaryKey(constraint_table)
-                                            .then((id) => {
-                                                return (async () => {
-                                                    return {// @ts-ignore 
-                                                        [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
-                                                                            .then(([rows, fields]) => rows)
-                                                                            .catch(err => Promise.reject(new SQLException(err)))
-                                                    }
-                                                })()
-                                            })
-                                            .catch((err: any) => Promise.reject(new SQLException(err)));
-                                        }
-                                    }
-                                }
-                                return rows;
-                            }
-                        })
-                        .then(rows => {
-                            if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                for (const key in this.reverse_references) {
-                                    let reverse_table = this.reverse_references[key].table;
-                                    let reverse_col   = this.reverse_references[key].column;
-                                    let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                    this.reverse_references[key].setting.where_column : '';
-                                    let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                    this.reverse_references[key].setting.where_table : '';
-                                    let reverse_name  = key;
-                                    if (typeof rows !== 'undefined') {
+                    return await this.db.executeModelQuery(sql)
+                    .then(([rows, fields]) => {
+                        if (!this.__.isEmpty(rows)) {
+                            for (const key in this.columns) {
+                                // @ts-ignore 
+                                rows['reverse_table_name'] = table; 
+                                let column_name = key;
+                                let is_constraint = this.columns[column_name].references;
+                                if (typeof is_constraint !== 'undefined') {
+                                    let constraint_table = this.columns[column_name].references.table;
+                                    if (typeof this.columns[column_name].references.column !== 'undefined') {
                                         // @ts-ignore 
-                                        rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                        .then((id) =>
-                                            {   // @ts-ignore 
-                                                if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                    // @ts-ignore 
-                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                        return this.getTablePrimaryKey(where_tbl)
-                                                        .then((_id) => {
-                                                            const _statement = where_tbl && where_col && reverse_table ? 
-                                                                            'SELECT * FROM '+reverse_table+' '+
-                                                                            'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                            'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                            // @ts-ignore 
-                                                                            'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                            ')' : '';
-                                                            return (async () => {
-                                                                return {
-                                                                    [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                .then(([results, fields]) => results)
-                                                                                .catch(err => Promise.reject(new SQLException(err)))
-                                                                }
-                                                            })()
-                                                        })
-                                                        .catch((err: any) => Promise.reject(new SQLException(err)));
-                                                    }
-                                                } else {
-                                                    return (async () => {
-                                                        return {
-                                                            [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
-                                                                        .then(([results, fields]) => results)
-                                                                        .catch(err => Promise.reject(new SQLException(err)))
-                                                        }
-                                                    })()
-                                                }
+                                        rows[column_name] = (async () => {
+                                            return {// @ts-ignore 
+                                                [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
+                                                                        .then(([rows, fields]) => rows)
+                                                                        .catch(err => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
                                             }
-                                        )
-                                        .catch((err: any) => Promise.reject(new SQLException(err)));
+                                        })(); 
                                     } else {
-                                        continue;   
+                                        // @ts-ignore 
+                                        rows[column_name] = this.getTablePrimaryKey(constraint_table)
+                                        .then((id) => {
+                                            return (async () => {
+                                                return {// @ts-ignore 
+                                                    [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
+                                                                        .then(([rows, fields]) => rows)
+                                                                        .catch(err => Promise.reject(new SQLException(err)))
+                                                }
+                                            })()
+                                        })
+                                        .catch((err: any) => Promise.reject(new SQLException(err)));
                                     }
                                 }
                             }
                             return rows;
-                        })
-                        .catch(err => Promise.reject(new SQLException(err)));
-                    }
-                } else {
-                    return await Promise.reject(new SQLException(`The Table ${table} does not exist in the database!`));
+                        }
+                    })
+                    .then((rows: any) => {
+                        if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
+                            for (const key in this.reverse_references) {
+                                let reverse_table = this.reverse_references[key].table;
+                                let reverse_col   = this.reverse_references[key].column;
+                                let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                this.reverse_references[key].setting.where_column : '';
+                                let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                this.reverse_references[key].setting.where_table : '';
+                                let reverse_name  = key;
+                                if (typeof rows !== 'undefined') {
+                                    rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
+                                    .then((id) =>
+                                        {
+                                            if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
+                                                    return this.getTablePrimaryKey(where_tbl)
+                                                    .then((_id) => {
+                                                        const _statement = where_tbl && where_col && reverse_table ? 
+                                                                        'SELECT * FROM '+reverse_table+' '+
+                                                                        'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
+                                                                        'SELECT '+_id+' FROM '+where_tbl+' '+
+                                                                        'WHERE '+where_col+' = '+rows[0][where_col]+' '+
+                                                                        ')' : '';
+                                                        return (async () => {
+                                                            return {
+                                                                [reverse_name]: await this.db.executeModelQuery(_statement) 
+                                                                            .then(([results, fields]) => results)
+                                                                            .catch(err => Promise.reject(new SQLException(err)))
+                                                            }
+                                                        })()
+                                                    })
+                                                    .catch((err: any) => Promise.reject(new SQLException(err)));
+                                                }
+                                            } else {
+                                                return this.getTablePrimaryKey(reverse_table)
+                                                .then((TABLE_ID: string) => {
+                                                    const sql = `SELECT * FROM ${reverse_table} where ${reverse_col} = ${rows[0][TABLE_ID]}`;
+                                                    return (async () => {
+                                                        return {
+                                                            [reverse_name]: await this.db.executeModelQuery(sql)
+                                                                        .then(([results, fields]) => results)
+                                                                        .catch(err => Promise.reject(new SQLException(err)))
+                                                        }
+                                                    })()
+                                                })
+                                                .catch(err => Promise.reject(err));
+                                            }
+                                        }
+                                    )
+                                    .catch((err: any) => Promise.reject(new SQLException(err)));
+                                } else {
+                                    continue;   
+                                }
+                            }
+                        }
+                        return rows;
+                    })
+                    .catch(err => Promise.reject(new SQLException(err)));
                 }
+        
+                if (!this.__.isNaN(sql_query) && this.__.isString(sql_query)) {
+                    sql_query = +sql_query;
+                }
+                
+                if (!this.__.isNaN(sql_query) && !this.__.isEmpty(table)) {
+                    let _table_id;
+                    try {
+                        _table_id = await this.getTablePrimaryKey(table)
+                    } catch (error) {
+                        return Promise.reject(new SQLException(`The Table ${table} does not exist in the database!`))
+                    }
+
+                    var sql = `SELECT * FROM ${table} where ${'id'} = ? ORDER BY ID ASC`;
+                    if (limit != null && !this.__.isNaN(limit)) {
+                        var _limit = ` LIMIT ${limit.toString()}`;
+                        sql += _limit;
+                    }
+                    
+                    return await this.db.executeModelQuery(sql, [sql_query])
+                    .then(([rows, fields]) => {
+                        if (!this.__.isEmpty(rows)) {
+                            for (const key in this.columns) {
+                                // @ts-ignore 
+                                rows['reverse_table_name'] = table; 
+                                let column_name = key;
+                                let is_constraint = this.columns[column_name].references;
+                                if (typeof is_constraint !== 'undefined') {
+                                    let constraint_table = this.columns[column_name].references.table;
+                                    if (typeof this.columns[column_name].references.column !== 'undefined') {
+                                        // @ts-ignore 
+                                        rows[column_name] = (async () => {
+                                            return {// @ts-ignore 
+                                                [is_constraint.name] : await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${this.columns[column_name].references.column} = '${rows[0][column_name]}'`)
+                                                                        .then(([rows, fields]) => rows)
+                                                                        .catch(err => Promise.reject(new SQLException(`Column "${this.columns[column_name].references.column}" does not exist in table "${constraint_table}"! \n Error: ${err}`)))
+                                            }
+                                        })(); 
+                                    } else {
+                                        // @ts-ignore 
+                                        rows[column_name] = this.getTablePrimaryKey(constraint_table)
+                                        .then((id) => {
+                                            return (async () => {
+                                                return {// @ts-ignore 
+                                                    [is_constraint.name]: await this.db.executeModelQuery(`SELECT * FROM ${constraint_table} where ${id} = '${rows[0][column_name]}'`)
+                                                                        .then(([rows, fields]) => rows)
+                                                                        .catch(err => Promise.reject(new SQLException(err)))
+                                                }
+                                            })()
+                                        })
+                                        .catch((err: any) => Promise.reject(new SQLException(err)));
+                                    }
+                                }
+                            }
+                        }
+                        return rows;
+                    })
+                    .then((rows: any) => {
+                        if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
+                            for (const key in this.reverse_references) {
+                                let reverse_table = this.reverse_references[key].table;
+                                let reverse_col   = this.reverse_references[key].column;
+                                let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                this.reverse_references[key].setting.where_column : '';
+                                let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                this.reverse_references[key].setting.where_table : '';
+                                let reverse_name  = key;
+                                if (typeof rows !== 'undefined') {
+                                    rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
+                                    .then((id) =>
+                                        {
+                                            if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
+                                                    return this.getTablePrimaryKey(where_tbl)
+                                                    .then((_id) => {
+                                                        const _statement = where_tbl && where_col && reverse_table ? 
+                                                                        'SELECT * FROM '+reverse_table+' '+
+                                                                        'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
+                                                                        'SELECT '+_id+' FROM '+where_tbl+' '+
+                                                                        'WHERE '+where_col+' = '+rows[0][where_col]+' '+
+                                                                        ')' : '';
+                                                        return (async () => {
+                                                            return {
+                                                                [reverse_name]: await this.db.executeModelQuery(_statement) 
+                                                                            .then(([results, fields]) => results)
+                                                                            .catch(err => Promise.reject(new SQLException(err)))
+                                                            }
+                                                        })()
+                                                    })
+                                                    .catch((err: any) => Promise.reject(new SQLException(err)));
+                                                }
+                                            } else {
+                                                return this.getTablePrimaryKey(reverse_table)
+                                                .then((TABLE_ID: string) => {
+                                                    const sql = `SELECT * FROM ${reverse_table} where ${reverse_col} = ${rows[0][TABLE_ID]}`;
+                                                    return (async () => {
+                                                        return {
+                                                            [reverse_name]: await this.db.executeModelQuery(sql)
+                                                                        .then(([results, fields]) => results)
+                                                                        .catch(err => Promise.reject(new SQLException(err)))
+                                                        }
+                                                    })()
+                                                })
+                                                .catch(err => Promise.reject(err));
+                                            }
+                                        }
+                                    )
+                                    .catch((err: any) => Promise.reject(new SQLException(err)));
+                                } else {
+                                    continue;   
+                                }
+                            }
+                        }
+                        return rows;
+                    })
+                    .catch(err => Promise.reject(new SQLException(err)));
+                }
+            } else {
+                return await Promise.reject(new SQLException(`The Table ${table} does not exist in the database!`));
+            }
         }
         return await Promise.reject(new SQLException('Query could not be executed!'));
     }
@@ -1318,7 +958,7 @@ export = class BaseModel extends QueryBuilder {
      * @param {Object} sql_query
      * @returns Promise
     */
-    get(sql_query: any, table = this.__table) : Promise<any> {
+    async get(sql_query: any, table = this.__table) : Promise<any> {
         // if (this.model) {
         //     var _model = Singleton.getModel(this.model.toString())
         //     // console.log(_model._columns);
@@ -1390,61 +1030,65 @@ export = class BaseModel extends QueryBuilder {
                                 return rows;
                             }
                         })
-                        .then(rows => {
-                                    if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                        for (const key in this.reverse_references) {
-                                            let reverse_table = this.reverse_references[key].table;
-                                            let reverse_col   = this.reverse_references[key].column;
-                                            let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                            this.reverse_references[key].setting.where_column : '';
-                                            let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                            this.reverse_references[key].setting.where_table : '';
-                                            let reverse_name  = key;
-                                            if (typeof rows !== 'undefined') {
-                                                // @ts-ignore 
-                                                rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                                .then((id) =>
-                                                    {   // @ts-ignore 
-                                                        if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                            // @ts-ignore 
-                                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                return this.getTablePrimaryKey(where_tbl)
-                                                                .then((_id) => {
-                                                                    const _statement = where_tbl && where_col && reverse_table ? 
-                                                                                    'SELECT * FROM '+reverse_table+' '+
-                                                                                    'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                                    'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                                    // @ts-ignore 
-                                                                                    'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                                    ')' : '';
-                                                                    return (async () => {
-                                                                        return {
-                                                                            [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                        .then(([results, fields]) => results)
-                                                                                        .catch(err => Promise.reject(new SQLException(err)))
-                                                                        }
-                                                                    })()
-                                                                })
-                                                                .catch((err: any) => Promise.reject(new SQLException(err)));
-                                                            }
-                                                        } else {
+                        .then((rows: any) => {
+                            if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
+                                for (const key in this.reverse_references) {
+                                    let reverse_table = this.reverse_references[key].table;
+                                    let reverse_col   = this.reverse_references[key].column;
+                                    let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                    this.reverse_references[key].setting.where_column : '';
+                                    let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                    this.reverse_references[key].setting.where_table : '';
+                                    let reverse_name  = key;
+                                    if (typeof rows !== 'undefined') {
+                                        rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
+                                        .then((id) =>
+                                            {
+                                                if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                    // @ts-ignore 
+                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
+                                                        return this.getTablePrimaryKey(where_tbl)
+                                                        .then((_id) => {
+                                                            const _statement = where_tbl && where_col && reverse_table ? 
+                                                                            'SELECT * FROM '+reverse_table+' '+
+                                                                            'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
+                                                                            'SELECT '+_id+' FROM '+where_tbl+' '+
+                                                                            // @ts-ignore 
+                                                                            'WHERE '+where_col+' = '+rows[0][where_col]+' '+
+                                                                            ')' : '';
                                                             return (async () => {
                                                                 return {
-                                                                    [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`)
+                                                                    [reverse_name]: await this.db.executeModelQuery(_statement) 
                                                                                 .then(([results, fields]) => results)
                                                                                 .catch(err => Promise.reject(new SQLException(err)))
                                                                 }
                                                             })()
-                                                        }
+                                                        })
+                                                        .catch((err: any) => Promise.reject(new SQLException(err)));
                                                     }
-                                                )
-                                                .catch((err: any) => Promise.reject(new SQLException(err)));
-                                            } else {
-                                                continue;   
+                                                } else {
+                                                    return this.getTablePrimaryKey(reverse_table)
+                                                    .then((TABLE_ID: string) => {
+                                                        const sql = `SELECT * FROM ${reverse_table} where ${reverse_col} = ${rows[0][TABLE_ID]}`;
+                                                        return (async () => {
+                                                            return {
+                                                                [reverse_name]: await this.db.executeModelQuery(sql)
+                                                                            .then(([results, fields]) => results)
+                                                                            .catch(err => Promise.reject(new SQLException(err)))
+                                                            }
+                                                        })()
+                                                    })
+                                                    .catch(err => Promise.reject(err));
+                                                }
                                             }
-                                        }
+                                        )
+                                        .catch((err: any) => Promise.reject(new SQLException(err)));
+                                    } else {
+                                        continue;   
                                     }
-                                    return rows;
+                                }
+                            }
+                            return rows;
                         })
                         .catch(err => Promise.reject(new SQLException(err)))
                     })()
@@ -1499,62 +1143,65 @@ export = class BaseModel extends QueryBuilder {
                                 return rows;
                             }
                         })
-                        .then(rows => {
-                                    if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                        for (const key in this.reverse_references) {
-                                            let reverse_table = this.reverse_references[key].table;
-                                            let reverse_col   = this.reverse_references[key].column;
-                                            let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                            this.reverse_references[key].setting.where_column : '';
-                                            let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                            this.reverse_references[key].setting.where_table : '';
-                                            let reverse_name  = key;
-                                            if (typeof rows !== 'undefined') {
-                                                // @ts-ignore 
-                                                rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                                .then((id) =>
-                                                    {
-                                                        // @ts-ignore 
-                                                        if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                            // @ts-ignore 
-                                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                return this.getTablePrimaryKey(where_tbl)
-                                                                .then((_id) => {
-                                                                    const _statement = where_tbl && where_col && reverse_table ? 
-                                                                                    'SELECT * FROM '+reverse_table+' '+
-                                                                                    'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                                    'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                                    // @ts-ignore 
-                                                                                    'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                                    ')' : '';
-                                                                    return (async () => {
-                                                                        return {
-                                                                            [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                        .then(([results, fields]) => results)
-                                                                                        .catch(err => Promise.reject(new SQLException(err)))
-                                                                        }
-                                                                    })()
-                                                                })
-                                                                .catch(err => Promise.reject(new SQLException(err)));
-                                                            }
-                                                        } else {
+                        .then((rows: any) => {
+                            if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
+                                for (const key in this.reverse_references) {
+                                    let reverse_table = this.reverse_references[key].table;
+                                    let reverse_col   = this.reverse_references[key].column;
+                                    let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                    this.reverse_references[key].setting.where_column : '';
+                                    let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                    this.reverse_references[key].setting.where_table : '';
+                                    let reverse_name  = key;
+                                    if (typeof rows !== 'undefined') {
+                                        rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
+                                        .then((id) =>
+                                            {
+                                                if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                    // @ts-ignore 
+                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
+                                                        return this.getTablePrimaryKey(where_tbl)
+                                                        .then((_id) => {
+                                                            const _statement = where_tbl && where_col && reverse_table ? 
+                                                                            'SELECT * FROM '+reverse_table+' '+
+                                                                            'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
+                                                                            'SELECT '+_id+' FROM '+where_tbl+' '+
+                                                                            // @ts-ignore 
+                                                                            'WHERE '+where_col+' = '+rows[0][where_col]+' '+
+                                                                            ')' : '';
                                                             return (async () => {
                                                                 return {
-                                                                    [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
+                                                                    [reverse_name]: await this.db.executeModelQuery(_statement) 
                                                                                 .then(([results, fields]) => results)
                                                                                 .catch(err => Promise.reject(new SQLException(err)))
                                                                 }
                                                             })()
-                                                        }
+                                                        })
+                                                        .catch((err: any) => Promise.reject(new SQLException(err)));
                                                     }
-                                                )
-                                                .catch((err: any) => Promise.reject(new SQLException(err)));
-                                            } else {
-                                                continue;   
+                                                } else {
+                                                    return this.getTablePrimaryKey(reverse_table)
+                                                    .then((TABLE_ID: string) => {
+                                                        const sql = `SELECT * FROM ${reverse_table} where ${reverse_col} = ${rows[0][TABLE_ID]}`;
+                                                        return (async () => {
+                                                            return {
+                                                                [reverse_name]: await this.db.executeModelQuery(sql)
+                                                                            .then(([results, fields]) => results)
+                                                                            .catch(err => Promise.reject(new SQLException(err)))
+                                                            }
+                                                        })()
+                                                    })
+                                                    .catch(err => Promise.reject(err));
+                                                }
                                             }
-                                        }
+                                        )
+                                        .catch((err: any) => Promise.reject(new SQLException(err)));
+                                    } else {
+                                        continue;   
                                     }
-                                    return rows;
+                                }
+                            }
+                            return rows;
                         })
                         .catch(err => Promise.reject(new SQLException(err)))
                     })()
@@ -1610,62 +1257,68 @@ export = class BaseModel extends QueryBuilder {
                                         }
                                     }
                                 }
-                                return rows;
                             }
+                            return rows;
                         })
-                        .then(rows => {
-                                    if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
-                                        for (const key in this.reverse_references) {
-                                            let reverse_table = this.reverse_references[key].table;
-                                            let reverse_col   = this.reverse_references[key].column;
-                                            let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                            this.reverse_references[key].setting.where_column : '';
-                                            let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
-                                                            this.reverse_references[key].setting.where_table : '';
-                                            let reverse_name  = key;
-                                            if (typeof rows !== 'undefined') {
-                                                // @ts-ignore 
-                                                rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
-                                                .then((id) =>
-                                                    {   // @ts-ignore 
-                                                        if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
-                                                            // @ts-ignore 
-                                                            if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
-                                                                return this.getTablePrimaryKey(where_tbl)
-                                                                .then((_id) => {
-                                                                    const _statement = where_tbl && where_col && reverse_table ? 
-                                                                                    'SELECT * FROM '+reverse_table+' '+
-                                                                                    'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
-                                                                                    'SELECT '+_id+' FROM '+where_tbl+' '+
-                                                                                    // @ts-ignore 
-                                                                                    'WHERE '+where_col+' = '+rows[0][where_col]+' '+
-                                                                                    ')' : '';
-                                                                    return (async () => {
-                                                                        return {
-                                                                            [reverse_name]: await this.db.executeModelQuery(_statement) 
-                                                                                        .then(([results, fields]) => results)
-                                                                                        .catch(err => Promise.reject(new SQLException(err)))
-                                                                        }
-                                                                    })()
-                                                                }).catch((err: any) => Promise.reject(new SQLException(err)));
-                                                            }
-                                                        } else {
+                        .then((rows: any) => {
+                            if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
+                                for (const key in this.reverse_references) {
+                                    let reverse_table = this.reverse_references[key].table;
+                                    let reverse_col   = this.reverse_references[key].column;
+                                    let where_col = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                    this.reverse_references[key].setting.where_column : '';
+                                    let where_tbl = typeof this.reverse_references[key].setting !== 'undefined' ? 
+                                                    this.reverse_references[key].setting.where_table : '';
+                                    let reverse_name  = key;
+                                    if (typeof rows !== 'undefined') {
+                                        rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
+                                        .then((id) =>
+                                            {
+                                                if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
+                                                    // @ts-ignore 
+                                                    if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
+                                                        return this.getTablePrimaryKey(where_tbl)
+                                                        .then((_id) => {
+                                                            const _statement = where_tbl && where_col && reverse_table ? 
+                                                                            'SELECT * FROM '+reverse_table+' '+
+                                                                            'WHERE '+reverse_table+'.'+reverse_col+' IN ('+
+                                                                            'SELECT '+_id+' FROM '+where_tbl+' '+
+                                                                            // @ts-ignore 
+                                                                            'WHERE '+where_col+' = '+rows[0][where_col]+' '+
+                                                                            ')' : '';
                                                             return (async () => {
                                                                 return {
-                                                                    [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`) 
+                                                                    [reverse_name]: await this.db.executeModelQuery(_statement) 
                                                                                 .then(([results, fields]) => results)
                                                                                 .catch(err => Promise.reject(new SQLException(err)))
                                                                 }
                                                             })()
-                                                        }
+                                                        })
+                                                        .catch((err: any) => Promise.reject(new SQLException(err)));
                                                     }
-                                                ).catch((err: any) => Promise.reject(new SQLException(err)));
-                                            } else {
-                                                continue;   
+                                                } else {
+                                                    return this.getTablePrimaryKey(reverse_table)
+                                                    .then((TABLE_ID: string) => {
+                                                        const sql = `SELECT * FROM ${reverse_table} where ${reverse_col} = ${rows[0][TABLE_ID]}`;
+                                                        return (async () => {
+                                                            return {
+                                                                [reverse_name]: await this.db.executeModelQuery(sql)
+                                                                            .then(([results, fields]) => results)
+                                                                            .catch(err => Promise.reject(new SQLException(err)))
+                                                            }
+                                                        })()
+                                                    })
+                                                    .catch(err => Promise.reject(err));
+                                                }
                                             }
-                                        }
+                                        )
+                                        .catch((err: any) => Promise.reject(new SQLException(err)));
+                                    } else {
+                                        continue;   
                                     }
-                                    return rows;
+                                }
+                            }
+                            return rows;
                         })
                         .catch(err => Promise.reject(new SQLException(err)))
                     })()
@@ -1688,7 +1341,7 @@ export = class BaseModel extends QueryBuilder {
      * @param {String} table
      * @returns Promise
     */
-    all(table = this.__table) : Promise<any>{
+    async all(table = this.__table) : Promise<any>{
         if (this.__.isEmpty(table) && !this.__.isString(table)) {
             return Promise.reject(new BadMethodCallException('Table must not be empty!'));
         }
@@ -1740,10 +1393,10 @@ export = class BaseModel extends QueryBuilder {
                                     }
                                 }
                             }
-                            return rows;
                         }
+                        return rows;
                     })
-                    .then(rows => {
+                    .then((rows: any) => {
                         if (typeof this.reverse_references === 'object' && typeof this.reverse_references !== 'undefined') {
                             for (const key in this.reverse_references) {
                                 let reverse_table = this.reverse_references[key].table;
@@ -1754,10 +1407,9 @@ export = class BaseModel extends QueryBuilder {
                                                 this.reverse_references[key].setting.where_table : '';
                                 let reverse_name  = key;
                                 if (typeof rows !== 'undefined') {
-                                    // @ts-ignore 
                                     rows[reverse_name] = this.getTablePrimaryKey(reverse_table)
                                     .then((id) =>
-                                        {   // @ts-ignore 
+                                        {
                                             if (where_col && typeof rows['reverse_table_name'] !== 'undefined') {
                                                 // @ts-ignore 
                                                 if (typeof rows[0][where_col] !== 'undefined' || typeof rows[0][where_col] !== null || !this.__.isEmpty(typeof rows[0][where_col])) {
@@ -1777,21 +1429,28 @@ export = class BaseModel extends QueryBuilder {
                                                                             .catch(err => Promise.reject(new SQLException(err)))
                                                             }
                                                         })()
-                                                    }).catch((err: any) => Promise.reject(new SQLException(err)));
+                                                    })
+                                                    .catch((err: any) => Promise.reject(new SQLException(err)));
                                                 }
                                             } else {
-                                                return (async () => {
-                                                    return {
-                                                        [reverse_name]: await this.db.executeModelQuery(`SELECT * FROM ${reverse_table}`)
-                                                                    .then(([results, fields]) => results)
-                                                                    .catch(err => Promise.reject(new SQLException(err)))
-                                                    }
-                                                })()
+                                                return this.getTablePrimaryKey(reverse_table)
+                                                .then((TABLE_ID: string) => {
+                                                    const sql = `SELECT * FROM ${reverse_table} where ${reverse_col} = ${rows[0][TABLE_ID]}`;
+                                                    return (async () => {
+                                                        return {
+                                                            [reverse_name]: await this.db.executeModelQuery(sql)
+                                                                        .then(([results, fields]) => results)
+                                                                        .catch(err => Promise.reject(new SQLException(err)))
+                                                        }
+                                                    })()
+                                                })
+                                                .catch(err => Promise.reject(err));
                                             }
                                         }
-                                    ).catch((err: any) => Promise.reject(new SQLException(err)));
+                                    )
+                                    .catch((err: any) => Promise.reject(new SQLException(err)));
                                 } else {
-                                    continue;
+                                    continue;   
                                 }
                             }
                         }
