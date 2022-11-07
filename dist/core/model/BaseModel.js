@@ -553,7 +553,6 @@ module.exports = /** @class */ (function (_super) {
      * @param {String} limit
      * @param {String} table
      * @returns Promise
-     // TODO modify all crud methods to be asynchronous
     */
     BaseModel.prototype.filter = function (sql_query, limit, table) {
         if (sql_query === void 0) { sql_query = null; }

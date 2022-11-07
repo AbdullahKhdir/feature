@@ -580,7 +580,6 @@ export = class BaseModel extends QueryBuilder {
      * @param {String} limit
      * @param {String} table
      * @returns Promise
-     // TODO modify all crud methods to be asynchronous 
     */
     async filter(sql_query: any = null, limit: number | string | null = null, table = this.__table) {
         if (this.__.isEmpty(table)) {
