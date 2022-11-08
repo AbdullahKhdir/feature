@@ -7,6 +7,7 @@ import { ENDPOINTS } from './core/api/apis_endpoints/endpoints';
 import * as config from './core/config';
 import { Singleton } from './core/Singleton/Singleton';
 import { csrf } from './core/utils/undefined-routes-logic';
+import WebSockets from "socket.io";
 
 /**
  * @class Server
@@ -1677,8 +1678,17 @@ class Server {
                                     }
                                     console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + ', Using TypeScript!' + '\u001b[0m');
                                 });
-                return server;
-            })();
+
+                    const io = new WebSockets.Server(server)
+                    
+                    io.on('connection', (socket) => {
+                        socket.on('chat message', (msg) => {
+                          console.log('message: ' + msg);
+                        });
+                    });
+                    // io.emit('some event', { someProperty: 'some value', otherProperty: 'other value' }); // This will emit the event to all connected sockets
+                    return server;
+                })();
         }
     }
 

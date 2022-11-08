@@ -60,6 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
+var is_auth_1 = __importDefault(require("../../middlewares/is_auth"));
 module.exports = /** @class */ (function (_super) {
     __extends(Chat, _super);
     function Chat() {
@@ -76,10 +77,25 @@ module.exports = /** @class */ (function (_super) {
         */
         _this.chat = function () { return _this.route('get', '/chat/', _this.chatMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
+                // todo usage of socket.io from calling it from singleton to enables it and listen on a port and activate sending responding messages
+                // todo Implementation in Singleton and calling it here.
+                // todo The same instance will be called more than once from different locations to render the stats of who is online and offline
+                // todo On opening a user's chat there will be another call for the instance to retrieve messages from that selected in user's chat.
                 return [2 /*return*/, this.render(res, 'materialize/pages/chat', {
                         nav_title: 'Chat',
-                        path: 'chat',
-                        root: 'pages'
+                        path: '/chat/',
+                        success: res.locals['success'],
+                        root: 'chat',
+                        breadcrumbs: [
+                            {
+                                title: 'Socials',
+                                url: '/'
+                            },
+                            {
+                                title: 'Chat',
+                                url: '/chat/'
+                            }
+                        ]
                     })];
             });
         }); }); };
@@ -116,7 +132,7 @@ module.exports = /** @class */ (function (_super) {
         return {
             //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
             //! IMPORTANT THE ORDER MATTERS !\\
-            is_authenticated: function (req, res, next) { next(); }, //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
+            is_authenticated: is_auth_1.default, //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
         };
     };
     ;

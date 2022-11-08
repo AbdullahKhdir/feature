@@ -68,6 +68,7 @@ var endpoints_1 = require("./core/api/apis_endpoints/endpoints");
 var config = __importStar(require("./core/config"));
 var Singleton_1 = require("./core/Singleton/Singleton");
 var undefined_routes_logic_1 = require("./core/utils/undefined-routes-logic");
+var socket_io_1 = __importDefault(require("socket.io"));
 /**
  * @class Server
  * @constructor
@@ -98,7 +99,7 @@ var Server = /** @class */ (function () {
             */
             var mkcert_1 = require('mkcert');
             (function () { return __awaiter(_this, void 0, void 0, function () {
-                var ca, cert, httpsOptions, port, server;
+                var ca, cert, httpsOptions, port, server, io;
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
@@ -1626,6 +1627,13 @@ var Server = /** @class */ (function () {
                                 }
                                 console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + ', Using TypeScript!' + '\u001b[0m');
                             });
+                            io = new socket_io_1.default.Server(server);
+                            io.on('connection', function (socket) {
+                                socket.on('chat message', function (msg) {
+                                    console.log('message: ' + msg);
+                                });
+                            });
+                            // io.emit('some event', { someProperty: 'some value', otherProperty: 'other value' }); // This will emit the event to all connected sockets
                             return [2 /*return*/, server];
                     }
                 });

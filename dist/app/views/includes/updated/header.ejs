@@ -83,11 +83,6 @@
                         Grid<i class="material-icons">dashboard</i>
                       </a>
                     </li>
-                    <li>
-                      <a href="/chat/" class="cube-loader waves-orange waves-effect <%= path ? path === 'chat' ? 'active' : '' : '' %>">
-                        Chat<i class="material-icons">chat</i>
-                      </a>
-                    </li>
                   </ul>
                 </div>
               </li>
@@ -128,7 +123,29 @@
                 </div>
               </li>
           <% } %>
+          <% if (!is_authenticated) { %>
+            <li class="bold waves-effect <%= root ? root === 'account' ? 'active' : '' : '' %>"><a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
+              <div class="collapsible-body">
+                <ul>
+                  <li><a href="/login/" class="cube-loader waves-orange waves-effect <%= path ? path === 'log-in' ? 'active' : '' : '' %>">Sign In<i class="material-icons">person</i></a></li>
+                  <li><a href="/signup/" class="cube-loader waves-orange waves-effect <%= path ? path === 'sign-up' ? 'active' : '' : '' %>">Sign Up<i class="material-icons">person_add</i></a></li>
+                  <li><a href="/settings/" class="cube-loader waves-orange waves-effect <%= path ? path === 'settings' ? 'active' : '' : '' %>">Settings<i class="material-icons">settings</i></a></li>
+                </ul>
+              </div>
+            </li>
+          <% } %>
           <% if (is_authenticated) { %>
+            <li class="bold waves-effect <%= root ? root === 'chat' ? 'active' : '' : '' %>"><a class="collapsible-header">Socials<i class="material-icons chevron">chevron_left</i></a>
+              <div class="collapsible-body">
+                <ul>
+                  <li>
+                    <a href="/chat/" class="cube-loader waves-orange waves-effect <%= path ? path === '/chat/' ? 'active' : '' : '' %>">
+                      Chat<i class="material-icons">chat</i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </li>
             <li class="bold waves-effect <%= root ? root === 'account' ? 'active' : '' : '' %>"><a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
               <div class="collapsible-body">
                 <ul>
@@ -137,17 +154,6 @@
                     <input type="hidden" name="_csrf" value="<%= csrf %>">
                     <li><a id="sign-out" class="waves-orange waves-effect">Sign out<i class="material-icons">exit_to_app</i></a></li>
                   </form>   
-                </ul>
-              </div>
-            </li>
-          <% } %>
-          <% if (!is_authenticated) { %>
-            <li class="bold waves-effect <%= root ? root === 'account' ? 'active' : '' : '' %>"><a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
-              <div class="collapsible-body">
-                <ul>
-                  <li><a href="/login/" class="cube-loader waves-orange waves-effect <%= path ? path === 'log-in' ? 'active' : '' : '' %>">Sign In<i class="material-icons">person</i></a></li>
-                  <li><a href="/signup/" class="cube-loader waves-orange waves-effect <%= path ? path === 'sign-up' ? 'active' : '' : '' %>">Sign Up<i class="material-icons">person_add</i></a></li>
-                  <li><a href="/settings/" class="cube-loader waves-orange waves-effect <%= path ? path === 'settings' ? 'active' : '' : '' %>">Settings<i class="material-icons">settings</i></a></li>
                 </ul>
               </div>
             </li>

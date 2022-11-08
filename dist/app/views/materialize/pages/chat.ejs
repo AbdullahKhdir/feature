@@ -1,10 +1,13 @@
-<%- include('../includes/head.ejs') %>
+<%- include('../../includes/updated/head.ejs') %>
 <script type="text/javascript" src="../materialize/js/init.js" defer></script>
 </head>
-    <body class="has-fixed-sidenav">
-        <%- include('../includes/header.ejs') %>
-        <%- include('../includes/chat/main.ejs') %>
-        <%- include('../includes/footer.ejs') %>
-        <%- include('../includes/script.ejs') %>
-    </body>
+<body>
+    <%- include('../../includes/updated/header.ejs') %>
+    <%- include('../../includes/updated/toaster.ejs') %>
+    
+    <%- include('../includes/chat/main.ejs') %>
+        
+    <%- include('../../includes/updated/footer.ejs') %>
+    <%- include('../../includes/updated/script.ejs') %>
+</body>
 </html>
