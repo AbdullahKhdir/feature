@@ -1,4 +1,5 @@
 
+import WebSockets from "socket.io";
 import multer from 'multer';
 import mysql from 'mysql2';
 import Application from "../../app/Application";
@@ -27,6 +28,7 @@ import Workerpool from "../worker_pool/workerpool";
 export class Singleton{
 
     private static instance: Singleton;
+    private static io_instance: any;
     private static apis: Api;
     private constructor() {
     }
@@ -177,6 +179,16 @@ export class Singleton{
             }
         }
         return;
+    }
+
+    //*******************************\\
+    //* Server getter function      *\\
+    //*******************************\\
+    static setSocket(server: any) {
+        if (this.io_instance) {
+            return this.io_instance
+        }
+        return this.io_instance = new WebSockets.Server(server);
     }
 
     //*******************************\\

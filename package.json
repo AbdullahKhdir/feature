@@ -10,7 +10,7 @@
     "start": "node ./dist/Server.js",
     "start-server": "node ./dist/Server.js",
     "start-nodemon": "nodemon -L ./dist/Server.js",
-    "start:inspect": "nodemon --exec \"node --inspect ./dist/Server.js\""
+    "start:inspect": "nodemon --expose_gc --exec \"node --inspect ./dist/Server.js\""
   },
   "author": "Khdir",
   "license": "ISC",
@@ -44,7 +44,9 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
+    "coffee-script": "^1.12.7",
     "compression": "^1.7.4",
+    "connect": "^3.7.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

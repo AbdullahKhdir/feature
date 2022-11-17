@@ -17,6 +17,12 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+//***********************************************************
+//* CONTROLLER: Application.ts
+//***********************************************************
+//* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
+//* BRANCH: features/Migrate
+//***********************************************************
 /*
 * Npm and Node Modules
 */

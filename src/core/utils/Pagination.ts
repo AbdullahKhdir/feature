@@ -8,7 +8,7 @@ import { Singleton } from "../Singleton/Singleton";
 /**
  * @class Pagination
  * @constructor
- * @description Class Pagination is used to stucture the records of a model
+ * @description Class Pagination is used to structure the records of a model
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */

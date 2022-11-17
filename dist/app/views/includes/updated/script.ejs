@@ -22,17 +22,5 @@
 <!-- Initialization script -->
 <script type="text/javascript" src="/materialize/js/admin.js"></script>
 <script type="text/javascript" src="/plugins/socket-io/socket-io.js"></script>
-<script>
-    var socket = io();
-    
-    socket.emit('chat message', 'Testing message!');
-    socket.on('chat message', function(msg) {
-        console.log(msg)
-        var item = document.createElement('li');
-        item.textContent = msg;
-        document.getElementsByTagName('body').appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-    });
-</script>
 <script type="text/javascript" src="/js/loadPlugins.js"></script>
 <script type="text/javascript" src="/js/main.js?random=<%= lodash.uniqueId() %>"></script>

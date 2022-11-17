@@ -20,7 +20,7 @@ export = class Api extends Routes {
     //! Application Programming Interface Principles (API)!\\
     //! 1- NO SESSIONS (Complete separation between client and our api or server)!\\
     //! 2- HTTP-METHODS can all be used not just post and get!\\
-    //! 3- Most of the server sid code wont be changed, only requests and response objects are effected !\\
+    //! 3- Most of the server side code wont be changed, only requests and response objects are effected !\\
     //! 4- Usage of JWT is mandatory for api authentication and authorization between client and our server !\\
     //!!!!!!!!!!!!!!!!!!!!!!!!!!\\
     protected path;

@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -62,13 +62,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Server = void 0;
 var https_1 = __importDefault(require("https"));
 var os_1 = __importDefault(require("os"));
 var endpoints_1 = require("./core/api/apis_endpoints/endpoints");
 var config = __importStar(require("./core/config"));
 var Singleton_1 = require("./core/Singleton/Singleton");
 var undefined_routes_logic_1 = require("./core/utils/undefined-routes-logic");
-var socket_io_1 = __importDefault(require("socket.io"));
 /**
  * @class Server
  * @constructor
@@ -93,26 +93,23 @@ var Server = /** @class */ (function () {
     Server.prototype.run = function () {
         var _this = this;
         if (config.configurations().environment === 'development') {
-            /*
-            !  DO NOT USE THIS IN PRODUCTION ENVIRONMENT
-            * ONLY FOR DEVELOPMENT PURPOSES
-            */
-            var mkcert_1 = require('mkcert');
-            (function () { return __awaiter(_this, void 0, void 0, function () {
-                var ca, cert, httpsOptions, port, server, io;
+            return (function () { return __awaiter(_this, void 0, void 0, function () {
+                var mkcert, ca, cert, httpsOptions, port, httpServer, server;
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
-                        case 0: return [4 /*yield*/, mkcert_1.createCA({
-                                organization: 'Node',
-                                countryCode: 'DE',
-                                state: 'Bavaria',
-                                locality: 'Nuremberg',
-                                validityDays: 1
-                            })];
+                        case 0:
+                            mkcert = require('mkcert');
+                            return [4 /*yield*/, mkcert.createCA({
+                                    organization: 'Node',
+                                    countryCode: 'DE',
+                                    state: 'Bavaria',
+                                    locality: 'Nuremberg',
+                                    validityDays: 1
+                                })];
                         case 1:
                             ca = _a.sent();
-                            return [4 /*yield*/, mkcert_1.createCert({
+                            return [4 /*yield*/, mkcert.createCert({
                                     domains: ['127.0.0.1', 'localhost'],
                                     validityDays: 1,
                                     caKey: ca.key,
@@ -1612,8 +1609,8 @@ var Server = /** @class */ (function () {
                                     }
                                 }
                             });
-                            server = https_1.default
-                                .createServer(httpsOptions, this.app).listen(port, function () {
+                            httpServer = https_1.default.createServer(httpsOptions, this.app);
+                            server = httpServer.listen(port, function () {
                                 if (config.configurations().execution_point === _this.constants.NPM) {
                                     console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m');
                                 }
@@ -1627,13 +1624,6 @@ var Server = /** @class */ (function () {
                                 }
                                 console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + ', Using TypeScript!' + '\u001b[0m');
                             });
-                            io = new socket_io_1.default.Server(server);
-                            io.on('connection', function (socket) {
-                                socket.on('chat message', function (msg) {
-                                    console.log('message: ' + msg);
-                                });
-                            });
-                            // io.emit('some event', { someProperty: 'some value', otherProperty: 'other value' }); // This will emit the event to all connected sockets
                             return [2 /*return*/, server];
                     }
                 });
@@ -1644,8 +1634,9 @@ var Server = /** @class */ (function () {
         return config.configurations().server_port || this.constants.PORTS.SERVER_PORT;
     };
     Server.init = function () {
-        Server.getServerInstance().run();
+        return Server.getServerInstance().run();
     };
     return Server;
 }());
+exports.Server = Server;
 Server.init();

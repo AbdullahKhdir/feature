@@ -1,4 +1,12 @@
 'use strict';
+
+//***********************************************************
+//* CONTROLLER: Application.ts
+//***********************************************************
+//* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
+//* BRANCH: features/Migrate
+//***********************************************************
+
 /*
 * Npm and Node Modules 
 */
@@ -275,6 +283,7 @@ export = class Application extends BaseController {
         * Passing default and helpful properties to all templates
         ? lasts for the life cycle of the application 
         */
+
         this.app.locals = Object.assign(this.app.locals, Locals);
     }
 

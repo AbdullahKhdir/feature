@@ -178,17 +178,6 @@
             "group": "build"
         },
         {
-            "label": "Start compiled ts on dev server",
-            "type": "shell",
-            "command": "npm install && npm update && npm run start:inspect",
-            "options": {
-                "env": {
-                    "EXECUTION_POINT": "NPM"
-                }
-            },
-            "group": "build"
-        },
-        {
             "label": "Clear all logs",
             "type": "shell",
             "command": "node_modules/pm2/bin/pm2 flush",

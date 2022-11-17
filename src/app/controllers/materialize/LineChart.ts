@@ -1,5 +1,5 @@
 //***********************************************************
-//* CONTROLLER: LinecChart.js
+//* CONTROLLER: LineChart.js
 //***********************************************************
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
 //* BRANCH: develop

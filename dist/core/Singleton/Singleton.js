@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Singleton = void 0;
+var socket_io_1 = __importDefault(require("socket.io"));
 var Application_1 = __importDefault(require("../../app/Application"));
 var PDFDocument_1 = __importDefault(require("../../app/plugins/PDFDocument"));
 var Uploader_1 = __importDefault(require("../../app/plugins/Uploader"));
@@ -157,6 +158,15 @@ var Singleton = /** @class */ (function () {
             }
         }
         return;
+    };
+    //*******************************\\
+    //* Server getter function      *\\
+    //*******************************\\
+    Singleton.setSocket = function (server) {
+        if (this.io_instance) {
+            return this.io_instance;
+        }
+        return this.io_instance = new socket_io_1.default.Server(server);
     };
     //*******************************\\
     //* PDFDocument getter function *\\

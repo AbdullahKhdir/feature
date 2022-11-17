@@ -1,8 +1,8 @@
 //***********************************************************
-//* CONTROLLER: Chat.js
+//* CONTROLLER: Chat.ts
 //***********************************************************
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
-//* BRANCH: develop
+//* BRANCH: features/Migrate
 //***********************************************************
 'use strict';
 var __extends = (this && this.__extends) || (function () {
@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -61,6 +61,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
 var is_auth_1 = __importDefault(require("../../middlewares/is_auth"));
+var Chat_1 = __importDefault(require("../../models/chat/Chat"));
+var Websockets_1 = __importDefault(require("../../../core/socket/Websockets"));
 module.exports = /** @class */ (function (_super) {
     __extends(Chat, _super);
     function Chat() {
@@ -75,20 +77,24 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.chat = function () { return _this.route('get', '/chat/', _this.chatMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this._chat = function () { return _this.route('get', '/chat/', _this.chatMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                // todo usage of socket.io from calling it from singleton to enables it and listen on a port and activate sending responding messages
-                // todo Implementation in Singleton and calling it here.
-                // todo The same instance will be called more than once from different locations to render the stats of who is online and offline
-                // todo On opening a user's chat there will be another call for the instance to retrieve messages from that selected in user's chat.
-                return [2 /*return*/, this.render(res, 'materialize/pages/chat', {
+                // todo dive deep in the protocol of web socket        
+                //**************************\\
+                //* OPEN SOCKET FOR CLIENT *\\
+                //**************************\\
+                Websockets_1.default.run(req);
+                //******************************\\
+                //* RENDER TEMPLATE FOR CLIENT *\\
+                //******************************\\
+                return [2 /*return*/, res.render('materialize/pages/chat', {
                         nav_title: 'Chat',
                         path: '/chat/',
                         success: res.locals['success'],
                         root: 'chat',
                         breadcrumbs: [
                             {
-                                title: 'Socials',
+                                title: 'Home',
                                 url: '/'
                             },
                             {
@@ -107,19 +113,19 @@ module.exports = /** @class */ (function (_super) {
             //**********\\
             //* Routes *\\
             //**********\\
-            'chat',
+            '_chat',
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\
         ];
-        return _this;
         //***************\\
         //* INIT MODELS *\\
         //***************\\
+        _this.chat = new Chat_1.default();
+        return _this;
         //*********************\\
         //* PROJECT CONSTANTS *\\
         //*********************\\
-        // this.constants
     }
     //! **************************** !\\
     //* Process protected functions  *\\

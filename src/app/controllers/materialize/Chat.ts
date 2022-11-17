@@ -1,8 +1,8 @@
 //***********************************************************
-//* CONTROLLER: Chat.js
+//* CONTROLLER: Chat.ts
 //***********************************************************
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
-//* BRANCH: develop
+//* BRANCH: features/Migrate
 //***********************************************************
 
 'use strict';
@@ -10,13 +10,16 @@
 import { NextFunction, Request, Response } from 'express';
 import BaseController from "../../../core/controller/BaseController";
 import is_auth from '../../middlewares/is_auth';
+import _Chat from '../../models/chat/Chat';
+import Websockets from '../../../core/socket/Websockets';
 
-export = class Chat extends BaseController{
+export = class Chat extends BaseController {
 
     //*****************************************************************\\
     //? CONSTRUCTOR FOR INITIALIZING ALL THE NECESSARY CONFIGURATIONS ?\\
     //*****************************************************************\\
-    public methods: any;
+    public    methods: any;
+    public    chat: _Chat;
     constructor() {
         super();
 
@@ -28,7 +31,7 @@ export = class Chat extends BaseController{
             //**********\\
             //* Routes *\\
             //**********\\
-            'chat',
+            '_chat',
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\
@@ -37,12 +40,11 @@ export = class Chat extends BaseController{
         //***************\\
         //* INIT MODELS *\\
         //***************\\
-        
+        this.chat = new _Chat();        
 
         //*********************\\
         //* PROJECT CONSTANTS *\\
         //*********************\\
-        // this.constants
     }
 
     //**********\\
@@ -56,14 +58,17 @@ export = class Chat extends BaseController{
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    chat = () => this.route('get', '/chat/', this.chatMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
-        // todo usage of socket.io from calling it from singleton to enables it and listen on a port and activate sending responding messages
-        // todo Implementation in Singleton and calling it here.
-        // todo The same instance will be called more than once from different locations to render the stats of who is online and offline
-        // todo On opening a user's chat there will be another call for the instance to retrieve messages from that selected in user's chat.
-        
-        return this.render(
-            res,
+    _chat = () => this.route('get','/chat/', this.chatMiddleware(), async (req: Request, res: Response, next: NextFunction) => {
+        // todo dive deep in the protocol of web socket        
+        //**************************\\
+        //* OPEN SOCKET FOR CLIENT *\\
+        //**************************\\
+        Websockets.run(req);
+
+        //******************************\\
+        //* RENDER TEMPLATE FOR CLIENT *\\
+        //******************************\\
+        return res.render(
             'materialize/pages/chat',
             {
                 nav_title: 'Chat',
@@ -72,7 +77,7 @@ export = class Chat extends BaseController{
                 root: 'chat',
                 breadcrumbs: [
                     {
-                        title: 'Socials',
+                        title: 'Home',
                         url: '/'
                     },
                     {

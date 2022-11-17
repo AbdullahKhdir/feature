@@ -1,9 +1,8 @@
 'use strict';
 
-import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { ReadStream } from 'node:fs';
 import * as config from '../config';
-import ApiError from '../error/ApiError';
 import ApiException from '../exception/ApiException';
 import { Singleton } from '../Singleton/Singleton';
 import { csrf, siteNotFound, error as _error } from '../utils/undefined-routes-logic';

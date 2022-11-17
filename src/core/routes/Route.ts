@@ -1,6 +1,5 @@
 'use strict';
 
-import { Router } from 'express';
 import { ENDPOINTS } from '../api/apis_endpoints/endpoints';
 import RuntimeException from '../exception/types/RuntimeException';
 import { ExpressResponse } from '../response/ExpressResponse';

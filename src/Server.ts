@@ -7,7 +7,6 @@ import { ENDPOINTS } from './core/api/apis_endpoints/endpoints';
 import * as config from './core/config';
 import { Singleton } from './core/Singleton/Singleton';
 import { csrf } from './core/utils/undefined-routes-logic';
-import WebSockets from "socket.io";
 
 /**
  * @class Server
@@ -17,7 +16,7 @@ import WebSockets from "socket.io";
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
-class Server {
+export class Server {
     
     private static server_instance: Server;
     public app;
@@ -39,27 +38,27 @@ class Server {
 
     run() {
         if (config.configurations().environment === 'development') {
-            /*
-            !  DO NOT USE THIS IN PRODUCTION ENVIRONMENT
-            * ONLY FOR DEVELOPMENT PURPOSES
-            */
-            const mkcert = require('mkcert');
-            (async () => {
+            return (async () => {
+                /*
+                !  DO NOT USE THIS IN PRODUCTION ENVIRONMENT
+                * ONLY FOR DEVELOPMENT PURPOSES
+                */
+                const mkcert = require('mkcert');
                 // create a certificate authority
                 const ca = await mkcert.createCA({
-                  organization: 'Node',
-                  countryCode:  'DE',
-                  state:        'Bavaria',
-                  locality:     'Nuremberg',
-                  validityDays: 1
+                organization: 'Node',
+                countryCode:  'DE',
+                state:        'Bavaria',
+                locality:     'Nuremberg',
+                validityDays: 1
                 });
                 
                 // then create a tls certificate
                 const cert = await mkcert.createCert({
-                  domains: ['127.0.0.1', 'localhost'],
-                  validityDays: 1,
-                  caKey: ca.key,
-                  caCert: ca.cert
+                domains: ['127.0.0.1', 'localhost'],
+                validityDays: 1,
+                caKey: ca.key,
+                caCert: ca.cert
                 });
                 
                 // certificate info
@@ -1656,39 +1655,36 @@ class Server {
                         }
                     }
                 });
-                                
-                const server = https
-                               .createServer(httpsOptions, this.app).listen(port, () => {
-                                    if (config.configurations().execution_point === this.constants.NPM) {
-                                        console.log(
-                                            '\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m'
-                                        );
-                                    } else if (config.configurations().execution_point === this.constants.PM2) {
-                                        console.log(
-                                            '\u001b[' + 94 + 'm' + 'Running On Load Balancer PM2..!' + '\u001b[0m'
-                                        );
-                                        console.log(
-                                            '\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m'
-                                        );
-                                        (<any> process).send('ready');
-                                    } else {
-                                        console.log(
-                                            '\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m'
-                                        );
-                                    }
-                                    console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + ', Using TypeScript!' + '\u001b[0m');
-                                });
+                
+                const httpServer = https.createServer(httpsOptions, this.app);
+                // const _class = Websocket.getClassInstance();
+                // const io = Websocket.getIoInstance(httpServer);
+                // _class.initializeHandlers([
+                //     { path: '/chat', handler: new ChatSockets() }
+                // ]);
 
-                    const io = new WebSockets.Server(server)
-                    
-                    io.on('connection', (socket) => {
-                        socket.on('chat message', (msg) => {
-                          console.log('message: ' + msg);
-                        });
-                    });
-                    // io.emit('some event', { someProperty: 'some value', otherProperty: 'other value' }); // This will emit the event to all connected sockets
-                    return server;
-                })();
+                const server = httpServer.listen(port, () => {
+                    if (config.configurations().execution_point === this.constants.NPM) {
+                        console.log(
+                            '\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m'
+                        );
+                    } else if (config.configurations().execution_point === this.constants.PM2) {
+                        console.log(
+                            '\u001b[' + 94 + 'm' + 'Running On Load Balancer PM2..!' + '\u001b[0m'
+                        );
+                        console.log(
+                            '\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m'
+                        );
+                        (<any> process).send('ready');
+                    } else {
+                        console.log(
+                            '\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m'
+                        );
+                    }
+                    console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + ', Using TypeScript!' + '\u001b[0m');
+                });
+                return server;
+            })();            
         }
     }
 
@@ -1697,8 +1693,8 @@ class Server {
     }
 
     static init() {
-        Server.getServerInstance().run();
+        return Server.getServerInstance().run();
     }
 }
 
-Server.init();
+Server.init()
