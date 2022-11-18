@@ -2,12 +2,11 @@ import { Request } from 'express';
 import { Server, Socket } from 'socket.io';
 
 class Websockets {
-
     private static io: any;
     private static class: Websockets;
     private static CORS: {origin: string; methods: Array<string>} = {
         origin: "*",
-        methods: ["GET", "POST", "PATCH"]
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
     };
     private constructor() {
     }
