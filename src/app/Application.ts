@@ -270,13 +270,11 @@ export = class Application extends BaseController {
         */
         this.app.set('case sensitive routing', false);
         this.app.set('strict routing', false);
-        // @ts-ignore
         this.sub_controller.deployRoutes(this.app);        
         
         /*
         * Deploying api's endpoints
         */
-        // @ts-ignore
         Singleton.getApis().deployApi(this.app);
         
         /*

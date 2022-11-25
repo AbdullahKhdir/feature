@@ -1,7 +1,6 @@
 "use strict";
 
-import Constants from '../../app/utils/Constants';
-import { Express } from '../framework/Express';
+import {Express} from 'express';
 import Routes from "../routes/Route";
 import { Singleton } from "../Singleton/Singleton";
 

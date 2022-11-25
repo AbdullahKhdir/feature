@@ -1,7 +1,7 @@
 "use strict";
 
 import { NextFunction, Request, Response } from "express";
-import { Express } from "../framework/Express";
+import {Express} from 'express';
 import Routes from "../routes/Route";
 import { Singleton } from "../Singleton/Singleton";
 import { siteNotFound, undefinedHttpRequest } from "../utils/undefined-routes-logic";
