@@ -132,13 +132,15 @@ export = class Routes extends ExpressResponse{
      * @return boolean
     */
     isApiEndpoint(req: Request) : boolean {
-        ENDPOINTS.forEach((endpoint: any) => {
-            if (ENDPOINTS.includes(req.headers.referer || '')
-            || ENDPOINTS.includes(req.originalUrl || '')
-            || ENDPOINTS.includes(req.url || '')) {
-                return true;
-            }
-        });
+        if (ENDPOINTS.length > 0) {
+            ENDPOINTS.forEach((endpoint: any) => {
+                if (ENDPOINTS.includes(req.headers.referer || '')
+                || ENDPOINTS.includes(req.originalUrl || '')
+                || ENDPOINTS.includes(req.url || '')) {
+                    return true;
+                }
+            });
+        }
         return false;
     }
 }

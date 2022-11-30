@@ -755,7 +755,7 @@ module.exports = /** @class */ (function (_super) {
                                 .catch(function (err) { return Promise.reject(new SQLException_1.default(err)); })];
                     case 6: return [2 /*return*/, _a.sent()];
                     case 7:
-                        if (!(this.__.isString(sql_query) && !this.__.isEmpty(table) && this.__.isNaN(sql_query))) return [3 /*break*/, 9];
+                        if (!(this.__.isString(sql_query) && !this.__.isEmpty(table) && !this.__.isNumber(sql_query))) return [3 /*break*/, 9];
                         // @ts-ignore
                         sql_query = this._mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
                         sql_2 = "SELECT * FROM ".concat(table, " WHERE ").concat(sql_query, " ORDER BY ID ASC");
@@ -1098,8 +1098,7 @@ module.exports = /** @class */ (function (_super) {
                     case 15: return [3 /*break*/, 18];
                     case 16: return [4 /*yield*/, Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")))];
                     case 17: return [2 /*return*/, _a.sent()];
-                    case 18: return [4 /*yield*/, Promise.reject(new SQLException_1.default('Query could not be executed!'))];
-                    case 19: return [2 /*return*/, _a.sent()];
+                    case 18: return [2 /*return*/];
                 }
             });
         });

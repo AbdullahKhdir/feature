@@ -133,13 +133,16 @@ var Server = /** @class */ (function () {
                                 var _status = err.statusCode || _this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                                 var message = err.message;
                                 var is_api_endpoint = false;
-                                endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                    if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                        || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                        || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                        is_api_endpoint = true;
-                                    }
-                                });
+                                // throw err;
+                                if (endpoints_1.ENDPOINTS.length > 0) {
+                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                            is_api_endpoint = true;
+                                        }
+                                    });
+                                }
                                 if (is_api_endpoint) {
                                     return res.status(_status).json({ message: message });
                                 }
@@ -157,13 +160,15 @@ var Server = /** @class */ (function () {
                                                 //*************CLIENT ERRORS*************\\
                                                 //***************************************\\
                                                 case CLIENT_1.BAD_REQUEST:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.BAD_REQUEST, message: 'Bad Request' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.BAD_REQUEST, message: 'Bad Request' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -180,13 +185,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.UNAUTHORIZED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.UNAUTHORIZED, message: 'Not authorized!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.UNAUTHORIZED, message: 'Not authorized!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -203,13 +210,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.PAYMENT_REQUIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.PAYMENT_REQUIRED, message: 'Payment Error, please try again!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.PAYMENT_REQUIRED, message: 'Payment Error, please try again!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -226,13 +235,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.FORBIDDEN:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.FORBIDDEN, message: 'Access forbidden!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.FORBIDDEN, message: 'Access forbidden!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -249,13 +260,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.METHOD_NOT_ALLOWED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.METHOD_NOT_ALLOWED, message: 'Method Not Allowed!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.METHOD_NOT_ALLOWED, message: 'Method Not Allowed!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -272,13 +285,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.SITE_NOT_FOUND:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.SITE_NOT_FOUND, message: 'Site Not Found!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.SITE_NOT_FOUND, message: 'Site Not Found!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -295,13 +310,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.NOT_ACCEPTABLE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.NOT_ACCEPTABLE, message: 'Not acceptable!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.NOT_ACCEPTABLE, message: 'Not acceptable!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -318,13 +335,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.PROXY_AUTHENTICATION_REQUIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.PROXY_AUTHENTICATION_REQUIRED, message: 'Proxy authentication required!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.PROXY_AUTHENTICATION_REQUIRED, message: 'Proxy authentication required!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -341,13 +360,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.REQUEST_TIMEOUT:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.REQUEST_TIMEOUT, message: 'Request timeout!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.REQUEST_TIMEOUT, message: 'Request timeout!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -364,13 +385,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.CONFLICT:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.CONFLICT, message: 'Conflict!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.CONFLICT, message: 'Conflict!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -387,13 +410,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.GONE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.GONE, message: 'Gone!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.GONE, message: 'Gone!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -410,13 +435,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.LENGTH_REQUIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.LENGTH_REQUIRED, message: 'Length required!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.LENGTH_REQUIRED, message: 'Length required!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -433,13 +460,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.PRECONDITION_FAILED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.PRECONDITION_FAILED, message: 'Precondition failed!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.PRECONDITION_FAILED, message: 'Precondition failed!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -456,13 +485,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.PAYLOAD_TOO_LARGE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.PAYLOAD_TOO_LARGE, message: 'Payload too large!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.PAYLOAD_TOO_LARGE, message: 'Payload too large!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -479,13 +510,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.URI_TOO_LONG:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.URI_TOO_LONG, message: 'URI too long!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.URI_TOO_LONG, message: 'URI too long!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -502,13 +535,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.UNSUPPORTED_MEDIA_TYPE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.UNSUPPORTED_MEDIA_TYPE, message: 'Unsupported media type!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.UNSUPPORTED_MEDIA_TYPE, message: 'Unsupported media type!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -525,13 +560,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.RANGE_NOT_SATISFIABLE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.RANGE_NOT_SATISFIABLE, message: 'Range not satisfiable!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.RANGE_NOT_SATISFIABLE, message: 'Range not satisfiable!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -548,13 +585,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.EXPECTATION_FAILED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.EXPECTATION_FAILED, message: 'Expectation failed!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.EXPECTATION_FAILED, message: 'Expectation failed!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -571,13 +610,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.IM_A_TEAPOT:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.IM_A_TEAPOT, message: "I'm a TEAPOT!" });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.IM_A_TEAPOT, message: "I'm a TEAPOT!" });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -594,13 +635,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.MISDIRECTED_REQUEST:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.MISDIRECTED_REQUEST, message: 'Misdirected request!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.MISDIRECTED_REQUEST, message: 'Misdirected request!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -617,13 +660,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.UNPROCESSABLE_ENTITY:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.UNPROCESSABLE_ENTITY, message: 'Wrong input!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.UNPROCESSABLE_ENTITY, message: 'Wrong input!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -640,13 +685,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.LOCKED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.LOCKED, message: 'Request is locked!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.LOCKED, message: 'Request is locked!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -663,13 +710,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.FAILED_DEPENDENCY:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.FAILED_DEPENDENCY, message: 'Failed dependency!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.FAILED_DEPENDENCY, message: 'Failed dependency!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -686,13 +735,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.TOO_EARLY:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.TOO_EARLY, message: 'Too early!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.TOO_EARLY, message: 'Too early!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -709,13 +760,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.UPGRADE_REQUIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.UPGRADE_REQUIRED, message: 'Upgrade required!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.UPGRADE_REQUIRED, message: 'Upgrade required!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -732,13 +785,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.PRECONDITION_REQUIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.PRECONDITION_REQUIRED, message: 'Precondition required!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.PRECONDITION_REQUIRED, message: 'Precondition required!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -755,13 +810,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.TOO_MANY_REQUESTS:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.TOO_MANY_REQUESTS, message: 'Too many requests!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.TOO_MANY_REQUESTS, message: 'Too many requests!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -778,13 +835,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.REQUEST_HEADER_FIELDS_TOO_LARGE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.REQUEST_HEADER_FIELDS_TOO_LARGE, message: 'Request header fields too large!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.REQUEST_HEADER_FIELDS_TOO_LARGE, message: 'Request header fields too large!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -801,13 +860,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case CLIENT_1.UNAVAILABLE_FOR_LEGAL_REASONS:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: CLIENT_1.UNAVAILABLE_FOR_LEGAL_REASONS, message: 'Unavailable for legal reasons!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: CLIENT_1.UNAVAILABLE_FOR_LEGAL_REASONS, message: 'Unavailable for legal reasons!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -827,13 +888,15 @@ var Server = /** @class */ (function () {
                                                 //*************SERVER ERRORS*************\\
                                                 //***************************************\\
                                                 case SERVER_1.INTERNAL_SERVER_ERROR:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.INTERNAL_SERVER_ERROR, message: 'Internal Server Error!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.INTERNAL_SERVER_ERROR, message: 'Internal Server Error!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -850,13 +913,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.NOT_IMPLEMENTED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.NOT_IMPLEMENTED, message: 'Not implemented Error!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.NOT_IMPLEMENTED, message: 'Not implemented Error!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -873,13 +938,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.BAD_GATEWAY:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.BAD_GATEWAY, message: 'Bad Gateway Error!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.BAD_GATEWAY, message: 'Bad Gateway Error!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -896,13 +963,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.SERVICE_UNAVAILABLE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.SERVICE_UNAVAILABLE, message: 'Service is not available!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.SERVICE_UNAVAILABLE, message: 'Service is not available!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -919,13 +988,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.GATEWAY_TIMEOUT:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.GATEWAY_TIMEOUT, message: 'Gateway timeout!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.GATEWAY_TIMEOUT, message: 'Gateway timeout!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -942,13 +1013,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.HTTP_VERSION_NOT_SUPPORTED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.HTTP_VERSION_NOT_SUPPORTED, message: 'Http version not supported!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.HTTP_VERSION_NOT_SUPPORTED, message: 'Http version not supported!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -965,13 +1038,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.VARIANT_ALSO_NEGOTIATES:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.VARIANT_ALSO_NEGOTIATES, message: 'Variant also negotiates!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.VARIANT_ALSO_NEGOTIATES, message: 'Variant also negotiates!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -988,13 +1063,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.INSUFFICIENT_STORAGE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.INSUFFICIENT_STORAGE, message: 'Insufficient storage!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.INSUFFICIENT_STORAGE, message: 'Insufficient storage!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1011,13 +1088,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.LOOP_DETECTED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.LOOP_DETECTED, message: 'Loop detected!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.LOOP_DETECTED, message: 'Loop detected!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1034,13 +1113,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.NOT_EXTENDED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.NOT_EXTENDED, message: 'Not extended!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.NOT_EXTENDED, message: 'Not extended!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1057,13 +1138,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case SERVER_1.NETWORK_AUTHENTICATION_REQUIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: SERVER_1.NETWORK_AUTHENTICATION_REQUIRED, message: 'Network authentication required!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: SERVER_1.NETWORK_AUTHENTICATION_REQUIRED, message: 'Network authentication required!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1083,13 +1166,15 @@ var Server = /** @class */ (function () {
                                                 //*************COMMON ERRORS*************\\
                                                 //***************************************\\
                                                 case UNOFFICIAL_CODES_1.PAGE_EXPIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.PAGE_EXPIRED, message: 'Page expired!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.PAGE_EXPIRED, message: 'Page expired!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1106,13 +1191,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.METHOD_FAILURE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.METHOD_FAILURE, message: 'Method failure!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.METHOD_FAILURE, message: 'Method failure!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1129,13 +1216,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.ENHANCE_YOUR_CALM:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.ENHANCE_YOUR_CALM, message: 'Enhance your calm!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.ENHANCE_YOUR_CALM, message: 'Enhance your calm!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1152,13 +1241,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.REQUEST_HEADER_FIELDS_TOO_LARGE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.REQUEST_HEADER_FIELDS_TOO_LARGE, message: 'Request header fields too large!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.REQUEST_HEADER_FIELDS_TOO_LARGE, message: 'Request header fields too large!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1175,13 +1266,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.BLOCKED_BY_WINDOWS_PARENTAL_CONTROLS:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.BLOCKED_BY_WINDOWS_PARENTAL_CONTROLS, message: 'Blocked by windows parental controls!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.BLOCKED_BY_WINDOWS_PARENTAL_CONTROLS, message: 'Blocked by windows parental controls!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1198,13 +1291,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.INVALID_TOKEN:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.INVALID_TOKEN, message: 'Invalid token!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.INVALID_TOKEN, message: 'Invalid token!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1221,13 +1316,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.TOKEN_REQUIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.TOKEN_REQUIRED, message: 'Token required!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.TOKEN_REQUIRED, message: 'Token required!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1244,13 +1341,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.BANDWIDTH_LIMIT_EXCEEDED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.BANDWIDTH_LIMIT_EXCEEDED, message: 'Bandwidth limit exceeded!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.BANDWIDTH_LIMIT_EXCEEDED, message: 'Bandwidth limit exceeded!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1267,13 +1366,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.SITE_IS_OVERLOADED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.SITE_IS_OVERLOADED, message: 'Site is overloaded!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.SITE_IS_OVERLOADED, message: 'Site is overloaded!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1290,13 +1391,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.SITE_IS_FROZEN:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.SITE_IS_FROZEN, message: 'Site is frozen!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.SITE_IS_FROZEN, message: 'Site is frozen!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1313,13 +1416,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.NETWORK_READ_TIMEOUT_ERROR:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.NETWORK_READ_TIMEOUT_ERROR, message: 'Network read timeout error!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.NETWORK_READ_TIMEOUT_ERROR, message: 'Network read timeout error!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1336,13 +1441,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case UNOFFICIAL_CODES_1.NETWORK_CONNECT_TIMEOUT_ERROR:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.NETWORK_CONNECT_TIMEOUT_ERROR, message: 'Network connect timeout error!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: UNOFFICIAL_CODES_1.NETWORK_CONNECT_TIMEOUT_ERROR, message: 'Network connect timeout error!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1362,13 +1469,15 @@ var Server = /** @class */ (function () {
                                                 //*************INTERNET INFORMATION SERVICES ERRORS*************\\
                                                 //**************************************************************\\
                                                 case INTERNET_INFORMATION_SERVICES_1.LOGIN_TIME_OUT:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.LOGIN_TIME_OUT, message: 'Login time out!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.LOGIN_TIME_OUT, message: 'Login time out!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1385,13 +1494,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case INTERNET_INFORMATION_SERVICES_1.NGINX.NO_RESPONSE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.NO_RESPONSE, message: 'No response from nginx!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.NO_RESPONSE, message: 'No response from nginx!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1408,13 +1519,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case INTERNET_INFORMATION_SERVICES_1.NGINX.REQUEST_HEADER_TOO_LARGE:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.REQUEST_HEADER_TOO_LARGE, message: 'Request header too large!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.REQUEST_HEADER_TOO_LARGE, message: 'Request header too large!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1431,13 +1544,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case INTERNET_INFORMATION_SERVICES_1.NGINX.SSL_CERTIFICATE_ERROR:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.SSL_CERTIFICATE_ERROR, message: 'Ssl certificate error!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.SSL_CERTIFICATE_ERROR, message: 'Ssl certificate error!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1454,13 +1569,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case INTERNET_INFORMATION_SERVICES_1.NGINX.SSL_CERTIFICATE_REQUIRED:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.SSL_CERTIFICATE_REQUIRED, message: 'Ssl certificate required!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.SSL_CERTIFICATE_REQUIRED, message: 'Ssl certificate required!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1477,13 +1594,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case INTERNET_INFORMATION_SERVICES_1.NGINX.HTTP_REQUEST_SENT_TO_HTTPS_PORT:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.HTTP_REQUEST_SENT_TO_HTTPS_PORT, message: 'Http request sent to https port!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.HTTP_REQUEST_SENT_TO_HTTPS_PORT, message: 'Http request sent to https port!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',
@@ -1500,13 +1619,15 @@ var Server = /** @class */ (function () {
                                                     });
                                                     break;
                                                 case INTERNET_INFORMATION_SERVICES_1.NGINX.CLIENT_CLOSED_REQUEST:
-                                                    endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                            return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.CLIENT_CLOSED_REQUEST, message: 'Client closed request!' });
-                                                        }
-                                                    });
+                                                    if (endpoints_1.ENDPOINTS.length > 0) {
+                                                        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                                                            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                                                                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                                                return res.status(_status).json({ statusCode: INTERNET_INFORMATION_SERVICES_1.NGINX.CLIENT_CLOSED_REQUEST, message: 'Client closed request!' });
+                                                            }
+                                                        });
+                                                    }
                                                     return res.status(_status)
                                                         .render('undefined_routes', {
                                                         nav_title: '',

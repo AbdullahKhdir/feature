@@ -149,10 +149,12 @@ module.exports = /** @class */ (function (_super) {
         });
         //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
         _this.app.use(function (req, res, next) {
-            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                return next();
+            if (endpoints_1.ENDPOINTS.length > 0) {
+                if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                    || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                    || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                    return next();
+                }
             }
             CSRF(req, res, next);
         });
@@ -236,12 +238,10 @@ module.exports = /** @class */ (function (_super) {
         */
         _this.app.set('case sensitive routing', false);
         _this.app.set('strict routing', false);
-        // @ts-ignore
         _this.sub_controller.deployRoutes(_this.app);
         /*
         * Deploying api's endpoints
         */
-        // @ts-ignore
         Singleton_1.Singleton.getApis().deployApi(_this.app);
         /*
         * Passing default and helpful properties to all templates

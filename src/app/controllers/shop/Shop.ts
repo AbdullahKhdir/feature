@@ -222,6 +222,7 @@ export = class Shop extends BaseController {
         res.removeHeader("Cross-Origin-Resource-Policy")
         res.removeHeader("Cross-Origin-Embedder-Policy")
         const user_cart = req.getCurrentUser().getCart() || [];
+        
         if (!user_cart) {
             return this.onError(res, next, new Error('User is not available'))
         }
@@ -242,6 +243,7 @@ export = class Shop extends BaseController {
                                         where_clause = 'id = '+ cart_products[index].product_id;
                                     }
                                 });
+
                                 this.product.filter(where_clause)
                                 .then((rows: any) => {
                                     cart_products.forEach((cart_product: any, index: any) => {

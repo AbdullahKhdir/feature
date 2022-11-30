@@ -716,8 +716,8 @@ export = class BaseModel extends QueryBuilder {
                     })
                     .catch(err => Promise.reject(new SQLException(err)))
                 }
-        
-                if (this.__.isString(sql_query) && !this.__.isEmpty(table) && this.__.isNaN(sql_query)) {
+                
+                if (this.__.isString(sql_query) && !this.__.isEmpty(table) && !this.__.isNumber(sql_query)) {
                     // @ts-ignore
                     sql_query = this._mysql.escape(sql_query).replaceAll("'", '').replaceAll('"', '').replaceAll("\\", '"');
                     let sql = `SELECT * FROM ${table} WHERE ${sql_query} ORDER BY ID ASC`;
@@ -725,7 +725,6 @@ export = class BaseModel extends QueryBuilder {
                         var _limit = ` LIMIT ${limit.toString()}`;
                         sql += _limit;
                     }
-                    
                     return await this.db.executeModelQuery(sql)
                     .then(([rows, fields]) => {
                         if (!this.__.isEmpty(rows)) {
@@ -945,7 +944,7 @@ export = class BaseModel extends QueryBuilder {
                 return await Promise.reject(new SQLException(`The Table ${table} does not exist in the database!`));
             }
         }
-        return await Promise.reject(new SQLException('Query could not be executed!'));
+        // return await Promise.reject(new SQLException('Query could not be executed!'));
     }
 
     /**

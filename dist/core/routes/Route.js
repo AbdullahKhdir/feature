@@ -123,13 +123,15 @@ module.exports = /** @class */ (function (_super) {
      * @return boolean
     */
     Routes.prototype.isApiEndpoint = function (req) {
-        endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-            if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                return true;
-            }
-        });
+        if (endpoints_1.ENDPOINTS.length > 0) {
+            endpoints_1.ENDPOINTS.forEach(function (endpoint) {
+                if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
+                    || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
+                    || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                    return true;
+                }
+            });
+        }
         return false;
     };
     return Routes;

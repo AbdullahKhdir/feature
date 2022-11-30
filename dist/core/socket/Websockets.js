@@ -83,7 +83,7 @@ var Websockets = /** @class */ (function () {
     };
     Websockets.CORS = {
         origin: "*",
-        methods: ["GET", "POST", "PATCH"]
+        methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
     };
     return Websockets;
 }());

@@ -86,14 +86,17 @@ export class Server {
                     const _status       = err.statusCode || this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                     const message       = err.message;
                     var is_api_endpoint = false;
+                    // throw err;
                     
-                    ENDPOINTS.forEach((endpoint: any) => {
-                        if (ENDPOINTS.includes(req.headers.referer || '')
-                        || ENDPOINTS.includes(req.originalUrl || '')
-                        || ENDPOINTS.includes(req.url || '')) {
-                            is_api_endpoint = true;
-                        }
-                    });
+                    if (ENDPOINTS.length > 0) {
+                        ENDPOINTS.forEach((endpoint: any) => {
+                            if (ENDPOINTS.includes(req.headers.referer || '')
+                            || ENDPOINTS.includes(req.originalUrl || '')
+                            || ENDPOINTS.includes(req.url || '')) {
+                                is_api_endpoint = true;
+                            }
+                        });                        
+                    }
                     
                     if (is_api_endpoint) {
                         return res.status(_status).json({message: message});
@@ -112,13 +115,15 @@ export class Server {
                                     //*************CLIENT ERRORS*************\\
                                     //***************************************\\
                                     case CLIENT.BAD_REQUEST:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.BAD_REQUEST, message: 'Bad Request'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.BAD_REQUEST, message: 'Bad Request'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -137,13 +142,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.UNAUTHORIZED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.UNAUTHORIZED, message: 'Not authorized!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.UNAUTHORIZED, message: 'Not authorized!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -162,13 +169,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.PAYMENT_REQUIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.PAYMENT_REQUIRED, message: 'Payment Error, please try again!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.PAYMENT_REQUIRED, message: 'Payment Error, please try again!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -187,13 +196,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.FORBIDDEN:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.FORBIDDEN, message: 'Access forbidden!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.FORBIDDEN, message: 'Access forbidden!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -211,13 +222,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.METHOD_NOT_ALLOWED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.METHOD_NOT_ALLOWED, message: 'Method Not Allowed!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.METHOD_NOT_ALLOWED, message: 'Method Not Allowed!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -235,13 +248,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.SITE_NOT_FOUND:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.SITE_NOT_FOUND, message: 'Site Not Found!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.SITE_NOT_FOUND, message: 'Site Not Found!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -261,13 +276,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.NOT_ACCEPTABLE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.NOT_ACCEPTABLE, message: 'Not acceptable!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.NOT_ACCEPTABLE, message: 'Not acceptable!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -287,13 +304,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.PROXY_AUTHENTICATION_REQUIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.PROXY_AUTHENTICATION_REQUIRED, message: 'Proxy authentication required!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.PROXY_AUTHENTICATION_REQUIRED, message: 'Proxy authentication required!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -312,13 +331,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.REQUEST_TIMEOUT:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.REQUEST_TIMEOUT, message: 'Request timeout!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.REQUEST_TIMEOUT, message: 'Request timeout!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -337,13 +358,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.CONFLICT:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.CONFLICT, message: 'Conflict!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.CONFLICT, message: 'Conflict!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -362,13 +385,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.GONE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.GONE, message: 'Gone!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.GONE, message: 'Gone!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -387,13 +412,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.LENGTH_REQUIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.LENGTH_REQUIRED, message: 'Length required!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.LENGTH_REQUIRED, message: 'Length required!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -412,13 +439,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.PRECONDITION_FAILED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.PRECONDITION_FAILED, message: 'Precondition failed!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.PRECONDITION_FAILED, message: 'Precondition failed!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -437,13 +466,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.PAYLOAD_TOO_LARGE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.PAYLOAD_TOO_LARGE, message: 'Payload too large!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.PAYLOAD_TOO_LARGE, message: 'Payload too large!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -462,13 +493,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.URI_TOO_LONG:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.URI_TOO_LONG, message: 'URI too long!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.URI_TOO_LONG, message: 'URI too long!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -487,13 +520,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.UNSUPPORTED_MEDIA_TYPE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.UNSUPPORTED_MEDIA_TYPE, message: 'Unsupported media type!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.UNSUPPORTED_MEDIA_TYPE, message: 'Unsupported media type!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -512,13 +547,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.RANGE_NOT_SATISFIABLE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.RANGE_NOT_SATISFIABLE, message: 'Range not satisfiable!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.RANGE_NOT_SATISFIABLE, message: 'Range not satisfiable!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -537,13 +574,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.EXPECTATION_FAILED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.EXPECTATION_FAILED, message: 'Expectation failed!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.EXPECTATION_FAILED, message: 'Expectation failed!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -562,13 +601,15 @@ export class Server {
                                         });
                                         break;
                                     case CLIENT.IM_A_TEAPOT:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.IM_A_TEAPOT, message: "I'm a TEAPOT!"});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.IM_A_TEAPOT, message: "I'm a TEAPOT!"});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -587,13 +628,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.MISDIRECTED_REQUEST:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.MISDIRECTED_REQUEST, message: 'Misdirected request!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.MISDIRECTED_REQUEST, message: 'Misdirected request!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -612,13 +655,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.UNPROCESSABLE_ENTITY:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.UNPROCESSABLE_ENTITY, message: 'Wrong input!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.UNPROCESSABLE_ENTITY, message: 'Wrong input!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -637,13 +682,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.LOCKED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.LOCKED, message: 'Request is locked!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.LOCKED, message: 'Request is locked!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -662,13 +709,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.FAILED_DEPENDENCY:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.FAILED_DEPENDENCY, message: 'Failed dependency!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.FAILED_DEPENDENCY, message: 'Failed dependency!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -687,13 +736,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.TOO_EARLY:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.TOO_EARLY, message: 'Too early!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.TOO_EARLY, message: 'Too early!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -712,13 +763,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.UPGRADE_REQUIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.UPGRADE_REQUIRED, message: 'Upgrade required!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.UPGRADE_REQUIRED, message: 'Upgrade required!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -737,13 +790,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.PRECONDITION_REQUIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.PRECONDITION_REQUIRED, message: 'Precondition required!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.PRECONDITION_REQUIRED, message: 'Precondition required!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -762,13 +817,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.TOO_MANY_REQUESTS:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.TOO_MANY_REQUESTS, message: 'Too many requests!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.TOO_MANY_REQUESTS, message: 'Too many requests!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -787,13 +844,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.REQUEST_HEADER_FIELDS_TOO_LARGE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.REQUEST_HEADER_FIELDS_TOO_LARGE, message: 'Request header fields too large!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.REQUEST_HEADER_FIELDS_TOO_LARGE, message: 'Request header fields too large!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -812,13 +871,15 @@ export class Server {
                                         });
                                     break;
                                     case CLIENT.UNAVAILABLE_FOR_LEGAL_REASONS:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: CLIENT.UNAVAILABLE_FOR_LEGAL_REASONS, message: 'Unavailable for legal reasons!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: CLIENT.UNAVAILABLE_FOR_LEGAL_REASONS, message: 'Unavailable for legal reasons!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -841,13 +902,15 @@ export class Server {
                                     //*************SERVER ERRORS*************\\
                                     //***************************************\\
                                     case SERVER.INTERNAL_SERVER_ERROR:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.INTERNAL_SERVER_ERROR, message: 'Internal Server Error!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.INTERNAL_SERVER_ERROR, message: 'Internal Server Error!'});
+                                                }
+                                            });
+                                        }
 
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -865,13 +928,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.NOT_IMPLEMENTED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.NOT_IMPLEMENTED, message: 'Not implemented Error!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.NOT_IMPLEMENTED, message: 'Not implemented Error!'});
+                                                }
+                                            });
+                                        }
 
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -889,13 +954,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.BAD_GATEWAY:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.BAD_GATEWAY, message: 'Bad Gateway Error!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.BAD_GATEWAY, message: 'Bad Gateway Error!'});
+                                                }
+                                            });
+                                        }
 
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -913,13 +980,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.SERVICE_UNAVAILABLE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.SERVICE_UNAVAILABLE, message: 'Service is not available!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.SERVICE_UNAVAILABLE, message: 'Service is not available!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -937,13 +1006,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.GATEWAY_TIMEOUT:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.GATEWAY_TIMEOUT, message: 'Gateway timeout!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.GATEWAY_TIMEOUT, message: 'Gateway timeout!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -961,13 +1032,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.HTTP_VERSION_NOT_SUPPORTED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.HTTP_VERSION_NOT_SUPPORTED, message: 'Http version not supported!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.HTTP_VERSION_NOT_SUPPORTED, message: 'Http version not supported!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -985,13 +1058,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.VARIANT_ALSO_NEGOTIATES:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.VARIANT_ALSO_NEGOTIATES, message: 'Variant also negotiates!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.VARIANT_ALSO_NEGOTIATES, message: 'Variant also negotiates!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1009,13 +1084,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.INSUFFICIENT_STORAGE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.INSUFFICIENT_STORAGE, message: 'Insufficient storage!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.INSUFFICIENT_STORAGE, message: 'Insufficient storage!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1033,13 +1110,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.LOOP_DETECTED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.LOOP_DETECTED, message: 'Loop detected!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.LOOP_DETECTED, message: 'Loop detected!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1057,13 +1136,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.NOT_EXTENDED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.NOT_EXTENDED, message: 'Not extended!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.NOT_EXTENDED, message: 'Not extended!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1081,13 +1162,15 @@ export class Server {
                                         });
                                     break;
                                     case SERVER.NETWORK_AUTHENTICATION_REQUIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: SERVER.NETWORK_AUTHENTICATION_REQUIRED, message: 'Network authentication required!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: SERVER.NETWORK_AUTHENTICATION_REQUIRED, message: 'Network authentication required!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1108,13 +1191,15 @@ export class Server {
                                     //*************COMMON ERRORS*************\\
                                     //***************************************\\
                                     case UNOFFICIAL_CODES.PAGE_EXPIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.PAGE_EXPIRED, message: 'Page expired!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.PAGE_EXPIRED, message: 'Page expired!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1132,13 +1217,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.METHOD_FAILURE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.METHOD_FAILURE, message: 'Method failure!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.METHOD_FAILURE, message: 'Method failure!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1156,13 +1243,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.ENHANCE_YOUR_CALM:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.ENHANCE_YOUR_CALM, message: 'Enhance your calm!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.ENHANCE_YOUR_CALM, message: 'Enhance your calm!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1180,13 +1269,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.REQUEST_HEADER_FIELDS_TOO_LARGE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.REQUEST_HEADER_FIELDS_TOO_LARGE, message: 'Request header fields too large!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.REQUEST_HEADER_FIELDS_TOO_LARGE, message: 'Request header fields too large!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1204,13 +1295,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.BLOCKED_BY_WINDOWS_PARENTAL_CONTROLS:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.BLOCKED_BY_WINDOWS_PARENTAL_CONTROLS, message: 'Blocked by windows parental controls!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.BLOCKED_BY_WINDOWS_PARENTAL_CONTROLS, message: 'Blocked by windows parental controls!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1228,13 +1321,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.INVALID_TOKEN:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.INVALID_TOKEN, message: 'Invalid token!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.INVALID_TOKEN, message: 'Invalid token!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1252,13 +1347,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.TOKEN_REQUIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.TOKEN_REQUIRED, message: 'Token required!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.TOKEN_REQUIRED, message: 'Token required!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1276,13 +1373,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.BANDWIDTH_LIMIT_EXCEEDED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.BANDWIDTH_LIMIT_EXCEEDED, message: 'Bandwidth limit exceeded!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.BANDWIDTH_LIMIT_EXCEEDED, message: 'Bandwidth limit exceeded!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1300,13 +1399,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.SITE_IS_OVERLOADED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.SITE_IS_OVERLOADED, message: 'Site is overloaded!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.SITE_IS_OVERLOADED, message: 'Site is overloaded!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1324,13 +1425,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.SITE_IS_FROZEN:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.SITE_IS_FROZEN, message: 'Site is frozen!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.SITE_IS_FROZEN, message: 'Site is frozen!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1348,13 +1451,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.NETWORK_READ_TIMEOUT_ERROR:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.NETWORK_READ_TIMEOUT_ERROR, message: 'Network read timeout error!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.NETWORK_READ_TIMEOUT_ERROR, message: 'Network read timeout error!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1372,13 +1477,15 @@ export class Server {
                                         });
                                     break;
                                     case UNOFFICIAL_CODES.NETWORK_CONNECT_TIMEOUT_ERROR:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: UNOFFICIAL_CODES.NETWORK_CONNECT_TIMEOUT_ERROR, message: 'Network connect timeout error!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: UNOFFICIAL_CODES.NETWORK_CONNECT_TIMEOUT_ERROR, message: 'Network connect timeout error!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1399,13 +1506,15 @@ export class Server {
                                     //*************INTERNET INFORMATION SERVICES ERRORS*************\\
                                     //**************************************************************\\
                                     case INTERNET_INFORMATION_SERVICES.LOGIN_TIME_OUT:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.LOGIN_TIME_OUT, message: 'Login time out!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.LOGIN_TIME_OUT, message: 'Login time out!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1423,13 +1532,15 @@ export class Server {
                                         });
                                     break;
                                     case INTERNET_INFORMATION_SERVICES.NGINX.NO_RESPONSE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.NO_RESPONSE, message: 'No response from nginx!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.NO_RESPONSE, message: 'No response from nginx!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1447,13 +1558,15 @@ export class Server {
                                         });
                                     break;
                                     case INTERNET_INFORMATION_SERVICES.NGINX.REQUEST_HEADER_TOO_LARGE:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.REQUEST_HEADER_TOO_LARGE, message: 'Request header too large!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.REQUEST_HEADER_TOO_LARGE, message: 'Request header too large!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1471,13 +1584,15 @@ export class Server {
                                         });
                                     break;
                                     case INTERNET_INFORMATION_SERVICES.NGINX.SSL_CERTIFICATE_ERROR:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.SSL_CERTIFICATE_ERROR, message: 'Ssl certificate error!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.SSL_CERTIFICATE_ERROR, message: 'Ssl certificate error!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1495,13 +1610,15 @@ export class Server {
                                         });
                                     break;
                                     case INTERNET_INFORMATION_SERVICES.NGINX.SSL_CERTIFICATE_REQUIRED:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.SSL_CERTIFICATE_REQUIRED, message: 'Ssl certificate required!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.SSL_CERTIFICATE_REQUIRED, message: 'Ssl certificate required!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1519,13 +1636,15 @@ export class Server {
                                         });
                                     break;
                                     case INTERNET_INFORMATION_SERVICES.NGINX.HTTP_REQUEST_SENT_TO_HTTPS_PORT:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.HTTP_REQUEST_SENT_TO_HTTPS_PORT, message: 'Http request sent to https port!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.HTTP_REQUEST_SENT_TO_HTTPS_PORT, message: 'Http request sent to https port!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
@@ -1543,13 +1662,15 @@ export class Server {
                                         });
                                     break;
                                     case INTERNET_INFORMATION_SERVICES.NGINX.CLIENT_CLOSED_REQUEST:
-                                        ENDPOINTS.forEach((endpoint: any) => {
-                                            if (ENDPOINTS.includes(req.headers.referer || '')
-                                            || ENDPOINTS.includes(req.originalUrl || '')
-                                            || ENDPOINTS.includes(req.url || '')) {
-                                                return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.CLIENT_CLOSED_REQUEST, message: 'Client closed request!'});
-                                            }
-                                        });
+                                        if (ENDPOINTS.length > 0) {
+                                            ENDPOINTS.forEach((endpoint: any) => {
+                                                if (ENDPOINTS.includes(req.headers.referer || '')
+                                                || ENDPOINTS.includes(req.originalUrl || '')
+                                                || ENDPOINTS.includes(req.url || '')) {
+                                                    return res.status(_status).json({statusCode: INTERNET_INFORMATION_SERVICES.NGINX.CLIENT_CLOSED_REQUEST, message: 'Client closed request!'});
+                                                }
+                                            });
+                                        }
                                         
                                         return res.status(_status)
                                         .render('undefined_routes', {
