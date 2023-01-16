@@ -19,3 +19,11 @@ If you dont have an account on https://beta.openai.com, then create one in order
 ```SHELL
 npm install && nodemon index.js
 ```
+
+### And then go to your twitch's chat and type either !question or !gpt3 following by the question or whatever you want to say!
+
+
+```GPT
+!question Hello, who are you ?
+!gpt3 Hello, who are you ?
+```
