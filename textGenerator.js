@@ -17,4 +17,5 @@ export async function generate(prompt) {
 
   const response = await got.post(url, { json: params, headers: headers }).json();
   return `${prompt}${response.choices[0].text}`;
+  
 }
