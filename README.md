@@ -6,7 +6,7 @@
 
 <p align="left"> <img src="https://komarev.com/ghpvc/?username=abdullahkhdir&label=Profile%20views&color=081402&style=flat" alt="abdullahkhdir" /> </p>
 
-[![trophy](https://github-profile-trophy.vercel.app/?username=AbdullahKhdir&theme=monokai	)](https://github.com/AbdullahKhdir/github-profile-trophy)![](http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=AbdullahKhdir&theme=monokai	)![](http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=AbdullahKhdir&theme=monokai	)![](http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=AbdullahKhdir&theme=monokai	)![](http://github-profile-summary-cards.vercel.app/api/cards/stats?username=AbdullahKhdir&theme=monokai	)![](http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=AbdullahKhdir&theme=monokai&utcOffset=8)
+![](http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=AbdullahKhdir&theme=monokai	)![](http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=AbdullahKhdir&theme=monokai	)![](http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=AbdullahKhdir&theme=monokai	)![](http://github-profile-summary-cards.vercel.app/api/cards/stats?username=AbdullahKhdir&theme=monokai	)![](http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=AbdullahKhdir&theme=monokai&utcOffset=8)
 
 <p>&nbsp;<img align="center" src="https://github-readme-stats.vercel.app/api?username=abdullahkhdir&show_icons=true&locale=en&theme=monokai" alt="abdullahkhdir" /></p>
 
