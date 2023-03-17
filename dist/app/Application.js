@@ -58,22 +58,22 @@ module.exports = /** @class */ (function (_super) {
             next();
         });
         /*
-        * Sets the following policies
-          ? contentSecurityPolicy
-          ? crossOriginEmbedderPolicy
-          ? crossOriginOpenerPolicy
-          ? crossOriginResourcePolicy
-          ? dnsPrefetchControl
-          ? expectCt
-          ? frameguard
-          ? hidePoweredBy
-          ? hsts
-          ? ieNoOpen
-          ? noSniff
-          ? originAgentCluster
-          ? permittedCrossDomainPolicies
-          ? referrerPolicy
-          ? xssFilter
+            * Sets the following policies
+            ? contentSecurityPolicy
+            ? crossOriginEmbedderPolicy
+            ? crossOriginOpenerPolicy
+            ? crossOriginResourcePolicy
+            ? dnsPrefetchControl
+            ? expectCt
+            ? frameguard
+            ? hidePoweredBy
+            ? hsts
+            ? ieNoOpen
+            ? noSniff
+            ? originAgentCluster
+            ? permittedCrossDomainPolicies
+            ? referrerPolicy
+            ? xssFilter
         */
         _this.app.use(helmet_1.default.contentSecurityPolicy(_this.constants.CONTENT_SECURITY_POLICY));
         _this.app.use(helmet_1.default.crossOriginEmbedderPolicy());
@@ -188,13 +188,16 @@ module.exports = /** @class */ (function (_super) {
         */
         _this.app.use(function (req, res, next) {
             var token = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
-            // res.set({
-            //     'csrf-Token':   token,
-            //     'X-CSRF-TOKEN': token,
-            //     'xsrf-token':   token,
-            //     'x-csrf-token': token,
-            //     'x-xsrf-token': token
-            // });
+            /**
+             *
+             * res.set({
+             *   'csrf-Token':   token,
+             *      'X-CSRF-TOKEN': token,
+             *      'xsrf-token':   token,
+             *      'x-csrf-token': token,
+             *      'x-xsrf-token': token
+             *  });
+            */
             res.locals['csrf'] = token;
             _this.app.locals['csrf'] = token;
             res.locals['is_authenticated'] = res.req.session.is_authenticated;
@@ -233,6 +236,9 @@ module.exports = /** @class */ (function (_super) {
             }
             next();
         });
+        Singleton_1.Singleton
+            .getI18n()
+            .configure(_this.constants.I18N.CONFIGURATION_OPTIONS);
         /*
         * Routes
         */

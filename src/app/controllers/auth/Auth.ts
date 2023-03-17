@@ -455,7 +455,7 @@ export = class Auth extends BaseController {
 
                             if (_first_answer === first_answer 
                                 && _second_answer === second_answer) {
-                                req.setProp('password_reset_acces', 'granted');
+                                req.setProp('password_reset_access', 'granted');
                                 req.setProp('warning', 'Please enter and confirm your new password');
                                 req.setProp('email', email);
                                 return this.redirect(res, '/password_reset')
@@ -652,7 +652,7 @@ export = class Auth extends BaseController {
             return this.siteNotFound(res);
         }
         res.noCacheNeeded();
-        const is_allowed = req.props()['password_reset_acces'];
+        const is_allowed = req.props()['password_reset_access'];
         const email      = req.props()['email'];
 
         if (typeof is_allowed === 'undefined' || typeof email === 'undefined') {
@@ -696,14 +696,14 @@ export = class Auth extends BaseController {
 
         if (this.__.isEmpty(password) || this.__.isEmpty(confirm_password)) {
             req.setProp('warning', 'Please enter and confirm your password!');
-            req.setProp('password_reset_acces', 'granted');
+            req.setProp('password_reset_access', 'granted');
             req.setProp('email', email);
             return this.postToSameSite(res);
         }
 
         if (confirm_password !== password) {
             req.setProp('error', 'Passwords do not match!');
-            req.setProp('password_reset_acces', 'granted');
+            req.setProp('password_reset_access', 'granted');
             req.setProp('email', email);
             return this.postToSameSite(res);
         }

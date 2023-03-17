@@ -16,6 +16,7 @@ import FileSystem from "../node/FileSystem";
 import Path from "../node/Path";
 import Pagination from '../utils/Pagination';
 import Workerpool from "../worker_pool/workerpool";
+import I18next from "../../app/plugins/I18next";
 
 /**
  * @class Singleton
@@ -71,7 +72,6 @@ export class Singleton{
     public static getExpressMysqlSession() {
         // return ExpressMysqlSession.getExpressMysqlSessionInstance();
     }
-
     
     //****************************\\
     //* Express getter functions *\\
@@ -100,6 +100,13 @@ export class Singleton{
     //**************************\\
     public static getLodash() : typeof import('lodash'){
         return Lodash.getLodashInstance();
+    }
+    
+    //***************************\\
+    //* I18next getter function *\\
+    //***************************\\
+    public static getI18n() : typeof import('i18n'){
+        return I18next.getI18nextInstance();
     }
 
     //*****************************\\

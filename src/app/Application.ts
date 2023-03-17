@@ -35,6 +35,7 @@ import { ENDPOINTS } from '../core/api/apis_endpoints/endpoints';
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
+// Todo Install and activate the i18n functionality
 export = class Application extends BaseController {
     
     private static application_instance: Application;
@@ -58,23 +59,24 @@ export = class Application extends BaseController {
             req.origin = req.headers.origin || req.get('origin');
             next();
         });
+        
         /*
-        * Sets the following policies
-          ? contentSecurityPolicy
-          ? crossOriginEmbedderPolicy
-          ? crossOriginOpenerPolicy
-          ? crossOriginResourcePolicy
-          ? dnsPrefetchControl
-          ? expectCt
-          ? frameguard
-          ? hidePoweredBy
-          ? hsts
-          ? ieNoOpen 
-          ? noSniff
-          ? originAgentCluster 
-          ? permittedCrossDomainPolicies
-          ? referrerPolicy
-          ? xssFilter
+            * Sets the following policies
+            ? contentSecurityPolicy
+            ? crossOriginEmbedderPolicy
+            ? crossOriginOpenerPolicy
+            ? crossOriginResourcePolicy
+            ? dnsPrefetchControl
+            ? expectCt
+            ? frameguard
+            ? hidePoweredBy
+            ? hsts
+            ? ieNoOpen 
+            ? noSniff
+            ? originAgentCluster 
+            ? permittedCrossDomainPolicies
+            ? referrerPolicy
+            ? xssFilter
         */
         this.app.use(Helmet.contentSecurityPolicy(this.constants.CONTENT_SECURITY_POLICY));
         this.app.use(Helmet.crossOriginEmbedderPolicy());
@@ -219,13 +221,18 @@ export = class Application extends BaseController {
         */
         this.app.use((req: Request, res: Response, next: NextFunction) => {
             const token = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
-            // res.set({
-            //     'csrf-Token':   token,
-            //     'X-CSRF-TOKEN': token,
-            //     'xsrf-token':   token,
-            //     'x-csrf-token': token,
-            //     'x-xsrf-token': token
-            // });
+        
+            /**
+             * 
+             * res.set({
+             *   'csrf-Token':   token,
+             *      'X-CSRF-TOKEN': token,
+             *      'xsrf-token':   token,
+             *      'x-csrf-token': token,
+             *      'x-xsrf-token': token
+             *  }); 
+            */
+            
             res.locals['csrf']                  = token;
             this.app.locals['csrf']             = token;
             res.locals['is_authenticated']      = res.req.session.is_authenticated;
@@ -266,6 +273,11 @@ export = class Application extends BaseController {
             next();
         });
 
+        Singleton
+            .getI18n()
+            .configure(
+            this.constants.I18N.CONFIGURATION_OPTIONS
+        );
         
         /*
         * Routes 

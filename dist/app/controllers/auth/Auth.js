@@ -442,7 +442,7 @@ module.exports = /** @class */ (function (_super) {
                                     var _second_answer = (0, cryptr_1.decrypt)(_second_result.answer);
                                     if (_first_answer === first_answer
                                         && _second_answer === second_answer) {
-                                        req.setProp('password_reset_acces', 'granted');
+                                        req.setProp('password_reset_access', 'granted');
                                         req.setProp('warning', 'Please enter and confirm your new password');
                                         req.setProp('email', email);
                                         return _this.redirect(res, '/password_reset');
@@ -638,7 +638,7 @@ module.exports = /** @class */ (function (_super) {
                     return [2 /*return*/, this.siteNotFound(res)];
                 }
                 res.noCacheNeeded();
-                is_allowed = req.props()['password_reset_acces'];
+                is_allowed = req.props()['password_reset_access'];
                 email = req.props()['email'];
                 if (typeof is_allowed === 'undefined' || typeof email === 'undefined') {
                     return [2 /*return*/, this.redirect(res, '/reset')];
@@ -675,13 +675,13 @@ module.exports = /** @class */ (function (_super) {
                 confirm_password = req.getFormPostedData('confirm_password');
                 if (this.__.isEmpty(password) || this.__.isEmpty(confirm_password)) {
                     req.setProp('warning', 'Please enter and confirm your password!');
-                    req.setProp('password_reset_acces', 'granted');
+                    req.setProp('password_reset_access', 'granted');
                     req.setProp('email', email);
                     return [2 /*return*/, this.postToSameSite(res)];
                 }
                 if (confirm_password !== password) {
                     req.setProp('error', 'Passwords do not match!');
-                    req.setProp('password_reset_acces', 'granted');
+                    req.setProp('password_reset_access', 'granted');
                     req.setProp('email', email);
                     return [2 /*return*/, this.postToSameSite(res)];
                 }

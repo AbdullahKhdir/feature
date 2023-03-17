@@ -4,13 +4,18 @@
         "becrypt",
         "confrim",
         "cryptr",
+        "firstname",
         "Fullcalendar",
         "Khdir",
         "Leage",
+        "mashpie",
         "middlewares",
         "mkcert",
         "modul",
+        "mylocales",
         "RGAPI",
-        "workerpool"
+        "webtranslateit",
+        "workerpool",
+        "yourcookiename"
     ]
 }

@@ -17,6 +17,7 @@ var Bodyparser_1 = __importDefault(require("../node/Bodyparser"));
 var FileSystem_1 = __importDefault(require("../node/FileSystem"));
 var Path_1 = __importDefault(require("../node/Path"));
 var Pagination_1 = __importDefault(require("../utils/Pagination"));
+var I18next_1 = __importDefault(require("../../app/plugins/I18next"));
 /**
  * @class Singleton
  * @constructor
@@ -84,6 +85,12 @@ var Singleton = /** @class */ (function () {
     //**************************\\
     Singleton.getLodash = function () {
         return Lodash_1.default.getLodashInstance();
+    };
+    //***************************\\
+    //* I18next getter function *\\
+    //***************************\\
+    Singleton.getI18n = function () {
+        return I18next_1.default.getI18nextInstance();
     };
     //*****************************\\
     //* Constants getter function *\\
