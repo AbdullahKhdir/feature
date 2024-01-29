@@ -192,6 +192,8 @@ export = class Db extends ExpressMysqlSession{
                                                         });
                                                     }, 3000);
                                                 }
+                                                console.log('\u001b[' + 92 + 'm' + 'Table could not be created or is already created ' + '\u001b[0m');
+                                                prompt_user.close();
                                             })
                                             .catch(err => {
                                                 console.log('\r');

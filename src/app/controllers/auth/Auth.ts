@@ -152,7 +152,7 @@ export = class Auth extends BaseController {
                                     }
                                     if (!res.headersSent) {
                                         req.session.is_authenticated = true;
-                                        this.user_security_questions.filter({user_id: req.session.currentUser.id})
+                                        this.user_security_questions.filter({id: req.session.currentUser.id})
                                         // @ts-ignore 
                                         .then((result: any) => {
                                             if (typeof result !== 'undefined') {

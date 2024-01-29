@@ -36,6 +36,7 @@ import { ENDPOINTS } from '../core/api/apis_endpoints/endpoints';
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
 */
 // Todo Install and activate the i18n functionality
+// todo create migration and push them to repository
 export = class Application extends BaseController {
     
     private static application_instance: Application;

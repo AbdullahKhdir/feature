@@ -275,6 +275,8 @@ module.exports = /** @class */ (function (_super) {
                                                                                             });
                                                                                         }, 3000);
                                                                                     }
+                                                                                    console.log('\u001b[' + 92 + 'm' + 'Table could not be created or is already created ' + '\u001b[0m');
+                                                                                    prompt_user_1.close();
                                                                                 })
                                                                                     .catch(function (err) {
                                                                                     console.log('\r');
