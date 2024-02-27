@@ -209,7 +209,7 @@ export abstract class ExpressResponse {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    onError(res: Response, next: NextFunction, error: Error | string | {message: string; statusCode: number}) : Response | void {
+    onError(res: Response, next: NextFunction, error: Error | string | {message?: string; statusCode: number}) : Response | void {
         if (config.configurations().environment === 'development') {
             if (typeof error === 'string') {
                 let _error = new Error(error);

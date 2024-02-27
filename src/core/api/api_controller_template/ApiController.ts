@@ -67,7 +67,7 @@ export = class ApiControllerNameWillBeUpdatedAutomatically extends Api {
      * @returns Response
     */
     getExmaple = () => this.route('get', '/get_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
-        return this.onError(res, next, 'declined api endpoint post');
+        return this.onError(res, next, 'declined api endpoint get apiController');
         // return next(new Error('declined api endpoint get'));
         return new JsonResponse(200, 'Success got', {success: 'OK'}).sendAsJson(res);
     });

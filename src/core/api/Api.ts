@@ -3,6 +3,7 @@
 import {Express} from 'express';
 import Routes from "../routes/Route";
 import { Singleton } from "../Singleton/Singleton";
+import { ENDPOINTS } from './apis_endpoints/endpoints';
 
 /**
  * @class Api

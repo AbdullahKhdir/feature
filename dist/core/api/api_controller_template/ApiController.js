@@ -100,7 +100,7 @@ module.exports = /** @class */ (function (_super) {
         */
         _this.getExmaple = function () { return _this.route('get', '/get_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.onError(res, next, 'declined api endpoint post')];
+                return [2 /*return*/, this.onError(res, next, 'declined api endpoint get apiController')];
             });
         }); }); };
         /**

@@ -120,7 +120,7 @@ export = class Routes extends ExpressResponse{
             return this._().delete(url, _middleware, asyncHandler(callback));
         }
 
-        return new RuntimeException('Route could not be deployed!')
+        return new RuntimeException('Route could not be deployed!');
     }
 
     /**

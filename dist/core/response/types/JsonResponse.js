@@ -22,7 +22,7 @@ module.exports = /** @class */ (function (_super) {
         if (code === void 0) { code = 200; }
         var _this = this;
         var _constants = Singleton_1.Singleton.getConstants();
-        _this = _super.call(this, _constants.HTTPS_STATUS.SUCCESS.OK, 'OK', message) || this;
+        _this = _super.call(this, code || _constants.HTTPS_STATUS.SUCCESS.OK, 'OK', message) || this;
         _this._message = message;
         _this.data = data;
         _this.code = code;

@@ -19,7 +19,7 @@ export =  class JsonResponse extends ExpressResponse {
     protected code: number | 500;
     constructor(code = 200, message: any, data: any) {
         const _constants = Singleton.getConstants();
-        super(_constants.HTTPS_STATUS.SUCCESS.OK, 'OK', message);
+        super(code || _constants.HTTPS_STATUS.SUCCESS.OK, 'OK', message);
         this._message  = message;
         this.data      = data;
         this.code      = code;
@@ -34,7 +34,14 @@ export =  class JsonResponse extends ExpressResponse {
      * @returns Response
     */
     sendAsJson(res: Response) {
-       return super.renderAsJson(res, Object.assign({status_code: this.getCode() || Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK}, {message: this.getMessage()}, {data: this.getData()}));
+        return super.renderAsJson(
+            res, 
+            Object.assign(
+                {status_code: this.getCode() || Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK}, 
+                {message: this.getMessage()}, 
+                {data: this.getData()}
+            )
+        );
     }
 
     /**

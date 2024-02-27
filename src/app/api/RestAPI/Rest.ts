@@ -72,8 +72,8 @@ export = class Rest extends Api {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Response
     */
-    getExmaple = () => this.route('get', '/get_example', {is_logged_in: this.isApiUserLoggedIn}, async (req: Request, res: Response, next: NextFunction) => {
-        return this.onError(res, next, 'declined api endpoint post');
+    getExmaple = () => this.route('get', '/get_example', {}, async (req: Request, res: Response, next: NextFunction) => {
+        // return this.onError(res, next, 'declined api endpoint get');
         // return next(new Error('declined api endpoint get'));
         return new JsonResponse(200, 'Success got', {success: 'OK'}).sendAsJson(res);
     }, true);

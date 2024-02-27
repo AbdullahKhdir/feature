@@ -104,9 +104,11 @@ module.exports = /** @class */ (function (_super) {
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
         */
-        _this.getExmaple = function () { return _this.route('get', '/get_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+        _this.getExmaple = function () { return _this.route('get', '/get_example', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                return [2 /*return*/, this.onError(res, next, 'declined api endpoint post')];
+                // return this.onError(res, next, 'declined api endpoint get');
+                // return next(new Error('declined api endpoint get'));
+                return [2 /*return*/, new JsonResponse_1.default(200, 'Success got', { success: 'OK' }).sendAsJson(res)];
             });
         }); }, true); };
         /**
