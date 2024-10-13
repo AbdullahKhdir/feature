@@ -1,100 +1,78 @@
-'use strict';
+"use strict";
 
-import BaseModel from "../../../core/model/BaseModel";
+import { CustomTypes } from "../../../core/custom_types";
+import SqlModel from "../../../core/model/SqlModel";
+import Cart from "./Cart";
+import Product from "./Product";
 
 /**
  * @class User
  * @constructor
- * @extends BaseModel
+ * @extends SqlModel
  * @description Defining Model User
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
-export = class User extends BaseModel {
-    constructor() {
-        super();
+ */
+export = class User extends SqlModel {
+	constructor() {
+		super();
+		this.initializeModel();
+	}
 
-        this.can_create = true;
-        this.can_update = true;
-        this.can_delete = false;
-        
-        this.primary_key        = 'id';
-        this.table              = 'node.tbl_users';
-        this.reverse_references = {
-            product_user_id: {
-                table: 'node.tbl_products',
-                class: 'shop/Products',
-                column: 'user_id'
-            },
-            cart_user_id: {
-                table: 'node.tbl_carts',
-                class: 'shop/Cart',
-                column: 'user_id'
-            }
-        };
-        this.columns = {
-            id: {
-                label: 'id'
-            },
-            first_name: {
-                label: 'First Name',
-                required: true
-            },
-            last_name: {
-                label: 'Last Name',
-                required: true
-            },
-            email: {
-                label: 'email',
-                required: true
-            },
-            password: {
-                label: 'password',
-                required: true
-            },
-            created_at: {
-                label: 'created_at',
-                type: 'datetime'
-            },
-            updated_at: {
-                label: 'updated_at',
-                type: 'datetime'
-            }
-        };
-        // this.descripeTable(this.table)
-        // .then(result => {
-        //     let db_columns_list: any = [];
-        //     const columns = result[0];
-        //     let invalid_columns = [];
-        //     // @ts-ignore 
-        //     columns.forEach(column => {
-        //         /*
-        //         * If columns is in the db but not in this.columns, it will get populated
-        //         */
-        //         if (Object.keys(this.columns).indexOf(column['Field']) === -1 && column['Key'] !== 'PRI') {
-        //             this.columns[column['Field']] = {
-        //                 label:   this.__.capitalize(this.__.startCase(column['Field'])),
-        //                 type:    column['Type'],
-        //                 default: column['Default'] ? column['Default'] : null,
-        //             }
-        //         }
-        //         db_columns_list.push(column["Field"]);
-        //     });
-        //     /*
-        //     * If columns is not in the db but in this.columns, a run time exception will be thrown
-        //     */
-        //     invalid_columns = Object.keys(this.columns).filter(x => !db_columns_list.includes(x));
-        //     if (!this.__.isEmpty(invalid_columns)) {
-        //         throw new RuntimeException(
-        //             "Columns ["+
-        //             invalid_columns.join(',')+" "+
-        //             "] not available in database for the Model "+
-        //             getClass(this)
-        //         );
-        //     }
-        //     return;
-        // })
-        // .catch(err => {throw err});
-    }
+	protected canCreate: CustomTypes["SqlModelTypes"]["canCreate"] = true;
+	protected canUpdate: CustomTypes["SqlModelTypes"]["canUpdate"] = true;
+	protected canDelete: CustomTypes["SqlModelTypes"]["canDelete"] = false;
+	protected primaryKey: CustomTypes["SqlModelTypes"]["primaryKey"] = "id";
+	protected table: CustomTypes["SqlModelTypes"]["table"] = "sql_database.tbl_users";
+	protected genericReferences: CustomTypes["SqlModelTypes"]["genericReferences"] = {};
+	protected reverseReferences: CustomTypes["SqlModelTypes"]["reverseReferences"] = {
+		product_user_id: {
+			name: "user_products",
+			table: "sql_database.tbl_products",
+			class: Product,
+			column: "user_id"
+		},
+		cart_user_id: {
+			name: "user_cart",
+			table: "sql_database.tbl_carts",
+			class: Cart,
+			column: "user_id"
+		}
+	};
+	public override modelColumns = {
+		id: {
+			label: "id",
+			type: "AUTO_INCREMENT"
+		},
+		first_name: {
+			label: "First Name",
+			required: true,
+			type: "VARCHAR"
+		},
+		last_name: {
+			label: "Last Name",
+			required: true,
+			type: "VARCHAR"
+		},
+		email: {
+			label: "email",
+			required: true,
+			type: "VARCHAR"
+		},
+		password: {
+			label: "password",
+			required: true,
+			type: "VARCHAR"
+		},
+		created_at: {
+			label: "created_at",
+			type: "DATETIME"
+		},
+		updated_at: {
+			label: "updated_at",
+			type: "DATETIME"
+		}
+	};
 
+	protected override columns: () => CustomTypes["SqlModelTypes"]["columns"] = () => this.modelColumns as any;
 };

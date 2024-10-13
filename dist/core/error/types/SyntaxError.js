@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -21,11 +21,12 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiError_1 = __importDefault(require("../ApiError"));
 module.exports = /** @class */ (function (_super) {
     __extends(SyntaxError, _super);
-    function SyntaxError(message, status_code) {
-        if (message === void 0) { message = 'Syntax error'; }
-        var _constants = Singleton_1.Singleton.getConstants();
-        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
-        // next error middleware will send or render the page
+    function SyntaxError(message, statusCode) {
+        if (message === void 0) { message = ""; }
+        if (statusCode === void 0) { statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR; }
+        var _this = _super.call(this, "SyntaxError", message, statusCode) || this;
+        Object.setPrototypeOf(_this, SyntaxError.prototype);
+        return _this;
     }
     return SyntaxError;
 }(ApiError_1.default));

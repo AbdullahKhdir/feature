@@ -4,7 +4,7 @@
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
 //* BRANCH: develop
 //***********************************************************
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -74,32 +74,36 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.table = function () { return _this.route('get', '/fullscreen-table', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.render(res, 'materialize/tables/table', {
-                        nav_title: 'Table',
-                        path: 'fullscreen-table',
-                        root: 'tables'
-                    })];
-            });
-        }); }); };
+         */
+        _this.table = function () {
+            return _this.route("get", "/fullscreen-table", {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, this.render(res, "materialize/tables/table", {
+                            nav_title: "Table",
+                            path: "fullscreen-table",
+                            root: "tables"
+                        })];
+                });
+            }); });
+        };
         /**
          * @function customTable
          * @description customTable route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.customTable = function () { return _this.route('get', '/custom-table/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.render(res, 'materialize/tables/custom', {
-                        nav_title: 'Table',
-                        path: 'custom-table',
-                        root: 'tables'
-                    })];
-            });
-        }); }); };
+         */
+        _this.customTable = function () {
+            return _this.route("get", "/custom-table/", {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, this.render(res, "materialize/tables/custom", {
+                            nav_title: "Table",
+                            path: "custom-table",
+                            root: "tables"
+                        })];
+                });
+            }); });
+        };
         //? ************************************************************** ?\\
         //? this.method is used to deploy all the routes to express router ?\\
         //! dynamic routes must be the last index of the methods array     !\\
@@ -108,8 +112,8 @@ module.exports = /** @class */ (function (_super) {
             //**********\\
             //* Routes *\\
             //**********\\
-            'table',
-            'customTable',
+            "table",
+            "customTable"
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\
@@ -134,13 +138,14 @@ module.exports = /** @class */ (function (_super) {
         return {
             //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
             //! IMPORTANT THE ORDER MATTERS !\\
-            is_authenticated: function (req, res, next) { next(); },
-            validate: (0, express_validator_1.check)('firstDynamicInput') //* SECOND VALIDATE BODY, PARAM COOKIE OR HEADER *\\
+            isUserAuthenticated: function (req, res, next) {
+                next();
+            },
+            validate: (0, express_validator_1.check)("firstDynamicInput") //* SECOND VALIDATE BODY, PARAM COOKIE OR HEADER *\\
                 .isEmpty()
                 .bail()
-                .withMessage('Dynamic param must not be empty!')
+                .withMessage("Dynamic param must not be empty!")
         };
     };
-    ;
     return Table;
 }(BaseController_1.default));

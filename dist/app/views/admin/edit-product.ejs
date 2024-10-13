@@ -8,7 +8,7 @@
         <div class="container">
             <%- uploader %>
             <form id="edit-product" class="product-form cube-loader" action="/admin/edit-product/<%= product.id %>" method="POST">
-                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                 <div class="input-field col s12 m6">
                     <label for="title"><%= nav_title %></label>
                     <input type="text" name="title" id="title" value="<%= lodash.capitalize(product.title) %>">

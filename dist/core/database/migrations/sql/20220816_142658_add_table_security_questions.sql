@@ -2,7 +2,7 @@
 -- @author Abdullah Khdir <abdullah.khdir@telekom.de>
 -- @branch develop
 
-CREATE TABLE `node`.`tbl_security_questions` (
+CREATE TABLE `sql_database`.`tbl_security_questions` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
   `question` LONGTEXT NOT NULL,

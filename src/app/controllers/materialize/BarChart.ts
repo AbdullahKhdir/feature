@@ -5,94 +5,87 @@
 //* BRANCH: develop
 //***********************************************************
 
-'use strict';
+"use strict";
 
-import { NextFunction, Request, Response } from 'express';
-import {
-    check
-} from "express-validator"; //? EXPRESS VALIDATOR ?\\
+import { NextFunction, Request, Response } from "express";
+import { check } from "express-validator"; //? EXPRESS VALIDATOR ?\\
 import BaseController from "../../../core/controller/BaseController";
-import ExampleModel from '../../models/example_model/ExampleModel';
 
-export = class BarChart extends BaseController{
+export = class BarChart extends BaseController {
+	//*****************************************************************\\
+	//? CONSTRUCTOR FOR INITIALIZING ALL THE NECESSARY CONFIGURATIONS ?\\
+	//*****************************************************************\\
+	public methods: any;
+	constructor() {
+		super();
 
-    //*****************************************************************\\
-    //? CONSTRUCTOR FOR INITIALIZING ALL THE NECESSARY CONFIGURATIONS ?\\
-    //*****************************************************************\\
-    public methods: any;
-    protected exmaple_model: ExampleModel;
-    constructor() {
-        super();
+		//? ************************************************************** ?\\
+		//? this.method is used to deploy all the routes to express router ?\\
+		//! dynamic routes must be the last index of the methods array     !\\
+		//? ************************************************************** ?\\
+		this.methods = [
+			//**********\\
+			//* Routes *\\
+			//**********\\
+			"barChart"
+			//******************\\
+			//* DYNAMIC Routes *\\
+			//******************\\
+		];
 
-        //? ************************************************************** ?\\
-        //? this.method is used to deploy all the routes to express router ?\\
-        //! dynamic routes must be the last index of the methods array     !\\
-        //? ************************************************************** ?\\
-        this.methods = [
-            //**********\\
-            //* Routes *\\
-            //**********\\
-            'barChart',
-            //******************\\
-            //* DYNAMIC Routes *\\
-            //******************\\
-        ];
+		//***************\\
+		//* INIT MODELS *\\
+		//***************\\
 
-        //***************\\
-        //* INIT MODELS *\\
-        //***************\\
-        this.exmaple_model = new ExampleModel();
-        
-        //*********************\\
-        //* PROJECT CONSTANTS *\\
-        //*********************\\
-        // this.constants
-    }
+		//*********************\\
+		//* PROJECT CONSTANTS *\\
+		//*********************\\
+		// this.constants
+	}
 
-    //**********\\
-    //* Routes *\\
-    //**********\\
+	//**********\\
+	//* Routes *\\
+	//**********\\
 
-    /**
-     * @function barChart
-     * @description barChart route
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns Response
-    */
-    barChart = () => this.route('get', '/bar-charts/', {}, async (req: Request, res: Response, next: NextFunction) => {
-        return this.render(
-            res,
-            'materialize/charts/bar',
-            {
-                nav_title: 'Bar Charts',
-                path: 'bar-charts',
-                root: 'charts'
-            }
-        );
-    });
+	/**
+	 * @function barChart
+	 * @description barChart route
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @returns Response
+	 */
+	barChart = () =>
+		this.route("get", "/bar-charts/", {}, async (req: Request, res: Response, next: NextFunction) => {
+			return this.render(res, "materialize/charts/bar", {
+				nav_title: "Bar Charts",
+				path: "bar-charts",
+				root: "charts"
+			});
+		});
 
-    //******************\\
-    //* DYNAMIC Routes *\\
-    //******************\\
+	//******************\\
+	//* DYNAMIC Routes *\\
+	//******************\\
 
-    //! **************************** !\\
-    //* Process protected functions  *\\
-    //! **************************** !\\
+	//! **************************** !\\
+	//* Process protected functions  *\\
+	//! **************************** !\\
 
-    //* ************************* *\\
-    //* firstDynMethod Middleware *\\
-    //? SHOULD BE PROTECTED       ?\\
-    //* ************************* *\\
-    firstDynMethodMiddleware() {
-        return {
-            //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
-            //! IMPORTANT THE ORDER MATTERS !\\
-            is_authenticated: (req: Request, res: Response, next: NextFunction) => {next()}, //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
-            validate: check('firstDynamicInput')            //* SECOND VALIDATE BODY, PARAM COOKIE OR HEADER *\\
-                      .isEmpty()
-                      .bail()
-                      .withMessage('Dynamic param must not be empty!')
-        }
-    };
-}
+	//* ************************* *\\
+	//* firstDynMethod Middleware *\\
+	//? SHOULD BE PROTECTED       ?\\
+	//* ************************* *\\
+	firstDynMethodMiddleware() {
+		return {
+			//? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
+			//! IMPORTANT THE ORDER MATTERS !\\
+			isUserAuthenticated: (req: Request, res: Response, next: NextFunction) => {
+				next();
+			}, //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
+			validate: check("firstDynamicInput") //* SECOND VALIDATE BODY, PARAM COOKIE OR HEADER *\\
+				.isEmpty()
+				.bail()
+				.withMessage("Dynamic param must not be empty!")
+		};
+	}
+};

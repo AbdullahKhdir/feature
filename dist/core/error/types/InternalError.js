@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -21,10 +21,12 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiError_1 = __importDefault(require("../ApiError"));
 module.exports = /** @class */ (function (_super) {
     __extends(InternalError, _super);
-    function InternalError(message, status_code) {
-        if (message === void 0) { message = 'Internal error'; }
-        var _constants = Singleton_1.Singleton.getConstants();
-        return _super.call(this, status_code ? status_code : Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
+    function InternalError(message, statusCode) {
+        if (message === void 0) { message = ""; }
+        if (statusCode === void 0) { statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR; }
+        var _this = _super.call(this, "InternalError", message, statusCode) || this;
+        Object.setPrototypeOf(_this, InternalError.prototype);
+        return _this;
     }
     return InternalError;
 }(ApiError_1.default));

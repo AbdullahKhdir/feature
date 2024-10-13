@@ -1,247 +1,398 @@
 <header>
-    <% if (typeof root !== 'undefined') { %>
-      <% if (root !== 'headers' && root !== 'account') { %>
-        <div class="navbar-fixed">
-          <nav class="navbar navbar-color">
-            <div class="nav-wrapper"><a href="" class="cube-loader brand-logo grey-text text-lighten-4"><%= nav_title %></a>
-              <ul id="nav-mobile" class="right">
-                <% if (is_authenticated) { %>
-                    <li class="hide-on-med-and-down"><a href="#!" data-target="dropdown1" class="dropdown-trigger waves-effect"><i class="material-icons white-text">notifications</i></a></li>
-                    <li><a href="#!" data-target="chat-dropdown" class="dropdown-trigger waves-effect"><i class="material-icons white-text">settings</i></a></li>
-                <% } %>
-
-              </ul>
-              <a href="#!" data-target="sidenav-left" class="sidenav-trigger left"><i class="material-icons white-text">menu</i></a>
-            </div>
-          </nav>
-        </div>
-      <% } %>
-    <% } %>
-    <ul id="sidenav-left" class="sidenav <%= path ? path !== 'grid' && path !== 'log-in' ? '' : '' : '' %>"> <!-- sidenav-fixed -->
-      <li>
-            <!-- <a href="/" class="cube-loader logo-container">Home<i class="material-icons left">home</i></a> -->
-            <a href="/" class="cube-loader logo-container"><img class="sidenav-logo" src="/logo/logo_orange_transparent.png" alt="Smile">Home</a>
-      </li>
-      <li class="no-padding">
-        <ul class="collapsible collapsible-accordion">
-          <li class="bold waves-effect <%= root ? root === 'shop' ? 'active' : '' : '' %>">
-            <a class="collapsible-header">Pages<i class="material-icons chevron">chevron_left</i></a>
-            <div class="collapsible-body">
-              <ul>
-                <li>
-                    <a href="/" class="cube-loader waves-orange  waves-effect <%= path ? path === '/' ? 'active' : '' : '' %>" href="/">
-                      Shop<i class="material-icons">store</i>
-                    </a>
-                </li>
-                <li>
-                    <a href="/products/" class="cube-loader waves-orange waves-effect <%= path ? path === '/products/' ? 'active' : '' : '' %>">
-                      Products<i class="material-icons">shop</i>
-                    </a>
-                </li>
-                <% if (is_authenticated) { %>
-                  <li>
-                    <a href="/cart/" class="cube-loader waves-orange waves-effect <%= path ? path === '/cart/' ? 'active' : '' : '' %>">
-                      Cart<i class="material-icons">shopping_cart</i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/orders/" class="cube-loader waves-orange waves-effect <%= path ? path === '/orders/' ? 'active' : '' : '' %>">
-                      Orders<i class="material-icons">view_list</i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/admin/add-product/" class="cube-loader waves-orange waves-effect <%= path ? path === '/admin/add-product/' ? 'active' : '' : '' %>">
-                      Add Product<i class="material-icons">add</i>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="/admin/products/" class="cube-loader waves-orange waves-effect <%= path ? path === '/admin/products/' ? 'active' : '' : '' %>">
-                      Admin Products<i class="material-icons">verified_user</i>
-                    </a>
-                  </li>
-                <% } %>
-              </ul>
-            </div>
-          </li>
-          <% if (false) { %>
-              <li class="bold waves-effect <%= root ? root === 'pages' ? 'active' : '' : '' %>">
-                <a class="collapsible-header">Pages<i class="material-icons chevron">chevron_left</i></a>
-                <div class="collapsible-body">
-                  <ul>
-                    <li>
-                        <a href="/dashboard/" class="cube-loader waves-orange waves-effect <%= path ? path === 'dashboard' ? 'active' : '' : '' %>">
-                          Dashboard<i class="material-icons">web</i>
-                        </a>
-                    </li>
-                    <li>
-                      <a href="/fixed-chart/" class="cube-loader waves-orange waves-effect <%= path ? path === 'fixed-chart' ? 'active' : '' : '' %>">
-                          Fixed Chart<i class="material-icons">list</i>
-                      </a>
-                    </li>
-                    <li>
-                      <a href="/grid/" class="cube-loader waves-orange waves-effect <%= path ? path === 'grid' ? 'active' : '' : '' %>">
-                        Grid<i class="material-icons">dashboard</i>
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              <li class="bold waves-effect <%= root ? root === 'charts' ? 'active' : '' : '' %>"><a class="collapsible-header">Charts<i class="material-icons chevron">chevron_left</i></a>
-                <div class="collapsible-body">
-                  <ul>
-                    <li><a href="/line-charts/" class="cube-loader waves-orange waves-effect <%= path ? path === 'line-charts' ? 'active' : '' : '' %>">Line Charts<i class="material-icons">show_chart</i></a></li>
-                    <li><a href="/bar-charts/" class="cube-loader waves-orange waves-effect <%= path ? path === 'bar-charts' ? 'active' : '' : '' %>">Bar Charts<i class="material-icons">equalizer</i></a></li>
-                    <li><a href="/area-charts/" class="cube-loader waves-orange waves-effect <%= path ? path === 'area-charts' ? 'active' : '' : '' %>">Area Charts<i class="material-icons">multiline_chart</i></a></li>
-                    <li><a href="/doughnut-charts/" class="cube-loader waves-orange waves-effect <%= path ? path === 'doughnut-charts' ? 'active' : '' : '' %>">Doughnut Charts<i class="material-icons">pie_chart</i></a></li>
-                    <li><a href="/financial-charts/" class="cube-loader waves-orange waves-effect <%= path ? path === 'financial-charts' ? 'active' : '' : '' %>">Financial Charts<i class="material-icons">euro_symbol</i></a></li>
-                    <li><a href="/interactive-charts/" class="cube-loader waves-orange waves-effect <%= path ? path === 'interactive-charts' ? 'active' : '' : '' %>">Interactive Charts<i class="material-icons">touch_app</i></a></li>
-                  </ul>
-                </div>
-              </li>
-              <li class="bold waves-effect <%= root ? root === 'tables' ? 'active' : '' : '' %>"><a class="collapsible-header">Tables<i class="material-icons chevron">chevron_left</i></a>
-                <div class="collapsible-body">
-                  <ul>
-                    <li><a href="/fullscreen-table/" class="cube-loader waves-orange waves-effect <%= path ? path === 'fullscreen-table' ? 'active' : '' : '' %>">Fullscreen with Chart<i class="material-icons">show_chart</i></a></li>
-                    <li><a href="/custom-table/" class="cube-loader waves-orange waves-effect <%= path ? path === 'custom-table' ? 'active' : '' : '' %>">Table with Custom Elements<i class="material-icons">settings</i></a></li>
-                  </ul>
-                </div>
-              </li>
-              <li class="bold waves-effect <%= root ? root === 'calendar' ? 'active' : '' : '' %>"><a class="collapsible-header">Calendar<i class="material-icons chevron">chevron_left</i></a>
-                <div class="collapsible-body">
-                  <ul>
-                    <li><a href="/calendar/" class="cube-loader waves-orange waves-effect <%= path ? path === 'calendar' ? 'active' : '' : '' %>">Calendar<i class="material-icons">cloud</i></a></li>
-                  </ul>
-                </div>
-              </li>
-              <li class="bold waves-effect <%= root ? root === 'headers' ? 'active' : '' : '' %>"><a class="collapsible-header">Headers<i class="material-icons chevron">chevron_left</i></a>
-                <div class="collapsible-body">
-                  <ul>
-                    <li><a href="/header-tabbed/" class="cube-loader waves-orange waves-effect <%= path ? path === 'header-tabbed' ? 'active' : '' : '' %>">Tabbed<i class="material-icons">tab</i></a></li>
-                    <li><a href="/header-metrics/" class="cube-loader waves-orange waves-effect <%= path ? path === 'header-metrics' ? 'active' : '' : '' %>">Metrics<i class="material-icons">web</i></a></li>
-                    <li><a href="/header-search/" class="cube-loader waves-orange waves-effect <%= path ? path === 'header-search' ? 'active' : '' : '' %>">Search<i class="material-icons">search</i></a></li>
-                  </ul>
-                </div>
-              </li>
-          <% } %>
-          <% if (!is_authenticated) { %>
-            <li class="bold waves-effect <%= root ? root === 'account' ? 'active' : '' : '' %>"><a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
-              <div class="collapsible-body">
-                <ul>
-                  <li><a href="/login/" class="cube-loader waves-orange waves-effect <%= path ? path === 'log-in' ? 'active' : '' : '' %>">Sign In<i class="material-icons">person</i></a></li>
-                  <li><a href="/signup/" class="cube-loader waves-orange waves-effect <%= path ? path === 'sign-up' ? 'active' : '' : '' %>">Sign Up<i class="material-icons">person_add</i></a></li>
-                  <li><a href="/settings/" class="cube-loader waves-orange waves-effect <%= path ? path === 'settings' ? 'active' : '' : '' %>">Settings<i class="material-icons">settings</i></a></li>
-                </ul>
-              </div>
-            </li>
-          <% } %>
-          <% if (is_authenticated) { %>
-            <li class="bold waves-effect <%= root ? root === 'chat' ? 'active' : '' : '' %>"><a class="collapsible-header">Socials<i class="material-icons chevron">chevron_left</i></a>
-              <div class="collapsible-body">
-                <ul>
-                  <li>
-                    <a href="/chat/" class="cube-loader waves-orange waves-effect <%= path ? path === '/chat/' ? 'active' : '' : '' %>">
-                      Chat<i class="material-icons">chat</i>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
-            <li class="bold waves-effect <%= root ? root === 'account' ? 'active' : '' : '' %>"><a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
-              <div class="collapsible-body">
-                <ul>
-                  <li><a href="/settings/" class="cube-loader waves-orange waves-effect <%= path ? path === 'settings' ? 'active' : '' : '' %>">Settings<i class="material-icons">settings</i></a></li>
-                  <form class="form-sign-out cube-loader" id="form-sign-out" action="/logout/" method="POST">
-                    <input type="hidden" name="_csrf" value="<%= csrf %>">
-                    <li><a id="sign-out" class="waves-orange waves-effect">Sign Out<i class="material-icons">exit_to_app</i></a></li>
-                  </form>   
-                </ul>
-              </div>
-            </li>
-          <% } %>
-        </ul>
-      </li>
-    </ul>
-    <% if (is_authenticated) { %>
-      <div id="dropdown1" class="dropdown-content notifications">
-        <div class="notifications-title">notifications</div>
-        <div class="card">
-          <div class="card-content"><span class="card-title">Joe Smith made a purchase</span>
-            <p>Content</p>
-          </div>
-          <div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
-        </div>
-        <div class="card">
-          <div class="card-content"><span class="card-title">Daily Traffic Update</span>
-            <p>Content</p>
-          </div>
-          <div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
-        </div>
-        <div class="card">
-          <div class="card-content"><span class="card-title">New User Joined</span>
-            <p>Content</p>
-          </div>
-          <div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
-        </div>
-      </div>
-    <% } %>
-    <div id="chat-dropdown" class="dropdown-content dropdown-tabbed">
-      <ul class="tabs tabs-fixed-width">
-        <li class="tab col s3"><a href="#settings">Settings</a></li>
-        <% if (is_authenticated) { %>
-          <li class="tab col s3"><a href="#friends" class="active">Friends</a></li>
-        <% } %>
-      </ul>
-      <div id="settings" class="col s12">
-        <div class="settings-group">
-          <div class="setting">Night Mode
-            <div class="switch right">
-              <label>
-                <input type="checkbox"><span class="lever"></span>
-              </label>
-            </div>
-          </div>
-          <div class="setting">Beta Testing
-            <label class="right">
-              <input type="checkbox"><span></span>
-            </label>
-          </div>
-        </div>
-      </div>
-      <% if (is_authenticated) { %>
-        <div id="friends" class="col s12">
-          <ul class="collection flush">
-            <li class="collection-item avatar">
-              <div class="badged-circle online"><img src="/materialize/img/portrait1.jpg" alt="avatar" class="circle"></div><span class="title">Jane Doe</span>
-              <p class="truncate">Lo-fi you probably haven't heard of them</p>
-            </li>
-            <li class="collection-item avatar">
-              <div class="badged-circle"><img src="/materialize/img/portrait2.jpg" alt="avatar" class="circle"></div><span class="title">John Chang</span>
-              <p class="truncate">etsy leggings raclette kickstarter four dollar toast</p>
-            </li>
-            <li class="collection-item avatar">
-              <div class="badged-circle"><img src="/materialize/img/portrait3.jpg" alt="avatar" class="circle"></div><span class="title">Lisa Simpson</span>
-              <p class="truncate">Raw denim fingerstache food truck chia health goth synth</p>
-            </li>
-          </ul>
-        </div>
-      <% } %>
-    </div>
+	<% if (typeof root !== 'undefined') { %> <% if (root !== 'headers' && root !== 'account') { %>
+	<div class="navbar-fixed">
+		<nav class="navbar navbar-color">
+			<div class="nav-wrapper">
+				<a href="" class="cube-loader brand-logo grey-text text-lighten-4"><%= nav_title %></a>
+				<ul id="nav-mobile" class="right">
+					<% if (isUserAuthenticated) { %>
+					<li class="hide-on-med-and-down">
+						<a href="#!" data-target="dropdown1" class="dropdown-trigger waves-effect"
+							><i class="material-icons white-text">notifications</i></a
+						>
+					</li>
+					<li>
+						<a href="#!" data-target="chat-dropdown" class="dropdown-trigger waves-effect"
+							><i class="material-icons white-text">settings</i></a
+						>
+					</li>
+					<% } %>
+				</ul>
+				<a href="#!" data-target="sidenav-left" class="sidenav-trigger left"
+					><i class="material-icons white-text">menu</i></a
+				>
+			</div>
+		</nav>
+	</div>
+	<% } %> <% } %>
+	<ul id="sidenav-left" class="sidenav <%= path ? path !== 'grid' && path !== 'log-in' ? '' : '' : '' %>">
+		<!-- sidenav-fixed -->
+		<li>
+			<!-- <a href="/" class="cube-loader logo-container">Home<i class="material-icons left">home</i></a> -->
+			<a href="/" class="cube-loader logo-container"
+				><img class="sidenav-logo" src="/logo/logo_orange_transparent.png" alt="Smile" />Home</a
+			>
+		</li>
+		<li class="no-padding">
+			<ul class="collapsible collapsible-accordion">
+				<li class="bold waves-effect <%= root ? root === 'shop' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Pages<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === '/' ? 'active' : '' : '' %>"
+									href="/"
+								>
+									Shop<i class="material-icons">store</i>
+								</a>
+							</li>
+							<li>
+								<a
+									href="/products/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === '/products/' ? 'active' : '' : '' %>"
+								>
+									Products<i class="material-icons">shop</i>
+								</a>
+							</li>
+							<% if (isUserAuthenticated) { %>
+							<li>
+								<a
+									href="/cart/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === '/cart/' ? 'active' : '' : '' %>"
+								>
+									Cart<i class="material-icons">shopping_cart</i>
+								</a>
+							</li>
+							<li>
+								<a
+									href="/orders/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === '/orders/' ? 'active' : '' : '' %>"
+								>
+									Orders<i class="material-icons">view_list</i>
+								</a>
+							</li>
+							<li>
+								<a
+									href="/admin/add-product/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === '/admin/add-product/' ? 'active' : '' : '' %>"
+								>
+									Add Product<i class="material-icons">add</i>
+								</a>
+							</li>
+							<li>
+								<a
+									href="/admin/products/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === '/admin/products/' ? 'active' : '' : '' %>"
+								>
+									Admin Products<i class="material-icons">verified_user</i>
+								</a>
+							</li>
+							<% } %>
+						</ul>
+					</div>
+				</li>
+				<% if (false) { %>
+				<li class="bold waves-effect <%= root ? root === 'pages' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Pages<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/dashboard/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'dashboard' ? 'active' : '' : '' %>"
+								>
+									Dashboard<i class="material-icons">web</i>
+								</a>
+							</li>
+							<li>
+								<a
+									href="/fixed-chart/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'fixed-chart' ? 'active' : '' : '' %>"
+								>
+									Fixed Chart<i class="material-icons">list</i>
+								</a>
+							</li>
+							<li>
+								<a
+									href="/grid/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'grid' ? 'active' : '' : '' %>"
+								>
+									Grid<i class="material-icons">dashboard</i>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="bold waves-effect <%= root ? root === 'charts' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Charts<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/line-charts/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'line-charts' ? 'active' : '' : '' %>"
+									>Line Charts<i class="material-icons">show_chart</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/bar-charts/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'bar-charts' ? 'active' : '' : '' %>"
+									>Bar Charts<i class="material-icons">equalizer</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/area-charts/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'area-charts' ? 'active' : '' : '' %>"
+									>Area Charts<i class="material-icons">multiline_chart</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/doughnut-charts/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'doughnut-charts' ? 'active' : '' : '' %>"
+									>Doughnut Charts<i class="material-icons">pie_chart</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/financial-charts/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'financial-charts' ? 'active' : '' : '' %>"
+									>Financial Charts<i class="material-icons">euro_symbol</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/interactive-charts/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'interactive-charts' ? 'active' : '' : '' %>"
+									>Interactive Charts<i class="material-icons">touch_app</i></a
+								>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="bold waves-effect <%= root ? root === 'tables' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Tables<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/fullscreen-table/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'fullscreen-table' ? 'active' : '' : '' %>"
+									>Fullscreen with Chart<i class="material-icons">show_chart</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/custom-table/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'custom-table' ? 'active' : '' : '' %>"
+									>Table with Custom Elements<i class="material-icons">settings</i></a
+								>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="bold waves-effect <%= root ? root === 'calendar' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Calendar<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/calendar/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'calendar' ? 'active' : '' : '' %>"
+									>Calendar<i class="material-icons">cloud</i></a
+								>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="bold waves-effect <%= root ? root === 'headers' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Headers<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/header-tabbed/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'header-tabbed' ? 'active' : '' : '' %>"
+									>Tabbed<i class="material-icons">tab</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/header-metrics/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'header-metrics' ? 'active' : '' : '' %>"
+									>Metrics<i class="material-icons">web</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/header-search/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'header-search' ? 'active' : '' : '' %>"
+									>Search<i class="material-icons">search</i></a
+								>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<% } %> <% if (!isUserAuthenticated) { %>
+				<li class="bold waves-effect <%= root ? root === 'account' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/login/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'log-in' ? 'active' : '' : '' %>"
+									>Sign In<i class="material-icons">person</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/signup/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'sign-up' ? 'active' : '' : '' %>"
+									>Sign Up<i class="material-icons">person_add</i></a
+								>
+							</li>
+							<li>
+								<a
+									href="/settings/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'settings' ? 'active' : '' : '' %>"
+									>Settings<i class="material-icons">settings</i></a
+								>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<% } %> <% if (isUserAuthenticated) { %>
+				<li class="bold waves-effect <%= root ? root === 'chat' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Socials<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/chat/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === '/chat/' ? 'active' : '' : '' %>"
+								>
+									Chat<i class="material-icons">chat</i>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				<li class="bold waves-effect <%= root ? root === 'account' ? 'active' : '' : '' %>">
+					<a class="collapsible-header">Account<i class="material-icons chevron">chevron_left</i></a>
+					<div class="collapsible-body">
+						<ul>
+							<li>
+								<a
+									href="/settings/"
+									class="cube-loader waves-orange waves-effect <%= path ? path === 'settings' ? 'active' : '' : '' %>"
+									>Settings<i class="material-icons">settings</i></a
+								>
+							</li>
+							<form class="form-sign-out cube-loader" id="form-sign-out" action="/logout/" method="POST">
+								<input type="hidden" name="x-csrf-token" value="<%= csrf %>" />
+								<li>
+									<a id="sign-out" class="waves-orange waves-effect"
+										>Sign Out<i class="material-icons">exit_to_app</i></a
+									>
+								</li>
+							</form>
+						</ul>
+					</div>
+				</li>
+				<% } %>
+			</ul>
+		</li>
+	</ul>
+	<% if (isUserAuthenticated) { %>
+	<div id="dropdown1" class="dropdown-content notifications">
+		<div class="notifications-title">notifications</div>
+		<div class="card">
+			<div class="card-content">
+				<span class="card-title">Joe Smith made a purchase</span>
+				<p>Content</p>
+			</div>
+			<div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
+		</div>
+		<div class="card">
+			<div class="card-content">
+				<span class="card-title">Daily Traffic Update</span>
+				<p>Content</p>
+			</div>
+			<div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
+		</div>
+		<div class="card">
+			<div class="card-content">
+				<span class="card-title">New User Joined</span>
+				<p>Content</p>
+			</div>
+			<div class="card-action"><a href="#!">view</a><a href="#!">dismiss</a></div>
+		</div>
+	</div>
+	<% } %>
+	<div id="chat-dropdown" class="dropdown-content dropdown-tabbed">
+		<ul class="tabs tabs-fixed-width">
+			<li class="tab col s3"><a href="#settings">Settings</a></li>
+			<% if (isUserAuthenticated) { %>
+			<li class="tab col s3"><a href="#friends" class="active">Friends</a></li>
+			<% } %>
+		</ul>
+		<div id="settings" class="col s12">
+			<div class="settings-group">
+				<div class="setting">
+					Night Mode
+					<div class="switch right">
+						<label> <input type="checkbox" /><span class="lever"></span> </label>
+					</div>
+				</div>
+				<div class="setting">
+					Beta Testing
+					<label class="right"> <input type="checkbox" /><span></span> </label>
+				</div>
+			</div>
+		</div>
+		<% if (isUserAuthenticated) { %>
+		<div id="friends" class="col s12">
+			<ul class="collection flush">
+				<li class="collection-item avatar">
+					<div class="badged-circle online">
+						<img src="/materialize/img/portrait1.jpg" alt="avatar" class="circle" />
+					</div>
+					<span class="title">Jane Doe</span>
+					<p class="truncate">Lo-fi you probably haven't heard of them</p>
+				</li>
+				<li class="collection-item avatar">
+					<div class="badged-circle">
+						<img src="/materialize/img/portrait2.jpg" alt="avatar" class="circle" />
+					</div>
+					<span class="title">John Chang</span>
+					<p class="truncate">etsy leggings raclette kickstarter four dollar toast</p>
+				</li>
+				<li class="collection-item avatar">
+					<div class="badged-circle">
+						<img src="/materialize/img/portrait3.jpg" alt="avatar" class="circle" />
+					</div>
+					<span class="title">Lisa Simpson</span>
+					<p class="truncate">Raw denim fingerstache food truck chia health goth synth</p>
+				</li>
+			</ul>
+		</div>
+		<% } %>
+	</div>
 </header>
-<% if (typeof root !== 'undefined') { %>
-  <% if (root !== 'headers' && root !== 'account') { %>
-    <% if (typeof breadcrumbs !== 'undefined') { %>
-      <% if (breadcrumbs.length > 0) { %>
-        <nav class="breadcrumb-nav">
-          <div class="nav-wrapper breadcrumb-div">
-            <div class="col s12 adjust-text-padding">
-              <% breadcrumbs.forEach(_breadcrumbs => { %>
-                  <a href="<%= _breadcrumbs.url %>" class="breadcrumb"><%= _breadcrumbs.title %></a>
-              <% }) %>
-              </div>
-            </div>
-          </nav>
-        <% } %>
-    <% } %>
-  <% } %>
-<% } %>
-
+<% if (typeof root !== 'undefined') { %> <% if (root !== 'headers' && root !== 'account') { %> <% if (typeof breadcrumbs
+!== 'undefined') { %> <% if (breadcrumbs.length > 0) { %>
+<nav class="breadcrumb-nav">
+	<div class="nav-wrapper breadcrumb-div">
+		<div class="col s12 adjust-text-padding">
+			<% breadcrumbs.forEach(_breadcrumbs => { %>
+			<a href="<%= _breadcrumbs.url %>" class="breadcrumb"><%= _breadcrumbs.title %></a>
+			<% }) %>
+		</div>
+	</div>
+</nav>
+<% } %> <% } %> <% } %> <% } %>

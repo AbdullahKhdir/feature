@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 import { Singleton } from "../../Singleton/Singleton";
-import ApiError  from "../ApiError";
+import ApiError from "../ApiError";
 
 /**
  * @class URIError
@@ -13,11 +13,13 @@ import ApiError  from "../ApiError";
  * If we call any of them with the wrong parameter we will get a URIError
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
+ */
 export = class URIError extends ApiError {
-    constructor(message = 'URI error', status_code?: number) {
-        const _constants = Singleton.getConstants();
-        super(status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message);
-        // next error middleware will send or render the page
-    }
- }
+	constructor(
+		message: string = "",
+		statusCode: number = Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST
+	) {
+		super("URIError", message, statusCode);
+		Object.setPrototypeOf(this, URIError.prototype);
+	}
+};

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -22,11 +22,11 @@ var ApiError_1 = __importDefault(require("../ApiError"));
 module.exports = /** @class */ (function (_super) {
     __extends(SiteNotFound, _super);
     function SiteNotFound(message, statusCode) {
-        if (message === void 0) { message = 'Site Not Found'; }
-        var _constants = Singleton_1.Singleton.getConstants();
-        var status_code = statusCode ? statusCode : _constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND;
-        return _super.call(this, status_code, message) || this;
-        // next error middleware will send or render the page
+        if (message === void 0) { message = ""; }
+        if (statusCode === void 0) { statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.NOT_FOUND; }
+        var _this = _super.call(this, "SiteNotFound", message, statusCode) || this;
+        Object.setPrototypeOf(_this, SiteNotFound.prototype);
+        return _this;
     }
     return SiteNotFound;
 }(ApiError_1.default));

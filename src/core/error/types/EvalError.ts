@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 import { Singleton } from "../../Singleton/Singleton";
-import ApiError  from "../ApiError";
+import ApiError from "../ApiError";
 
 /**
  * @class EvalError
@@ -10,11 +10,13 @@ import ApiError  from "../ApiError";
  * @description This is used to identify errors when using the global eval() function.
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
- //? Usage:                                   *\\
- //* return next(new EvalError('Eval Error')) *\\
-*/
+ */
 export = class EvalError extends ApiError {
-    constructor(message = 'Eval error', status_code?: number) {
-        super(status_code ? status_code : Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message);
-    }
-}
+	constructor(
+		message: string = "",
+		statusCode: number = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+	) {
+		super("EvalError", message, statusCode);
+		Object.setPrototypeOf(this, EvalError.prototype);
+	}
+};

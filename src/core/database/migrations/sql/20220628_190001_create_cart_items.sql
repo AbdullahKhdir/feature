@@ -1,8 +1,4 @@
--- create_cart_items
--- @author Abdullah Khdir <abdullahkhder77@gmail.com>
--- @branch 
-
-CREATE TABLE IF NOT EXISTS `node`.`tbl_cart_items` (
+CREATE TABLE IF NOT EXISTS `sql_database`.`tbl_cart_items` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `quantity` INT UNSIGNED NOT NULL,
   `cart_id` INT UNSIGNED NOT NULL,

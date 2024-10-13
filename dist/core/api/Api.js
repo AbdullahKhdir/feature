@@ -25,7 +25,6 @@ module.exports = /** @class */ (function (_super) {
         var _this = _super.call(this) || this;
         _this.path = Singleton_1.Singleton.getPath();
         _this.file_system = Singleton_1.Singleton.getFileSystem();
-        _this.constants = Singleton_1.Singleton.getConstants();
         return _this;
     }
     /**
@@ -43,48 +42,52 @@ module.exports = /** @class */ (function (_super) {
      */
     Api.prototype.deployApi = function (app) {
         var _this = this;
-        var directory_routes = this.path.join(__dirname, '..', '..', 'app', 'api');
+        var directory_routes = this.path.join(__dirname, "..", "..", "app", "api");
         var methods_array = null;
         this.file_system.readdir(directory_routes, { withFileTypes: true }, function (err, files) {
             if (err) {
-                return console.log('Unable to scan directory: ' + err);
+                return console.log("Unable to scan directory: " + err);
             }
             /*
-            * is a directory or is a file
-            */
+             * is a directory or is a file
+             */
             files.forEach(function (file) {
                 var is_dir = file.isDirectory();
                 var is_file = file.isFile();
                 if (is_file) {
                     /*
                      * let content   = this.file_system.readFileSync(directory_routes+'/'+file);
-                    */
-                    var file_name = _this.__.capitalize(file.name.substring(0, file.name.indexOf('js') - 1));
-                    var route_name = require('../../app/api/' + file_name + '.js');
-                    var instance_of = new route_name();
-                    methods_array = instance_of.methods;
+                     */
+                    var file_name = _this._.capitalize(file.name.substring(0, file.name.indexOf("js") - 1));
+                    var route_name = require("../../app/api/" + file_name + ".js");
+                    var instance_of_1 = new route_name();
+                    methods_array = instance_of_1.methods;
                     if (methods_array.length > 0) {
                         methods_array.forEach(function (route) {
-                            eval('app.use(instance_of.' + route + '());');
+                            app.use(instance_of_1[route]());
                         });
                     }
                 }
                 else if (is_dir) {
                     var directory_name_1 = file.name;
-                    _this.file_system.readdir(directory_routes + '/' + file.name, { withFileTypes: true }, function (err, files) {
+                    _this.file_system.readdir(directory_routes + "/" + file.name, { withFileTypes: true }, function (err, files) {
                         if (err) {
-                            return console.log('Unable to scan directory: ' + err);
+                            return console.log("Unable to scan directory: " + err);
                         }
                         files.forEach(function (file) {
                             var is_file = file.isFile();
                             if (is_file) {
-                                var file_name = _this.__.capitalize(file.name.substring(0, file.name.indexOf('js') - 1));
-                                var route_name = require('../../app/api/' + directory_name_1 + '/' + file_name + '.js');
-                                var instance_of = new route_name();
-                                methods_array = instance_of.methods;
+                                var file_name = _this._.capitalize(file.name.substring(0, file.name.indexOf("js") - 1));
+                                var route_name = require("../../app/api/" +
+                                    directory_name_1 +
+                                    "/" +
+                                    file_name +
+                                    ".js");
+                                var instance_of_2 = new route_name();
+                                methods_array = instance_of_2.methods;
                                 if (methods_array.length > 0) {
                                     methods_array.forEach(function (route) {
-                                        eval('app.use(instance_of.' + route + '());');
+                                        app.use(instance_of_2[route]());
                                     });
                                 }
                             }

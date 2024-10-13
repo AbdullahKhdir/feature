@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -17,92 +17,70 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var BaseModel_1 = __importDefault(require("../../../core/model/BaseModel"));
+var SqlModel_1 = __importDefault(require("../../../core/model/SqlModel"));
+var Cart_1 = __importDefault(require("./Cart"));
+var Product_1 = __importDefault(require("./Product"));
 module.exports = /** @class */ (function (_super) {
     __extends(User, _super);
     function User() {
         var _this = _super.call(this) || this;
-        _this.can_create = true;
-        _this.can_update = true;
-        _this.can_delete = false;
-        _this.primary_key = 'id';
-        _this.table = 'node.tbl_users';
-        _this.reverse_references = {
+        _this.canCreate = true;
+        _this.canUpdate = true;
+        _this.canDelete = false;
+        _this.primaryKey = "id";
+        _this.table = "sql_database.tbl_users";
+        _this.genericReferences = {};
+        _this.reverseReferences = {
             product_user_id: {
-                table: 'node.tbl_products',
-                class: 'shop/Products',
-                column: 'user_id'
+                name: "user_products",
+                table: "sql_database.tbl_products",
+                class: Product_1.default,
+                column: "user_id"
             },
             cart_user_id: {
-                table: 'node.tbl_carts',
-                class: 'shop/Cart',
-                column: 'user_id'
+                name: "user_cart",
+                table: "sql_database.tbl_carts",
+                class: Cart_1.default,
+                column: "user_id"
             }
         };
-        _this.columns = {
+        _this.modelColumns = {
             id: {
-                label: 'id'
+                label: "id",
+                type: "AUTO_INCREMENT"
             },
             first_name: {
-                label: 'First Name',
-                required: true
+                label: "First Name",
+                required: true,
+                type: "VARCHAR"
             },
             last_name: {
-                label: 'Last Name',
-                required: true
+                label: "Last Name",
+                required: true,
+                type: "VARCHAR"
             },
             email: {
-                label: 'email',
-                required: true
+                label: "email",
+                required: true,
+                type: "VARCHAR"
             },
             password: {
-                label: 'password',
-                required: true
+                label: "password",
+                required: true,
+                type: "VARCHAR"
             },
             created_at: {
-                label: 'created_at',
-                type: 'datetime'
+                label: "created_at",
+                type: "DATETIME"
             },
             updated_at: {
-                label: 'updated_at',
-                type: 'datetime'
+                label: "updated_at",
+                type: "DATETIME"
             }
         };
+        _this.columns = function () { return _this.modelColumns; };
+        _this.initializeModel();
         return _this;
-        // this.descripeTable(this.table)
-        // .then(result => {
-        //     let db_columns_list: any = [];
-        //     const columns = result[0];
-        //     let invalid_columns = [];
-        //     // @ts-ignore 
-        //     columns.forEach(column => {
-        //         /*
-        //         * If columns is in the db but not in this.columns, it will get populated
-        //         */
-        //         if (Object.keys(this.columns).indexOf(column['Field']) === -1 && column['Key'] !== 'PRI') {
-        //             this.columns[column['Field']] = {
-        //                 label:   this.__.capitalize(this.__.startCase(column['Field'])),
-        //                 type:    column['Type'],
-        //                 default: column['Default'] ? column['Default'] : null,
-        //             }
-        //         }
-        //         db_columns_list.push(column["Field"]);
-        //     });
-        //     /*
-        //     * If columns is not in the db but in this.columns, a run time exception will be thrown
-        //     */
-        //     invalid_columns = Object.keys(this.columns).filter(x => !db_columns_list.includes(x));
-        //     if (!this.__.isEmpty(invalid_columns)) {
-        //         throw new RuntimeException(
-        //             "Columns ["+
-        //             invalid_columns.join(',')+" "+
-        //             "] not available in database for the Model "+
-        //             getClass(this)
-        //         );
-        //     }
-        //     return;
-        // })
-        // .catch(err => {throw err});
     }
     return User;
-}(BaseModel_1.default));
+}(SqlModel_1.default));

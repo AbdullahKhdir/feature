@@ -3,7 +3,7 @@
 </head>
     <%- include('../includes/updated/header.ejs') %>
     <%- include('../includes/updated/toaster.ejs') %>
-    <% if (!is_authenticated) { %>
+    <% if (!isUserAuthenticated) { %>
         <nav class="navbar nav-extended no-padding">
             <div class="nav-wrapper">
                 <a href="#" class="brand-logo grey-text text-lighten-4"><%= nav_title %></a>
@@ -83,7 +83,7 @@
                             <div class="card-content">
                                 <span class="card-title">Sign up</span>
                                 <form action="/signup/" method="POST" class="cube-loader">
-                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                    <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                                     <div class="input-field">
                                         <label for="first_name">First Name</label>
                                         <input type="text" name="first_name" id="first_name">

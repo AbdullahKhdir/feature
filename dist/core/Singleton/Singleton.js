@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -11,13 +34,17 @@ var Uploader_1 = __importDefault(require("../../app/plugins/Uploader"));
 var Constants_1 = __importDefault(require("../../app/utils/Constants"));
 var Lodash_1 = __importDefault(require("../../app/utils/Lodash"));
 var Api_1 = __importDefault(require("../api/Api"));
-var Db_1 = __importDefault(require("../database/Db"));
+var Database_1 = __importDefault(require("../database/Database"));
 var Express_1 = require("../framework/Express");
 var Bodyparser_1 = __importDefault(require("../node/Bodyparser"));
 var FileSystem_1 = __importDefault(require("../node/FileSystem"));
 var Path_1 = __importDefault(require("../node/Path"));
 var Pagination_1 = __importDefault(require("../utils/Pagination"));
 var I18next_1 = __importDefault(require("../../app/plugins/I18next"));
+var ExpressSession_1 = __importDefault(require("../framework/ExpressSession"));
+var MongoDb_1 = __importDefault(require("../database/MongoDb"));
+var config = __importStar(require("../config"));
+var Redis_1 = __importDefault(require("../redis/Redis"));
 /**
  * @class Singleton
  * @constructor
@@ -25,7 +52,7 @@ var I18next_1 = __importDefault(require("../../app/plugins/I18next"));
  * Class Singleton is used to get instances of all singleton classes and plugins
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
+ */
 var Singleton = /** @class */ (function () {
     function Singleton() {
     }
@@ -39,10 +66,10 @@ var Singleton = /** @class */ (function () {
     //* Database getter functions *\\
     //*****************************\\
     Singleton.getDb = function () {
-        return Db_1.default.getDbInstance();
+        return Database_1.default.getDbInstance();
     };
     Singleton.getDbSession = function () {
-        return Db_1.default.getDbInstance().getMysqlInstance;
+        return Database_1.default.getDbInstance().getMysqlInstance;
     };
     //**************************************************\\
     //* API getter function *\\
@@ -51,17 +78,49 @@ var Singleton = /** @class */ (function () {
         if (this.apis) {
             return this.apis;
         }
-        return this.apis = new Api_1.default();
+        return (this.apis = new Api_1.default());
+    };
+    Singleton.getRedisInstance = function (options) {
+        if (options === void 0) { options = {
+            url: config.configurations().redisUrl,
+            socket: {
+                port: config.configurations().redisSocket.redisSocketPort,
+                host: config.configurations().redisSocket.redisSocketHost,
+                keepAlive: config.configurations().redisSocket.redisKeepAlive,
+                noDelay: config.configurations().redisSocket.redisNoDelay,
+                reconnectStrategy: function (retries) { return Math.min(retries * 50, 2000); }
+            },
+            database: config.configurations().redisDatabase,
+            disableOfflineQueue: config.configurations().redisDisableOfflineQueue
+        }; }
+        return Redis_1.default.getRedisInstance(options);
     };
     //**************************************************\\
     //* Database and Express Sessions getter functions *\\
     //**************************************************\\
     Singleton.getExpressSession = function () {
-        // return ExpressSession.getExpressSessionInstance();
+        if (!ExpressSession_1.default.expressSession) {
+            new ExpressSession_1.default();
+        }
+        return ExpressSession_1.default.expressSession;
     };
-    Singleton.getExpressMysqlSession = function () {
-        // return ExpressMysqlSession.getExpressMysqlSessionInstance();
+    Singleton.getMysqlStore = function () {
+        return this.getDb().getMysqlStore;
     };
+    Object.defineProperty(Singleton, "pool", {
+        /**
+         * @function getTransaction
+         * @version 1.0.0
+         * @description initializes the connection object to have connection object
+         * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+         * @returns {Promise<PoolConnection>}
+         */
+        get: function () {
+            return Singleton.getDb().pool;
+        },
+        enumerable: false,
+        configurable: true
+    });
     //****************************\\
     //* Express getter functions *\\
     //****************************\\
@@ -101,6 +160,15 @@ var Singleton = /** @class */ (function () {
     Singleton.getConstantsInstance = function () {
         return Constants_1.default.instance();
     };
+    Singleton.getMongoDbInstance = function (username, dbName, serverApi) {
+        if (dbName === void 0) { dbName = config.configurations().mongoDbName; }
+        if (serverApi === void 0) { serverApi = {
+            version: "1",
+            strict: true,
+            deprecationErrors: true
+        }; }
+        return MongoDb_1.default.getInstance(username, dbName, serverApi);
+    };
     //************************\\
     //* Path getter function *\\
     //************************\\
@@ -126,6 +194,9 @@ var Singleton = /** @class */ (function () {
     //******************************\\
     //* FileSystem getter function *\\
     //******************************\\
+    Singleton.getPromisifyFileSystem = function () {
+        return FileSystem_1.default.getPromisifyFileSystemInstance();
+    };
     Singleton.getFileSystem = function () {
         return FileSystem_1.default.getFileSystemInstance();
     };
@@ -143,7 +214,7 @@ var Singleton = /** @class */ (function () {
             if (this.instance) {
                 return this.instance;
             }
-            return this.instance = new Singleton();
+            return (this.instance = new Singleton());
         },
         enumerable: false,
         configurable: true
@@ -154,11 +225,11 @@ var Singleton = /** @class */ (function () {
     Singleton.getModel = function (model_name) {
         if (model_name) {
             var Model = null;
-            if (model_name === 'ExampleModel') {
-                Model = require('../../app/models/example_model/' + model_name);
+            if (model_name === "ExampleModel") {
+                Model = require("../../app/models/example_model/" + model_name);
             }
             else {
-                Model = require('../../app/models/shop/' + model_name);
+                Model = require("../../app/models/shop/" + model_name);
             }
             if (Model) {
                 return new Model();
@@ -173,7 +244,7 @@ var Singleton = /** @class */ (function () {
         if (this.io_instance) {
             return this.io_instance;
         }
-        return this.io_instance = new socket_io_1.default.Server(server);
+        return (this.io_instance = new socket_io_1.default.Server(server));
     };
     //*******************************\\
     //* PDFDocument getter function *\\

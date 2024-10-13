@@ -1,8 +1,4 @@
--- create_products_table
--- @author Abdullah Khdir <abdullahkhder77@gmail.com>
--- @branch 
-
-CREATE TABLE IF NOT EXISTS `node`.`tbl_products` (
+CREATE TABLE IF NOT EXISTS `sql_database`.`tbl_products` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
   `title` VARCHAR(255) NOT NULL,

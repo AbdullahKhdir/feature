@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -17,25 +17,16 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 var Singleton_1 = require("../../Singleton/Singleton");
 var ApiException_1 = __importDefault(require("../ApiException"));
-/**
- * @class FileNotFoundException
- * @constructor
- * @extends ApiException
- * @description This is used to identify When file is not found
- * @version 1.0.0
- * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
- //? Usage:                                                             *\\
- //* return next(new FileNotFoundException('File Not Found Exception')) *\\
-*/
 module.exports = /** @class */ (function (_super) {
     __extends(FileNotFoundException, _super);
-    function FileNotFoundException(message, status_code) {
-        if (message === void 0) { message = 'File not found exception'; }
-        var _constants = Singleton_1.Singleton.getConstants();
-        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
+    function FileNotFoundException(message, statusCode) {
+        if (message === void 0) { message = ""; }
+        if (statusCode === void 0) { statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.NOT_FOUND; }
+        var _this = _super.call(this, "FileNotFoundException", message, statusCode) || this;
+        Object.setPrototypeOf(_this, FileNotFoundException.prototype);
+        return _this;
     }
     return FileNotFoundException;
 }(ApiException_1.default));

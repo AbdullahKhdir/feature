@@ -2,7 +2,7 @@
 -- @author Abdullah Khdir <abdullahkhder77@gmail.com>
 -- @branch develop
 
-CREATE TABLE IF NOT EXISTS `node`.`tbl_order_items` (
+CREATE TABLE IF NOT EXISTS `sql_database`.`tbl_order_items` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `quantity` INT UNSIGNED NOT NULL,
   `order_id` INT UNSIGNED NOT NULL,

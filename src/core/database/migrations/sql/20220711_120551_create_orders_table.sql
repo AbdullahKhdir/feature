@@ -1,8 +1,4 @@
--- create orders table
--- @author Abdullah Khdir <abdullahkhder77@gmail.com>
--- @branch develop
-
-CREATE TABLE IF NOT EXISTS `node`.`tbl_orders` (
+CREATE TABLE IF NOT EXISTS `sql_database`.`tbl_orders` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

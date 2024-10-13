@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -21,11 +21,12 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiException_1 = __importDefault(require("../ApiException"));
 module.exports = /** @class */ (function (_super) {
     __extends(NumberFormatException, _super);
-    function NumberFormatException(message, status_code) {
-        if (message === void 0) { message = 'Number format exception'; }
-        var _constants = Singleton_1.Singleton.getConstants();
-        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
-        // next error middleware will send or render the page
+    function NumberFormatException(message, statusCode) {
+        if (message === void 0) { message = ""; }
+        if (statusCode === void 0) { statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST; }
+        var _this = _super.call(this, "NumberFormatException", message, statusCode) || this;
+        Object.setPrototypeOf(_this, NumberFormatException.prototype);
+        return _this;
     }
     return NumberFormatException;
 }(ApiException_1.default));

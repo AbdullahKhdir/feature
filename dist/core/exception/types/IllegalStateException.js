@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -17,25 +17,16 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 var Singleton_1 = require("../../Singleton/Singleton");
 var ApiException_1 = __importDefault(require("../ApiException"));
-/**
- * @class IllegalStateException
- * @constructor
- * @extends ApiException
- * @description This type of exception occurs when the state of the environment
- * does not match the operation being executed
- * @version 1.0.0
- * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
 module.exports = /** @class */ (function (_super) {
     __extends(IllegalStateException, _super);
-    function IllegalStateException(message, status_code) {
-        if (message === void 0) { message = 'Illegal state exception'; }
-        var _constants = Singleton_1.Singleton.getConstants();
-        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
-        // next error middleware will send or render the page
+    function IllegalStateException(message, statusCode) {
+        if (message === void 0) { message = ""; }
+        if (statusCode === void 0) { statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.CONFLICT; }
+        var _this = _super.call(this, "IllegalStateException", message, statusCode) || this;
+        Object.setPrototypeOf(_this, IllegalStateException.prototype);
+        return _this;
     }
     return IllegalStateException;
 }(ApiException_1.default));

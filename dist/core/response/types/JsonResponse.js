@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -19,11 +19,10 @@ var ExpressResponse_1 = require("../ExpressResponse");
 module.exports = /** @class */ (function (_super) {
     __extends(JsonResponse, _super);
     function JsonResponse(code, message, data) {
-        if (code === void 0) { code = 200; }
         var _this = this;
         var _constants = Singleton_1.Singleton.getConstants();
-        _this = _super.call(this, code || _constants.HTTPS_STATUS.SUCCESS.OK, 'OK', message) || this;
-        _this._message = message;
+        _this = _super.call(this, code || _constants.HTTPS_STATUS.SUCCESS.OK, message) || this;
+        _this.jsonMessage = message;
         _this.data = data;
         _this.code = code;
         return _this;
@@ -35,39 +34,9 @@ module.exports = /** @class */ (function (_super) {
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param Response res
      * @returns Response
-    */
+     */
     JsonResponse.prototype.sendAsJson = function (res) {
-        return _super.prototype.renderAsJson.call(this, res, Object.assign({ status_code: this.getCode() || Singleton_1.Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK }, { message: this.getMessage() }, { data: this.getData() }));
-    };
-    /**
-     * @function getData
-     * @description Gets the json data
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns Object
-    */
-    JsonResponse.prototype.getData = function () {
-        return this.data;
-    };
-    /**
-     * @function getCode
-     * @description Gets the status code
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns Object
-    */
-    JsonResponse.prototype.getCode = function () {
-        return this.code;
-    };
-    /**
-     * @function getMessage
-     * @description Gets the message
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns Object
-    */
-    JsonResponse.prototype.getMessage = function () {
-        return this.message;
+        return _super.prototype.renderAsJson.call(this, res, Object.assign({ status_code: this.code || Singleton_1.Singleton.getConstants().HTTPS_STATUS.SUCCESS.OK }, { message: this.jsonMessage }, { data: this.data }));
     };
     return JsonResponse;
 }(ExpressResponse_1.ExpressResponse));

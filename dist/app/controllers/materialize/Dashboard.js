@@ -4,7 +4,7 @@
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
 //* BRANCH: develop
 //***********************************************************
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -73,16 +73,18 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.dashboard = function () { return _this.route('get', '/dashboard/', _this.dashboardMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.render(res, 'materialize/pages/dashboard', {
-                        nav_title: 'Home',
-                        path: 'dashboard',
-                        root: 'pages'
-                    })];
-            });
-        }); }); };
+         */
+        _this.dashboard = function () {
+            return _this.route("get", "/dashboard/", _this.dashboardMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, this.render(res, "materialize/pages/dashboard", {
+                            nav_title: "Home",
+                            path: "dashboard",
+                            root: "pages"
+                        })];
+                });
+            }); });
+        };
         //? ************************************************************** ?\\
         //? this.method is used to deploy all the routes to express router ?\\
         //! dynamic routes must be the last index of the methods array     !\\
@@ -91,7 +93,7 @@ module.exports = /** @class */ (function (_super) {
             //**********\\
             //* Routes *\\
             //**********\\
-            'dashboard',
+            "dashboard"
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\
@@ -117,10 +119,11 @@ module.exports = /** @class */ (function (_super) {
             //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
             //! IMPORTANT THE ORDER MATTERS !\\
             //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
-            is_authenticated: function (req, res, next) { next(); },
+            isUserAuthenticated: function (req, res, next) {
+                next();
+            }
             //* SECOND VALIDATE BODY, PARAM COOKIE OR HEADER *\\
         };
     };
-    ;
     return Dashboard;
 }(BaseController_1.default));

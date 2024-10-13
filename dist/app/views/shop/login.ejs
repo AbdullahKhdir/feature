@@ -2,7 +2,7 @@
 <script type="text/javascript" src="../materialize/js/init.js" defer></script>
 </head>
     <%- include('../includes/updated/header.ejs') %>
-    <% if (!is_authenticated) { %>
+    <% if (!isUserAuthenticated) { %>
         <nav class="navbar nav-extended no-padding">
             <div class="nav-wrapper"><a href="#" class="brand-logo grey-text text-lighten-4"><%= nav_title %></a><a href="#" data-target="sidenav-left"
                     class="sidenav-trigger"><i class="material-icons white-text">menu</i></a>
@@ -79,7 +79,7 @@
                             <div class="card-content">
                                 <span class="card-title">Log In</span>
                                 <form action="/login/" method="POST" class="cube-loader">
-                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                    <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                                     <div class="input-field">
                                         <label for="username">Email</label>
                                         <input class="validate" type="email" name="email" id="email">

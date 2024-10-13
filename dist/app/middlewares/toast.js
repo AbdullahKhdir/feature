@@ -12,35 +12,34 @@ function toast(req, res, next, app) {
     var success = null;
     var post_data = null;
     var get_data = null;
-    if (typeof _flash_array['error'] !== 'undefined') {
-        error = _flash_array['error'];
+    if (typeof _flash_array["error"] !== "undefined") {
+        error = _flash_array["error"];
     }
-    if (typeof _flash_array['warning'] !== 'undefined') {
-        warning = _flash_array['warning'];
+    if (typeof _flash_array["warning"] !== "undefined") {
+        warning = _flash_array["warning"];
     }
-    if (typeof _flash_array['success'] !== 'undefined') {
-        success = _flash_array['success'];
+    if (typeof _flash_array["success"] !== "undefined") {
+        success = _flash_array["success"];
     }
-    if (typeof _flash_array['post_data'] !== 'undefined') {
-        post_data = _flash_array['post_data'][0];
+    if (typeof _flash_array["post_data"] !== "undefined") {
+        post_data = _flash_array["post_data"][0];
     }
-    if (typeof _flash_array['get_data'] !== 'undefined') {
-        get_data = _flash_array['get_data'];
+    if (typeof _flash_array["get_data"] !== "undefined") {
+        get_data = _flash_array["get_data"];
     }
-    if (typeof _flash_array['validation_errors'] !== 'undefined') {
-        validation_errors = JSON.parse(_flash_array['validation_errors']);
+    if (typeof _flash_array["validation_errors"] !== "undefined") {
+        validation_errors = JSON.parse(_flash_array["validation_errors"]);
     }
-    if (typeof _flash_array['errored_inputs'] !== 'undefined') {
-        errored_inputs = JSON.parse(_flash_array['errored_inputs']);
+    if (typeof _flash_array["errored_inputs"] !== "undefined") {
+        errored_inputs = JSON.parse(_flash_array["errored_inputs"]);
     }
-    res.locals['error'] = error;
-    res.locals['warning'] = warning;
-    res.locals['success'] = success;
-    res.locals['validation_errors'] = validation_errors;
-    res.locals['errored_inputs'] = errored_inputs;
-    res.locals['post_data'] = post_data || {};
-    res.locals['get_data'] = get_data;
-    res.locals['csrf'] = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
+    res.locals["error"] = error;
+    res.locals["warning"] = warning;
+    res.locals["success"] = success;
+    res.locals["validation_errors"] = validation_errors;
+    res.locals["errored_inputs"] = errored_inputs;
+    res.locals["post_data"] = post_data || {};
+    res.locals["get_data"] = get_data;
     app.locals.error = error;
     app.locals.warning = warning;
     app.locals.success = success;
@@ -54,5 +53,6 @@ function toast(req, res, next, app) {
         req.flash(key, value);
         return true;
     };
+    return next();
 }
 exports.toast = toast;

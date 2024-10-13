@@ -31,7 +31,7 @@
                                         <button type="submit" class="icon-btn btn waves-effect waves-light card-title text-darken-4 right">
                                             <i class="material-icons white-text">add_shopping_cart</i>
                                         </button>
-                                        <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                        <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                                         <input type="hidden" name="product_id" value="<%= product.id %>">
                                     </form>            
                                     <p>$<%= product.price %></p>

@@ -2,7 +2,7 @@
 -- @author Abdullah Khdir <abdullahkhder77@gmail.com>
 -- @branch 
 
-CREATE TABLE IF NOT EXISTS `node`.`tbl_carts` (
+CREATE TABLE IF NOT EXISTS `sql_database`.`tbl_carts` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT UNSIGNED NOT NULL,
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

@@ -67,7 +67,7 @@ export = class Uploader {
                                 <span>${options.button_name ? options.button_name : 'Choose a file'}</span>
                                 <input 
                                     id="fileupload${options.input_id ? ' '+options.input_id : ''}"
-                                    class=file"${options.input_class ? ' '+options.input_class : ''}"
+                                    class="${options.input_class ? 'file '+options.input_class : 'file'}"
                                     name="${options.input_name}"
                                     id="${options.input_name}"
                                     type="file"

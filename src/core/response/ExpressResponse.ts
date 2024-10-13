@@ -1,307 +1,417 @@
-'use strict';
+"use strict";
 
-import { NextFunction, Request, Response } from 'express';
-import { ReadStream } from 'node:fs';
-import * as config from '../config';
-import ApiException from '../exception/ApiException';
-import { Singleton } from '../Singleton/Singleton';
-import { csrf, siteNotFound, error as _error } from '../utils/undefined-routes-logic';
+import { NextFunction, Request, Response } from "express";
+import { ReadStream } from "node:fs";
+import * as config from "../config";
+import ApiException from "../exception/ApiException";
+import { Singleton } from "../Singleton/Singleton";
+import { csrf, siteNotFound, error as _error } from "../utils/undefined-routes-logic";
+import CustomError from "../error/types/Error";
 
 /**
  * @class Response
  * @constructor
- * @description Class Response is used to define the Response Objects 
+ * @description Class Response is used to define the Response Objects
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
-// export = class ExpressResponse implements Response {
+ */
 export abstract class ExpressResponse {
-    protected message: string;
-    protected status_code: number;
-    protected response_status: string;
-    protected readonly codes: any;
-    protected readonly express;
-    constructor(status_code? : any, response_status? : any, message : string = '') {
-        this.message         = message;
-        this.status_code     = status_code;
-        this.response_status = response_status;
-        this.codes           = Singleton.getConstants();
-        this.express         = Singleton.getExpress();
-    }
+	private message: string;
+	private statusCode: number;
+	protected readonly constants: any;
+	protected readonly express;
+	protected readonly _;
 
-    /**
-     * @function renderAsJson
-     * @description Sends a json response
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param Object data
-     * @param Number status
-     * @returns Response
-    */
-    renderAsJson(res: Response, data: any, status = this.codes.HTTPS_STATUS.SUCCESS.OK) : Response {
-        res.type(this.codes.RESPONSE.TYPES.JSON);
-        if (typeof this.status_code === 'undefined') {
-            return res.status(status).json(ExpressResponse.sanitize(data));
-        }
-        return res.status(this.status_code).json(ExpressResponse.sanitize(data));
-    }
+	constructor(statusCode?: any, message: string = "") {
+		this.message = message;
+		this.statusCode = statusCode;
+		this.constants = Singleton.getConstants();
+		this.express = Singleton.getExpress();
+		this._ = Singleton.getLodash();
+	}
 
-    /**
-     * @function render
-     * @description Sends a html response
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param String template
-     * @param Object options
-     * @param Function callback
-     * @param Number status
-     * @returns Response
-    */
-    render(res: Response, template : any, options = {}, callback = null, status: any = this.codes.HTTPS_STATUS.SUCCESS.OK) : Response {
-        res.type(this.codes.RESPONSE.TYPES.HTML);
-        if (typeof this.status_code === 'undefined') {// @ts-ignore 
-            return res.status(status).render(template, options, callback);
-        }// @ts-ignore 
-        return res.status(this.status_code).render(template, options, callback);
-    }
+	/**
+	 * @function getMessage
+	 * @description getter for the property message
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @returns {string}
+	 */
+	get getMessage(): string {
+		return this.message;
+	}
 
-    /**
-     * @function redirect
-     * @description redirect response to html page
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param String url
-     * @param Number status
-     * @returns Response
-    */
-    redirect(res: Response, url: any, status : any = this.codes.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY) : Response {
-        res.type(this.codes.RESPONSE.TYPES.HTML);
-        if (typeof this.status_code === 'undefined') {
-            res.redirect(status, url);
-            return res.end();
-            
-        }
-        res.redirect(this.status_code, url);
-        return res.end();
-    }
+	/**
+	 * @function setMessage
+	 * @description setter for the property message
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 */
+	set setMessage(message: string) {
+		this.message = message;
+	}
 
-    /**
-     * @function toSameSite
-     * @description redirect response to html page
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param String url
-     * @param Number status
-     * @returns Response
-    */
-    toSameSite(res: Response, status: any = this.codes.HTTPS_STATUS.REDIRECTION.PERMANENT_REDIRECT) : Response{
-        res.type(this.codes.RESPONSE.TYPES.HTML);
-        // res.redirect(status, res.req.route.path);
-        res.redirect(status, res.req.url);
-        return res.end();
-    }
+	/**
+	 * @function getStatusCode
+	 * @description getter for the status code
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @returns {number}
+	 */
+	get getStatusCode(): number {
+		return this.statusCode;
+	}
 
-    /**
-     * @function postToSameSite
-     * @description redirect response to html page
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param String url
-     * @param Number status
-     * @returns Response
-    */
-    postToSameSite(res: Response, status: any  = this.codes.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY) : Response{
-        res.type(this.codes.RESPONSE.TYPES.HTML);
-        res.redirect(status, res.req.route.path);
-        return res.end();
-    }
+	/**
+	 * @function setStatusCode
+	 * @description setter for the property statusCode
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 */
+	set setStatusCode(statusCode: number) {
+		this.statusCode = statusCode;
+	}
 
-    /**
-     * @function siteNotFound
-     * @description undefined_routes html page
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns Response
-    */
-    siteNotFound(res: Response) : Response{
-        return this.render(res, 'undefined_routes', siteNotFound(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND);
-    }
+	/**
+	 * @function renderAsJson
+	 * @description Sends a json response
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} resopnse
+	 * @param {any} data
+	 * @param {number} status
+	 * @returns {Response}
+	 */
+	renderAsJson(resopnse: Response, data: any, status: number = this.constants.HTTPS_STATUS.SUCCESS.OK): Response {
+		resopnse.type(this.constants.RESPONSE.TYPES.JSON);
+		return resopnse.status(this.getStatusCode ?? status).json(ExpressResponse.sanitize(data));
+	}
 
-    /**
-     * @function onErrorValidation
-     * @description renders all the validation errors back to the user
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param Object errors
-     * @returns Response
-    */
-    onErrorValidation(res: Response, errors: any) : Response {
-        let status = null;
-        res.type(this.codes.RESPONSE.TYPES.HTML);
-        if (typeof errors !== 'undefined') {
-            if (typeof errors === 'object' && typeof errors[Symbol.iterator] === 'function') {
-                if (errors.length >= 0) {
-                    let obj_warnings = {};
-                    let errored_params = {};
-                    errors.forEach((error: any, index: any) => {
-                        Object.assign(obj_warnings, {[index]:`${error.msg}`});
-                        Object.assign(errored_params, {[index]:`${error.param}`});
-                    });
-                    res.req.flash('validation_errors', JSON.stringify(obj_warnings));
-                    res.req.flash('errored_inputs', JSON.stringify(errored_params));
-                }
-            } else if (typeof errors === 'string') {
-                const error = errors;
-                res.req.flash('validation_errors', JSON.stringify({error: error}));
-                res.req.flash('errored_inputs', JSON.stringify({error: error}));
-            }
-        }
-        if (res.req.method === this.codes.REQUEST.TYPE.GET) {
-            status = this.codes.HTTPS_STATUS.REDIRECTION.PERMANENT_REDIRECT
-        } else if (res.req.method === this.codes.REQUEST.TYPE.POST) {
-            status = this.codes.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY;
-        }
-        
-        res.redirect(status, res.req.url);
-        return res.end();
-    }
+	/**
+	 * @function render
+	 * @description Sends a html response
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {string} template
+	 * @param {object} options
+	 * @param {Function} callback
+	 * @param Number status
+	 * @returns {Response}
+	 */
+	render(
+		response: Response,
+		template: string,
+		options: object = {},
+		status: number = this.constants.HTTPS_STATUS.SUCCESS.OK,
+		callback?: (err: Error | null, html: string) => void
+	): Response {
+		response.type(this.constants.RESPONSE.TYPES.HTML);
 
-    /**
-     * @function onErrorValidation
-     * @description renders all the validation errors back to the user
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param Object errors
-     * @returns Response
-    */
-    sendPdf(res: Response, pdf: PDFKit.PDFDocument | ReadStream, pdf_name = 'pdf', to_download = false) {
-        let date    = new Date();
-        let year    = date.getFullYear();
-        let month   = (date.getMonth() + 1);
-        let day     = date.getDate();
-        let hours   = date.getHours();
-        let minutes = date.getMinutes();
-        res.setHeader('Content-Type', this.codes.RESPONSE.TYPES.PDF);
-        res.setHeader('Content-Disposition', `${to_download ? 'attachment' : 'inline'}; filename="${year}_${month}_${day}_${hours}_${minutes}_${pdf_name}"`);
-        if (pdf instanceof ReadStream) {
-            return pdf.pipe(res);
-        } else {
-            pdf.pipe(res);
-            return pdf.end();
-        }
-    }
+		if (callback) {
+			response
+				.status(this.getStatusCode ?? status)
+				.render(template, options, (error: Error | null, html: string) => {
+					if (error) {
+						response
+							.status(this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR)
+							.send(`An error occurred while rendering the page. \n ${error}`);
+					} else {
+						callback(error, html);
+					}
+				});
 
-    /**
-     * @function invalidCsrfResponse
-     * @description undefined_routes html page for invalid csrf response
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns Response
-    */
-    invalidCsrfResponse(req: Request, res: Response) : Response{
-        return this.render(res, 'undefined_routes', csrf(res), null, this.codes.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN);
-    }
+			return response;
+		}
 
-    /**
-     * @function onError
-     * @description undefined_routes html page on throwing an error
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @returns Response
-    */
-    onError(res: Response, next: NextFunction, error: Error | string | {message?: string; statusCode: number}) : Response | void {
-        if (config.configurations().environment === 'development') {
-            if (typeof error === 'string') {
-                let _error = new Error(error);
-                //@ts-ignore
-                _error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
-                return next(_error);
-            } else if (error instanceof Error) {
-                // @ts-ignore
-                error.statusCode = error.statusCode ? error.statusCode : Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
-                return next(error);
-            } else if (typeof error === 'object' && typeof error !== 'string' 
-                && typeof error !== 'function' && typeof error !== 'boolean' 
-                && typeof error !== 'number') {
-                return next(error);
-            }
-            
-            return this.render(res, 'undefined_routes', {
-                nav_title: '', 
-                path: '/undefined_routes/',
-                is_authenticated: res?.req?.session?.is_authenticated,
-                error:   null,
-                warning: null,
-                success: null,
-                status_code: 500,
-                status_title: "Unexpected error",
-                status_description: Singleton.getLodash().capitalize(error_message!) || `Please contact the support team!`,
-                url: '/',
-                label: 'Home'
-            }, null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);                
-        } else if (config.configurations().environment === 'production') {
-            var error_message = '';
-            if (error instanceof Error && error !instanceof ApiException) {
-                // @ts-ignore
-                error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
-                return next(error);
-            } else if (error !instanceof ApiException && typeof error === 'string') {
-                let _error = new Error(error);
-                //@ts-ignore
-                _error.statusCode = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
-                return next(_error);
-            } else if (error !instanceof ApiException && typeof error === 'object') {
-                return next(error);
-            }
-            
-            return this.render(res, 'undefined_routes', {
-                nav_title: '', 
-                path: '/undefined_routes/',
-                is_authenticated: res?.req?.session?.is_authenticated,
-                error:   null,
-                warning: null,
-                success: null,
-                status_code: 500,
-                status_title: "Unexpected error",
-                status_description: Singleton.getLodash().capitalize(error_message!) || `Please contact the support team!`,
-                url: '/',
-                label: 'Home'
-            }, null, this.codes.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE);
-        }
-        return res.end();
-    }
+		response.status(this.getStatusCode ?? status).render(template, options);
 
-    /**
-     * @function send
-     * @description Sends a html response
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param String body
-     * @param Number status
-     * @returns Response
-    */
-    send(res: Response, body: any, status = this.codes.HTTPS_STATUS.SUCCESS.OK) : Response {
-        res.type(this.codes.RESPONSE.TYPES.HTML);
-        if (typeof this.status_code === 'undefined') {
-            res.status(status).send(body);
-            return res.end();
-        }
-        res.status(this.status_code).send(body);
-        return res.end();
-    }
- 
-    /**
-     * @function sanitize
-     * @description Prepares and cleans the json data to be send in the response
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param Response res
-     * @returns object
-    */
-    static sanitize(response: Response) {
-        const clone: any = {};
-        Object.assign(clone, response);
-        for (const i in clone) if (typeof clone[i] === 'undefined') delete clone[i];
-        return clone;
-    }
+		return response;
+	}
+
+	/**
+	 * @function redirect
+	 * @description redirect response to html page
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {string} url
+	 * @param {number} status
+	 * @returns {Response}
+	 */
+	redirect(
+		response: Response,
+		url: string,
+		status: number = this.constants.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY
+	): Response {
+		response.type(this.constants.RESPONSE.TYPES.HTML);
+		response.redirect(this.getStatusCode ?? status, url);
+
+		return response;
+	}
+
+	/**
+	 * @function toSameSite
+	 * @description redirect response to html page
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {number} status
+	 * @returns {Response}
+	 */
+	toSameSite(
+		response: Response,
+		status: number = this.constants.HTTPS_STATUS.REDIRECTION.PERMANENT_REDIRECT
+	): Response {
+		response.type(this.constants.RESPONSE.TYPES.HTML);
+		response.redirect(this.getStatusCode ?? status, response.req.url);
+
+		return response;
+	}
+
+	/**
+	 * @function postToSameSite
+	 * @description redirect response to html page
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {number} status
+	 * @returns {Response}
+	 */
+	postToSameSite(
+		response: Response,
+		status: number = this.constants.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY
+	): Response {
+		response.type(this.constants.RESPONSE.TYPES.HTML);
+		response.redirect(this.getStatusCode ?? status, response.req.route.path);
+		return response;
+	}
+
+	/**
+	 * @function siteNotFound
+	 * @description undefined_routes html page
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @returns {Response}
+	 */
+	siteNotFound(response: Response): Response {
+		return this.render(
+			response,
+			"undefined_routes",
+			siteNotFound(response),
+			this.constants.HTTPS_STATUS.CLIENT_ERRORS.NOT_FOUND
+		);
+	}
+
+	/**
+	 * @function onErrorValidation
+	 * @description renders all the validation errors back to the user
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {object[] | string} errors
+	 * @returns {Response}
+	 */
+	onErrorValidation(response: Response, errors: object[] | string): Response {
+		response.type(this.constants.RESPONSE.TYPES.HTML);
+
+		if (!response.req.flash) {
+			throw new Error("Flash middleware is not initialized");
+		}
+
+		if (typeof errors !== "undefined") {
+			if (this._.isArray(errors) && !this._.isEmpty(errors)) {
+				let objWarnings = {};
+				let erroredParams = {};
+
+				errors.forEach((error: any, index: any) => {
+					Object.assign(objWarnings, { [index]: `${error.msg}` });
+					Object.assign(erroredParams, { [index]: `${error.param}` });
+				});
+
+				response.req.flash("validationErrors", JSON.stringify(objWarnings));
+				response.req.flash("erroredInputs", JSON.stringify(erroredParams));
+			} else if (typeof errors === "string") {
+				const error = errors;
+				response.req.flash("validationErrors", JSON.stringify({ error: error }));
+				response.req.flash("erroredInputs", JSON.stringify({ error: error }));
+			}
+		}
+
+		let status = null;
+		if (response.req.method === this.constants.REQUEST.TYPE.GET) {
+			status = this.constants.HTTPS_STATUS.REDIRECTION.PERMANENT_REDIRECT;
+		} else if (response.req.method === this.constants.REQUEST.TYPE.POST) {
+			status = this.constants.HTTPS_STATUS.REDIRECTION.MOVED_PERMANENTLY;
+		} else {
+			status = this.constants.HTTPS_STATUS.REDIRECTION.TEMPORARY_REDIRECT;
+		}
+
+		response.redirect(status, response.req.url || "/");
+
+		return response;
+	}
+
+	/**
+	 * @function sendPdf
+	 * @description returns a pdf file to be downloaded instantly
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {PDFKit.PDFDocument | ReadStream} pdf
+	 * @param {string} pdf_name
+	 * @param {boolean} to_download
+	 * @returns {Response}
+	 */
+	sendPdf(
+		response: Response,
+		pdf: PDFKit.PDFDocument | ReadStream,
+		pdf_name: string = "pdf",
+		to_download: boolean = false
+	): Response {
+		const date = new Date();
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, "0");
+		const day = String(date.getDate()).padStart(2, "0");
+		const hours = String(date.getHours()).padStart(2, "0");
+		const minutes = String(date.getMinutes()).padStart(2, "0");
+
+		response.setHeader("Content-Type", this.constants.RESPONSE.TYPES.PDF);
+		response.setHeader(
+			"Content-Disposition",
+			`${
+				to_download ? "attachment" : "inline"
+			}; filename="${year}_${month}_${day}_${hours}_${minutes}_${pdf_name}.pdf"`
+		);
+
+		pdf.pipe(response);
+
+		return response;
+	}
+
+	/**
+	 * @function invalidCsrfResponse
+	 * @description undefined_routes html page for invalid csrf response
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @returns {Response}
+	 */
+	invalidCsrfResponse(response: Response): Response {
+		return this.render(
+			response,
+			"undefined_routes",
+			csrf(response),
+			undefined,
+			this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN
+		);
+	}
+
+	/**
+	 * @function onError
+	 * @description undefined_routes html page on throwing an error
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {NextFunction} next
+	 * @param {Error | string | { message?: string; statusCode: number }} error
+	 * @returns {Response | void}
+	 */
+	onError(
+		response: Response,
+		next: NextFunction,
+		error: Error | string | { message?: string; statusCode: number }
+	): Response | void {
+		const environment = config.configurations().environment;
+		let error_message = typeof error === "string" ? error : (error as Error).message || "Unexpected error";
+
+		if (environment === "development") {
+			if (typeof error === "string") {
+				const customError = new CustomError(error);
+				customError.statusCode = this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+				return next(customError);
+			} else if (error instanceof Error) {
+				return next(error);
+			}
+
+			return this.renderErrorPage(response, "Unexpected error", 500, "Please contact the support team.");
+		}
+
+		if (error instanceof Error && !(error instanceof ApiException)) {
+			(error as any).statusCode = this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+			return next(error);
+		} else if (typeof error === "string") {
+			const genericError = new Error(error);
+			return next(genericError);
+		} else if (typeof error === "object" && error instanceof ApiException) {
+			return next(error);
+		}
+
+		return this.renderErrorPage(response, error_message, 500, "Unexpected error occurred.");
+	}
+
+	/**
+	 * @function renderErrorPage
+	 * @description undefined_routes html page on throwing an error
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {string} title
+	 * @param {number} statusCode
+	 * @param {string} description
+	 * @returns {Response}
+	 */
+	private renderErrorPage(response: Response, title: string, statusCode: number, description: string): Response {
+		return this.render(
+			response,
+			"undefined_routes",
+			{
+				nav_title: "",
+				path: "/undefined_routes/",
+				isUserAuthenticated: response?.req?.session?.isUserAuthenticated,
+				error: null,
+				warning: null,
+				success: null,
+				status_code: statusCode,
+				status_title: title,
+				status_description: description,
+				url: "/",
+				label: "Home"
+			},
+			undefined,
+			this.constants.HTTPS_STATUS.SERVER_ERRORS.SERVICE_UNAVAILABLE
+		);
+	}
+
+	/**
+	 * @function send
+	 * @description Sends a html response
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @param {any} body
+	 * @param {number} status
+	 * @returns Response
+	 */
+	send(response: Response, body: any, status: number = this.constants.HTTPS_STATUS.SUCCESS.OK): Response {
+		response.type(this.constants.RESPONSE.TYPES.HTML);
+		response.status(this.statusCode ?? status).send(body);
+		return response;
+	}
+
+	/**
+	 * @function sanitize
+	 * @description Prepares and cleans the json data to be send in the response
+	 * @version 1.0.0
+	 * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+	 * @param {Response} response
+	 * @returns {object}
+	 */
+	static sanitize(response: Response): object {
+		const clone: any = {};
+		Object.assign(clone, response);
+		for (const i in clone) if (typeof clone[i] === "undefined") delete clone[i];
+		return clone;
+	}
 }

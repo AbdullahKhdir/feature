@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -63,7 +63,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = void 0;
-var https_1 = __importDefault(require("https"));
+var http_1 = __importDefault(require("http"));
 var os_1 = __importDefault(require("os"));
 var endpoints_1 = require("./core/api/apis_endpoints/endpoints");
 var config = __importStar(require("./core/config"));
@@ -77,51 +77,48 @@ var ApiError_1 = __importDefault(require("./core/error/ApiError"));
  * @description Class Server is used to initiate the whole application and open a socket to serve the application
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
+ */
 var Server = /** @class */ (function () {
     function Server() {
         this.app = Singleton_1.Singleton.getExpressApp();
         this.constants = Singleton_1.Singleton.getConstants();
         this.__ = Singleton_1.Singleton.getLodash();
-        process.env['UV_THREADPOOL_SIZE'] = os_1.default.cpus().length.toString();
+        process.env["UV_THREADPOOL_SIZE"] = os_1.default.cpus().length.toString();
     }
     Server.getServerInstance = function () {
         if (this.server_instance) {
             return this.server_instance;
         }
-        return this.server_instance = new Server();
+        return (this.server_instance = new Server());
     };
     Server.prototype.run = function () {
         var _this = this;
-        if (config.configurations().environment === 'development') {
+        if (config.configurations().environment === "development") {
             return (function () { return __awaiter(_this, void 0, void 0, function () {
                 var mkcert, ca, cert, httpsOptions, port, httpServer, server;
                 var _this = this;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            mkcert = require('mkcert');
+                            mkcert = require("mkcert");
                             return [4 /*yield*/, mkcert.createCA({
-                                    organization: 'Node',
-                                    countryCode: 'DE',
-                                    state: 'Bavaria',
-                                    locality: 'Nuremberg',
+                                    organization: "Node",
+                                    countryCode: "DE",
+                                    state: "Bavaria",
+                                    locality: "Nuremberg",
                                     validityDays: 1
                                 })];
                         case 1:
                             ca = _a.sent();
                             return [4 /*yield*/, mkcert.createCert({
-                                    domains: ['127.0.0.1', 'localhost'],
+                                    domains: ["127.0.0.1", "test"],
                                     validityDays: 1,
                                     caKey: ca.key,
                                     caCert: ca.cert
                                 })];
                         case 2:
                             cert = _a.sent();
-                            httpsOptions = {
-                                key: cert.key,
-                                cert: cert.cert
-                            };
+                            httpsOptions = { key: cert.key, cert: cert.cert };
                             port = Server.getServerInstance().port();
                             //****************************************************************************************************\\
                             //* Will be triggered only on errors or next(new Error('error message')) or next({error: 'message'}) *\\
@@ -129,17 +126,18 @@ var Server = /** @class */ (function () {
                             this.app.use(function (error, req, res, next) {
                                 var _a, _b, _c, _d, _e, _f;
                                 if (error.code === _this.constants.CSRF.errCode) {
-                                    return res.status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN).render('undefined_routes', (0, undefined_routes_logic_1.csrf)(res));
+                                    return res
+                                        .status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN)
+                                        .render("undefined_routes", (0, undefined_routes_logic_1.csrf)(res));
                                 }
                                 var _status = error.statusCode || _this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                                 var message = error.message;
                                 var is_api_endpoint = false;
-                                // throw err;
                                 if (endpoints_1.ENDPOINTS.length > 0) {
                                     endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                            || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                            || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                                        if (endpoints_1.ENDPOINTS.includes(req.headers.referer || "") ||
+                                            endpoints_1.ENDPOINTS.includes(req.originalUrl || "") ||
+                                            endpoints_1.ENDPOINTS.includes(req.url || "")) {
                                             is_api_endpoint = true;
                                         }
                                     });
@@ -149,24 +147,28 @@ var Server = /** @class */ (function () {
                                 }
                                 else {
                                     if (error) {
-                                        if (Object.keys('statusCode')) {
+                                        if (Object.keys("statusCode")) {
                                             // req.origin = req.headers.origin || req.get('origin');
-                                            error.statusCode = error.statusCode ? error.statusCode : _this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
+                                            error.statusCode = error.statusCode
+                                                ? error.statusCode
+                                                : _this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                                             var error_handler_1 = ApiError_1.default.errorHandler(error)[error.statusCode];
                                             if (endpoints_1.ENDPOINTS.length > 0) {
                                                 endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                                                    if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                                                        || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                                                        || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                                                        return res.status(_status).json({ statusCode: error_handler_1.status_code, message: error_handler_1.status_title });
+                                                    if (endpoints_1.ENDPOINTS.includes(req.headers.referer || "") ||
+                                                        endpoints_1.ENDPOINTS.includes(req.originalUrl || "") ||
+                                                        endpoints_1.ENDPOINTS.includes(req.url || "")) {
+                                                        return res.status(_status).json({
+                                                            statusCode: error_handler_1.status_code,
+                                                            message: error_handler_1.status_title
+                                                        });
                                                     }
                                                 });
                                             }
-                                            return res.status(_status)
-                                                .render('undefined_routes', {
-                                                nav_title: '',
-                                                path: '/undefined_routes/',
-                                                is_authenticated: (_a = req === null || req === void 0 ? void 0 : req.session) === null || _a === void 0 ? void 0 : _a.is_authenticated,
+                                            return res.status(_status).render("undefined_routes", {
+                                                nav_title: "",
+                                                path: "/undefined_routes/",
+                                                isUserAuthenticated: (_a = req === null || req === void 0 ? void 0 : req.session) === null || _a === void 0 ? void 0 : _a.isUserAuthenticated,
                                                 error: null,
                                                 warning: null,
                                                 success: null,
@@ -179,101 +181,114 @@ var Server = /** @class */ (function () {
                                         }
                                     }
                                     if (req.isPost()) {
-                                        return res.status(_status)
-                                            .render('undefined_routes', {
-                                            nav_title: '',
-                                            path: '/undefined_routes/',
-                                            is_authenticated: (_b = req === null || req === void 0 ? void 0 : req.session) === null || _b === void 0 ? void 0 : _b.is_authenticated,
+                                        return res.status(_status).render("undefined_routes", {
+                                            nav_title: "",
+                                            path: "/undefined_routes/",
+                                            isUserAuthenticated: (_b = req === null || req === void 0 ? void 0 : req.session) === null || _b === void 0 ? void 0 : _b.isUserAuthenticated,
                                             error: null,
                                             warning: null,
                                             success: null,
                                             status_code: 400,
                                             status_title: "Bad Request",
                                             status_description: "Wondering from where have you requested this url, but you can click the button below\n                                    to go back to the homepage.",
-                                            url: '/',
-                                            label: 'Home'
+                                            url: "/",
+                                            label: "Home"
                                         });
                                     }
                                     else if (req.isGet()) {
-                                        return res.status(_status)
-                                            .render('undefined_routes', {
-                                            nav_title: '',
-                                            path: '/undefined_routes/',
-                                            is_authenticated: (_c = req === null || req === void 0 ? void 0 : req.session) === null || _c === void 0 ? void 0 : _c.is_authenticated,
+                                        return res.status(_status).render("undefined_routes", {
+                                            nav_title: "",
+                                            path: "/undefined_routes/",
+                                            isUserAuthenticated: (_c = req === null || req === void 0 ? void 0 : req.session) === null || _c === void 0 ? void 0 : _c.isUserAuthenticated,
                                             error: null,
                                             warning: null,
                                             success: null,
                                             status_code: 404,
                                             status_title: "UH OH! You're lost.",
                                             status_description: "The page you are looking for does not exist.\n                                    How you got here is a mystery. But you can click the button below\n                                    to go back to the homepage.",
-                                            url: '/',
-                                            label: 'Home'
+                                            url: "/",
+                                            label: "Home"
                                         });
                                     }
                                     else if (req.isPatch()) {
-                                        return res.status(_status)
-                                            .render('undefined_routes', {
-                                            nav_title: '',
-                                            path: '/undefined_routes/',
-                                            is_authenticated: (_d = req === null || req === void 0 ? void 0 : req.session) === null || _d === void 0 ? void 0 : _d.is_authenticated,
+                                        return res.status(_status).render("undefined_routes", {
+                                            nav_title: "",
+                                            path: "/undefined_routes/",
+                                            isUserAuthenticated: (_d = req === null || req === void 0 ? void 0 : req.session) === null || _d === void 0 ? void 0 : _d.isUserAuthenticated,
                                             error: null,
                                             warning: null,
                                             success: null,
                                             status_code: 400,
                                             status_title: "Bad Request",
                                             status_description: "Wondering from where have you requested this url, but you can click the button below\n                                    to go back to the homepage.",
-                                            url: '/',
-                                            label: 'Home'
+                                            url: "/",
+                                            label: "Home"
                                         });
                                     }
                                     else if (req.isPut()) {
-                                        return res.status(_status)
-                                            .render('undefined_routes', {
-                                            nav_title: '',
-                                            path: '/undefined_routes/',
-                                            is_authenticated: (_e = req === null || req === void 0 ? void 0 : req.session) === null || _e === void 0 ? void 0 : _e.is_authenticated,
+                                        return res.status(_status).render("undefined_routes", {
+                                            nav_title: "",
+                                            path: "/undefined_routes/",
+                                            isUserAuthenticated: (_e = req === null || req === void 0 ? void 0 : req.session) === null || _e === void 0 ? void 0 : _e.isUserAuthenticated,
                                             error: null,
                                             warning: null,
                                             success: null,
                                             status_code: 400,
                                             status_title: "Bad Request",
                                             status_description: "Wondering from where have you requested this url, but you can click the button below\n                                    to go back to the homepage.",
-                                            url: '/',
-                                            label: 'Home'
+                                            url: "/",
+                                            label: "Home"
                                         });
                                     }
                                     else if (req.isDelete()) {
-                                        return res.status(_status)
-                                            .render('undefined_routes', {
-                                            nav_title: '',
-                                            path: '/undefined_routes/',
-                                            is_authenticated: (_f = req === null || req === void 0 ? void 0 : req.session) === null || _f === void 0 ? void 0 : _f.is_authenticated,
+                                        return res.status(_status).render("undefined_routes", {
+                                            nav_title: "",
+                                            path: "/undefined_routes/",
+                                            isUserAuthenticated: (_f = req === null || req === void 0 ? void 0 : req.session) === null || _f === void 0 ? void 0 : _f.isUserAuthenticated,
                                             error: null,
                                             warning: null,
                                             success: null,
                                             status_code: 400,
                                             status_title: "Bad Request",
                                             status_description: "Wondering from where have you requested this url, but you can click the button below\n                                    to go back to the homepage.",
-                                            url: '/',
-                                            label: 'Home'
+                                            url: "/",
+                                            label: "Home"
                                         });
                                     }
                                 }
                             });
-                            httpServer = https_1.default.createServer(httpsOptions, this.app);
+                            httpServer = http_1.default.createServer(this.app);
                             server = httpServer.listen(port, function () {
-                                if (config.configurations().execution_point === _this.constants.NPM) {
-                                    console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m');
+                                if (config.configurations().executionPoint === _this.constants.NPM) {
+                                    console.log("\u001b[" +
+                                        44 +
+                                        "m" +
+                                        "Express Server Is Running Natively On Port " +
+                                        port +
+                                        "!" +
+                                        "\u001b[0m");
                                 }
-                                else if (config.configurations().execution_point === _this.constants.PM2) {
-                                    console.log('\u001b[' + 94 + 'm' + 'Running On Load Balancer PM2..!' + '\u001b[0m');
-                                    console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + '!' + '\u001b[0m');
-                                    process.send('ready');
+                                else if (config.configurations().executionPoint === _this.constants.PM2) {
+                                    console.log("\u001b[" + 94 + "m" + "Running On Load Balancer PM2..!" + "\u001b[0m");
+                                    console.log("\u001b[" + 44 + "m" + "Express Server Is Running On Port " + port + "!" + "\u001b[0m");
+                                    process.send("ready");
                                 }
                                 else {
-                                    console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running Natively On Port ' + port + '!' + '\u001b[0m');
+                                    console.log("\u001b[" +
+                                        44 +
+                                        "m" +
+                                        "Express Server Is Running Natively On Port " +
+                                        port +
+                                        "!" +
+                                        "\u001b[0m");
                                 }
-                                console.log('\u001b[' + 44 + 'm' + 'Express Server Is Running On Port ' + port + ', Using TypeScript!' + '\u001b[0m');
+                                console.log("\u001b[" +
+                                    44 +
+                                    "m" +
+                                    "Express Server Is Running On Port " +
+                                    port +
+                                    ", Using TypeScript!" +
+                                    "\u001b[0m");
                             });
                             return [2 /*return*/, server];
                     }

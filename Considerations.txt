@@ -1,6 +1,6 @@
 Important factors to consider while building an API or a project:
 
-Important factors to make the application runs fast and efficient.  
+Important factors to make the application runs fast and efficient.
 
 1-How many requests can an application handle on a per second basis?
 2-What are the specs of the machine that the node application is running on?
@@ -16,5 +16,4 @@ Important factors to make the application runs fast and efficient.
 12-How many requests per second can an application handle at a bare metal minimum?
 
 
-Recommended benchmarking tool to test many requests per second: autocannon 
-
+Recommended benchmarking tool to test many requests per second: autocannon

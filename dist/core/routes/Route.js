@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -20,48 +20,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var endpoints_1 = require("../api/apis_endpoints/endpoints");
 var RuntimeException_1 = __importDefault(require("../exception/types/RuntimeException"));
 var ExpressResponse_1 = require("../response/ExpressResponse");
-var Singleton_1 = require("../Singleton/Singleton");
 var Promise_1 = __importDefault(require("../utils/Promise"));
 module.exports = /** @class */ (function (_super) {
     __extends(Routes, _super);
     function Routes() {
         var _this = _super.call(this) || this;
-        /*
-        * This line of code is responsible for the
-        * difference between "/route" and "/route/"
-        */
+        _this.router = _this.initializeRouter();
+        _this.corsOptions = _this.initializeCorsOptions();
+        return _this;
+    }
+    Routes.prototype.initializeRouter = function () {
         var options = {
             caseSensitive: false,
             mergeParams: true,
-            // If the parent and the child have conflicting param names, the child’s value take precedence.
-            strict: false, // Enable strict routing.
+            strict: false // Enable strict routing.
         };
-        _this.express = Singleton_1.Singleton.getExpress();
-        _this.__ = Singleton_1.Singleton.getLodash();
-        _this.express.getExpress.Router(options);
-        _this.router = _this.express.getExpress.Router(options);
-        /*
-            ? DEMO OF THE CORS CONFIGURATIONS
-        */
-        _this.corsOptions = {
-            origin: 'https://localhost:8010.com',
-            methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+        return this.express.getExpress.Router(options);
+    };
+    Routes.prototype.initializeCorsOptions = function () {
+        return {
+            origin: "https://localhost:8010.com",
+            methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
             preflightContinue: false,
             maxAge: 86400,
-            allowedHeaders: ['Content-Type', 'Authorization'],
-            optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+            allowedHeaders: ["Content-Type", "Authorization"],
+            optionsSuccessStatus: 200 // Some legacy browsers (IE11, various SmartTVs) choke on 204
         };
-        return _this;
-    }
-    /**
-     * @function _
-     * @description  gets an instance of the Routes class
-     * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @return {Routes}
-     */
-    Routes.prototype._ = function () {
-        return this.router;
     };
     /**
      * @function Route
@@ -72,67 +56,45 @@ module.exports = /** @class */ (function (_super) {
      * @param {String} url
      * @param {Object} middleware
      * @param {Function} callback
-     * @return ExpressRoute
-    */
+     * @return {ExpressRoute}
+     */
     Routes.prototype.route = function (method, url, middleware, callback, is_api_endpoint) {
         if (is_api_endpoint === void 0) { is_api_endpoint = false; }
-        if (typeof method === 'undefined' || method === '' || method == null) {
-            return new RuntimeException_1.default('Route does not have an http method!');
+        if (!method || !url || typeof callback !== "function") {
+            throw new RuntimeException_1.default("Invalid route configuration: Missing method, url, or callback");
         }
-        if (typeof url === 'undefined' || url === '' || url == null) {
-            return new RuntimeException_1.default('Route does not have an http url!');
-        }
-        if (typeof callback === 'undefined' || this.__.isString(callback) || callback == null) {
-            return new RuntimeException_1.default('Route does not have a callback!');
-        }
-        if (typeof middleware !== 'object' && middleware.length <= 0 && typeof callback === 'function') {
-            return new RuntimeException_1.default('Middlewares could not be implemented!');
-        }
-        var _middleware = [];
+        var routeMiddleware = [];
         for (var key in middleware) {
             if (Object.hasOwnProperty.call(middleware, key)) {
-                _middleware.push(middleware[key]);
+                routeMiddleware.push(middleware[key]);
             }
         }
         if (is_api_endpoint) {
             endpoints_1.ENDPOINTS.push(url);
         }
-        if (this.__.capitalize(method) === 'Get' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().get(url, _middleware, (0, Promise_1.default)(callback));
+        var validMethods = ["get", "post", "put", "patch", "delete"];
+        var lowerMethod = method.toLowerCase();
+        if (validMethods.includes(lowerMethod)) {
+            if (typeof callback !== "function") {
+                throw new RuntimeException_1.default("Callback is not a function for route ".concat(url));
+            }
+            return this.router[lowerMethod](url, routeMiddleware, (0, Promise_1.default)(callback));
         }
-        if (this.__.capitalize(method) === 'Post' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().post(url, _middleware, (0, Promise_1.default)(callback));
+        else {
+            throw new RuntimeException_1.default("Invalid HTTP method: ".concat(method));
         }
-        if (this.__.capitalize(method) === 'Put' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().put(url, _middleware, (0, Promise_1.default)(callback));
-        }
-        if (this.__.capitalize(method) === 'Patch' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().patch(url, _middleware, (0, Promise_1.default)(callback));
-        }
-        if (this.__.capitalize(method) === 'Delete' && !this.__.isEmpty(url) && typeof callback === 'function') {
-            return this._().delete(url, _middleware, (0, Promise_1.default)(callback));
-        }
-        return new RuntimeException_1.default('Route could not be deployed!');
     };
     /**
      * @function isApiEndpoint
-     * @description  check if the url matches a string of api endpoints array
+     * @description Check if the URL matches any string from the API endpoints array
      * @version 1.0.0
-     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @param {Request} req
-     * @return boolean
-    */
+     * @return {boolean}
+     */
     Routes.prototype.isApiEndpoint = function (req) {
-        if (endpoints_1.ENDPOINTS.length > 0) {
-            endpoints_1.ENDPOINTS.forEach(function (endpoint) {
-                if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                    || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                    || endpoints_1.ENDPOINTS.includes(req.url || '')) {
-                    return true;
-                }
-            });
-        }
-        return false;
+        var referrer = req.headers.referer || "";
+        var url = req.originalUrl || req.url || "";
+        return endpoints_1.ENDPOINTS.includes(referrer) || endpoints_1.ENDPOINTS.includes(url);
     };
     return Routes;
 }(ExpressResponse_1.ExpressResponse));

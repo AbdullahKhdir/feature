@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -22,7 +22,7 @@ module.exports = /** @class */ (function (_super) {
     __extends(ExpressMysqlSession, _super);
     function ExpressMysqlSession() {
         var _this = _super.call(this) || this;
-        _this.mysql_session = require('express-mysql-session')(ExpressSession_1.default.getExpressSession);
+        ExpressMysqlSession.mysqlSession = require("connect-session-sequelize")(ExpressSession_1.default.expressSession);
         return _this;
     }
     return ExpressMysqlSession;

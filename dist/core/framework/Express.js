@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -13,17 +13,17 @@ var express_1 = __importDefault(require("express"));
  * @description Class Express to define and initiate the express framework
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
+ */
 var Express = /** @class */ (function () {
     function Express() {
         this.framework = express_1.default;
-        this.express_cors = cors_1.default;
+        this.expressCors = cors_1.default;
     }
     Express.getExpressInstance = function () {
         if (this.express_instance) {
             return this.express_instance;
         }
-        return this.express_instance = new Express();
+        return (this.express_instance = new Express());
     };
     Object.defineProperty(Express.prototype, "getExpress", {
         get: function () {
@@ -38,7 +38,7 @@ var Express = /** @class */ (function () {
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
      * @returns Workerpool
-    */
+     */
     Express.prototype.getWorkerPool = function () {
         return workerpool_1.default.getWorkerPoolInstance();
     };

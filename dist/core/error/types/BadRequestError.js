@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -21,9 +21,12 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiError_1 = __importDefault(require("../ApiError"));
 module.exports = /** @class */ (function (_super) {
     __extends(BadRequestError, _super);
-    function BadRequestError(message, status_code) {
-        if (message === void 0) { message = 'Bad Request'; }
-        return _super.call(this, status_code ? status_code : Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST, message) || this;
+    function BadRequestError(message, statusCode) {
+        if (message === void 0) { message = ""; }
+        if (statusCode === void 0) { statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST; }
+        var _this = _super.call(this, "BadRequestError", message, statusCode) || this;
+        Object.setPrototypeOf(_this, BadRequestError.prototype);
+        return _this;
     }
     return BadRequestError;
 }(ApiError_1.default));

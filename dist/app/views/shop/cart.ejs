@@ -33,7 +33,7 @@
                                                             <label class="cart-item-price-height cart-item-quantity-z-index" style="margin-top: 10px;" for="updates_<%= product.product_id %>">quantity</label>
                                                             <div style="position: relative;top: 10px;">
                                                                 <form class="align-forms" action="/cart/delete-item/" method="POST" novalidate>
-                                                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                                                    <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                                                                     <input type="hidden" name="product_id" value="<%= product.product_id %>">
                                                                     <button type="submit" class="white black-text" title="Remove one product">
                                                                         <i class="material-icons remove">remove_circle_outline</i>
@@ -46,7 +46,7 @@
                                                                 value="<%= product.quantity %>"
                                                                 min="0">
                                                                 <form class="align-forms" action="/cart/" method="POST" novalidate>
-                                                                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                                                    <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                                                                     <input type="hidden" name="product_id" value="<%= product.product_id %>">
                                                                     <button type="submit" class="white black-text" title="Add one product">
                                                                         <i class="material-icons add">add_circle_outline</i>
@@ -58,7 +58,7 @@
                                 
                                                     <div class="variant-remove-item-wrapper">
                                                         <form id="remove_products" action="/cart/delete-items/" method="POST">
-                                                            <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                                            <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                                                             <input type="hidden" name="product_items_id" value="<%= product.product_id %>">
                                                             <button type="submit" class="btn remove-item-from-cart waves-effect waves-light" title="Remove from cart">
                                                                 <i class="material-icons">delete</i>
@@ -88,7 +88,7 @@
                             </div>
                             <p class="cart-item-ship-note">Shipping & taxes calculated at checkout</p>
                             <form id="cart-checkout" action="/create-order/" method="POST">
-                                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                                 <!-- <button id="order-btn" type="submit" name="checkout" class="btn-large waves-effect waves-light">Check out</button> -->
                                 <div id="order-btn"></div>
                                 <!-- Replace "test" with your own sandbox Business account app client ID -->

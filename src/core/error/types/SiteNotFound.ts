@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 import { Singleton } from "../../Singleton/Singleton";
 import ApiError from "../ApiError";
@@ -10,12 +10,13 @@ import ApiError from "../ApiError";
  * @description This exception is thrown when a the site is not registered in the application
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
+ */
 export = class SiteNotFound extends ApiError {
-    constructor(message = 'Site Not Found', statusCode?: number) {
-        const _constants = Singleton.getConstants();
-        const status_code = statusCode ? statusCode : _constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND;
-        super(status_code, message);
-        // next error middleware will send or render the page
-    }
- }
+	constructor(
+		message: string = "",
+		statusCode: number = Singleton.getConstants().HTTPS_STATUS.CLIENT_ERRORS.NOT_FOUND
+	) {
+		super("SiteNotFound", message, statusCode);
+		Object.setPrototypeOf(this, SiteNotFound.prototype);
+	}
+};

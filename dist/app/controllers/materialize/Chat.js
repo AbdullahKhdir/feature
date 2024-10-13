@@ -4,7 +4,7 @@
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
 //* BRANCH: features/Migrate
 //***********************************************************
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -60,8 +60,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
-var is_auth_1 = __importDefault(require("../../middlewares/is_auth"));
-var Chat_1 = __importDefault(require("../../models/chat/Chat"));
+var isUserAuthenticated_1 = __importDefault(require("../../../core/middlewares/sub_middlewares/isUserAuthenticated"));
 var Websockets_1 = __importDefault(require("../../../core/socket/Websockets"));
 module.exports = /** @class */ (function (_super) {
     __extends(Chat, _super);
@@ -76,35 +75,37 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this._chat = function () { return _this.route('get', '/chat/', _this.chatMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                // todo dive deep in the protocol of web socket        
-                //**************************\\
-                //* OPEN SOCKET FOR CLIENT *\\
-                //**************************\\
-                Websockets_1.default.run(req);
-                //******************************\\
-                //* RENDER TEMPLATE FOR CLIENT *\\
-                //******************************\\
-                return [2 /*return*/, res.render('materialize/pages/chat', {
-                        nav_title: 'Chat',
-                        path: '/chat/',
-                        success: res.locals['success'],
-                        root: 'chat',
-                        breadcrumbs: [
-                            {
-                                title: 'Home',
-                                url: '/'
-                            },
-                            {
-                                title: 'Chat',
-                                url: '/chat/'
-                            }
-                        ]
-                    })];
-            });
-        }); }); };
+         */
+        _this._chat = function () {
+            return _this.route("get", "/chat/", _this.chatMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    // todo dive deep in the protocol of web socket
+                    //**************************\\
+                    //* OPEN SOCKET FOR CLIENT *\\
+                    //**************************\\
+                    Websockets_1.default.run(req);
+                    //******************************\\
+                    //* RENDER TEMPLATE FOR CLIENT *\\
+                    //******************************\\
+                    return [2 /*return*/, res.render("materialize/pages/chat", {
+                            nav_title: "Chat",
+                            path: "/chat/",
+                            success: res.locals["success"],
+                            root: "chat",
+                            breadcrumbs: [
+                                {
+                                    title: "Home",
+                                    url: "/"
+                                },
+                                {
+                                    title: "Chat",
+                                    url: "/chat/"
+                                }
+                            ]
+                        })];
+                });
+            }); });
+        };
         //? ************************************************************** ?\\
         //? this.method is used to deploy all the routes to express router ?\\
         //! dynamic routes must be the last index of the methods array     !\\
@@ -113,16 +114,15 @@ module.exports = /** @class */ (function (_super) {
             //**********\\
             //* Routes *\\
             //**********\\
-            '_chat',
+            "_chat"
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\
         ];
+        return _this;
         //***************\\
         //* INIT MODELS *\\
         //***************\\
-        _this.chat = new Chat_1.default();
-        return _this;
         //*********************\\
         //* PROJECT CONSTANTS *\\
         //*********************\\
@@ -138,9 +138,8 @@ module.exports = /** @class */ (function (_super) {
         return {
             //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
             //! IMPORTANT THE ORDER MATTERS !\\
-            is_authenticated: is_auth_1.default, //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
+            isUserAuthenticated: isUserAuthenticated_1.default //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
         };
     };
-    ;
     return Chat;
 }(BaseController_1.default));

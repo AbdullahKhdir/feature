@@ -4,7 +4,7 @@
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
 //* BRANCH: develop
 //***********************************************************
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -61,7 +61,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var express_validator_1 = require("express-validator"); //? EXPRESS VALIDATOR ?\\
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
-var ExampleModel_1 = __importDefault(require("../../models/example_model/ExampleModel"));
 module.exports = /** @class */ (function (_super) {
     __extends(BarChart, _super);
     function BarChart() {
@@ -75,16 +74,18 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.barChart = function () { return _this.route('get', '/bar-charts/', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.render(res, 'materialize/charts/bar', {
-                        nav_title: 'Bar Charts',
-                        path: 'bar-charts',
-                        root: 'charts'
-                    })];
-            });
-        }); }); };
+         */
+        _this.barChart = function () {
+            return _this.route("get", "/bar-charts/", {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, this.render(res, "materialize/charts/bar", {
+                            nav_title: "Bar Charts",
+                            path: "bar-charts",
+                            root: "charts"
+                        })];
+                });
+            }); });
+        };
         //? ************************************************************** ?\\
         //? this.method is used to deploy all the routes to express router ?\\
         //! dynamic routes must be the last index of the methods array     !\\
@@ -93,16 +94,15 @@ module.exports = /** @class */ (function (_super) {
             //**********\\
             //* Routes *\\
             //**********\\
-            'barChart',
+            "barChart"
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\
         ];
+        return _this;
         //***************\\
         //* INIT MODELS *\\
         //***************\\
-        _this.exmaple_model = new ExampleModel_1.default();
-        return _this;
         //*********************\\
         //* PROJECT CONSTANTS *\\
         //*********************\\
@@ -122,13 +122,14 @@ module.exports = /** @class */ (function (_super) {
         return {
             //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
             //! IMPORTANT THE ORDER MATTERS !\\
-            is_authenticated: function (req, res, next) { next(); },
-            validate: (0, express_validator_1.check)('firstDynamicInput') //* SECOND VALIDATE BODY, PARAM COOKIE OR HEADER *\\
+            isUserAuthenticated: function (req, res, next) {
+                next();
+            },
+            validate: (0, express_validator_1.check)("firstDynamicInput") //* SECOND VALIDATE BODY, PARAM COOKIE OR HEADER *\\
                 .isEmpty()
                 .bail()
-                .withMessage('Dynamic param must not be empty!')
+                .withMessage("Dynamic param must not be empty!")
         };
     };
-    ;
     return BarChart;
 }(BaseController_1.default));

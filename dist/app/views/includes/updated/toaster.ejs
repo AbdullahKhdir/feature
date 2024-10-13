@@ -1,26 +1,30 @@
 <main>
-    <input type="hidden" class="posted_data" id="posted_data" name="posted_data" value="<%= typeof post_data !== 'undefined' ? JSON.stringify(post_data) : {} %>">
-    <% if (error) { %>
-        <div style="display:none" class="user-message user-message--error"><%= error %></div>
-    <% } %>
-    <% if (warning) { %>
-        <div style="display:none" class="user-message user-message--warning"><%= warning %></div>
-    <% } %>
-    <% if (success) { %>
-            <div style="display:none" class="user-message user-message--success"><%= success %></div>
-    <% } %>
-    <% if (typeof errored_inputs !== 'undefined') { %>
-            <input id="errored_inputs" class="errored_inputs" type="hidden" name="errored_inputs" value="<%= JSON.stringify(errored_inputs) %>">
-    <% } %>
-    <% if (typeof validation_errors !== 'undefined') { %>
-        <% if (validation_errors) {%>
-            <div style="display:none" class="user-message user-message--validation_errors">
-                <% if (Object.keys(validation_errors).length > 0) {%>
-                    <% for(key in validation_errors) {%>
-                        <p style="display:none" class="err--on_validate">-<%= validation_errors[key] %></p>
-                    <% } %>
-                <% } %>
-            </div>
-        <% } %>
-    <% } %>
+	<input
+		type="hidden"
+		class="posted_data"
+		id="posted_data"
+		name="posted_data"
+		value="<%= typeof postData !== 'undefined' ? JSON.stringify(postData) : {} %>"
+	/>
+	<% if (error) { %>
+	<div style="display: none" class="user-message user-message--error"><%= error %></div>
+	<% } %> <% if (warning) { %>
+	<div style="display: none" class="user-message user-message--warning"><%= warning %></div>
+	<% } %> <% if (success) { %>
+	<div style="display: none" class="user-message user-message--success"><%= success %></div>
+	<% } %> <% if (typeof erroredInputs !== 'undefined') { %>
+	<input
+		id="errored-inputs"
+		class="errored-inputs"
+		type="hidden"
+		name="errored_inputs"
+		value="<%= JSON.stringify(erroredInputs) %>"
+	/>
+	<% } %> <% if (typeof validationErrors !== 'undefined') { %> <% if (validationErrors) {%>
+	<div style="display: none" class="user-message user-message--validation-errors">
+		<% if (Object.keys(validationErrors).length > 0) {%> <% for(key in validationErrors) {%>
+		<p style="display: none" class="err--on-validate">-<%= validationErrors[key] %></p>
+		<% } %> <% } %>
+	</div>
+	<% } %> <% } %>
 </main>

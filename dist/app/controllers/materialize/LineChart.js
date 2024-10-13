@@ -4,7 +4,7 @@
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
 //* BRANCH: develop
 //***********************************************************
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -73,16 +73,18 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.line = function () { return _this.route('get', '/line-charts/', _this.lineMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, this.render(res, 'materialize/charts/line', {
-                        nav_title: 'Line Charts',
-                        path: 'line-charts',
-                        root: 'charts'
-                    })];
-            });
-        }); }); };
+         */
+        _this.line = function () {
+            return _this.route("get", "/line-charts/", _this.lineMiddleware(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, this.render(res, "materialize/charts/line", {
+                            nav_title: "Line Charts",
+                            path: "line-charts",
+                            root: "charts"
+                        })];
+                });
+            }); });
+        };
         //? ************************************************************** ?\\
         //? this.method is used to deploy all the routes to express router ?\\
         //! dynamic routes must be the last index of the methods array     !\\
@@ -91,7 +93,7 @@ module.exports = /** @class */ (function (_super) {
             //**********\\
             //* Routes *\\
             //**********\\
-            'line',
+            "line"
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\
@@ -116,9 +118,10 @@ module.exports = /** @class */ (function (_super) {
         return {
             //? YOU CAN ADD ALL THE NECESSARY MIDDLEWARES ?\\
             //! IMPORTANT THE ORDER MATTERS !\\
-            is_authenticated: function (req, res, next) { next(); }, //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
+            isUserAuthenticated: function (req, res, next) {
+                next();
+            } //* FIRST CHECK IF THE USER  IS AUTHENTICATED    *\\
         };
     };
-    ;
     return LineChart;
 }(BaseController_1.default));

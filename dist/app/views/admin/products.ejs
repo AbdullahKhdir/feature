@@ -20,7 +20,7 @@
                     <div class="card">
                         <div class="card-image">
                             <form action="/admin/delete-product/" method="POST">
-                                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                                <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                                 <input type="hidden" name="product_id" value="<%= product.id %>">
                                 <button type="submit" class="close-icon btn-floating waves-effect waves-darken white" title="Delete product"><i class="material-icons black-text">clear</i></button>
                             </form>

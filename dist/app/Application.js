@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -14,6 +14,29 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -24,37 +47,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 //* BRANCH: features/Migrate
 //***********************************************************
 /*
-* Npm and Node Modules
-*/
+ * Npm and Node Modules
+ */
 var compression_1 = __importDefault(require("compression"));
 var connect_flash_1 = __importDefault(require("connect-flash"));
 var cookie_parser_1 = __importDefault(require("cookie-parser"));
 var crypto_1 = __importDefault(require("crypto"));
-var csurf_1 = __importDefault(require("csurf"));
 var helmet_1 = __importDefault(require("helmet"));
 var BaseController_1 = __importDefault(require("../core/controller/BaseController"));
-var ExpressSession_1 = __importDefault(require("../core/framework/ExpressSession"));
 var Singleton_1 = require("../core/Singleton/Singleton");
 var AppLocals_js_1 = __importDefault(require("../core/utils/AppLocals.js"));
-var request_utilities_1 = require("./middlewares/request_utilities");
-var cache_control_1 = __importDefault(require("../core/middlewares/cache_control"));
-var toast_1 = require("./middlewares/toast");
-var morgan_logger_1 = __importDefault(require("../core/middlewares/morgan_logger"));
+var requestUtilities_1 = require("../core/middlewares/sub_middlewares/requestUtilities");
+var cacheControl_1 = __importDefault(require("../core/middlewares/sub_middlewares/cacheControl"));
+var toast_1 = require("../core/middlewares/sub_middlewares/toast");
+var morganLogger_1 = __importDefault(require("../core/middlewares/sub_middlewares/morganLogger"));
 var endpoints_1 = require("../core/api/apis_endpoints/endpoints");
+var config = __importStar(require("../core/config"));
+var undefined_routes_logic_1 = require("../core/utils/undefined-routes-logic");
+var FileSystem_1 = __importDefault(require("../core/node/FileSystem"));
 module.exports = /** @class */ (function (_super) {
     __extends(Application, _super);
     function Application() {
         var _this = _super.call(this) || this;
         /*
-        * Init The Application
-        */
+         * Init The Application
+         */
         _this.app = _this.express.getExpress();
-        _this.body_parser = Singleton_1.Singleton.getBodyParser();
+        _this.bodyParser = Singleton_1.Singleton.getBodyParser();
         _this.path = Singleton_1.Singleton.getPath();
-        _this.sub_controller = _this;
-        _this.session = ExpressSession_1.default.getExpressSession;
+        _this.session = Singleton_1.Singleton.getExpressSession();
         _this.app.use(function (req, res, next) {
-            req.origin = req.headers.origin || req.get('origin');
+            var origin = req.headers.origin || "".concat(req.protocol, "://").concat(req.get("host"));
+            req.origin = origin;
             next();
         });
         /*
@@ -91,140 +115,162 @@ module.exports = /** @class */ (function (_super) {
         _this.app.use(helmet_1.default.referrerPolicy());
         _this.app.use(helmet_1.default.xssFilter());
         /*
-        * Setting Cache-Control Header
-        */
-        _this.app.use(cache_control_1.default);
+         * To allow preflight requests on all http(s) methods*\
+         */
+        _this.app.options("*", _this.express.expressCors());
         /*
-        * Enable Logger
-        */
-        _this.app.use(morgan_logger_1.default);
+         * CORS Configurations
+         */
+        _this.app.use(_this.express.expressCors(_this.constants.CORS.CORS_OPTIONS));
         /*
-        * To allow preflight requests on all http(s) methods*\
-        */
-        _this.app.options('*', _this.express.express_cors());
-        /*
-        * CORS Configurations
-        */
-        _this.app.use(_this.express.express_cors(_this.constants.CORS.CORS_OPTIONS));
-        /*
-        * Middleware To Set Static Public Folder
-        */
-        _this.app.use(_this.express.getExpress.static(_this.path.join(__dirname, '..', 'app', 'public'), _this.constants.EXPRESS.STATIC_OPTIONS));
-        /*
-        * AUTO ESCAPE JSON
-        */
-        _this.app.set('json escape', true);
-        /*
-        * REGISTER COOKIE PARSER
-        */
+         * REGISTER COOKIE PARSER
+         */
         _this.app.use((0, cookie_parser_1.default)());
         /*
-        * USE EJS TEMPLATE ENGINE (NODE SUPPORTS TWIG)
-        */
-        _this.app.set('view engine', 'ejs');
-        /*
-        * Specify the templates folder of the view property in express
-        */
-        _this.app.set('views', _this.path.join(__dirname, 'views'));
-        /*
-        * Parse JSON-BODY (API) or ANY DATA TYPE Requests
-        */
-        _this.app.use(_this.body_parser.json());
-        _this.app.use(_this.body_parser.urlencoded({ extended: true }));
-        /*
-        * Middleware To Initiate Mysql Session
-        */
-        var secret = crypto_1.default.randomBytes(48).toString('base64');
+         * Middleware To Initiate Mysql Session
+         */
+        var secret = crypto_1.default.randomBytes(48).toString("base64");
         _this.app.use(_this.session(Object.assign(_this.constants.EXPRESS.SESSION_OPTIONS, {
             secret: secret,
-            store: Singleton_1.Singleton.getDb().initiateSession(),
+            store: Singleton_1.Singleton.getDb().initiateSession()
         })));
         /*
-        * CSRF Enabled
-        */
-        var CSRF = (0, csurf_1.default)({
-            sessionKey: _this.constants.CSRF.sessionKey,
-            cookie: _this.constants.CSRF.cookie,
-            ignoreMethods: _this.constants.CSRF.ignoreMethods,
-        });
+         * AUTO ESCAPE JSON
+         * And parse JSON-BODY (API) or ANY DATA TYPE Requests
+         */
+        _this.app.set("json escape", true);
+        _this.app.use(_this.bodyParser.json());
+        _this.app.use(_this.bodyParser.urlencoded({ extended: true }));
+        /*
+         * CSRF Enabled
+         */
         //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
         _this.app.use(function (req, res, next) {
             if (endpoints_1.ENDPOINTS.length > 0) {
-                if (endpoints_1.ENDPOINTS.includes(req.headers.referer || '')
-                    || endpoints_1.ENDPOINTS.includes(req.originalUrl || '')
-                    || endpoints_1.ENDPOINTS.includes(req.url || '')) {
+                if (endpoints_1.ENDPOINTS.includes(req.headers.referer || "") ||
+                    endpoints_1.ENDPOINTS.includes(req.originalUrl || "") ||
+                    endpoints_1.ENDPOINTS.includes(req.url || "")) {
                     return next();
                 }
             }
-            CSRF(req, res, next);
+            var isExcluded = FileSystem_1.default.getAllSubfolders(_this.path.join(__dirname, "..", "app", "public")).some(function (path) { return req.url.startsWith(path); });
+            if (isExcluded) {
+                return next();
+            }
+            if (!_this.constants.CSRF.methods.includes(req.method)) {
+                var csrf_1 = crypto_1.default.randomBytes(24).toString("hex");
+                req.session["x-csrf-token"] = csrf_1;
+                res.cookie(_this.constants.CSRF.cookieHeaderName, csrf_1, {
+                    httpOnly: true,
+                    secure: config.configurations().environment === "production",
+                    sameSite: "lax"
+                });
+                res.header(_this.constants.CSRF.cookieHeaderName, csrf_1);
+                res.locals["csrf"] = csrf_1;
+                _this.app.locals["csrf"] = csrf_1;
+            }
+            next();
         });
         /*
-        * Using package compressor
-        */
+         * Send csrf token on every request along with the authentication status
+         */
+        _this.app.use(function (req, res, next) {
+            res.locals["isUserAuthenticated"] = req.session.isUserAuthenticated;
+            _this.app.locals["isUserAuthenticated"] = req.session.isUserAuthenticated;
+            next();
+        });
+        _this.app.use(function (req, res, next) {
+            if (_this.constants.CSRF.methods.includes(req.method)) {
+                if (endpoints_1.ENDPOINTS.length > 0 &&
+                    (endpoints_1.ENDPOINTS.includes(req.headers.referer || "") ||
+                        endpoints_1.ENDPOINTS.includes(req.originalUrl || "") ||
+                        endpoints_1.ENDPOINTS.includes(req.url || ""))) {
+                    return next();
+                }
+                var requestBodyCsrf = req.body ? req.body["x-csrf-token"] : undefined;
+                var requestHeaderCsrf = req.get ? req.get("x-csrf-token") : undefined;
+                var requestCsrfFromSession = req.session ? req.session["x-csrf-token"] : undefined;
+                var tokenFromClient = requestBodyCsrf || requestHeaderCsrf;
+                if (!tokenFromClient || tokenFromClient !== requestCsrfFromSession) {
+                    return res
+                        .status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN)
+                        .render("undefined_routes", (0, undefined_routes_logic_1.csrf)(res));
+                }
+            }
+            next();
+        });
+        /*
+         * Using package compressor
+         */
         _this.app.use((0, compression_1.default)());
         /*
-        * Registering Flash
-        */
+         * Setting Cache-Control Header
+         */
+        _this.app.use(cacheControl_1.default);
+        /*
+         * Enable Logger
+         */
+        _this.app.use(morganLogger_1.default);
+        /*
+         * Registering Flash
+         */
         _this.app.use((0, connect_flash_1.default)());
         /*
-        * Registering error, warning and success toaster to every template
-        */
+         * Registering error, warning and success toaster to every template
+         */
         _this.app.use(function (req, res, next) {
             (0, toast_1.toast)(req, res, next, _this.app);
-            next();
         });
         /*
-        * Middleware for editing and wrapping
-        * query params,
-        * post data and
-        * getting data to templates after getting or posting
-        */
+         * Middleware for editing and wrapping
+         * query params,
+         * post data and
+         * getting data to templates after getting or posting
+         */
         _this.app.use(function (req, res, next) {
-            (0, request_utilities_1.reqUtil)(req, res, next);
-            next();
+            (0, requestUtilities_1.reqUtil)(req, res, next);
         });
         /*
-        * Send csrf token on every request along with the authentication status
-        */
-        _this.app.use(function (req, res, next) {
-            var token = typeof req.csrfToken === 'function' ? req.csrfToken() : '';
-            /**
-             *
-             * res.set({
-             *   'csrf-Token':   token,
-             *      'X-CSRF-TOKEN': token,
-             *      'xsrf-token':   token,
-             *      'x-csrf-token': token,
-             *      'x-xsrf-token': token
-             *  });
-            */
-            res.locals['csrf'] = token;
-            _this.app.locals['csrf'] = token;
-            res.locals['is_authenticated'] = res.req.session.is_authenticated;
-            _this.app.locals['is_authenticated'] = res.req.session.is_authenticated;
-            next();
-        });
+         * Middleware To Set Static Public Folder
+         */
+        _this.app.use(_this.express.getExpress.static(_this.path.join(__dirname, "..", "app", "public"), _this.constants.EXPRESS.STATIC_OPTIONS));
         /*
-        * Middleware for saving cookie in the request
-        */
+         * USE EJS TEMPLATE ENGINE (NODE SUPPORTS TWIG)
+         * And specify the templates folder of the view property in express
+         */
+        _this.app.set("view engine", "ejs");
+        _this.app.set("views", _this.path.join(__dirname, "views"));
+        /*
+         * Routes
+         */
+        _this.app.set("case sensitive routing", false);
+        _this.app.set("strict routing", false);
+        _this.deployRoutes(_this.app);
+        /*
+         * Deploying api's endpoints
+         */
+        Singleton_1.Singleton.getApis().deployApi(_this.app);
+        /*
+         * Middleware for saving cookie in the request
+         */
         _this.app.use(function (req, res, next) {
-            var key = crypto_1.default.randomBytes(48).toString('base64');
+            var key = crypto_1.default.randomBytes(48).toString("base64");
             req.user_cookie = key;
             next();
         });
         /*
-        * Middleware populating file or files attribute on file upload's request
-        */
+         * Middleware populating file or files attribute on file upload's request
+         */
         _this.app.use(function (req, res, next) {
             if (req.isPost()) {
-                var upload_object = req.getFormPostedData('upload_object');
-                var upload_id = req.getFormPostedData('upload-input-name');
-                if (!_this.__.isEmpty(upload_object) && !_this.__.isEmpty(upload_id)) {
+                var upload_object = req.getFormPostedData("upload_object");
+                var upload_id = req.getFormPostedData("upload-input-name");
+                if (!_this._.isEmpty(upload_object) && !_this._.isEmpty(upload_id)) {
                     upload_object = upload_object.replaceAll("'", '"');
-                    if (upload_id.includes(',')) {
-                        upload_id = upload_id.split(',')[1];
+                    if (upload_id.includes(",")) {
+                        upload_id = upload_id.split(",")[1];
                     }
-                    if (upload_object.startsWith('[')) {
+                    if (upload_object.startsWith("[")) {
                         upload_object = "{ \"".concat(upload_id, "\" : ").concat(upload_object);
                         upload_object = "".concat(upload_object, " }");
                         req.files = JSON.parse(upload_object);
@@ -236,19 +282,7 @@ module.exports = /** @class */ (function (_super) {
             }
             next();
         });
-        Singleton_1.Singleton
-            .getI18n()
-            .configure(_this.constants.I18N.CONFIGURATION_OPTIONS);
-        /*
-        * Routes
-        */
-        _this.app.set('case sensitive routing', false);
-        _this.app.set('strict routing', false);
-        _this.sub_controller.deployRoutes(_this.app);
-        /*
-        * Deploying api's endpoints
-        */
-        Singleton_1.Singleton.getApis().deployApi(_this.app);
+        Singleton_1.Singleton.getI18n().configure(_this.constants.I18N.CONFIGURATION_OPTIONS);
         /*
         * Passing default and helpful properties to all templates
         ? lasts for the life cycle of the application
@@ -263,12 +297,12 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @return Application Object
-        */
+         */
         get: function () {
-            if (this.application_instance) {
-                return this.application_instance;
+            if (this.applicationInstance) {
+                return this.applicationInstance;
             }
-            return this.application_instance = new Application();
+            return (this.applicationInstance = new Application());
         },
         enumerable: false,
         configurable: true

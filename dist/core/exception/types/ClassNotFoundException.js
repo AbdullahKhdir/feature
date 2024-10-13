@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -21,10 +21,12 @@ var Singleton_1 = require("../../Singleton/Singleton");
 var ApiException_1 = __importDefault(require("../ApiException"));
 module.exports = /** @class */ (function (_super) {
     __extends(ClassNotFoundException, _super);
-    function ClassNotFoundException(message, status_code) {
-        if (message === void 0) { message = 'Class not found exception'; }
-        var _constants = Singleton_1.Singleton.getConstants();
-        return _super.call(this, status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message) || this;
+    function ClassNotFoundException(message, statusCode) {
+        if (message === void 0) { message = ""; }
+        if (statusCode === void 0) { statusCode = Singleton_1.Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR; }
+        var _this = _super.call(this, "ClassNotFoundException", message, statusCode) || this;
+        Object.setPrototypeOf(_this, ClassNotFoundException.prototype);
+        return _this;
     }
     return ClassNotFoundException;
 }(ApiException_1.default));

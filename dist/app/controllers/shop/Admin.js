@@ -4,7 +4,7 @@
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
 //* BRANCH: features/Migrate
 //***********************************************************
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -64,8 +64,8 @@ var multer_1 = __importDefault(require("multer"));
 var BaseController_1 = __importDefault(require("../../../core/controller/BaseController"));
 var JsonResponse_1 = __importDefault(require("../../../core/response/types/JsonResponse"));
 var Singleton_1 = require("../../../core/Singleton/Singleton");
-var init_user_session_1 = __importDefault(require("../../middlewares/init_user_session"));
-var is_auth_1 = __importDefault(require("../../middlewares/is_auth"));
+var initUserSession_1 = __importDefault(require("../../../core/middlewares/sub_middlewares/initUserSession"));
+var isUserAuthenticated_1 = __importDefault(require("../../../core/middlewares/sub_middlewares/isUserAuthenticated"));
 var Product_1 = __importDefault(require("../../models/shop/Product"));
 module.exports = /** @class */ (function (_super) {
     __extends(Admin, _super);
@@ -77,165 +77,178 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.product = function () { return _this.route('get', '/admin/add-product/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var uploader_form;
-            return __generator(this, function (_a) {
-                if (req.isGet()) {
-                    res.longTimeNoCache();
-                    uploader_form = Singleton_1.Singleton.buildUploader({
-                        extensions: ['png', 'jpeg', 'jpg'],
-                        url: '/upload-image/',
-                        button_name: 'Upload Image',
-                        input_name: 'uploaded_image',
-                        multiple_files: false,
-                        max_files: 1,
-                        form_id: 'form-add-product'
-                    });
-                    return [2 /*return*/, this.render(res, 'admin/add-product', {
-                            nav_title: 'Add Product',
-                            path: '/admin/add-product/',
-                            root: 'shop',
-                            uploader: uploader_form,
-                            // todo: check which lib is mandatory and which is not
-                            js: [
-                                'plugins/jquery/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
-                                'plugins/jquery/blueimp-file-upload/js/load_image.js',
-                                'plugins/jquery/blueimp-file-upload/js/canvas_to_blob.js',
-                                'plugins/jquery/blueimp-file-upload/js/blueimp_gallery.js',
-                                'plugins/jquery/blueimp-file-upload/js/jquery.iframe-transport.js',
-                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload.js',
-                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-process.js',
-                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-image.js',
-                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-audio.js',
-                                'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-video.js',
-                                'plugins/jquery/blueimp-file-upload/js/validate.js',
-                                'plugins/jquery/blueimp-file-upload/js/cors/jquery.postmessage-transport.js',
-                                'plugins/jquery/blueimp-file-upload/js/cors/jquery.xdr-transport.js',
-                            ],
-                            breadcrumbs: [
-                                {
-                                    title: 'Shop',
-                                    url: '/'
-                                },
-                                {
-                                    title: 'Add Product',
-                                    url: '/admin/add-product/'
-                                }
-                            ]
-                        })];
-                }
-                return [2 /*return*/, this.siteNotFound(res)];
-            });
-        }); }); };
+         */
+        _this.product = function () {
+            return _this.route("get", "/admin/add-product/", { isAuth: isUserAuthenticated_1.default, userSession: initUserSession_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var uploader_form;
+                return __generator(this, function (_a) {
+                    if (req.isGet()) {
+                        res.longTimeNoCache();
+                        uploader_form = Singleton_1.Singleton.buildUploader({
+                            extensions: ["png", "jpeg", "jpg"],
+                            url: "/upload-image/",
+                            button_name: "Upload Image",
+                            input_name: "uploaded_image",
+                            multiple_files: false,
+                            max_files: 1,
+                            form_id: "form-add-product"
+                        });
+                        return [2 /*return*/, this.render(res, "admin/add-product", {
+                                nav_title: "Add Product",
+                                path: "/admin/add-product/",
+                                root: "shop",
+                                uploader: uploader_form,
+                                // todo: check which lib is mandatory and which is not
+                                js: [
+                                    "plugins/jquery/blueimp-file-upload/js/vendor/jquery.ui.widget.js",
+                                    "plugins/jquery/blueimp-file-upload/js/load_image.js",
+                                    "plugins/jquery/blueimp-file-upload/js/canvas_to_blob.js",
+                                    "plugins/jquery/blueimp-file-upload/js/blueimp_gallery.js",
+                                    "plugins/jquery/blueimp-file-upload/js/jquery.iframe-transport.js",
+                                    "plugins/jquery/blueimp-file-upload/js/jquery.fileupload.js",
+                                    "plugins/jquery/blueimp-file-upload/js/jquery.fileupload-process.js",
+                                    "plugins/jquery/blueimp-file-upload/js/jquery.fileupload-image.js",
+                                    "plugins/jquery/blueimp-file-upload/js/jquery.fileupload-audio.js",
+                                    "plugins/jquery/blueimp-file-upload/js/jquery.fileupload-video.js",
+                                    "plugins/jquery/blueimp-file-upload/js/validate.js",
+                                    "plugins/jquery/blueimp-file-upload/js/cors/jquery.postmessage-transport.js",
+                                    "plugins/jquery/blueimp-file-upload/js/cors/jquery.xdr-transport.js"
+                                ],
+                                breadcrumbs: [
+                                    {
+                                        title: "Shop",
+                                        url: "/"
+                                    },
+                                    {
+                                        title: "Add Product",
+                                        url: "/admin/add-product/"
+                                    }
+                                ]
+                            })];
+                    }
+                    return [2 /*return*/, this.siteNotFound(res)];
+                });
+            }); });
+        };
         /**
          * @function editProduct
          * @description editProduct route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.editProduct = function () { return _this.route('get', '/admin/edit-product/:product_id/', { isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var uploader_form, product_id, user_id;
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (!req.isGet()) {
-                    return [2 /*return*/, this.siteNotFound(res)];
-                }
-                uploader_form = Singleton_1.Singleton.buildUploader({
-                    extensions: ['png', 'jpeg', 'jpg'],
-                    url: '/upload-image/',
-                    button_name: 'Upload Image',
-                    input_name: 'uploaded_image',
-                    multiple_files: false,
-                    max_files: 1,
-                    form_id: 'edit-product',
+         */
+        _this.editProduct = function () {
+            return _this.route("get", "/admin/edit-product/:product_id/", { isAuth: isUserAuthenticated_1.default, userSession: initUserSession_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var uploader_form, product_id, user_id;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    if (!req.isGet()) {
+                        return [2 /*return*/, this.siteNotFound(res)];
+                    }
+                    uploader_form = Singleton_1.Singleton.buildUploader({
+                        extensions: ["png", "jpeg", "jpg"],
+                        url: "/upload-image/",
+                        button_name: "Upload Image",
+                        input_name: "uploaded_image",
+                        multiple_files: false,
+                        max_files: 1,
+                        form_id: "edit-product"
+                    });
+                    product_id = +req.getDynamicParam("product_id");
+                    user_id = +req.getCurrentUser().id;
+                    if (this._.isNumber(user_id) && this._.isNumber(product_id)) {
+                        this.product_object
+                            .get({ id: product_id, user_id: user_id })
+                            .then(function (rows) {
+                            if (!_this._.isEmpty(rows)) {
+                                var product = rows;
+                                return _this.render(res, "admin/edit-product", {
+                                    nav_title: "Edit Product",
+                                    path: "/admin/edit-product/",
+                                    product_id: product_id,
+                                    product: product,
+                                    root: "shop",
+                                    uploader: uploader_form,
+                                    js: [
+                                        "plugins/jquery/blueimp-file-upload/js/vendor/jquery.ui.widget.js",
+                                        "plugins/jquery/blueimp-file-upload/js/load_image.js",
+                                        "plugins/jquery/blueimp-file-upload/js/canvas_to_blob.js",
+                                        "plugins/jquery/blueimp-file-upload/js/blueimp_gallery.js",
+                                        "plugins/jquery/blueimp-file-upload/js/jquery.iframe-transport.js",
+                                        "plugins/jquery/blueimp-file-upload/js/jquery.fileupload.js",
+                                        "plugins/jquery/blueimp-file-upload/js/jquery.fileupload-process.js",
+                                        "plugins/jquery/blueimp-file-upload/js/jquery.fileupload-image.js",
+                                        "plugins/jquery/blueimp-file-upload/js/jquery.fileupload-audio.js",
+                                        "plugins/jquery/blueimp-file-upload/js/jquery.fileupload-video.js",
+                                        "plugins/jquery/blueimp-file-upload/js/validate.js",
+                                        "plugins/jquery/blueimp-file-upload/js/cors/jquery.postmessage-transport.js",
+                                        "plugins/jquery/blueimp-file-upload/js/cors/jquery.xdr-transport.js"
+                                    ],
+                                    breadcrumbs: [
+                                        {
+                                            title: "Shop",
+                                            url: "/"
+                                        },
+                                        {
+                                            title: "Admin Products",
+                                            url: "/admin/products/"
+                                        },
+                                        {
+                                            title: "Edit Product",
+                                            url: "/admin/edit-product/".concat(product_id)
+                                        }
+                                    ]
+                                });
+                            }
+                            else {
+                                return _this.redirect(res, "/products/");
+                            }
+                        })
+                            .catch(function (err) { return _this.onError(res, next, err); });
+                    }
+                    else {
+                        return [2 /*return*/, this.redirect(res, "/")];
+                    }
+                    return [2 /*return*/];
                 });
-                product_id = +req.getDynamicParam('product_id') || false;
-                user_id = +req.getCurrentUser().id;
-                if (this.__.isNumber(user_id) && this.__.isNumber(product_id)) {
-                    this.product_object.get({ id: product_id, user_id: user_id })
-                        .then(function (rows) {
-                        if (!_this.__.isEmpty(rows)) {
-                            var product = rows[0];
-                            return _this.render(res, 'admin/edit-product', {
-                                nav_title: 'Edit Product',
-                                path: '/admin/edit-product/',
-                                product_id: product_id,
-                                product: product,
-                                root: 'shop',
-                                uploader: uploader_form,
-                                js: [
-                                    'plugins/jquery/blueimp-file-upload/js/vendor/jquery.ui.widget.js',
-                                    'plugins/jquery/blueimp-file-upload/js/load_image.js',
-                                    'plugins/jquery/blueimp-file-upload/js/canvas_to_blob.js',
-                                    'plugins/jquery/blueimp-file-upload/js/blueimp_gallery.js',
-                                    'plugins/jquery/blueimp-file-upload/js/jquery.iframe-transport.js',
-                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload.js',
-                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-process.js',
-                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-image.js',
-                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-audio.js',
-                                    'plugins/jquery/blueimp-file-upload/js/jquery.fileupload-video.js',
-                                    'plugins/jquery/blueimp-file-upload/js/validate.js',
-                                    'plugins/jquery/blueimp-file-upload/js/cors/jquery.postmessage-transport.js',
-                                    'plugins/jquery/blueimp-file-upload/js/cors/jquery.xdr-transport.js',
-                                ],
-                                breadcrumbs: [
-                                    {
-                                        title: 'Shop',
-                                        url: '/'
-                                    },
-                                    {
-                                        title: 'Admin Products',
-                                        url: '/admin/products/'
-                                    },
-                                    {
-                                        title: 'Edit Product',
-                                        url: "/admin/edit-product/".concat(product_id)
-                                    }
-                                ]
-                            });
-                        }
-                        else {
-                            return _this.redirect(res, '/products/');
-                        }
-                    })
-                        .catch(function (err) { return _this.onError(res, next, err); });
-                }
-                else {
-                    return [2 /*return*/, this.redirect(res, '/')];
-                }
-                return [2 /*return*/];
-            });
-        }); }); };
+            }); });
+        };
         _this.validatedEditProduct = function () { return ({
-            is_authenticated: is_auth_1.default,
-            user_session: init_user_session_1.default,
-            validate_product_id: (0, express_validator_1.check)('product_id').not().isEmpty().withMessage("Product could not be edited, plase contact the support team!").bail(),
-            validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
-            validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
-            validate_price: (0, express_validator_1.check)('price').isNumeric().withMessage("Please enter product's price!").bail(),
-            validate_image_path: (0, express_validator_1.check)('uploaded_image').
+            isUserAuthenticated: isUserAuthenticated_1.default,
+            user_session: initUserSession_1.default,
+            validate_product_id: (0, express_validator_1.check)("product_id")
+                .not()
+                .isEmpty()
+                .withMessage("Product could not be edited, plase contact the support team!")
+                .bail(),
+            validate_title: (0, express_validator_1.check)("title").not().isEmpty().withMessage("Please enter a product's title!").bail(),
+            validate_description: (0, express_validator_1.check)("description")
+                .not()
+                .isEmpty()
+                .withMessage("Please enter product's description!")
+                .bail(),
+            validate_price: (0, express_validator_1.check)("price").isNumeric().withMessage("Please enter product's price!").bail(),
+            validate_image_path: (0, express_validator_1.check)("uploaded_image")
                 // @ts-ignore
-                custom(function (value, _a) {
+                .custom(function (value, _a) {
                 var _b, _c, _d;
                 var req = _a.req;
                 if (req.file) {
-                    if (((_b = req.file) === null || _b === void 0 ? void 0 : _b.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG))
-                        || ((_c = req.file) === null || _c === void 0 ? void 0 : _c.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG))
-                        || ((_d = req.file) === null || _d === void 0 ? void 0 : _d.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG))) {
+                    if (((_b = req.file) === null || _b === void 0 ? void 0 : _b.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG)) ||
+                        ((_c = req.file) === null || _c === void 0 ? void 0 : _c.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG)) ||
+                        ((_d = req.file) === null || _d === void 0 ? void 0 : _d.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG))) {
                         return true;
                     }
                     //! FILE WILL BE SAVED
                     // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
                 }
                 else if (req.files) {
-                    if (typeof req.files['uploaded_image'] !== 'undefined') {
-                        if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
-                            req.files['uploaded_image'].forEach(function (image) {
-                                if (!image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG)
-                                    || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG)
-                                    || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
+                    if (typeof req.files["uploaded_image"] !== "undefined") {
+                        if (typeof req.files["uploaded_image"][Symbol.iterator] === "function") {
+                            req.files["uploaded_image"].forEach(function (image) {
+                                if (!image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG) ||
+                                    !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG) ||
+                                    !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
                                     return false;
                                 }
                             });
@@ -244,7 +257,8 @@ module.exports = /** @class */ (function (_super) {
                     }
                 }
                 return true;
-            }).bail(),
+            })
+                .bail()
         }); };
         /**
          * @function postEditedProduct
@@ -252,87 +266,98 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.postEditedProduct = function () { return _this.route('post', '/admin/edit-product/:product_id/', _this.validatedEditProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var product_id, title, price, description, image, values, errors;
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (!req.isPost()) {
-                    return [2 /*return*/, this.siteNotFound(res)];
-                }
-                req.sendFormPostedData();
-                product_id = +req.getFormPostedData('product_id');
-                title = this.__.capitalize(req.getFormPostedData('title'));
-                price = req.getFormPostedData('price');
-                description = this.__.capitalize(req.getFormPostedData('description'));
-                image = req.getUploadedFile() || null;
-                values = {
-                    title: title,
-                    price: price,
-                    description: description
-                };
-                if (Object.keys(image).length > 0) {
-                    values['imageUrl'] = "/images/".concat(image.filename);
-                    this.product_object.get({ id: product_id })
-                        .then(function (result) {
-                        if (result) {
-                            var image_path = result[0].imageUrl;
-                            var fs = Singleton_1.Singleton.getFileSystem();
-                            var path = Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', image_path);
-                            if (fs.existsSync(path)) {
-                                fs.unlinkSync(path);
-                            }
-                        }
-                    })
-                        .catch(function (err) { return _this.onError(res, next, err); });
-                }
-                errors = (0, express_validator_1.validationResult)(req);
-                if (errors.isEmpty()) {
-                    if (product_id) {
-                        // @ts-ignore
-                        this.product_object.update(values, product_id).then(function (result) {
-                            if (result[0].affectedRows) {
-                                return res.redirect('/admin/products/');
-                            }
-                        }).catch(function (err) { return _this.onError(res, next, err); });
+         */
+        _this.postEditedProduct = function () {
+            return _this.route("post", "/admin/edit-product/:product_id/", _this.validatedEditProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var product_id, title, price, description, image, values, errors;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    if (!req.isPost()) {
+                        return [2 /*return*/, this.siteNotFound(res)];
                     }
-                }
-                else {
-                    return [2 /*return*/, this.onErrorValidation(res, errors.array())];
-                }
-                return [2 /*return*/];
-            });
-        }); }); };
+                    req.sendFormPostedData();
+                    product_id = +req.getFormPostedData("product_id");
+                    title = this._.capitalize(req.getFormPostedData("title"));
+                    price = req.getFormPostedData("price");
+                    description = this._.capitalize(req.getFormPostedData("description"));
+                    image = req.getUploadedFile() || null;
+                    values = {
+                        title: title,
+                        price: price,
+                        description: description
+                    };
+                    if (Object.keys(image).length > 0) {
+                        values["imageUrl"] = "/images/".concat(image.filename);
+                        this.product_object
+                            .get({ id: product_id })
+                            .then(function (result) {
+                            if (result) {
+                                var image_path = result[0].imageUrl;
+                                var fs = Singleton_1.Singleton.getFileSystem();
+                                var path = Singleton_1.Singleton.getPath().join(__dirname, "..", "..", "public", image_path);
+                                if (fs.existsSync(path)) {
+                                    fs.unlinkSync(path);
+                                }
+                            }
+                        })
+                            .catch(function (err) { return _this.onError(res, next, err); });
+                    }
+                    errors = (0, express_validator_1.validationResult)(req);
+                    if (errors.isEmpty()) {
+                        if (product_id) {
+                            // @ts-ignore
+                            this.product_object
+                                // @ts-ignore
+                                .update(values, product_id)
+                                .then(function (result) {
+                                if (result[0].affectedRows) {
+                                    return res.redirect("/admin/products/");
+                                }
+                            })
+                                .catch(function (err) { return _this.onError(res, next, err); });
+                        }
+                    }
+                    else {
+                        return [2 /*return*/, this.onErrorValidation(res, errors.array())];
+                    }
+                    return [2 /*return*/];
+                });
+            }); });
+        };
         //******************************\\
         //* Add Product middleware     *\\
         //******************************\\
         _this.validatedNewProduct = function () { return ({
-            is_authenticated: is_auth_1.default,
-            user_session: init_user_session_1.default,
-            validate_title: (0, express_validator_1.check)('title').not().isEmpty().withMessage("Please enter a product's title!").bail(),
-            validate_description: (0, express_validator_1.check)('description').not().isEmpty().withMessage("Please enter product's description!").bail(),
-            validate_price: (0, express_validator_1.check)('price').isNumeric().withMessage("Please enter product's price!").bail(),
-            validate_image_path: (0, express_validator_1.check)('uploaded_image').
+            isUserAuthenticated: isUserAuthenticated_1.default,
+            user_session: initUserSession_1.default,
+            validate_title: (0, express_validator_1.check)("title").not().isEmpty().withMessage("Please enter a product's title!").bail(),
+            validate_description: (0, express_validator_1.check)("description")
+                .not()
+                .isEmpty()
+                .withMessage("Please enter product's description!")
+                .bail(),
+            validate_price: (0, express_validator_1.check)("price").isNumeric().withMessage("Please enter product's price!").bail(),
+            validate_image_path: (0, express_validator_1.check)("uploaded_image")
                 // @ts-ignore
-                custom(function (value, _a) {
+                .custom(function (value, _a) {
                 var _b, _c, _d;
                 var req = _a.req;
                 if (req.file) {
-                    if (((_b = req.file) === null || _b === void 0 ? void 0 : _b.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG))
-                        || ((_c = req.file) === null || _c === void 0 ? void 0 : _c.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG))
-                        || ((_d = req.file) === null || _d === void 0 ? void 0 : _d.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG))) {
+                    if (((_b = req.file) === null || _b === void 0 ? void 0 : _b.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG)) ||
+                        ((_c = req.file) === null || _c === void 0 ? void 0 : _c.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG)) ||
+                        ((_d = req.file) === null || _d === void 0 ? void 0 : _d.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG))) {
                         return true;
                     }
                     //! FILE WILL BE SAVED
                     // return Promise.reject('Only images with the (PNG, JPEG or JPG) extensions are allowed');
                 }
                 else if (req.files) {
-                    if (typeof req.files['uploaded_image'] !== 'undefined') {
-                        if (typeof req.files['uploaded_image'][Symbol.iterator] === 'function') {
-                            req.files['uploaded_image'].forEach(function (image) {
-                                if (!image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG)
-                                    || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG)
-                                    || !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
+                    if (typeof req.files["uploaded_image"] !== "undefined") {
+                        if (typeof req.files["uploaded_image"][Symbol.iterator] === "function") {
+                            req.files["uploaded_image"].forEach(function (image) {
+                                if (!image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG) ||
+                                    !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG) ||
+                                    !image.mimetype.includes(Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG)) {
                                     return false;
                                 }
                             });
@@ -340,8 +365,9 @@ module.exports = /** @class */ (function (_super) {
                         }
                     }
                 }
-                return Promise.reject('Please upload an image for the product with the extensions JPG, JPEG, or PNG!');
-            }).bail(),
+                return Promise.reject("Please upload an image for the product with the extensions JPG, JPEG, or PNG!");
+            })
+                .bail()
         }); };
         /**
          * @function addProduct
@@ -349,37 +375,47 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.addProduct = function () { return _this.route('post', '/admin/add-product/', _this.validatedNewProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var title, description, price, user_id, image, errors;
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (!req.isPost()) {
-                    return [2 /*return*/, this.siteNotFound(res)];
-                }
-                req.sendFormPostedData();
-                title = this.__.capitalize(req.getFormPostedData('title'));
-                description = this.__.capitalize(req.getFormPostedData('description'));
-                price = req.getFormPostedData('price');
-                user_id = req.getCurrentUser().id;
-                image = req.getUploadedFile();
-                errors = (0, express_validator_1.validationResult)(req);
-                if (errors.isEmpty()) {
-                    image = "/images/".concat(image.filename);
-                    this.product_object.create({ title: title, imageUrl: image, description: description, price: price, user_id: user_id })
-                        .then(function (results) {
-                        var primary_key = results[0].insertId;
-                        if (primary_key) {
-                            return _this.redirect(res, '/');
-                        }
-                    }).catch(function (err) { return _this.onError(res, next, err); });
-                }
-                else {
-                    return [2 /*return*/, this.onErrorValidation(res, errors.array())];
-                }
-                return [2 /*return*/];
-            });
-        }); }); };
+         */
+        _this.addProduct = function () {
+            return _this.route("post", "/admin/add-product/", _this.validatedNewProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var title, description, price, user_id, image, errors;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    if (!req.isPost()) {
+                        return [2 /*return*/, this.siteNotFound(res)];
+                    }
+                    req.sendFormPostedData();
+                    title = this._.capitalize(req.getFormPostedData("title"));
+                    description = this._.capitalize(req.getFormPostedData("description"));
+                    price = req.getFormPostedData("price");
+                    user_id = req.getCurrentUser().id;
+                    image = req.getUploadedFile();
+                    errors = (0, express_validator_1.validationResult)(req);
+                    if (errors.isEmpty()) {
+                        image = "/images/".concat(image.filename);
+                        this.product_object
+                            .create({
+                            title: title,
+                            imageUrl: image,
+                            description: description,
+                            price: price,
+                            user_id: user_id
+                        })
+                            .then(function (results) {
+                            var primary_key = results[0].insertId;
+                            if (primary_key) {
+                                return _this.redirect(res, "/");
+                            }
+                        })
+                            .catch(function (err) { return _this.onError(res, next, err); });
+                    }
+                    else {
+                        return [2 /*return*/, this.onErrorValidation(res, errors.array())];
+                    }
+                    return [2 /*return*/];
+                });
+            }); });
+        };
         _this._uploader = function () { return ({
             uploader_error_handler: function (req, res, next) {
                 // @ts-ignore
@@ -387,13 +423,13 @@ module.exports = /** @class */ (function (_super) {
                     if (err instanceof multer_1.default.MulterError) {
                         switch (err.code) {
                             case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FILE_TOO_LARGE:
-                                return _this.onErrorValidation(res, 'Please upload a file with maximum size of 10 MB!');
+                                return _this.onErrorValidation(res, "Please upload a file with maximum size of 10 MB!");
                                 break;
                             case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_PARTS:
-                                return _this.onErrorValidation(res, 'File exceded the allowed parts!');
+                                return _this.onErrorValidation(res, "File exceded the allowed parts!");
                                 break;
                             case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.TOO_MANY_FILES:
-                                return _this.onErrorValidation(res, 'Too many files uploaded, please upload less files!');
+                                return _this.onErrorValidation(res, "Too many files uploaded, please upload less files!");
                                 break;
                             case Singleton_1.Singleton.getConstants().UPLOADER_ERRORS.FIELD_NAME_TOO_LONG:
                                 return _this.onErrorValidation(res, "Field name is too long, please insert a short fields's name!");
@@ -418,23 +454,30 @@ module.exports = /** @class */ (function (_super) {
                     next();
                 });
             },
-            is_authenticated: is_auth_1.default,
-            user_session: init_user_session_1.default,
+            isUserAuthenticated: isUserAuthenticated_1.default,
+            user_session: initUserSession_1.default
         }); };
-        _this.uploader = function () { return _this.route('post', '/upload-image/', _this._uploader(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var uploaded_file;
-            return __generator(this, function (_a) {
-                uploaded_file = JSON.stringify(req.getUploadedFiles());
-                return [2 /*return*/, new JsonResponse_1.default(200, 'Success', { upload_object: uploaded_file }).sendAsJson(res)];
-            });
-        }); }); };
+        _this.uploader = function () {
+            return _this.route("post", "/upload-image/", _this._uploader(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var uploaded_file;
+                return __generator(this, function (_a) {
+                    uploaded_file = JSON.stringify(req.getUploadedFiles());
+                    return [2 /*return*/, new JsonResponse_1.default(200, "Success", { upload_object: uploaded_file }).sendAsJson(res)];
+                });
+            }); });
+        };
         //******************************\\
         //* Delete Product middleware  *\\
         //******************************\\
         _this.validatedDeleteProduct = function () { return ({
-            is_authenticated: is_auth_1.default,
-            user_session: init_user_session_1.default,
-            validate_title: (0, express_validator_1.check)('product_id').not().isEmpty().isNumeric().withMessage("Product could not be deleted, please talk to the technical team!").bail()
+            isUserAuthenticated: isUserAuthenticated_1.default,
+            user_session: initUserSession_1.default,
+            validate_title: (0, express_validator_1.check)("product_id")
+                .not()
+                .isEmpty()
+                .isNumeric()
+                .withMessage("Product could not be deleted, please talk to the technical team!")
+                .bail()
         }); };
         /**
          * @function deleteProduct
@@ -442,121 +485,127 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.deleteProduct = function () { return _this.route('post', '/admin/delete-product/', _this.validatedDeleteProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var product_id, user_id, errors;
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (!req.isPost()) {
-                    return [2 /*return*/, this.siteNotFound(res)];
-                }
-                res.noCacheNeeded();
-                product_id = req.getFormPostedData('product_id');
-                user_id = +req.getCurrentUser().id;
-                errors = (0, express_validator_1.validationResult)(req);
-                if (errors.isEmpty()) {
-                    if (product_id && user_id) {
-                        this.product_object.get({ id: product_id, user_id: user_id })
-                            .then(function (rows) {
-                            if (!_this.__.isEmpty(rows)) {
-                                var image_path = rows[0].imageUrl;
-                                var fs = Singleton_1.Singleton.getFileSystem();
-                                var path = Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', image_path);
-                                if (fs.existsSync(path)) {
-                                    fs.unlink(path, function (err) {
-                                        if (err) {
-                                            return _this.onError(res, next, err);
-                                        }
-                                        var id = rows[0].id;
-                                        _this.product_object.delete(id)
-                                            .then(function (result) {
-                                            return _this.redirect(res, '/admin/products/');
-                                        })
-                                            .catch(function (err) { return _this.onError(res, next, err); });
-                                    });
-                                }
-                            }
-                        })
-                            .catch(function (err) { return _this.onError(res, next, err); });
+         */
+        _this.deleteProduct = function () {
+            return _this.route("post", "/admin/delete-product/", _this.validatedDeleteProduct(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var product_id, user_id, errors;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    if (!req.isPost()) {
+                        return [2 /*return*/, this.siteNotFound(res)];
                     }
-                }
-                else {
-                    return [2 /*return*/, this.onErrorValidation(res, errors.array())];
-                }
-                return [2 /*return*/];
-            });
-        }); }); };
+                    res.noCacheNeeded();
+                    product_id = req.getFormPostedData("product_id");
+                    user_id = +req.getCurrentUser().id;
+                    errors = (0, express_validator_1.validationResult)(req);
+                    if (errors.isEmpty()) {
+                        if (product_id && user_id) {
+                            this.product_object
+                                .get({ id: product_id, user_id: user_id })
+                                .then(function (rows) {
+                                if (!_this._.isEmpty(rows)) {
+                                    var image_path = rows[0].imageUrl;
+                                    var fs = Singleton_1.Singleton.getFileSystem();
+                                    var path = Singleton_1.Singleton.getPath().join(__dirname, "..", "..", "public", image_path);
+                                    if (fs.existsSync(path)) {
+                                        fs.unlink(path, function (err) {
+                                            if (err) {
+                                                return _this.onError(res, next, err);
+                                            }
+                                            var id = rows[0].id;
+                                            _this.product_object
+                                                .delete(id)
+                                                .then(function (result) {
+                                                return _this.redirect(res, "/admin/products/");
+                                            })
+                                                .catch(function (err) { return _this.onError(res, next, err); });
+                                        });
+                                    }
+                                }
+                            })
+                                .catch(function (err) { return _this.onError(res, next, err); });
+                        }
+                    }
+                    else {
+                        return [2 /*return*/, this.onErrorValidation(res, errors.array())];
+                    }
+                    return [2 /*return*/];
+                });
+            }); });
+        };
         /**
          * @function products
          * @description products route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.products = function () { return _this.route('get', '/admin/products/', { cors: _this.express.express_cors(_this.corsOptionsDelegate), isAuth: is_auth_1.default, userSession: init_user_session_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var user_products;
-            var _this = this;
-            return __generator(this, function (_a) {
-                if (!req.isGet()) {
-                    return [2 /*return*/, this.siteNotFound(res)];
-                }
-                res.updatedContentAlways();
-                user_products = req.getCurrentUser().getProducts();
-                user_products
-                    .then(function (rows) {
-                    return _this.render(res, 'admin/products', {
-                        products: rows || [],
-                        nav_title: 'Admin Products',
-                        path: '/admin/products/',
-                        root: 'shop',
-                        breadcrumbs: [
-                            {
-                                title: 'Shop',
-                                url: '/'
-                            },
-                            {
-                                title: 'Admin Products',
-                                url: '/admin/products/'
-                            }
-                        ]
-                    });
-                })
-                    .catch(function (err) { return _this.onError(res, next, err); });
-                return [2 /*return*/];
-            });
-        }); }); };
+         */
+        _this.products = function () {
+            return _this.route("get", "/admin/products/", { cors: _this.express.expressCors(_this.corsOptionsDelegate), isAuth: isUserAuthenticated_1.default, userSession: initUserSession_1.default }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var user_products;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    if (!req.isGet()) {
+                        return [2 /*return*/, this.siteNotFound(res)];
+                    }
+                    res.updatedContentAlways();
+                    user_products = req.getCurrentUser().getProducts();
+                    user_products
+                        .then(function (rows) {
+                        return _this.render(res, "admin/products", {
+                            products: rows || [],
+                            nav_title: "Admin Products",
+                            path: "/admin/products/",
+                            root: "shop",
+                            breadcrumbs: [
+                                {
+                                    title: "Shop",
+                                    url: "/"
+                                },
+                                {
+                                    title: "Admin Products",
+                                    url: "/admin/products/"
+                                }
+                            ]
+                        });
+                    })
+                        .catch(function (err) { return _this.onError(res, next, err); });
+                    return [2 /*return*/];
+                });
+            }); });
+        };
         _this.methods = [
-            'product',
-            'addProduct',
-            'products',
-            'postEditedProduct',
-            'deleteProduct',
-            'editProduct',
-            'uploader',
+            "product",
+            "addProduct",
+            "products",
+            "postEditedProduct",
+            "deleteProduct",
+            "editProduct",
+            "uploader"
         ];
         _this.product_object = new Product_1.default();
         /*
          ? CORS CONFIGURATIONS
         */
-        var whitelist = ['http://example1.com', 'http://example2.com'];
+        var whitelist = ["http://example1.com", "http://example2.com"];
         _this.corsOptionsDelegate = function (req, callback) {
             var corsOptions;
-            // @ts-ignore 
-            if (whitelist.indexOf(req.header('Origin')) !== -1) {
+            // @ts-ignore
+            if (whitelist.indexOf(req.header("Origin")) !== -1) {
                 // reflect (enable) the requested origin in the CORS response
                 corsOptions = {
                     origin: true,
-                    methods: ['GET'],
+                    methods: ["GET"],
                     preflightContinue: false,
                     maxAge: 86400,
-                    allowedHeaders: ['Content-Type', 'Authorization'],
-                    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204 
+                    allowedHeaders: ["Content-Type", "Authorization"],
+                    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
                 };
             }
             else {
                 // disable CORS for this request
                 corsOptions = {
-                    origin: false,
+                    origin: false
                 };
             }
             callback(null, corsOptions); // callback expects two parameters: error and options
@@ -588,32 +637,33 @@ module.exports = /** @class */ (function (_super) {
         // this.upload_middleware = this.uploader({storage: this.uploader_configs, limits: {fileSize: this.file_size}, fileFilter: this.file_filter}).single('uploaded_image');
         _this.upload_middleware = Singleton_1.Singleton.configUploader({
             file_size: 10 * 1024 * 1024,
-            input_name: 'uploaded_image',
-            storage_type: 'diskStorage',
-            upload_type: 'single',
+            input_name: "uploaded_image",
+            storage_type: "diskStorage",
+            upload_type: "single",
             // @ts-ignore
             file_filter: function (req, file, callback) {
-                if (file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG
-                    || file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG
-                    || file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG) {
+                if (file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.PNG ||
+                    file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPEG ||
+                    file.mimetype === Singleton_1.Singleton.getConstants().RESPONSE.TYPES.JPG) {
                     callback(null, true);
                 }
                 else {
                     //! FILE WILL NOT BE SAVED
                     req.sendFormPostedData();
+                    return _this.onErrorValidation(
                     // @ts-ignore
-                    return _this.onErrorValidation(req.res, 'Only images with the (PNG, JPEG or JPG) extensions are allowed');
+                    req.res, "Only images with the (PNG, JPEG or JPG) extensions are allowed");
                 }
             },
             // @ts-ignore
             storage_disk_destination_callback: function (req, file, callback) {
-                callback(null, Singleton_1.Singleton.getPath().join(__dirname, '..', '..', 'public', 'images'));
+                callback(null, Singleton_1.Singleton.getPath().join(__dirname, "..", "..", "public", "images"));
             },
             // @ts-ignore
             storage_disk_filename_callback: function (req, file, callback) {
                 var date = new Date();
                 var year = date.getFullYear();
-                var month = (date.getMonth() + 1);
+                var month = date.getMonth() + 1;
                 var day = date.getDate();
                 var hours = date.getHours();
                 var minutes = date.getMinutes();

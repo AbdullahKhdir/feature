@@ -1,43 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <noscript>Javascript is disabled, please activate javascript in order to use the application</noscript>
-    <input type="hidden" id="_csrf" class="_csrf" name="_csrf" value="<%= typeof csrf !== 'undefined' ? csrf : '' %>">
-    <!-- <meta http-equiv="Content-Language" content="de, en, ar"> -->                        <!-- Bad practice, send as header instead --> 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="keywords" content="HTML, CSS, JavaScript, Node, NodeJS, Express, ExpressJS">  <!-- Search Keywords --> 
-    <meta name="description" content="Framework">                                             <!-- Search Description -->
-    <meta name="author" content="Abdullah Khdir">                                             <!-- Search Author -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">                    <!-- Width Adjustments for all screens -->
-    <!-- <meta http-equiv="refresh" content="60">                                             refreshing the page every 60 seconds-->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="msapplication-tap-highlight" content="no">
-    <title><%= typeof nav_title !== 'undefined' ? nav_title : '' %></title>
-    <link href="/materialize/datatables.min.css" rel="stylesheet">
-    <link href="/materialize/jqvmap.css" rel="stylesheet">
-    <link href="/materialize/flag-icon-css/css/flag-icon.min.css" rel="stylesheet">
-    <!-- Fullcalendar-->
-    <link href="/materialize/fullcalendar.min.css" rel="stylesheet">
-    <!-- Materialize-->
-    <link href="/materialize/admin-materialize.min.css" rel="stylesheet">
-    <!-- Material Icons-->
-    <link href="/materialize/material_icons.css" rel="stylesheet">
-    <!-- ####################################################################### -->
-    <link rel="stylesheet" href="/css/cube.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/plugins/materialize/css/materialize.css"> 
-    <!-- ####################################################################### -->
-    <% if (typeof js !== 'undefined') { %>
-      <% if (js.length > 0) { %>
-          <% js.forEach(file => { %>
-              <script type="text/javascript" src="/<%= file.toString() %>" defer></script>
-          <% }) %>
-      <% } %>
-  <% } %>
-  <% if (typeof css !== 'undefined') { %>
-      <% if (css.length > 0) { %>
-          <% css.forEach(file => { %>
-            <link rel="stylesheet" href="../<%= file.toString() %>"> 
-          <% }) %>
-      <% } %>
-  <% } %>
+	<head>
+		<noscript>Javascript is disabled, please activate javascript in order to use the application</noscript>
+		<input type="hidden" id="x-csrf-token" class="x-csrf-token" name="x-csrf-token" value="<%= csrf %>" />
+		<!-- <meta http-equiv="Content-Language" content="de, en, ar"> -->
+		<!-- Bad practice, send as header instead -->
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="keywords" content="HTML, CSS, JavaScript, Node, NodeJS, Express, ExpressJS" />
+		<!-- Search Keywords -->
+		<meta name="description" content="Framework" />
+		<!-- Search Description -->
+		<meta name="author" content="Abdullah Khdir" />
+		<!-- Search Author -->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- Width Adjustments for all screens -->
+		<!-- <meta http-equiv="refresh" content="60">                                             refreshing the page every 60 seconds-->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="msapplication-tap-highlight" content="no" />
+		<title><%= typeof nav_title !== 'undefined' ? nav_title : '' %></title>
+		<link href="/materialize/datatables.min.css" rel="stylesheet" />
+		<link href="/materialize/jqvmap.css" rel="stylesheet" />
+		<link href="/materialize/flag-icon-css/css/flag-icon.min.css" rel="stylesheet" />
+		<!-- Fullcalendar-->
+		<link href="/materialize/fullcalendar.min.css" rel="stylesheet" />
+		<!-- Materialize-->
+		<link href="/materialize/admin-materialize.min.css" rel="stylesheet" />
+		<!-- Material Icons-->
+		<link href="/materialize/material_icons.css" rel="stylesheet" />
+		<!-- ####################################################################### -->
+		<link rel="stylesheet" href="/css/cube.css" />
+		<link rel="stylesheet" href="/css/main.css" />
+		<link rel="stylesheet" href="/plugins/materialize/css/materialize.css" />
+		<!-- ####################################################################### -->
+		<% if (typeof js !== 'undefined') { %> <% if (js.length > 0) { %> <% js.forEach(file => { %>
+		<script type="text/javascript" src="/<%= file.toString() %>" defer></script>
+		<% }); %> <% } %> <% } %> <% if (typeof css !== 'undefined') { %> <% if (css.length > 0) { %> <%
+		css.forEach(file=> { %>
+		<link rel="stylesheet" href="../<%= file.toString() %>" />
+		<% }) %> <% } %> <% } %>
+	</head>
+</html>

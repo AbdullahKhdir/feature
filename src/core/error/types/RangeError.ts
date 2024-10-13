@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 
 import { Singleton } from "../../Singleton/Singleton";
-import ApiError  from "../ApiError";
+import ApiError from "../ApiError";
 
 /**
  * @class RangeError
@@ -10,11 +10,13 @@ import ApiError  from "../ApiError";
  * @description This is thrown when a number is outside an allowable range of values.
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-*/
-module.exports = class RangeError extends ApiError {
-    constructor(message = 'Range error', status_code?: number) {
-        const _constants = Singleton.getConstants();
-        super(status_code ? status_code : _constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR, message);
-        // next error middleware will send or render the page
-    }
- }
+ */
+export = class RangeError extends ApiError {
+	constructor(
+		message: string = "",
+		statusCode: number = Singleton.getConstants().HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR
+	) {
+		super("RangeError", message, statusCode);
+		Object.setPrototypeOf(this, RangeError.prototype);
+	}
+};

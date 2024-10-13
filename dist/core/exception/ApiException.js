@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -14,14 +14,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-module.exports = /** @class */ (function (_super_1) {
-    __extends(ApiException, _super_1);
-    function ApiException(status_code, message) {
-        var _this = this;
-        var _super = _this = _super_1.call(this, message) || this;
-        // @ts-ignore
-        _super.statusCode = status_code;
+module.exports = /** @class */ (function (_super) {
+    __extends(ApiException, _super);
+    function ApiException(name, message, status_code) {
+        var _this = _super.call(this, message) || this;
+        _this.statusCode = status_code;
+        _this.name = name;
+        Object.setPrototypeOf(_this, ApiException.prototype);
         return _this;
     }
+    ApiException.prototype.toString = function () {
+        return "".concat(this.name, ": ").concat(this.message, " (status code: ").concat(this.statusCode, ")");
+    };
     return ApiException;
 }(Error));

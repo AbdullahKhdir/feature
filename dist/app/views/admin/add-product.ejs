@@ -8,7 +8,7 @@
         <div class="container">
             <%- uploader %>
             <form id="form-add-product" class="product-form cube-loader" action="/admin/add-product/" method="POST">
-                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <input type="hidden" name="x-csrf-token" value="<%= csrf %>">
                 <div class="input-field col s12 m6">
                     <label for="title"><%= nav_title %></label>
                     <input type="text" name="title" id="title">
@@ -21,7 +21,7 @@
                     <label for="description"><%= 'Description' %></label>
                     <textarea class="materialize-textarea" name="description" id="description" rows="5"></textarea>
                 </div>
-                <button class="btn" type="submit">Add Product</button>
+                <button id="upload_and_submit" class="btn" type="submit">Add Product</button>
             </form>
         </div>
     </main>

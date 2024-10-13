@@ -4,7 +4,7 @@
 //* AUTHOR: Abdullah Khdir <abdullahkhder77@gmail.com>
 //* BRANCH: features/Migrate
 //**************************************************************
-'use strict';
+"use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -90,6 +90,7 @@ var UserSecurityQuestion_1 = __importDefault(require("../../models/shop/UserSecu
 var jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 var config = __importStar(require("../../../core/config"));
 var Api_1 = __importDefault(require("../../../core/api/Api"));
+var Error_1 = __importDefault(require("../../../core/error/types/Error"));
 module.exports = /** @class */ (function (_super) {
     __extends(Rest, _super);
     function Rest() {
@@ -103,144 +104,165 @@ module.exports = /** @class */ (function (_super) {
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.getExmaple = function () { return _this.route('get', '/get_example', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                // return this.onError(res, next, 'declined api endpoint get');
-                // return next(new Error('declined api endpoint get'));
-                return [2 /*return*/, new JsonResponse_1.default(200, 'Success got', { success: 'OK' }).sendAsJson(res)];
-            });
-        }); }, true); };
+         */
+        _this.getExmaple = function () {
+            return _this.route("get", "/get_example", {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    // return this.onError(res, next, 'declined api endpoint get');
+                    // return next(new Error('declined api endpoint get'));
+                    return [2 /*return*/, new JsonResponse_1.default(200, "Success got", { success: "OK" }).sendAsJson(res)];
+                });
+            }); }, true);
+        };
         /**
          * @function postExmaple
          * @description postExmaple route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.postExmaple = function () { return _this.route('post', '/post_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new JsonResponse_1.default(201, 'Success posted', { success: 'OK', id: new Date() }).sendAsJson(res)];
-            });
-        }); }, true); };
+         */
+        _this.postExmaple = function () {
+            return _this.route("post", "/post_example", { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, new JsonResponse_1.default(201, "Success posted", { success: "OK", id: new Date() }).sendAsJson(res)];
+                });
+            }); }, true);
+        };
         /**
          * @function patchExmaple
          * @description patchExmaple route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.patchExmaple = function () { return _this.route('patch', '/patch_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new JsonResponse_1.default(201, 'Success patched', { success: 'OK', origin: req.origin, user_infos: req.user, uid: new Date() }).sendAsJson(res)];
-            });
-        }); }, true); };
+         */
+        _this.patchExmaple = function () {
+            return _this.route("patch", "/patch_example", { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, new JsonResponse_1.default(201, "Success patched", {
+                            success: "OK",
+                            origin: req.origin,
+                            user_infos: req.user,
+                            uid: new Date()
+                        }).sendAsJson(res)];
+                });
+            }); }, true);
+        };
         /**
          * @function putExmaple
          * @description putExmaple route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.putExmaple = function () { return _this.route('put', '/put_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new JsonResponse_1.default(201, 'Success put', { success: 'OK', id: new Date() }).sendAsJson(res)];
-            });
-        }); }, true); };
+         */
+        _this.putExmaple = function () {
+            return _this.route("put", "/put_example", { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, new JsonResponse_1.default(201, "Success put", { success: "OK", id: new Date() }).sendAsJson(res)];
+                });
+            }); }, true);
+        };
         /**
          * @function deleteExmaple
          * @description deleteExmaple route
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.deleteExmaple = function () { return _this.route('delete', '/delete_example', { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                return [2 /*return*/, new JsonResponse_1.default(200, 'Success deleted', { success: 'OK', id: new Date() }).sendAsJson(res)];
-            });
-        }); }, true); };
+         */
+        _this.deleteExmaple = function () {
+            return _this.route("delete", "/delete_example", { is_logged_in: _this.isApiUserLoggedIn }, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/, new JsonResponse_1.default(200, "Success deleted", { success: "OK", id: new Date() }).sendAsJson(res)];
+                });
+            }); }, true);
+        };
         /**
          * @function postAuthenticate
          * @description Check user's authentication's infos
          * @version 1.0.0
          * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
          * @returns Response
-        */
-        _this.postAuthenticate = function () { return _this.route('post', '/api-login', _this.validatedLogin(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var errors, email, password;
-            var _this = this;
-            return __generator(this, function (_a) {
-                errors = (0, express_validator_1.validationResult)(req);
-                email = req.getFormPostedData('email');
-                password = req.getFormPostedData('password');
-                if (errors.isEmpty()) {
-                    this.user.get({ email: email })
-                        .then(function (rows) {
-                        if (typeof rows === 'undefined' || rows == null || _this.__.isEmpty(rows) || rows.length === 0) {
-                            return new JsonResponse_1.default(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED, 'Email or password are not correct!, Please insert a valid E-mail address or sign up!', { status_code: _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED }).sendAsJson(res);
-                        }
-                        rows = rows[0];
-                        bcryptjs_1.default.compare(password, rows.password)
-                            .then(function (do_match) {
-                            if (do_match) {
-                                if (typeof rows !== 'undefined') {
-                                    var token = jsonwebtoken_1.default.sign({ user: rows }, config.configurations().api_authentication_secret, { expiresIn: '1h' });
-                                    return new JsonResponse_1.default(_this.constants.HTTPS_STATUS.SUCCESS.OK, 'Logged in', { success: 'OK', status_code: _this.constants.HTTPS_STATUS.SUCCESS.OK, token: token }).sendAsJson(res);
+         */
+        _this.postAuthenticate = function () {
+            return _this.route("post", "/api-login", _this.validatedLogin(), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var errors, email, password;
+                var _this = this;
+                return __generator(this, function (_a) {
+                    errors = (0, express_validator_1.validationResult)(req);
+                    email = req.getFormPostedData("email");
+                    password = req.getFormPostedData("password");
+                    if (errors.isEmpty()) {
+                        this.user
+                            .get({ email: email })
+                            .then(function (rows) {
+                            if (typeof rows === "undefined" ||
+                                rows == null ||
+                                _this._.isEmpty(rows) ||
+                                rows.length === 0) {
+                                return new JsonResponse_1.default(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED, "Email or password are not correct!, Please insert a valid E-mail address or sign up!", { status_code: _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED }).sendAsJson(res);
+                            }
+                            rows = rows[0];
+                            bcryptjs_1.default
+                                .compare(password, rows.password)
+                                .then(function (do_match) {
+                                if (do_match) {
+                                    if (typeof rows !== "undefined") {
+                                        var token = jsonwebtoken_1.default.sign({ user: rows }, config.configurations().apiAuthenticationSecret, { expiresIn: "1h" });
+                                        return new JsonResponse_1.default(_this.constants.HTTPS_STATUS.SUCCESS.OK, "Logged in", {
+                                            success: "OK",
+                                            status_code: _this.constants.HTTPS_STATUS.SUCCESS.OK,
+                                            token: token
+                                        }).sendAsJson(res);
+                                    }
                                 }
-                            }
-                            else {
-                                return new JsonResponse_1.default(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED, 'Email or password are not correct!, Please insert a valid data or sign up!', { status_code: _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED }).sendAsJson(res);
-                            }
+                                else {
+                                    return new JsonResponse_1.default(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED, "Email or password are not correct!, Please insert a valid data or sign up!", { status_code: _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED }).sendAsJson(res);
+                                }
+                            })
+                                .catch(function (err) { return _this.onError(res, next, new Error_1.default(JSON.stringify(err))); });
                         })
-                            .catch(function (err) { return _this.onError(res, next, new Error(JSON.stringify(err))); });
-                    })
-                        .catch(function (err) { return _this.onError(res, next, new Error(JSON.stringify(err))); });
-                }
-                else {
-                    return [2 /*return*/, new JsonResponse_1.default(this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNPROCESSABLE_ENTITY, 'Invalid Email-Address or wrong password!', {
-                            message: JSON.stringify(errors.array()) || errors.array().toString(),
-                            status_code: this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNPROCESSABLE_ENTITY
-                        }).sendAsJson(res)];
-                }
-                return [2 /*return*/];
-            });
-        }); }, true); };
+                            .catch(function (err) { return _this.onError(res, next, new Error_1.default(JSON.stringify(err))); });
+                    }
+                    else {
+                        return [2 /*return*/, new JsonResponse_1.default(this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNPROCESSABLE_ENTITY, "Invalid Email-Address or wrong password!", {
+                                message: JSON.stringify(errors.array()) || errors.array().toString(),
+                                status_code: this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNPROCESSABLE_ENTITY
+                            }).sendAsJson(res)];
+                    }
+                    return [2 /*return*/];
+                });
+            }); }, true);
+        };
         //******************************\\
         //* Sign in middleware         *\\
         //******************************\\
         _this.validatedLogin = function () { return ({
-            validate_email: (0, express_validator_1.check)('email').isEmail().withMessage('Please enter a valid email!').bail(),
-            validate_password: (0, express_validator_1.check)('password').not().isEmpty().withMessage('Please enter your password!').bail()
+            validate_email: (0, express_validator_1.check)("email").isEmail().withMessage("Please enter a valid email!").bail(),
+            validate_password: (0, express_validator_1.check)("password").not().isEmpty().withMessage("Please enter your password!").bail()
         }); };
         //******************************\\
         //* Sign in middleware         *\\
         //******************************\\
         _this.isApiUserLoggedIn = function (req, res, next) {
-            var AUTHORIZATION_HEADER = req.get('Authorization');
+            var AUTHORIZATION_HEADER = req.get("Authorization");
             if (!AUTHORIZATION_HEADER) {
-                var _error = new Error('Not Authenticated!');
-                //@ts-ignore
-                _error.statusCode = _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED;
-                throw _error;
+                var error = new Error_1.default("Not Authenticated!");
+                error.statusCode = _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED;
+                throw error;
             }
-            var TOKEN = AUTHORIZATION_HEADER.split(' ')[1];
+            var TOKEN = AUTHORIZATION_HEADER.split(" ")[1];
             if (TOKEN) {
                 var decoded_token = void 0;
                 try {
-                    decoded_token = jsonwebtoken_1.default.verify(TOKEN, config.configurations().api_authentication_secret);
+                    decoded_token = jsonwebtoken_1.default.verify(TOKEN, config.configurations().apiAuthenticationSecret);
                 }
                 catch (error) {
-                    // @ts-ignore
-                    error.statusCode = _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED;
-                    // @ts-ignore
-                    error.message = 'Invalid authorization header token!';
+                    error.message = "Invalid authorization header token!";
                     throw error;
                 }
                 if (!decoded_token) {
-                    var _error = new Error('Not Authenticated!');
-                    //@ts-ignore
-                    _error.statusCode = _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED;
-                    throw _error;
+                    var error = new Error_1.default("Not Authenticated!");
+                    error.statusCode = _this.constants.HTTPS_STATUS.CLIENT_ERRORS.UNAUTHORIZED;
+                    throw error;
                 }
                 req.user = decoded_token.user;
                 return next();
@@ -254,12 +276,12 @@ module.exports = /** @class */ (function (_super) {
             //**********\\
             //* Routes *\\
             //**********\\
-            'getExmaple',
-            'postExmaple',
-            'patchExmaple',
-            'putExmaple',
-            'deleteExmaple',
-            'postAuthenticate',
+            "getExmaple",
+            "postExmaple",
+            "patchExmaple",
+            "putExmaple",
+            "deleteExmaple",
+            "postAuthenticate"
             //******************\\
             //* DYNAMIC Routes *\\
             //******************\\

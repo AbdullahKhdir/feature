@@ -56,17 +56,41 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var Route_1 = __importDefault(require("../routes/Route"));
 var Singleton_1 = require("../Singleton/Singleton");
 var undefined_routes_logic_1 = require("../utils/undefined-routes-logic");
+var InternalError_1 = __importDefault(require("../error/types/InternalError"));
 module.exports = /** @class */ (function (_super) {
     __extends(BaseController, _super);
     function BaseController() {
         var _this = _super.call(this) || this;
         _this.path = Singleton_1.Singleton.getPath();
-        _this.file_system = Singleton_1.Singleton.getFileSystem();
-        _this.constants = Singleton_1.Singleton.getConstants();
+        _this.fileSystem = Singleton_1.Singleton.getPromisifyFileSystem();
         return _this;
     }
     /**
      * @function deployRoutes
+     * @description register all routes in express router
+     * @version 1.0.0
+     * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param {Application} app
+     * @return {Promise<void>}
+     */
+    BaseController.prototype.deployRoutes = function (app) {
+        return __awaiter(this, void 0, void 0, function () {
+            var directoryRoutes;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        directoryRoutes = this.path.join(__dirname, "..", "..", "app", "controllers");
+                        return [4 /*yield*/, this.processDirectory(directoryRoutes, app)];
+                    case 1:
+                        _a.sent();
+                        this.undefinedRoutes(app);
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
+    /**
+     * @function processDirectory
      * @description
      * * Will automatically scan the controllers
      * * directory and loop each controller file
@@ -75,63 +99,72 @@ module.exports = /** @class */ (function (_super) {
      * * routes that will be deployed by the app via express
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
+     * @param {string} directory
      * @param {Application} app
-     * @return void
+     * @return {Promise<void>}
      */
-    BaseController.prototype.deployRoutes = function (app) {
-        var _this = this;
-        var directory_routes = this.path.join(__dirname, '..', '..', 'app', 'controllers');
-        var methods_array = null;
-        this.file_system.readdir(directory_routes, { withFileTypes: true }, function (err, files) {
-            if (err) {
-                return console.log('Unable to scan directory: ' + err);
-            }
-            /*
-            * is a directory or is a file
-            */
-            files.forEach(function (file) {
-                var is_dir = file.isDirectory();
-                var is_file = file.isFile();
-                if (is_file) {
-                    /*
-                     * let content   = this.file_system.readFileSync(directory_routes+'/'+file);
-                    */
-                    var file_name = _this.__.capitalize(file.name.substring(0, file.name.indexOf('js') - 1));
-                    var route_name = require('../../app/controllers/' + file_name + '.js');
-                    var instance_of = new route_name();
-                    methods_array = instance_of.methods;
-                    if (methods_array.length > 0) {
-                        methods_array.forEach(function (route) {
-                            eval('app.use(instance_of.' + route + '());');
-                        });
-                    }
-                }
-                else if (is_dir) {
-                    var directory_name_1 = file.name;
-                    _this.file_system.readdir(directory_routes + '/' + file.name, { withFileTypes: true }, function (err, files) {
-                        if (err) {
-                            return console.log('Unable to scan directory: ' + err);
-                        }
-                        files.forEach(function (file) {
-                            var is_file = file.isFile();
-                            if (is_file) {
-                                var file_name = _this.__.capitalize(file.name.substring(0, file.name.indexOf('js') - 1));
-                                var route_name = require('../../app/controllers/' + directory_name_1 + '/' + file_name + '.js');
-                                var instance_of = new route_name();
-                                methods_array = instance_of.methods;
-                                if (methods_array.length > 0) {
-                                    methods_array.forEach(function (route) {
-                                        eval('app.use(instance_of.' + route + '());');
-                                    });
+    BaseController.prototype.processDirectory = function (directory, app) {
+        return __awaiter(this, void 0, void 0, function () {
+            var files, _loop_1, this_1, _i, files_1, file, error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 6, , 7]);
+                        return [4 /*yield*/, this.fileSystem.readdir(directory, { withFileTypes: true })];
+                    case 1:
+                        files = _a.sent();
+                        _loop_1 = function (file) {
+                            var fullPath, routePath, Controller, instanceOf_1;
+                            return __generator(this, function (_b) {
+                                switch (_b.label) {
+                                    case 0:
+                                        fullPath = this_1.path.join(directory, file.name);
+                                        if (!file.isDirectory()) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, this_1.processDirectory(fullPath, app)];
+                                    case 1:
+                                        _b.sent();
+                                        _b.label = 2;
+                                    case 2:
+                                        if (file.isFile() && file.name.endsWith(".js")) {
+                                            routePath = fullPath.replace(/\\/g, "/");
+                                            Controller = require(routePath);
+                                            instanceOf_1 = new Controller();
+                                            if (this_1._.isArray(instanceOf_1.methods) && instanceOf_1.methods.length > 0) {
+                                                instanceOf_1.methods.forEach(function (route) {
+                                                    if (typeof instanceOf_1[route] === "function") {
+                                                        app.use(instanceOf_1[route]());
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        return [2 /*return*/];
                                 }
-                            }
-                        });
-                    });
+                            });
+                        };
+                        this_1 = this;
+                        _i = 0, files_1 = files;
+                        _a.label = 2;
+                    case 2:
+                        if (!(_i < files_1.length)) return [3 /*break*/, 5];
+                        file = files_1[_i];
+                        return [5 /*yield**/, _loop_1(file)];
+                    case 3:
+                        _a.sent();
+                        _a.label = 4;
+                    case 4:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 5: return [3 /*break*/, 7];
+                    case 6:
+                        error_1 = _a.sent();
+                        if (error_1 instanceof Error) {
+                            throw new InternalError_1.default(error_1.message);
+                        }
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         });
-        // @ts-ignore
-        this.undefinedRoutes(app);
     };
     /**
      * @function undefinedRoutes
@@ -145,374 +178,83 @@ module.exports = /** @class */ (function (_super) {
      * * it acceptes all kind of routes with (next())
      * @version 1.0.0
      * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
-     * @param {Application} app
-     * @return void
+     * @param {Express} app - The Express application instance.
+     * @return {void}
      */
     BaseController.prototype.undefinedRoutes = function (app) {
         var _this = this;
-        var site_is_found = false;
-        var is_post_request_successful = false;
-        var is_put_request_successful = false;
-        var is_patch_request_successful = false;
-        var is_delete_request_successful = false;
-        var _constants = this.constants;
-        // @ts-ignore
-        app.use(this.route('get', '*', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var route, routes, route_exists;
-            var _this = this;
-            return __generator(this, function (_a) {
-                routes = [];
-                // @ts-ignore
-                app._router.stack.forEach(function (middleware) {
-                    if (middleware.route) { // routes registered directly on the app
-                        routes.push(middleware.route);
-                    }
-                    else if (middleware.name === 'router') { // router middleware 
-                        middleware.handle.stack.forEach(function (handler) {
-                            route = handler.route;
-                            route && routes.push(route);
-                        });
-                    }
-                });
-                route_exists = routes.filter(function (route) {
-                    return route.path.toString() === req.path.toString();
-                });
-                routes.forEach(function (route) {
-                    var check_path = req.path.toString().slice(1, req.path.toString().length);
-                    var direction = Object.assign(route.path.slice(1, route.path.length));
-                    var predefined_direction_from_route = _this.__.toLower(direction.toString());
-                    var requested_path_in_browser = _this.__.toLower(check_path.toString());
-                    /*
-                    * "/route" is same as "/route/"
-                    */
-                    if (_this.__.endsWith(requested_path_in_browser, '/') || _this.__.endsWith(predefined_direction_from_route, '/')) {
-                        requested_path_in_browser = _this.__.trimEnd(requested_path_in_browser, '/');
-                        predefined_direction_from_route = _this.__.trimEnd(predefined_direction_from_route, '/');
-                    }
-                    if (predefined_direction_from_route.includes(':')) {
-                        var _predefined_direction_from_route = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
-                        var _requested_path_in_browser = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
-                        if (_predefined_direction_from_route === _requested_path_in_browser) {
-                            if (_this.__.isEmpty(route_exists)) {
-                                route_exists = 'dynamic routes';
+        var methods = ["get", "post", "put", "patch", "delete"];
+        this._.forEach(methods, function (method) {
+            app.use(_this.route(method, "*", {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+                var routeExists;
+                return __generator(this, function (_a) {
+                    try {
+                        routeExists = this.routeExists(req, app, method);
+                        if (!routeExists) {
+                            if (this._.get(req, "origin") !== this.constants.SITE_DOMAIN_AND_PORT) {
+                                return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, "json"))];
                             }
-                            site_is_found = true;
+                            return [2 /*return*/, res
+                                    .status(this.constants.HTTPS_STATUS.CLIENT_ERRORS.NOT_FOUND)
+                                    .render("undefined_routes", (0, undefined_routes_logic_1.siteNotFound)(res))];
                         }
+                        next();
                     }
-                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.get) {
-                        route_exists = 'true';
-                        site_is_found = true;
+                    catch (error) {
+                        next(error);
+                    }
+                    return [2 /*return*/];
+                });
+            }); }));
+        });
+    };
+    /**
+     * @function routeExists
+     * @description Checks if a route exists for the current request and method.
+     * @param {Request} request - The current request object.
+     * @param {Express} app - The Express application instance.
+     * @param {string} method - The HTTP method (get, post, put, etc.).
+     * @return {boolean} - Returns true if the route exists, otherwise false.
+     */
+    BaseController.prototype.routeExists = function (request, app, method) {
+        var _this = this;
+        var routes = [];
+        this._.forEach(app._router.stack, function (middleware) {
+            if (middleware.route) {
+                var middlewareMethod = _this._.get(middleware, "route.methods.".concat(method));
+                if (middlewareMethod) {
+                    routes.push(middleware.route);
+                }
+            }
+            else if (middleware.name === "router") {
+                _this._.forEach(middleware.handle.stack, function (handler) {
+                    var handlerMethod = _this._.get(handler, "route.methods.".concat(method));
+                    if (handler.route && handlerMethod) {
+                        routes.push(handler.route);
                     }
                 });
-                if (this.__.isEmpty(route_exists)) {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', (0, undefined_routes_logic_1.siteNotFound)(res))];
-                    }
-                }
-                if (site_is_found === true) {
-                    next();
-                    site_is_found = false;
-                }
-                else {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.SITE_NOT_FOUND).render('undefined_routes', (0, undefined_routes_logic_1.siteNotFound)(res))];
-                    }
-                }
-                return [2 /*return*/];
-            });
-        }); }));
-        // @ts-ignore
-        app.use(this.route('post', '*', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var route, routes, route_exists;
-            var _this = this;
-            return __generator(this, function (_a) {
-                routes = [];
-                // @ts-ignore
-                app._router.stack.forEach(function (middleware) {
-                    if (middleware.route) { // routes registered directly on the app
-                        routes.push(middleware.route);
-                    }
-                    else if (middleware.name === 'router') { // router middleware 
-                        middleware.handle.stack.forEach(function (handler) {
-                            route = handler.route;
-                            route && routes.push(route);
-                        });
-                    }
-                });
-                route_exists = routes.filter(function (route) {
-                    return route.path.toString() === req.path.toString();
-                });
-                routes.forEach(function (route) {
-                    var check_path = req.path.toString().slice(1, req.path.toString().length);
-                    var direction = Object.assign(route.path.slice(1, route.path.length));
-                    var predefined_direction_from_route = _this.__.toLower(direction.toString());
-                    var requested_path_in_browser = _this.__.toLower(check_path.toString());
-                    /*
-                    * "/route" is same as "/route/"
-                    */
-                    if (_this.__.endsWith(requested_path_in_browser, '/') || _this.__.endsWith(predefined_direction_from_route, '/')) {
-                        requested_path_in_browser = _this.__.trimEnd(requested_path_in_browser, '/');
-                        predefined_direction_from_route = _this.__.trimEnd(predefined_direction_from_route, '/');
-                    }
-                    if (predefined_direction_from_route.includes(':')) {
-                        var _predefined_direction_from_route = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
-                        var _requested_path_in_browser = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
-                        if (_predefined_direction_from_route === _requested_path_in_browser) {
-                            if (_this.__.isEmpty(route_exists)) {
-                                route_exists = 'dynamic routes';
-                            }
-                            is_post_request_successful = true;
-                        }
-                    }
-                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.post) {
-                        route_exists = 'true';
-                        is_post_request_successful = true;
-                    }
-                });
-                if (this.__.isEmpty(route_exists)) {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
-                    }
-                }
-                if (is_post_request_successful === true) {
-                    next();
-                    is_post_request_successful = false;
-                }
-                else {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
-                    }
-                }
-                return [2 /*return*/];
-            });
-        }); }));
-        // @ts-ignore
-        app.use(this.route('put', '*', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var route, routes, route_exists;
-            var _this = this;
-            return __generator(this, function (_a) {
-                routes = [];
-                // @ts-ignore
-                app._router.stack.forEach(function (middleware) {
-                    if (middleware.route) { // routes registered directly on the app
-                        routes.push(middleware.route);
-                    }
-                    else if (middleware.name === 'router') { // router middleware 
-                        middleware.handle.stack.forEach(function (handler) {
-                            route = handler.route;
-                            route && routes.push(route);
-                        });
-                    }
-                });
-                route_exists = routes.filter(function (route) {
-                    return route.path.toString() === req.path.toString();
-                });
-                routes.forEach(function (route) {
-                    var check_path = req.path.toString().slice(1, req.path.toString().length);
-                    var direction = Object.assign(route.path.slice(1, route.path.length));
-                    var predefined_direction_from_route = _this.__.toLower(direction.toString());
-                    var requested_path_in_browser = _this.__.toLower(check_path.toString());
-                    /*
-                    * "/route" is same as "/route/"
-                    */
-                    if (_this.__.endsWith(requested_path_in_browser, '/') || _this.__.endsWith(predefined_direction_from_route, '/')) {
-                        requested_path_in_browser = _this.__.trimEnd(requested_path_in_browser, '/');
-                        predefined_direction_from_route = _this.__.trimEnd(predefined_direction_from_route, '/');
-                    }
-                    if (predefined_direction_from_route.includes(':')) {
-                        var _predefined_direction_from_route = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
-                        var _requested_path_in_browser = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
-                        if (_predefined_direction_from_route === _requested_path_in_browser) {
-                            if (_this.__.isEmpty(route_exists)) {
-                                route_exists = 'dynamic routes';
-                            }
-                            is_put_request_successful = true;
-                        }
-                    }
-                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.put) {
-                        route_exists = 'true';
-                        is_put_request_successful = true;
-                    }
-                });
-                if (this.__.isEmpty(route_exists)) {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        console.log('here');
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        console.log('or here');
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
-                    }
-                }
-                if (is_put_request_successful === true) {
-                    next();
-                    is_put_request_successful = false;
-                }
-                else {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
-                    }
-                }
-                return [2 /*return*/];
-            });
-        }); }));
-        // @ts-ignore
-        app.use(this.route('patch', '*', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var route, routes, route_exists;
-            var _this = this;
-            return __generator(this, function (_a) {
-                routes = [];
-                // @ts-ignore
-                app._router.stack.forEach(function (middleware) {
-                    if (middleware.route) { // routes registered directly on the app
-                        routes.push(middleware.route);
-                    }
-                    else if (middleware.name === 'router') { // router middleware 
-                        middleware.handle.stack.forEach(function (handler) {
-                            route = handler.route;
-                            route && routes.push(route);
-                        });
-                    }
-                });
-                route_exists = routes.filter(function (route) {
-                    return route.path.toString() === req.path.toString();
-                });
-                routes.forEach(function (route) {
-                    var check_path = req.path.toString().slice(1, req.path.toString().length);
-                    var direction = Object.assign(route.path.slice(1, route.path.length));
-                    var predefined_direction_from_route = _this.__.toLower(direction.toString());
-                    var requested_path_in_browser = _this.__.toLower(check_path.toString());
-                    /*
-                    * "/route" is same as "/route/"
-                    */
-                    if (_this.__.endsWith(requested_path_in_browser, '/') || _this.__.endsWith(predefined_direction_from_route, '/')) {
-                        requested_path_in_browser = _this.__.trimEnd(requested_path_in_browser, '/');
-                        predefined_direction_from_route = _this.__.trimEnd(predefined_direction_from_route, '/');
-                    }
-                    if (predefined_direction_from_route.includes(':')) {
-                        var _predefined_direction_from_route = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
-                        var _requested_path_in_browser = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
-                        if (_predefined_direction_from_route === _requested_path_in_browser) {
-                            if (_this.__.isEmpty(route_exists)) {
-                                route_exists = 'dynamic routes';
-                            }
-                            is_patch_request_successful = true;
-                        }
-                    }
-                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.patch) {
-                        route_exists = 'true';
-                        is_patch_request_successful = true;
-                    }
-                });
-                if (this.__.isEmpty(route_exists)) {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
-                    }
-                }
-                if (is_patch_request_successful === true) {
-                    next();
-                    is_patch_request_successful = false;
-                }
-                else {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
-                    }
-                }
-                return [2 /*return*/];
-            });
-        }); }));
-        // @ts-ignore
-        app.use(this.route('delete', '*', {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-            var route, routes, route_exists;
-            var _this = this;
-            return __generator(this, function (_a) {
-                routes = [];
-                // @ts-ignore
-                app._router.stack.forEach(function (middleware) {
-                    if (middleware.route) { // routes registered directly on the app
-                        routes.push(middleware.route);
-                    }
-                    else if (middleware.name === 'router') { // router middleware 
-                        middleware.handle.stack.forEach(function (handler) {
-                            route = handler.route;
-                            route && routes.push(route);
-                        });
-                    }
-                });
-                route_exists = routes.filter(function (route) {
-                    return route.path.toString() === req.path.toString();
-                });
-                routes.forEach(function (route) {
-                    var check_path = req.path.toString().slice(1, req.path.toString().length);
-                    var direction = Object.assign(route.path.slice(1, route.path.length));
-                    var predefined_direction_from_route = _this.__.toLower(direction.toString());
-                    var requested_path_in_browser = _this.__.toLower(check_path.toString());
-                    /*
-                    * "/route" is same as "/route/"
-                    */
-                    if (_this.__.endsWith(requested_path_in_browser, '/') || _this.__.endsWith(predefined_direction_from_route, '/')) {
-                        requested_path_in_browser = _this.__.trimEnd(requested_path_in_browser, '/');
-                        predefined_direction_from_route = _this.__.trimEnd(predefined_direction_from_route, '/');
-                    }
-                    if (predefined_direction_from_route.includes(':')) {
-                        var _predefined_direction_from_route = predefined_direction_from_route.substr(0, predefined_direction_from_route.indexOf(':') - 1);
-                        var _requested_path_in_browser = requested_path_in_browser.substr(0, requested_path_in_browser.lastIndexOf('/'));
-                        if (_predefined_direction_from_route === _requested_path_in_browser) {
-                            if (_this.__.isEmpty(route_exists)) {
-                                route_exists = 'dynamic routes';
-                            }
-                            is_delete_request_successful = true;
-                        }
-                    }
-                    if (predefined_direction_from_route === requested_path_in_browser && route.methods.delete) {
-                        route_exists = 'true';
-                        is_delete_request_successful = true;
-                    }
-                });
-                if (this.__.isEmpty(route_exists)) {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
-                    }
-                }
-                if (is_delete_request_successful === true) {
-                    next();
-                    is_delete_request_successful = false;
-                }
-                else {
-                    if (req.origin !== _constants.SITE_DOMAIN_AND_PORT) {
-                        return [2 /*return*/, next((0, undefined_routes_logic_1.undefinedHttpRequest)(res, 'json'))];
-                    }
-                    else {
-                        return [2 /*return*/, res.status(_constants.HTTPS_STATUS.CLIENT_ERRORS.BAD_REQUEST).render('undefined_routes', (0, undefined_routes_logic_1.undefinedHttpRequest)(res))];
-                    }
-                }
-                return [2 /*return*/];
-            });
-        }); }));
+            }
+        });
+        return this._.some(routes, function (route) { return _this.matchRoutePath(route.path, request.path); });
+    };
+    /**
+     * @function matchRoutePath
+     * @description Matches the current request path with the route path, considering dynamic segments.
+     * @param {string} routePath - The route path defined in the Express app.
+     * @param {string} requestPath - The path from the current request.
+     * @return {boolean} - Returns true if the paths match, considering dynamic routes.
+     */
+    BaseController.prototype.matchRoutePath = function (routePath, requestPath) {
+        var formattedRoutePath = this._.trimEnd(this._.toLower(routePath), "/");
+        var formattedRequestPath = this._.trimEnd(this._.toLower(requestPath), "/");
+        // Handle dynamic route segments, e.g., "/user/:id"
+        if (this._.includes(formattedRoutePath, ":")) {
+            var baseRoute = this._.trimEnd(this._.split(formattedRoutePath, ":")[0], "/");
+            var baseRequest = this._.join(this._.slice(this._.split(formattedRequestPath, "/"), 0, this._.split(baseRoute, "/").length), "/");
+            return baseRoute === baseRequest;
+        }
+        // Return true if the formatted paths match
+        return formattedRoutePath === formattedRequestPath;
     };
     return BaseController;
 }(Route_1.default));
