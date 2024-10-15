@@ -71,13 +71,13 @@
 			"group": "build"
 		},
 		{
-			"label": "Compile typescirpt",
+			"label": "Compile typescript",
 			"type": "shell",
 			"command": "node_modules/typescript/bin/tsc",
 			"group": "build"
 		},
 		{
-			"label": "Compile typescirpt and watch",
+			"label": "Compile typescript and watch",
 			"type": "shell",
 			"command": "node_modules/typescript/bin/tsc --watch",
 			"group": "build"

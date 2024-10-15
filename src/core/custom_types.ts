@@ -82,6 +82,8 @@ export interface CustomTypes {
 			[key: string]: {
 				label: string;
 				required?: boolean;
+				isPrimaryKey?: boolean;
+				isForeignKey?: boolean;
 				type?: // Numeric Types
 				| "TINYINT"
 					| "SMALLINT"
@@ -93,6 +95,7 @@ export interface CustomTypes {
 					| "DOUBLE"
 					| "NUMERIC"
 					| "DECIMAL"
+					| "NULL"
 					// Date and Time Types
 					| "DATE"
 					| "TIME"

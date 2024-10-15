@@ -114,14 +114,6 @@ abstract class SqlModel {
 	protected _: typeof import("lodash");
 	protected connection!: PoolConnection;
 
-	// todo export NODE_COMPILE_CACHE_PATH=/path/to/your/custom/cache/directory
-	// todo node 22.09 module.enableCompileCache();
-	// todo const util = require('node:util'); const {functionName, scriptName, lineNumber, column} = util.getCallSite()
-	// todo cluster module in node for handling multiple-core systems
-	// todo io.js, N-API, llhttp, HTTP/2 and HTTP3 ?
-
-	// todo see what seqeulize have to offer of functionalities and do implement them
-	// todo mysql cache - redis caching
 	constructor() {
 		this.mysql = Singleton.getDbSession();
 		this.model = getClass(this);
@@ -133,7 +125,7 @@ abstract class SqlModel {
 
 		setTimeout(() => {
 			if (!this.isInitialized) {
-				throw new Error(`initializeModel() was not called in the derived class (${this.model}).`);
+				throw new Error(`initializeModel() was not called in the derived class "${this.model}".`);
 			}
 		}, 0);
 	}
@@ -180,8 +172,11 @@ abstract class SqlModel {
 	): Promise<boolean | SQLException> {
 		for (const key in data) {
 			if (this.modelColumns.hasOwnProperty(key)) {
+				const isPrimaryKey = this.modelColumns[key]?.isPrimaryKey;
+				const isForeignKey = this.modelColumns[key]?.isForeignKey;
+				const actualValue =
+					(isPrimaryKey || isForeignKey) && !this._.isNil(data[key]) ? +this._.trim(data[key]) : data[key];
 				const expectedType = this.modelColumns[key]?.type;
-				const actualValue = data[key];
 
 				if (!expectedType) continue;
 
@@ -218,12 +213,12 @@ abstract class SqlModel {
 			case "INT":
 			case "INTEGER":
 			case "BIGINT":
-				return Number.isInteger(value);
+				return Number.isInteger(+this._.trim(value));
 			case "FLOAT":
 			case "DOUBLE":
 			case "NUMERIC":
 			case "DECIMAL":
-				return typeof value === "number";
+				return typeof +this._.trim(value) === "number";
 			case "BOOLEAN":
 			case "BOOL":
 				return typeof value === "boolean";
@@ -254,7 +249,7 @@ abstract class SqlModel {
 	 * @returns {Promise<[T, FieldPacket[]]>}
 	 */
 	async describeTable(
-		table: string,
+		table: string = this.table,
 		connection?: PoolConnection
 	): Promise<RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[] | ResultSetHeader> {
 		if (!this._columnsValidationExcuted) {
@@ -269,6 +264,17 @@ abstract class SqlModel {
 		}
 
 		try {
+			const cacheKey = `sql:describeTable:${table}`;
+			const describeTableCacheResults = await this.redis.getCachedResult(cacheKey);
+
+			if (describeTableCacheResults) {
+				if (automaticConnectionRelease) {
+					connection.release();
+				}
+				this.redis.quit();
+				return describeTableCacheResults;
+			}
+
 			const [result] = await connection.query(`DESC ${table};`);
 
 			if (automaticConnectionRelease) {
@@ -299,14 +305,14 @@ abstract class SqlModel {
 		if (this._.isEmpty(this.modelColumns)) {
 			return await this.handleException(
 				SQLException,
-				`The public modelColumns property the ${this.model} of the table ${this.table} is not implemented!`
+				`The public modelColumns property the "${this.model}" of the table "${this.table}" is not implemented!`
 			);
 		}
 
 		if (this._.isEmpty(this.table)) {
 			return await this.handleException(
 				SQLException,
-				`The table property of the ${this.model} of the table ${this.table} is not implemented!`
+				`The table property of the "${this.model}" of the table "${this.table}" is not implemented!`
 			);
 		}
 
@@ -417,6 +423,10 @@ abstract class SqlModel {
 			if (automaticConnectionRelease) {
 				connection.release();
 			}
+
+			await this.redis.invalidateCacheForCollection("sql", this.table);
+			await this.redis.quit();
+
 			return (result as any).affectedRows;
 		} catch (error) {
 			connection.release();
@@ -460,7 +470,10 @@ abstract class SqlModel {
 		const tableExists = !!(await this.describeTable(this.table, connection));
 		if (!tableExists) {
 			connection.release();
-			return await this.handleException(SQLException, `The Table ${this.table} does not exist in the database!`);
+			return await this.handleException(
+				SQLException,
+				`The Table "${this.table}" does not exist in the database!`
+			);
 		}
 
 		try {
@@ -471,6 +484,10 @@ abstract class SqlModel {
 			if (automaticConnectionRelease) {
 				connection.release();
 			}
+
+			await this.redis.invalidateCacheForCollection("sql", this.table);
+			await this.redis.quit();
+
 			return (result as any).affectedRows;
 		} catch (error) {
 			connection.release();
@@ -606,7 +623,10 @@ abstract class SqlModel {
 		const tableExists = !!(await this.describeTable(this.table, connection));
 		if (!tableExists) {
 			connection.release();
-			return await this.handleException(SQLException, `The Table ${this.table} does not exist in the database!`);
+			return await this.handleException(
+				SQLException,
+				`The Table "${this.table}" does not exist in the database!`
+			);
 		}
 
 		if (!this._.isObject(values) || this._.isEmpty(values)) {
@@ -623,6 +643,10 @@ abstract class SqlModel {
 			if (automaticConnectionRelease) {
 				connection.release();
 			}
+
+			await this.redis.invalidateCacheForCollection("sql", this.table);
+			await this.redis.quit();
+
 			return (result as any).insertId;
 		} catch (error) {
 			connection.release();
@@ -683,7 +707,10 @@ abstract class SqlModel {
 		const tableExists = !!(await this.describeTable(this.table, connection));
 		if (!tableExists) {
 			connection.release();
-			return await this.handleException(SQLException, `The Table ${this.table} does not exist in the database!`);
+			return await this.handleException(
+				SQLException,
+				`The Table "${this.table}" does not exist in the database!`
+			);
 		}
 
 		let primaryKey: string = this.primaryKey;
@@ -723,6 +750,9 @@ abstract class SqlModel {
 			connection.release();
 		}
 
+		await this.redis.invalidateCacheForCollection("sql", this.table);
+		await this.redis.quit();
+
 		if (result && (result as any).affectedRows) {
 			return (result as any).affectedRows;
 		}
@@ -758,7 +788,7 @@ abstract class SqlModel {
 			connection.release();
 			return Promise.reject(
 				new SQLException(
-					`Please write the database name in the return value of the abstract function "table() = ${table}" in the module class (${this.model})`
+					`Please write the database name in the return value of the abstract function table() "${table}" in the module class "${this.model}"`
 				)
 			);
 		}
@@ -768,7 +798,7 @@ abstract class SqlModel {
 
 		if (!result) {
 			connection.release();
-			return Promise.reject(new SQLException(`The Table ${table} does not exist in the database!`));
+			return Promise.reject(new SQLException(`The Table "${table}" does not exist in the database!`));
 		}
 
 		const database = table.substring(0, database_index);
@@ -834,7 +864,7 @@ abstract class SqlModel {
 		const tableExists = !!(await this.describeTable(table, connection));
 		if (!tableExists) {
 			connection.release();
-			return await this.handleException(SQLException, `The Table ${table} does not exist in the database!`);
+			return await this.handleException(SQLException, `The Table "${table}" does not exist in the database!`);
 		}
 
 		let whereClause: string[] | string = [];
@@ -845,6 +875,7 @@ abstract class SqlModel {
 			class: { table: string } | (new (...args: any[]) => any);
 			column: string;
 		};
+		let isForeignKey: boolean = false;
 		let constraintTable: string = "";
 		let constraintForeignKey: string = "";
 		let sql: string = "";
@@ -871,7 +902,7 @@ abstract class SqlModel {
 
 		if (fetchAll === false && (!this._.isEmpty(params) || !this._.isNil(params))) {
 			if (isGet && isRecursiv) {
-				const getCacheKey = `sql:"getRecursiveData":${table}`;
+				const getCacheKey = `sql:"getRecursiveData":${table}:${JSON.stringify(params)}`;
 				const getCachedResult = await this.redis.getCachedResult(getCacheKey);
 
 				if (getCachedResult) {
@@ -883,7 +914,7 @@ abstract class SqlModel {
 				}
 
 				const getRecursiveResults = this.deepCamelCaseKeys(
-					await this.getRecursiveData(params, table, connection)
+					await this.getRecursiveData(params as object | number, table, connection)
 				);
 
 				if (getRecursiveResults) {
@@ -897,7 +928,7 @@ abstract class SqlModel {
 				await this.redis.quit();
 				return getRecursiveResults;
 			} else if (isFilter && isRecursiv) {
-				const cacheKey = `sql:"filterRecursiveData":${table}`;
+				const cacheKey = `sql:"filterRecursiveData":${table}:${JSON.stringify(params)}`;
 				const cachedResult = await this.redis.getCachedResult(cacheKey);
 
 				if (cachedResult) {
@@ -967,15 +998,28 @@ abstract class SqlModel {
 				return filterRecursiveResults;
 			}
 
-			const cacheKey = `sql:"filter":${table}`;
-			const filterCachedResult = await this.redis.getCachedResult(cacheKey);
+			if (isGet) {
+				const cacheKey = `sql:"get":${table}`;
+				const getCachedResult = await this.redis.getCachedResult(cacheKey);
 
-			if (filterCachedResult) {
-				if (automaticConnectionRelease) {
-					connection.release();
+				if (getCachedResult) {
+					if (automaticConnectionRelease) {
+						connection.release();
+					}
+					await this.redis.quit();
+					return getCachedResult;
 				}
-				await this.redis.quit();
-				return filterCachedResult;
+			} else if (isFilter) {
+				const cacheKey = `sql:"filter":${table}`;
+				const filterCachedResult = await this.redis.getCachedResult(cacheKey);
+
+				if (filterCachedResult) {
+					if (automaticConnectionRelease) {
+						connection.release();
+					}
+					await this.redis.quit();
+					return filterCachedResult;
+				}
 			}
 
 			if (this._.isObject(params)) {
@@ -1038,6 +1082,9 @@ abstract class SqlModel {
 			const allCachedResult = await this.redis.getCachedResult(cacheKey);
 
 			if (allCachedResult) {
+				if (automaticConnectionRelease) {
+					connection.release();
+				}
 				await this.redis.quit();
 				return allCachedResult;
 			}
@@ -1046,7 +1093,7 @@ abstract class SqlModel {
 			sql = `SELECT * FROM ${table} ORDER BY ${primaryKey} ${order}`;
 		}
 
-		let [rows, fields] = await connection.query(sql, [params]);
+		let [rows, _] = await connection.query(sql, [params]);
 
 		rows = this.deepCamelCaseKeys(rows);
 
@@ -1054,10 +1101,20 @@ abstract class SqlModel {
 			if (this._.isObject(this.modelColumns) && !this._.isEmpty(this.modelColumns)) {
 				for (const key in this.modelColumns) {
 					columnName = key;
+					isForeignKey = (this.modelColumns as any)[columnName]?.isForeignKey;
 					foreignKeyReference = (this.modelColumns as any)[columnName]?.references;
 
 					if (this._.isEmpty(foreignKeyReference)) {
 						continue;
+					}
+
+					if (!isForeignKey) {
+						connection.release();
+						await this.redis.quit();
+						return await this.handleException(
+							LogicException,
+							`Property "isForeignKey" of the referenced column name "${columnName}" of the tabel "${table}" of the model "${this.model}" does not exist!`
+						);
 					}
 
 					if (!("column" in foreignKeyReference)) {
@@ -1065,7 +1122,7 @@ abstract class SqlModel {
 						await this.redis.quit();
 						return await this.handleException(
 							LogicException,
-							`Property "column" of the referenced column name ${columnName} of the tabel ${table} of the model ${this.model} does not exist!`
+							`Property "column" of the referenced column name "${columnName}" of the tabel "${table}" of the model "${this.model}" does not exist!`
 						);
 					}
 
@@ -1074,7 +1131,7 @@ abstract class SqlModel {
 						await this.redis.quit();
 						return await this.handleException(
 							LogicException,
-							`One of the properties "table" or "class" of the referenced column name ${columnName} of the tabel ${table} of the model ${this.model} must be defined!`
+							`One of the properties "table" or "class" of the referenced column name "${columnName}" of the tabel "${table}" of the model "${this.model}" must be defined!`
 						);
 					}
 
@@ -1083,7 +1140,7 @@ abstract class SqlModel {
 						await this.redis.quit();
 						return await this.handleException(
 							LogicException,
-							`Property "class" of the referenced column name ${columnName} of the tabel ${table} of the model ${this.model} must be either a model class or an initiated instance of the model class!`
+							`Property "class" of the referenced column name "${columnName}" of the tabel "${table}" of the model "${this.model}" must be either a model class or an initiated instance of the model class!`
 						);
 					}
 
@@ -1103,7 +1160,7 @@ abstract class SqlModel {
 						await this.redis.quit();
 						return await this.handleException(
 							LogicException,
-							`Property table of the model ${foreignKeyReference.class} is not defined!`
+							`Property table of the model "${foreignKeyReference.class}" is not defined!`
 						);
 					}
 
@@ -1191,13 +1248,15 @@ abstract class SqlModel {
 			}
 
 			if (this._.isObject(this.reverseReferences) && !this._.isEmpty(this.reverseReferences)) {
+				let tableMetaData: object | undefined;
+				let rowsReversedForeignKey: string = "";
 				for (const key in this.reverseReferences) {
 					if (!("table" in this.reverseReferences[key]) || !("column" in this.reverseReferences[key])) {
 						connection.release();
 						await this.redis.quit();
 						return await this.handleException(
 							LogicException,
-							`The referenced column property ${this.reverseReferences[key]} 
+							`The referenced column property "${this.reverseReferences[key]}"
 							must have the properties table and column.`
 						);
 					}
@@ -1211,7 +1270,7 @@ abstract class SqlModel {
 							await this.redis.quit();
 							return await this.handleException(
 								LogicException,
-								`The property "settings" of the object ${this.reverseReferences[key].settings} must have the properties whereColumn and whereTable.`
+								`The property "settings" of the object "${this.reverseReferences[key].settings}" must have the properties "whereColumn" and "whereTable".`
 							);
 						}
 
@@ -1222,6 +1281,7 @@ abstract class SqlModel {
 					reverseTable = this.reverseReferences[key].table;
 					reverseCol = this.reverseReferences[key].column;
 					reverseName = key;
+					tableMetaData = await this.fetchTableMetadata(reverseTable, connection);
 
 					if (!this._.isEmpty(whereCol) && !this._.isEmpty(whereTbl)) {
 						try {
@@ -1253,7 +1313,7 @@ abstract class SqlModel {
 								whereTbl;
 
 							if (!this._.isNil((rows as any)[0][whereCol])) {
-								sqlStatement += " " + "WHERE " + whereCol + " = " + "?" + " )";
+								sqlStatement += " " + "WHERE " + whereCol + " = " + (rows as any)[0][whereCol] + " )";
 							} else {
 								sqlStatement += " )";
 							}
@@ -1281,7 +1341,7 @@ abstract class SqlModel {
 							await this.redis.quit();
 							return await this.handleException(
 								SQLException,
-								`Reverse query for the table ${reverseTable} could not be executed!`,
+								`Reverse query for the table "${reverseTable}" could not be executed!`,
 								error
 							);
 						}
@@ -1299,17 +1359,32 @@ abstract class SqlModel {
 						}
 
 						try {
-							// todo reverseCol that does not match the primary key of the table must be fetched and identified seperatly in order to get the right name from the rows variable to have the value and then to assign the reversed reference name to the results array
-							// todo get table meta data and see the reverseCol relationship to which column does it reference then call the column name from meta data and then attach it as index to rows variable to get the right value
-							// todo and then attach redis to the rest of the functions in sqlModel
+							if (!this._.isEmpty(tableMetaData)) {
+								for (let key in tableMetaData as {}) {
+									if (this._.isArray(tableMetaData[key])) {
+										for (let element of tableMetaData[key] as Array<{
+											foreign_key_column: string;
+											referenced_table: string;
+											referenced_column: string;
+										}>) {
+											if (element.foreign_key_column === reverseCol) {
+												rowsReversedForeignKey = element.referenced_column;
+											}
+										}
+									}
+								}
+							}
+
+							if (this._.isEmpty(rowsReversedForeignKey)) {
+								return this.handleException(
+									SQLException,
+									`Could not get the foreign key column (reversed column) "${reverseCol}" from the model "${this.model}" of the primary key of the table "${table}"`
+								);
+							}
+
 							sql = `SELECT * FROM ${reverseTable} WHERE ${reverseCol} = ?`;
 							const [constraintQuery]: CustomTypes["mysqlTypes"]["mysqlQueryType"] =
-								await connection.query(sql, [(rows as any)[0][reverseCol]]);
-
-							console.log(sql);
-							console.log(reverseTable);
-							console.log(reverseCol);
-							console.log(rows);
+								await connection.query(sql, [(rows as any)[0][rowsReversedForeignKey]]);
 							if (this._.isArray(constraintQuery)) {
 								this._.assign(rows as any, {
 									[this._.camelCase(reverseName)]: this.deepCamelCaseKeys(constraintQuery[0]),
@@ -1328,9 +1403,9 @@ abstract class SqlModel {
 							await this.redis.quit();
 							return await this.handleException(
 								SQLException,
-								`Query for column ${reverseCol} with the value of ${
+								`Query for column "${reverseCol}" with the value of "${
 									(rows as any)[0][primaryKey]
-								} of the table "${reverseTable}" could not be executed!`,
+								}" of the table "${reverseTable}" could not be executed!`,
 								error
 							);
 						}
@@ -1369,9 +1444,9 @@ abstract class SqlModel {
 
 		try {
 			table = await this.escapeDatabaseName(table);
-			let primaryKey: string = "";
+			let foreignKey: string = "";
 			const metadataQuery = `
-				SELECT COLUMN_NAME as primaryKey, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME, COLUMN_NAME as foreignKeyColumn
+				SELECT COLUMN_NAME as foreignKey, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME, COLUMN_NAME as foreignKeyColumn
 				FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
 				WHERE TABLE_NAME = ?
 				AND REFERENCED_TABLE_SCHEMA = DATABASE();`;
@@ -1380,7 +1455,7 @@ abstract class SqlModel {
 			if (this._.isArray(result)) {
 				const rows = result as mysql.RowDataPacket[];
 				if (!this._.isEmpty(rows[0])) {
-					primaryKey = rows[0]["primaryKey"];
+					foreignKey = rows[0]["foreignKey"];
 				}
 				const relationships = result.map((row) => ({
 					foreign_key_column: (row as any).foreignKeyColumn,
@@ -1391,7 +1466,7 @@ abstract class SqlModel {
 				if (automaticConnectionRelease) {
 					connection.release();
 				}
-				return { primaryKey, relationships };
+				return { foreignKey, relationships };
 			}
 		} catch (error) {
 			connection.release();
@@ -1412,7 +1487,7 @@ abstract class SqlModel {
 	 * @returns {Promise<object>}
 	 */
 	protected async getRecursiveData(
-		params: number | object | string | undefined,
+		params: number | object | undefined,
 		table?: string,
 		connection?: PoolConnection
 	): Promise<object> {
@@ -1453,11 +1528,8 @@ abstract class SqlModel {
 					sql = `SELECT * FROM ${table} WHERE ${whereClause} ORDER BY ${primaryKey} ASC LIMIT 1;`;
 					(params as object) = Object.values(params);
 				}
-			} else if (this._.isString(params)) {
-				params = this.mysql.escape(params);
-				sql = `SELECT * FROM ${table} WHERE ? ORDER BY ${primaryKey} ASC LIMIT 1;`;
 			} else if (this._.isNumber(params)) {
-				if (this._.isEmpty((metadata as any).primaryKey) || this._.isEmpty((metadata as any).relationships)) {
+				if (this._.isEmpty((metadata as any).foreignKey) || this._.isEmpty((metadata as any).relationships)) {
 					sql = `SELECT * FROM ${table} WHERE ${primaryKey} = ? ORDER BY ${primaryKey} ASC LIMIT 1;`;
 					const [result] = await connection.query(sql, [params]);
 					if (this._.isArray(result)) {
@@ -1467,10 +1539,6 @@ abstract class SqlModel {
 						return result[0];
 					}
 				}
-
-				sql = `SELECT * FROM ${table!} WHERE ${
-					(metadata as any).primaryKey
-				} = ? ORDER BY ${primaryKey} ASC LIMIT 1`;
 			}
 
 			const [record] = await connection.query(sql, [params]);
@@ -1514,7 +1582,7 @@ abstract class SqlModel {
 				}
 			}
 
-			if (this._.isEmpty((metadata as any).primaryKey)) {
+			if (this._.isEmpty((metadata as any).foreignKey)) {
 				if (automaticConnectionRelease) {
 					connection.release();
 				}
@@ -1554,11 +1622,7 @@ abstract class SqlModel {
 	 */
 	protected async filterRecursiveData(
 		connection: PoolConnection,
-		params?:
-			| Partial<{
-					[key in keyof this["modelColumns"]]: string | number | undefined;
-			  }>
-			| string,
+		params?: string,
 		order: string = "ASC",
 		limit: number | string = "",
 		table?: string,
@@ -1583,7 +1647,7 @@ abstract class SqlModel {
 			const descTable = await this.describeTable(table as string, connection);
 			const validFields = (descTable as any).map((field: { Field: string }) => field.Field);
 
-			if (this._.isString(params) && !isAll) {
+			if (this._.isString(params) && !isAll && !this._.isEmpty(params)) {
 				const conditions = params.split(/\s+(AND|OR)\s+/i);
 				const filteredConditions = conditions
 					.map((condition) => {
@@ -1625,8 +1689,6 @@ abstract class SqlModel {
 
 				params = filteredConditions.join(" AND ");
 				sql = `SELECT * FROM ${table} WHERE ${params} ORDER BY ${primaryKey} ${order}`;
-			} else if (this._.isNumber(params) && !isAll) {
-				sql = `SELECT * FROM ${table} WHERE ${primaryKey} = ? ORDER BY ${primaryKey} ${order}`;
 			}
 
 			if (!this._.isNil(limit) && !this._.isEmpty() && !isAll) {
@@ -1662,7 +1724,7 @@ abstract class SqlModel {
 
 			if (this._.isArray(records)) {
 				connection.release();
-				return records[0];
+				return records;
 			} else {
 				connection.release();
 				return await this.handleException(
@@ -1728,16 +1790,39 @@ abstract class SqlModel {
 	 * @param {string} condition - The SQL-like condition string to parse.
 	 * @returns {object} - Returns an object with key-value pairs.
 	 */
-	protected parseSqlConditionString(condition: string): { [key: string]: any } {
-		const conditionObject: { [key: string]: any } = {};
+	protected parseSqlConditionString(condition: string): { [key: string]: string } {
+		const conditionObject: { [key: string]: string } = {};
 
-		const regex = /([a-zA-Z_]+)\s*(=|>|<|<=|>=|!=|LIKE|IN)\s*(['"]?[\w\s]*['"]?)/g;
+		// Regex to capture key, operator, and value
+		const regex =
+			/([a-zA-Z_]+)\s*(=|!=|<>|>|<|>=|<=|LIKE|ILIKE|NOT LIKE|BETWEEN|IN|NOT IN|IS NULL|IS NOT NULL)\s*(.*?)(?=\s+(AND|OR|$))/gi;
 		let match: RegExpExecArray | null;
 
 		while ((match = regex.exec(condition)) !== null) {
 			const [_, key, operator, value] = match;
-			const cleanedValue = value.replace(/['"]/g, "");
-			conditionObject[key] = cleanedValue;
+
+			// Handle IS NULL and IS NOT NULL
+			if (operator.toUpperCase() === "IS NULL" || operator.toUpperCase() === "IS NOT NULL") {
+				conditionObject[key.trim()] = "NULL";
+			}
+			// Handle BETWEEN clause and return the first value only
+			else if (operator.toUpperCase() === "BETWEEN") {
+				const betweenValues = value.split(/\s+(AND|OR)\s+/i);
+				if (betweenValues.length > 0) {
+					conditionObject[key.trim()] = betweenValues[0].trim(); // Return the first value only
+				} else {
+					conditionObject[key.trim()] = "INVALID BETWEEN CLAUSE";
+				}
+			}
+			// Handle LIKE, IN, and other operators with string values
+			else if (operator.toUpperCase() === "IN" || operator.toUpperCase() === "NOT IN") {
+				const cleanedValue = value.replace(/[\(\)'"]/g, "").trim();
+				conditionObject[key.trim()] = cleanedValue;
+			}
+			// Handle LIKE and other single-value operators
+			else {
+				conditionObject[key.trim()] = value.replace(/['"]/g, "").trim();
+			}
 		}
 
 		return conditionObject;

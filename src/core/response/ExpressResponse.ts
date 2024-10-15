@@ -324,14 +324,18 @@ export abstract class ExpressResponse {
 		error: Error | string | { message?: string; statusCode: number }
 	): Response | void {
 		const environment = config.configurations().environment;
-		let error_message = typeof error === "string" ? error : (error as Error).message || "Unexpected error";
+		const detailedError = this.getDetailedError();
+		let error_message =
+			typeof error === "string" ? error : error instanceof Error ? error.stack ?? "" : "Unexpected error";
 
 		if (environment === "development") {
 			if (typeof error === "string") {
+				error = error + `\n${detailedError}`;
 				const customError = new CustomError(error);
 				customError.statusCode = this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
 				return next(customError);
 			} else if (error instanceof Error) {
+				error.message = `${error.stack}`;
 				return next(error);
 			}
 
@@ -339,16 +343,17 @@ export abstract class ExpressResponse {
 		}
 
 		if (error instanceof Error && !(error instanceof ApiException)) {
-			(error as any).statusCode = this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
-			return next(error);
+			console.error(error_message);
+			(error as any).statusCode = 500;
+			return next(error.stack ?? `\n${detailedError}`);
 		} else if (typeof error === "string") {
-			const genericError = new Error(error);
+			const genericError = new Error(error + `\n${detailedError}`);
 			return next(genericError);
 		} else if (typeof error === "object" && error instanceof ApiException) {
-			return next(error);
+			return next(error.stack ?? `\n${detailedError}`);
 		}
 
-		return this.renderErrorPage(response, error_message, 500, "Unexpected error occurred.");
+		return this.renderErrorPage(response, error_message as string, 500, "Unexpected error occurred.");
 	}
 
 	/**
@@ -413,5 +418,26 @@ export abstract class ExpressResponse {
 		Object.assign(clone, response);
 		for (const i in clone) if (typeof clone[i] === "undefined") delete clone[i];
 		return clone;
+	}
+
+	/**
+	 * @function getErrorDetails
+	 * @description Captures and returns detailed error information, including function name, file name, line number, and column number.
+	 * @returns {string} A string containing error information.
+	 */
+	getDetailedError(): string {
+		const util = require("node:util");
+		const callSites: Array<any> = util.getCallSite(); // Adjust based on actual util method availability
+
+		let detailedError = "\n Stack Trace: \n";
+		callSites.forEach((callSite, index) => {
+			detailedError += `CallSite ${index + 1}: \n`;
+			detailedError += `Function Name: ${callSite.functionName ?? "N/A"} \n`;
+			detailedError += `Script Name: ${callSite.scriptName ?? "N/A"} \n`;
+			detailedError += `Line Number: ${callSite.lineNumer ?? "N/A"} \n`;
+			detailedError += `Column Number: ${callSite.column ?? "N/A"} \n`;
+		});
+
+		return detailedError || "Unable to extract stack trace.";
 	}
 }

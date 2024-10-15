@@ -1,5 +1,6 @@
 "use strict";
 
+import redis from "redis";
 import { createClient, RedisClientOptions, RedisClientType, SetOptions } from "redis";
 import * as config from "../config";
 import LogicException from "../exception/types/LogicException";
@@ -518,7 +519,7 @@ export = class Redis {
 	 */
 	async executeMulti(
 		key: string,
-		operations: Array<(multi: ReturnType<typeof this.redis.multi>) => Promise<void>>,
+		operations: Array<(multi: any) => Promise<void>>,
 		watch: boolean = false
 	): Promise<any[]> {
 		try {

@@ -84,13 +84,6 @@ var config = __importStar(require("../config"));
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
  */
 var SqlModel = /** @class */ (function () {
-    // todo export NODE_COMPILE_CACHE_PATH=/path/to/your/custom/cache/directory
-    // todo node 22.09 module.enableCompileCache();
-    // todo const util = require('node:util'); const {functionName, scriptName, lineNumber, column} = util.getCallSite()
-    // todo cluster module in node for handling multiple-core systems
-    // todo io.js, N-API, llhttp, HTTP/2 and HTTP3 ?
-    // todo see what seqeulize have to offer of functionalities and do implement them
-    // todo mysql cache - redis caching
     function SqlModel() {
         var _this = this;
         /**
@@ -137,7 +130,7 @@ var SqlModel = /** @class */ (function () {
         this._ = Singleton_1.Singleton.getLodash();
         setTimeout(function () {
             if (!_this.isInitialized) {
-                throw new Error("initializeModel() was not called in the derived class (".concat(_this.model, ")."));
+                throw new Error("initializeModel() was not called in the derived class \"".concat(_this.model, "\"."));
             }
         }, 0);
     }
@@ -177,35 +170,37 @@ var SqlModel = /** @class */ (function () {
      * @returns {Promise<boolean | SQLException>} - Resolves true if valid, otherwise throws SQLException.
      */
     SqlModel.prototype.validateTypesAgainstModelColumns = function (data) {
-        var _a;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function () {
-            var _b, _c, _d, _i, key, expectedType, actualValue, isValid;
-            return __generator(this, function (_e) {
-                switch (_e.label) {
+            var _d, _e, _f, _i, key, isPrimaryKey, isForeignKey, actualValue, expectedType, isValid;
+            return __generator(this, function (_g) {
+                switch (_g.label) {
                     case 0:
-                        _b = data;
-                        _c = [];
-                        for (_d in _b)
-                            _c.push(_d);
+                        _d = data;
+                        _e = [];
+                        for (_f in _d)
+                            _e.push(_f);
                         _i = 0;
-                        _e.label = 1;
+                        _g.label = 1;
                     case 1:
-                        if (!(_i < _c.length)) return [3 /*break*/, 7];
-                        _d = _c[_i];
-                        if (!(_d in _b)) return [3 /*break*/, 6];
-                        key = _d;
+                        if (!(_i < _e.length)) return [3 /*break*/, 7];
+                        _f = _e[_i];
+                        if (!(_f in _d)) return [3 /*break*/, 6];
+                        key = _f;
                         if (!this.modelColumns.hasOwnProperty(key)) return [3 /*break*/, 4];
-                        expectedType = (_a = this.modelColumns[key]) === null || _a === void 0 ? void 0 : _a.type;
-                        actualValue = data[key];
+                        isPrimaryKey = (_a = this.modelColumns[key]) === null || _a === void 0 ? void 0 : _a.isPrimaryKey;
+                        isForeignKey = (_b = this.modelColumns[key]) === null || _b === void 0 ? void 0 : _b.isForeignKey;
+                        actualValue = (isPrimaryKey || isForeignKey) && !this._.isNil(data[key]) ? +this._.trim(data[key]) : data[key];
+                        expectedType = (_c = this.modelColumns[key]) === null || _c === void 0 ? void 0 : _c.type;
                         if (!expectedType)
                             return [3 /*break*/, 6];
                         isValid = this.validateType(expectedType, actualValue);
                         if (!!isValid) return [3 /*break*/, 3];
                         return [4 /*yield*/, this.handleException(SQLException_1.default, "Invalid type for column \"".concat(key, "\". Expected type \"").concat(expectedType, "\" but got value \"").concat(actualValue, "\" of type \"").concat(typeof actualValue, "\"."))];
-                    case 2: return [2 /*return*/, _e.sent()];
+                    case 2: return [2 /*return*/, _g.sent()];
                     case 3: return [3 /*break*/, 6];
                     case 4: return [4 /*yield*/, this.handleException(SQLException_1.default, "The column \"".concat(key, "\" does not exist in the modelColumns of the model \"").concat(this.model, "\"."))];
-                    case 5: return [2 /*return*/, _e.sent()];
+                    case 5: return [2 /*return*/, _g.sent()];
                     case 6:
                         _i++;
                         return [3 /*break*/, 1];
@@ -229,12 +224,12 @@ var SqlModel = /** @class */ (function () {
             case "INT":
             case "INTEGER":
             case "BIGINT":
-                return Number.isInteger(value);
+                return Number.isInteger(+this._.trim(value));
             case "FLOAT":
             case "DOUBLE":
             case "NUMERIC":
             case "DECIMAL":
-                return typeof value === "number";
+                return typeof +this._.trim(value) === "number";
             case "BOOLEAN":
             case "BOOL":
                 return typeof value === "boolean";
@@ -264,8 +259,9 @@ var SqlModel = /** @class */ (function () {
      * @returns {Promise<[T, FieldPacket[]]>}
      */
     SqlModel.prototype.describeTable = function (table, connection) {
+        if (table === void 0) { table = this.table; }
         return __awaiter(this, void 0, void 0, function () {
-            var automaticConnectionRelease, result, error_1;
+            var automaticConnectionRelease, cacheKey, describeTableCacheResults, result, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -284,19 +280,30 @@ var SqlModel = /** @class */ (function () {
                         connection = _a.sent();
                         _a.label = 5;
                     case 5:
-                        _a.trys.push([5, 7, , 8]);
-                        return [4 /*yield*/, connection.query("DESC ".concat(table, ";"))];
+                        _a.trys.push([5, 8, , 9]);
+                        cacheKey = "sql:describeTable:".concat(table);
+                        return [4 /*yield*/, this.redis.getCachedResult(cacheKey)];
                     case 6:
+                        describeTableCacheResults = _a.sent();
+                        if (describeTableCacheResults) {
+                            if (automaticConnectionRelease) {
+                                connection.release();
+                            }
+                            this.redis.quit();
+                            return [2 /*return*/, describeTableCacheResults];
+                        }
+                        return [4 /*yield*/, connection.query("DESC ".concat(table, ";"))];
+                    case 7:
                         result = (_a.sent())[0];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
                         return [2 /*return*/, result];
-                    case 7:
+                    case 8:
                         error_1 = _a.sent();
                         connection.release();
                         throw error_1;
-                    case 8: return [2 /*return*/];
+                    case 9: return [2 /*return*/];
                 }
             });
         });
@@ -319,11 +326,11 @@ var SqlModel = /** @class */ (function () {
                         }
                         this._columnsValidationExcuted = true;
                         if (!this._.isEmpty(this.modelColumns)) return [3 /*break*/, 2];
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The public modelColumns property the ".concat(this.model, " of the table ").concat(this.table, " is not implemented!"))];
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The public modelColumns property the \"".concat(this.model, "\" of the table \"").concat(this.table, "\" is not implemented!"))];
                     case 1: return [2 /*return*/, _b.sent()];
                     case 2:
                         if (!this._.isEmpty(this.table)) return [3 /*break*/, 4];
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The table property of the ".concat(this.model, " of the table ").concat(this.table, " is not implemented!"))];
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The table property of the \"".concat(this.model, "\" of the table \"").concat(this.table, "\" is not implemented!"))];
                     case 3: return [2 /*return*/, _b.sent()];
                     case 4: return [4 /*yield*/, this.describeTable(this.table)];
                     case 5:
@@ -433,20 +440,26 @@ var SqlModel = /** @class */ (function () {
                         return [4 /*yield*/, this.handleException(SQLException_1.default, "Invalid ID format")];
                     case 21: return [2 /*return*/, _a.sent()];
                     case 22:
-                        _a.trys.push([22, 24, , 26]);
+                        _a.trys.push([22, 26, , 28]);
                         return [4 /*yield*/, connection.query(query, params)];
                     case 23:
                         result = (_a.sent())[0];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
-                        return [2 /*return*/, result.affectedRows];
+                        return [4 /*yield*/, this.redis.invalidateCacheForCollection("sql", this.table)];
                     case 24:
+                        _a.sent();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 25:
+                        _a.sent();
+                        return [2 /*return*/, result.affectedRows];
+                    case 26:
                         error_2 = _a.sent();
                         connection.release();
                         return [4 /*yield*/, this.handleException(SQLException_1.default, "Query could not be executed!. \n Error: ".concat(error_2))];
-                    case 25: return [2 /*return*/, _a.sent()];
-                    case 26: return [2 /*return*/];
+                    case 27: return [2 /*return*/, _a.sent()];
+                    case 28: return [2 /*return*/];
                 }
             });
         });
@@ -497,23 +510,29 @@ var SqlModel = /** @class */ (function () {
                         tableExists = !!(_a.sent());
                         if (!!tableExists) return [3 /*break*/, 12];
                         connection.release();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The Table ".concat(this.table, " does not exist in the database!"))];
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The Table \"".concat(this.table, "\" does not exist in the database!"))];
                     case 11: return [2 /*return*/, _a.sent()];
                     case 12:
-                        _a.trys.push([12, 14, , 16]);
+                        _a.trys.push([12, 16, , 18]);
                         return [4 /*yield*/, connection.query("DELETE FROM ".concat(this.table, ";"))];
                     case 13:
                         result = (_a.sent())[0];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
-                        return [2 /*return*/, result.affectedRows];
+                        return [4 /*yield*/, this.redis.invalidateCacheForCollection("sql", this.table)];
                     case 14:
+                        _a.sent();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 15:
+                        _a.sent();
+                        return [2 /*return*/, result.affectedRows];
+                    case 16:
                         error_3 = _a.sent();
                         connection.release();
                         return [4 /*yield*/, this.handleException(SQLException_1.default, "Query could not be executed!")];
-                    case 15: return [2 /*return*/, _a.sent()];
-                    case 16: return [2 /*return*/];
+                    case 17: return [2 /*return*/, _a.sent()];
+                    case 18: return [2 /*return*/];
                 }
             });
         });
@@ -667,7 +686,7 @@ var SqlModel = /** @class */ (function () {
                         tableExists = !!(_a.sent());
                         if (!!tableExists) return [3 /*break*/, 13];
                         connection.release();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The Table ".concat(this.table, " does not exist in the database!"))];
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The Table \"".concat(this.table, "\" does not exist in the database!"))];
                     case 12: return [2 /*return*/, _a.sent()];
                     case 13:
                         if (!(!this._.isObject(values) || this._.isEmpty(values))) return [3 /*break*/, 15];
@@ -675,20 +694,26 @@ var SqlModel = /** @class */ (function () {
                         return [4 /*yield*/, this.handleException(LogicException_1.default, "No columns neither values are specified!")];
                     case 14: return [2 /*return*/, _a.sent()];
                     case 15:
-                        _a.trys.push([15, 17, , 19]);
+                        _a.trys.push([15, 19, , 21]);
                         return [4 /*yield*/, connection.query("INSERT INTO ".concat(this.table, " SET ?;"), [values])];
                     case 16:
                         result = (_a.sent())[0];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
-                        return [2 /*return*/, result.insertId];
+                        return [4 /*yield*/, this.redis.invalidateCacheForCollection("sql", this.table)];
                     case 17:
+                        _a.sent();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 18:
+                        _a.sent();
+                        return [2 /*return*/, result.insertId];
+                    case 19:
                         error_4 = _a.sent();
                         connection.release();
                         return [4 /*yield*/, this.handleException(SQLException_1.default, "Failed to insert data into the table! \n Error: ".concat(error_4))];
-                    case 18: return [2 /*return*/, _a.sent()];
-                    case 19: return [2 /*return*/];
+                    case 20: return [2 /*return*/, _a.sent()];
+                    case 21: return [2 /*return*/];
                 }
             });
         });
@@ -745,7 +770,7 @@ var SqlModel = /** @class */ (function () {
                         tableExists = !!(_a.sent());
                         if (!!tableExists) return [3 /*break*/, 15];
                         connection.release();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The Table ".concat(this.table, " does not exist in the database!"))];
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The Table \"".concat(this.table, "\" does not exist in the database!"))];
                     case 14: return [2 /*return*/, _a.sent()];
                     case 15:
                         primaryKey = this.primaryKey;
@@ -794,6 +819,12 @@ var SqlModel = /** @class */ (function () {
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
+                        return [4 /*yield*/, this.redis.invalidateCacheForCollection("sql", this.table)];
+                    case 29:
+                        _a.sent();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 30:
+                        _a.sent();
                         if (result && result.affectedRows) {
                             return [2 /*return*/, result.affectedRows];
                         }
@@ -835,7 +866,7 @@ var SqlModel = /** @class */ (function () {
                         database_index = table.indexOf(".");
                         if (database_index === this.constants.STRING_RETURN_NUMBERS.NOT_FOUND) {
                             connection.release();
-                            return [2 /*return*/, Promise.reject(new SQLException_1.default("Please write the database name in the return value of the abstract function \"table() = ".concat(table, "\" in the module class (").concat(this.model, ")")))];
+                            return [2 /*return*/, Promise.reject(new SQLException_1.default("Please write the database name in the return value of the abstract function table() \"".concat(table, "\" in the module class \"").concat(this.model, "\"")))];
                         }
                         length = table.toString().length;
                         return [4 /*yield*/, this.describeTable(table, connection)];
@@ -843,7 +874,7 @@ var SqlModel = /** @class */ (function () {
                         result = !!(_a.sent());
                         if (!result) {
                             connection.release();
-                            return [2 /*return*/, Promise.reject(new SQLException_1.default("The Table ".concat(table, " does not exist in the database!")))];
+                            return [2 /*return*/, Promise.reject(new SQLException_1.default("The Table \"".concat(table, "\" does not exist in the database!")))];
                         }
                         database = table.substring(0, database_index);
                         table_name = table.substring(database_index + 1, length);
@@ -881,7 +912,7 @@ var SqlModel = /** @class */ (function () {
      * @returns {Promise<RowDataPacket[] | RowDataPacket[][] | OkPacket | OkPacket[] | ResultSetHeader | SQLException | LogicException | { [key: string]: any };>}
      */
     SqlModel.prototype.fetchQuery = function (table, params, isFilter, isGet, fetchAll, isRecursiv, order, limit, connection) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         if (table === void 0) { table = this.table; }
         if (isFilter === void 0) { isFilter = false; }
         if (isGet === void 0) { isGet = false; }
@@ -890,10 +921,10 @@ var SqlModel = /** @class */ (function () {
         if (order === void 0) { order = "ASC"; }
         if (limit === void 0) { limit = ""; }
         return __awaiter(this, void 0, void 0, function () {
-            var automaticConnectionRelease, tableExists, whereClause, columnName, foreignKeyReference, constraintTable, constraintForeignKey, sql, reverseTable, reverseCol, whereCol, whereTbl, reverseName, primaryKey, cacheKey, error_6, getCacheKey, getCachedResult, getRecursiveResults, _d, cacheKey_1, cachedResult, filterRecursiveResults, _e, key, _f, allCacheKey, allCachedResult, allRecursiveResults, _g, cacheKey_2, filterCachedResult, key, allCacheKey, allCachedResult_1, allRecursiveResults, _h, cacheKey_3, allCachedResult, _j, rows, fields, _k, _l, _m, _i, key, classInstance, constraintQuery, error_7, error_8, constraintQuery, error_9, _o, _p, _q, _r, key, error_10, sqlStatement, constraintQuery, error_11, error_12, constraintQuery, error_13;
-            var _s, _t, _u, _v;
-            return __generator(this, function (_w) {
-                switch (_w.label) {
+            var automaticConnectionRelease, tableExists, whereClause, columnName, foreignKeyReference, isForeignKey, constraintTable, constraintForeignKey, sql, reverseTable, reverseCol, whereCol, whereTbl, reverseName, primaryKey, cacheKey, error_6, getCacheKey, getCachedResult, getRecursiveResults, _e, cacheKey_1, cachedResult, filterRecursiveResults, _f, key, _g, allCacheKey, allCachedResult, allRecursiveResults, _h, cacheKey_2, getCachedResult, cacheKey_3, filterCachedResult, key, allCacheKey, allCachedResult_1, allRecursiveResults, _j, cacheKey_4, allCachedResult, _k, rows, _, _l, _m, _o, _i, key, classInstance, constraintQuery, error_7, error_8, constraintQuery, error_9, tableMetaData, rowsReversedForeignKey, _p, _q, _r, _s, key, error_10, sqlStatement, constraintQuery, error_11, error_12, key_1, _t, _u, element, constraintQuery, error_13;
+            var _v, _w, _x, _y;
+            return __generator(this, function (_z) {
+                switch (_z.label) {
                     case 0:
                         automaticConnectionRelease = true;
                         if (!connection) return [3 /*break*/, 1];
@@ -901,23 +932,24 @@ var SqlModel = /** @class */ (function () {
                         return [3 /*break*/, 3];
                     case 1: return [4 /*yield*/, this.pool.getConnection()];
                     case 2:
-                        connection = _w.sent();
-                        _w.label = 3;
+                        connection = _z.sent();
+                        _z.label = 3;
                     case 3:
                         if (!this._.isEmpty(table)) return [3 /*break*/, 5];
                         connection.release();
                         return [4 /*yield*/, this.handleException(LogicException_1.default, "Table must not be empty!")];
-                    case 4: return [2 /*return*/, _w.sent()];
+                    case 4: return [2 /*return*/, _z.sent()];
                     case 5: return [4 /*yield*/, this.describeTable(table, connection)];
                     case 6:
-                        tableExists = !!(_w.sent());
+                        tableExists = !!(_z.sent());
                         if (!!tableExists) return [3 /*break*/, 8];
                         connection.release();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The Table ".concat(table, " does not exist in the database!"))];
-                    case 7: return [2 /*return*/, _w.sent()];
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "The Table \"".concat(table, "\" does not exist in the database!"))];
+                    case 7: return [2 /*return*/, _z.sent()];
                     case 8:
                         whereClause = [];
                         columnName = "";
+                        isForeignKey = false;
                         constraintTable = "";
                         constraintForeignKey = "";
                         sql = "";
@@ -929,68 +961,68 @@ var SqlModel = /** @class */ (function () {
                         primaryKey = this.primaryKey;
                         cacheKey = "";
                         if (!this._.isEmpty(primaryKey)) return [3 /*break*/, 13];
-                        _w.label = 9;
+                        _z.label = 9;
                     case 9:
-                        _w.trys.push([9, 11, , 13]);
+                        _z.trys.push([9, 11, , 13]);
                         return [4 /*yield*/, this.getTablePrimaryKey(table, connection)];
                     case 10:
-                        primaryKey = _w.sent();
+                        primaryKey = _z.sent();
                         return [3 /*break*/, 13];
                     case 11:
-                        error_6 = _w.sent();
+                        error_6 = _z.sent();
                         connection.release();
                         return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not retrieve primary key of the table \"".concat(table || this.table, "\"!"), error_6)];
-                    case 12: return [2 /*return*/, _w.sent()];
+                    case 12: return [2 /*return*/, _z.sent()];
                     case 13:
-                        if (!(fetchAll === false && (!this._.isEmpty(params) || !this._.isNil(params)))) return [3 /*break*/, 44];
+                        if (!(fetchAll === false && (!this._.isEmpty(params) || !this._.isNil(params)))) return [3 /*break*/, 48];
                         if (!(isGet && isRecursiv)) return [3 /*break*/, 21];
-                        getCacheKey = "sql:\"getRecursiveData\":".concat(table);
+                        getCacheKey = "sql:\"getRecursiveData\":".concat(table, ":").concat(JSON.stringify(params));
                         return [4 /*yield*/, this.redis.getCachedResult(getCacheKey)];
                     case 14:
-                        getCachedResult = _w.sent();
+                        getCachedResult = _z.sent();
                         if (!getCachedResult) return [3 /*break*/, 16];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
                         return [4 /*yield*/, this.redis.quit()];
                     case 15:
-                        _w.sent();
+                        _z.sent();
                         return [2 /*return*/, getCachedResult];
                     case 16:
-                        _d = this.deepCamelCaseKeys;
+                        _e = this.deepCamelCaseKeys;
                         return [4 /*yield*/, this.getRecursiveData(params, table, connection)];
                     case 17:
-                        getRecursiveResults = _d.apply(this, [_w.sent()]);
+                        getRecursiveResults = _e.apply(this, [_z.sent()]);
                         if (!getRecursiveResults) return [3 /*break*/, 19];
                         return [4 /*yield*/, this.redis.cacheResult(getCacheKey, getRecursiveResults, config.configurations().redisCacheExpiry)];
                     case 18:
-                        _w.sent();
-                        _w.label = 19;
+                        _z.sent();
+                        _z.label = 19;
                     case 19: return [4 /*yield*/, this.redis.quit()];
                     case 20:
-                        _w.sent();
+                        _z.sent();
                         return [2 /*return*/, getRecursiveResults];
                     case 21:
                         if (!(isFilter && isRecursiv)) return [3 /*break*/, 40];
-                        cacheKey_1 = "sql:\"filterRecursiveData\":".concat(table);
+                        cacheKey_1 = "sql:\"filterRecursiveData\":".concat(table, ":").concat(JSON.stringify(params));
                         return [4 /*yield*/, this.redis.getCachedResult(cacheKey_1)];
                     case 22:
-                        cachedResult = _w.sent();
+                        cachedResult = _z.sent();
                         if (!cachedResult) return [3 /*break*/, 24];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
                         return [4 /*yield*/, this.redis.quit()];
                     case 23:
-                        _w.sent();
+                        _z.sent();
                         return [2 /*return*/, cachedResult];
                     case 24:
                         filterRecursiveResults = null;
                         if (!this._.isString(params)) return [3 /*break*/, 26];
-                        _e = this.deepCamelCaseKeys;
+                        _f = this.deepCamelCaseKeys;
                         return [4 /*yield*/, this.filterRecursiveData(connection, params, order, limit, table, false)];
                     case 25:
-                        filterRecursiveResults = _e.apply(this, [_w.sent()]);
+                        filterRecursiveResults = _f.apply(this, [_z.sent()]);
                         return [3 /*break*/, 36];
                     case 26:
                         if (!this._.isObject(params)) return [3 /*break*/, 28];
@@ -1002,62 +1034,78 @@ var SqlModel = /** @class */ (function () {
                         if (!this._.isEmpty(whereClause)) {
                             whereClause = whereClause.join(" AND ");
                         }
-                        _f = this.deepCamelCaseKeys;
+                        _g = this.deepCamelCaseKeys;
                         return [4 /*yield*/, this.filterRecursiveData(connection, whereClause, order, limit, table, false)];
                     case 27:
-                        filterRecursiveResults = _f.apply(this, [_w.sent()]);
+                        filterRecursiveResults = _g.apply(this, [_z.sent()]);
                         return [3 /*break*/, 36];
                     case 28:
                         allCacheKey = "sql:\"allRecursiveData\":".concat(table);
                         return [4 /*yield*/, this.redis.getCachedResult(allCacheKey)];
                     case 29:
-                        allCachedResult = _w.sent();
+                        allCachedResult = _z.sent();
                         if (!allCachedResult) return [3 /*break*/, 31];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
                         return [4 /*yield*/, this.redis.quit()];
                     case 30:
-                        _w.sent();
+                        _z.sent();
                         return [2 /*return*/, allCachedResult];
                     case 31:
-                        _g = this.deepCamelCaseKeys;
+                        _h = this.deepCamelCaseKeys;
                         return [4 /*yield*/, this.filterRecursiveData(connection, "", order, limit, table, true)];
                     case 32:
-                        allRecursiveResults = _g.apply(this, [_w.sent()]);
+                        allRecursiveResults = _h.apply(this, [_z.sent()]);
                         if (!allRecursiveResults) return [3 /*break*/, 34];
                         return [4 /*yield*/, this.redis.cacheResult(allCacheKey, allRecursiveResults, config.configurations().redisCacheExpiry)];
                     case 33:
-                        _w.sent();
-                        _w.label = 34;
+                        _z.sent();
+                        _z.label = 34;
                     case 34: return [4 /*yield*/, this.redis.quit()];
                     case 35:
-                        _w.sent();
+                        _z.sent();
                         return [2 /*return*/, allRecursiveResults];
                     case 36:
                         if (!filterRecursiveResults) return [3 /*break*/, 38];
                         return [4 /*yield*/, this.redis.cacheResult(cacheKey_1, filterRecursiveResults, config.configurations().redisCacheExpiry)];
                     case 37:
-                        _w.sent();
-                        _w.label = 38;
+                        _z.sent();
+                        _z.label = 38;
                     case 38: return [4 /*yield*/, this.redis.quit()];
                     case 39:
-                        _w.sent();
+                        _z.sent();
                         return [2 /*return*/, filterRecursiveResults];
                     case 40:
-                        cacheKey_2 = "sql:\"filter\":".concat(table);
+                        if (!isGet) return [3 /*break*/, 44];
+                        cacheKey_2 = "sql:\"get\":".concat(table);
                         return [4 /*yield*/, this.redis.getCachedResult(cacheKey_2)];
                     case 41:
-                        filterCachedResult = _w.sent();
-                        if (!filterCachedResult) return [3 /*break*/, 43];
+                        getCachedResult = _z.sent();
+                        if (!getCachedResult) return [3 /*break*/, 43];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
                         return [4 /*yield*/, this.redis.quit()];
                     case 42:
-                        _w.sent();
+                        _z.sent();
+                        return [2 /*return*/, getCachedResult];
+                    case 43: return [3 /*break*/, 47];
+                    case 44:
+                        if (!isFilter) return [3 /*break*/, 47];
+                        cacheKey_3 = "sql:\"filter\":".concat(table);
+                        return [4 /*yield*/, this.redis.getCachedResult(cacheKey_3)];
+                    case 45:
+                        filterCachedResult = _z.sent();
+                        if (!filterCachedResult) return [3 /*break*/, 47];
+                        if (automaticConnectionRelease) {
+                            connection.release();
+                        }
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 46:
+                        _z.sent();
                         return [2 /*return*/, filterCachedResult];
-                    case 43:
+                    case 47:
                         if (this._.isObject(params)) {
                             for (key in params) {
                                 if (Object.hasOwnProperty.call(params, key)) {
@@ -1087,95 +1135,107 @@ var SqlModel = /** @class */ (function () {
                         else {
                             sql += ";";
                         }
-                        return [3 /*break*/, 56];
-                    case 44:
-                        if (!isRecursiv) return [3 /*break*/, 52];
+                        return [3 /*break*/, 60];
+                    case 48:
+                        if (!isRecursiv) return [3 /*break*/, 56];
                         allCacheKey = "sql:\"allRecursiveData\":".concat(table);
                         return [4 /*yield*/, this.redis.getCachedResult(allCacheKey)];
-                    case 45:
-                        allCachedResult_1 = _w.sent();
-                        if (!allCachedResult_1) return [3 /*break*/, 47];
+                    case 49:
+                        allCachedResult_1 = _z.sent();
+                        if (!allCachedResult_1) return [3 /*break*/, 51];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
                         return [4 /*yield*/, this.redis.quit()];
-                    case 46:
-                        _w.sent();
+                    case 50:
+                        _z.sent();
                         return [2 /*return*/, allCachedResult_1];
-                    case 47:
-                        _h = this.deepCamelCaseKeys;
-                        return [4 /*yield*/, this.filterRecursiveData(connection, "", order, "", table, true)];
-                    case 48:
-                        allRecursiveResults = _h.apply(this, [_w.sent()]);
-                        if (!allRecursiveResults) return [3 /*break*/, 50];
-                        return [4 /*yield*/, this.redis.cacheResult(allCacheKey, allRecursiveResults, config.configurations().redisCacheExpiry)];
-                    case 49:
-                        _w.sent();
-                        _w.label = 50;
-                    case 50: return [4 /*yield*/, this.redis.quit()];
                     case 51:
-                        _w.sent();
-                        return [2 /*return*/, allRecursiveResults];
+                        _j = this.deepCamelCaseKeys;
+                        return [4 /*yield*/, this.filterRecursiveData(connection, "", order, "", table, true)];
                     case 52:
-                        cacheKey_3 = "sql:\"all\":".concat(table);
-                        return [4 /*yield*/, this.redis.getCachedResult(cacheKey_3)];
+                        allRecursiveResults = _j.apply(this, [_z.sent()]);
+                        if (!allRecursiveResults) return [3 /*break*/, 54];
+                        return [4 /*yield*/, this.redis.cacheResult(allCacheKey, allRecursiveResults, config.configurations().redisCacheExpiry)];
                     case 53:
-                        allCachedResult = _w.sent();
-                        if (!allCachedResult) return [3 /*break*/, 55];
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 54:
-                        _w.sent();
-                        return [2 /*return*/, allCachedResult];
+                        _z.sent();
+                        _z.label = 54;
+                    case 54: return [4 /*yield*/, this.redis.quit()];
                     case 55:
+                        _z.sent();
+                        return [2 /*return*/, allRecursiveResults];
+                    case 56:
+                        cacheKey_4 = "sql:\"all\":".concat(table);
+                        return [4 /*yield*/, this.redis.getCachedResult(cacheKey_4)];
+                    case 57:
+                        allCachedResult = _z.sent();
+                        if (!allCachedResult) return [3 /*break*/, 59];
+                        if (automaticConnectionRelease) {
+                            connection.release();
+                        }
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 58:
+                        _z.sent();
+                        return [2 /*return*/, allCachedResult];
+                    case 59:
                         params = "";
                         sql = "SELECT * FROM ".concat(table, " ORDER BY ").concat(primaryKey, " ").concat(order);
-                        _w.label = 56;
-                    case 56: return [4 /*yield*/, connection.query(sql, [params])];
-                    case 57:
-                        _j = _w.sent(), rows = _j[0], fields = _j[1];
-                        rows = this.deepCamelCaseKeys(rows);
-                        if (!!this._.isEmpty(rows)) return [3 /*break*/, 135];
-                        if (!(this._.isObject(this.modelColumns) && !this._.isEmpty(this.modelColumns))) return [3 /*break*/, 96];
-                        _k = this.modelColumns;
-                        _l = [];
-                        for (_m in _k)
-                            _l.push(_m);
-                        _i = 0;
-                        _w.label = 58;
-                    case 58:
-                        if (!(_i < _l.length)) return [3 /*break*/, 96];
-                        _m = _l[_i];
-                        if (!(_m in _k)) return [3 /*break*/, 95];
-                        key = _m;
-                        columnName = key;
-                        foreignKeyReference = (_a = this.modelColumns[columnName]) === null || _a === void 0 ? void 0 : _a.references;
-                        if (this._.isEmpty(foreignKeyReference)) {
-                            return [3 /*break*/, 95];
-                        }
-                        if (!!("column" in foreignKeyReference)) return [3 /*break*/, 61];
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 59:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Property \"column\" of the referenced column name ".concat(columnName, " of the tabel ").concat(table, " of the model ").concat(this.model, " does not exist!"))];
-                    case 60: return [2 /*return*/, _w.sent()];
+                        _z.label = 60;
+                    case 60: return [4 /*yield*/, connection.query(sql, [params])];
                     case 61:
-                        if (!(!("table" in foreignKeyReference) && !("class" in foreignKeyReference))) return [3 /*break*/, 64];
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
+                        _k = _z.sent(), rows = _k[0], _ = _k[1];
+                        rows = this.deepCamelCaseKeys(rows);
+                        if (!!this._.isEmpty(rows)) return [3 /*break*/, 143];
+                        if (!(this._.isObject(this.modelColumns) && !this._.isEmpty(this.modelColumns))) return [3 /*break*/, 103];
+                        _l = this.modelColumns;
+                        _m = [];
+                        for (_o in _l)
+                            _m.push(_o);
+                        _i = 0;
+                        _z.label = 62;
                     case 62:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(LogicException_1.default, "One of the properties \"table\" or \"class\" of the referenced column name ".concat(columnName, " of the tabel ").concat(table, " of the model ").concat(this.model, " must be defined!"))];
-                    case 63: return [2 /*return*/, _w.sent()];
-                    case 64:
-                        if (!this._.isString(foreignKeyReference.class)) return [3 /*break*/, 67];
+                        if (!(_i < _m.length)) return [3 /*break*/, 103];
+                        _o = _m[_i];
+                        if (!(_o in _l)) return [3 /*break*/, 102];
+                        key = _o;
+                        columnName = key;
+                        isForeignKey = (_a = this.modelColumns[columnName]) === null || _a === void 0 ? void 0 : _a.isForeignKey;
+                        foreignKeyReference = (_b = this.modelColumns[columnName]) === null || _b === void 0 ? void 0 : _b.references;
+                        if (this._.isEmpty(foreignKeyReference)) {
+                            return [3 /*break*/, 102];
+                        }
+                        if (!!isForeignKey) return [3 /*break*/, 65];
                         connection.release();
                         return [4 /*yield*/, this.redis.quit()];
+                    case 63:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Property \"isForeignKey\" of the referenced column name \"".concat(columnName, "\" of the tabel \"").concat(table, "\" of the model \"").concat(this.model, "\" does not exist!"))];
+                    case 64: return [2 /*return*/, _z.sent()];
                     case 65:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Property \"class\" of the referenced column name ".concat(columnName, " of the tabel ").concat(table, " of the model ").concat(this.model, " must be either a model class or an initiated instance of the model class!"))];
-                    case 66: return [2 /*return*/, _w.sent()];
-                    case 67:
+                        if (!!("column" in foreignKeyReference)) return [3 /*break*/, 68];
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 66:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Property \"column\" of the referenced column name \"".concat(columnName, "\" of the tabel \"").concat(table, "\" of the model \"").concat(this.model, "\" does not exist!"))];
+                    case 67: return [2 /*return*/, _z.sent()];
+                    case 68:
+                        if (!(!("table" in foreignKeyReference) && !("class" in foreignKeyReference))) return [3 /*break*/, 71];
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 69:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "One of the properties \"table\" or \"class\" of the referenced column name \"".concat(columnName, "\" of the tabel \"").concat(table, "\" of the model \"").concat(this.model, "\" must be defined!"))];
+                    case 70: return [2 /*return*/, _z.sent()];
+                    case 71:
+                        if (!this._.isString(foreignKeyReference.class)) return [3 /*break*/, 74];
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 72:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Property \"class\" of the referenced column name \"".concat(columnName, "\" of the tabel \"").concat(table, "\" of the model \"").concat(this.model, "\" must be either a model class or an initiated instance of the model class!"))];
+                    case 73: return [2 /*return*/, _z.sent()];
+                    case 74:
                         if (foreignKeyReference.table && this._.isString(foreignKeyReference.table)) {
                             constraintTable = foreignKeyReference.table;
                         }
@@ -1186,143 +1246,148 @@ var SqlModel = /** @class */ (function () {
                         else if ((0, helperFunctions_1.isInstance)(foreignKeyReference.class)) {
                             constraintTable = foreignKeyReference.class.table;
                         }
-                        if (!this._.isEmpty(constraintTable)) return [3 /*break*/, 70];
+                        if (!this._.isEmpty(constraintTable)) return [3 /*break*/, 77];
                         connection.release();
                         return [4 /*yield*/, this.redis.quit()];
-                    case 68:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Property table of the model ".concat(foreignKeyReference.class, " is not defined!"))];
-                    case 69: return [2 /*return*/, _w.sent()];
-                    case 70:
-                        constraintForeignKey = foreignKeyReference.column;
-                        if (!!this._.isEmpty(constraintForeignKey)) return [3 /*break*/, 81];
-                        _w.label = 71;
-                    case 71:
-                        _w.trys.push([71, 77, , 80]);
-                        return [4 /*yield*/, connection.query("SELECT * \n\t\t\t\t\t\t\t\tFROM ".concat(constraintTable, " \n\t\t\t\t\t\t\t\tWHERE ").concat(constraintForeignKey, " = ?"), [rows[0][this._.camelCase(columnName)]])];
-                    case 72:
-                        constraintQuery = (_w.sent())[0];
-                        if (!this._.isArray(constraintQuery)) return [3 /*break*/, 73];
-                        rows[this._.camelCase(columnName)] = (_s = {},
-                            _s[this._.camelCase(foreignKeyReference.name)] = this.deepCamelCaseKeys(constraintQuery[0]),
-                            _s);
-                        return [3 /*break*/, 76];
-                    case 73:
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 74:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Could not return the query because it is not an array!")];
-                    case 75: return [2 /*return*/, _w.sent()];
-                    case 76: return [3 /*break*/, 80];
+                    case 75:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Property table of the model \"".concat(foreignKeyReference.class, "\" is not defined!"))];
+                    case 76: return [2 /*return*/, _z.sent()];
                     case 77:
-                        error_7 = _w.sent();
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
+                        constraintForeignKey = foreignKeyReference.column;
+                        if (!!this._.isEmpty(constraintForeignKey)) return [3 /*break*/, 88];
+                        _z.label = 78;
                     case 78:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Column \"".concat(constraintForeignKey, "\" does not exist in table \"").concat(constraintTable, "\"!"), error_7)];
-                    case 79: return [2 /*return*/, _w.sent()];
-                    case 80: return [3 /*break*/, 95];
+                        _z.trys.push([78, 84, , 87]);
+                        return [4 /*yield*/, connection.query("SELECT * \n\t\t\t\t\t\t\t\tFROM ".concat(constraintTable, " \n\t\t\t\t\t\t\t\tWHERE ").concat(constraintForeignKey, " = ?"), [rows[0][this._.camelCase(columnName)]])];
+                    case 79:
+                        constraintQuery = (_z.sent())[0];
+                        if (!this._.isArray(constraintQuery)) return [3 /*break*/, 80];
+                        rows[this._.camelCase(columnName)] = (_v = {},
+                            _v[this._.camelCase(foreignKeyReference.name)] = this.deepCamelCaseKeys(constraintQuery[0]),
+                            _v);
+                        return [3 /*break*/, 83];
+                    case 80:
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
                     case 81:
-                        _w.trys.push([81, 83, , 86]);
-                        return [4 /*yield*/, this.getTablePrimaryKey(constraintTable, connection)];
-                    case 82:
-                        primaryKey = _w.sent();
-                        return [3 /*break*/, 86];
-                    case 83:
-                        error_8 = _w.sent();
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 84:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not retrieve primary key of the table \"".concat(constraintTable, "\"!"), error_8)];
-                    case 85: return [2 /*return*/, _w.sent()];
-                    case 86:
-                        _w.trys.push([86, 92, , 95]);
-                        return [4 /*yield*/, connection.query("SELECT *\n\t\t\t\t\t\t\t\tFROM ".concat(constraintTable, "\n\t\t\t\t\t\t\t\tWHERE ").concat(primaryKey, " = ?"), [rows[0][this._.camelCase(columnName)]])];
-                    case 87:
-                        constraintQuery = (_w.sent())[0];
-                        if (!this._.isArray(constraintQuery)) return [3 /*break*/, 88];
-                        rows[this._.camelCase(columnName)] = (_t = {},
-                            _t[this._.camelCase(foreignKeyReference.name)] = this.deepCamelCaseKeys(constraintQuery[0]),
-                            _t);
-                        return [3 /*break*/, 91];
-                    case 88:
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 89:
-                        _w.sent();
+                        _z.sent();
                         return [4 /*yield*/, this.handleException(LogicException_1.default, "Could not return the query because it is not an array!")];
-                    case 90: return [2 /*return*/, _w.sent()];
-                    case 91: return [3 /*break*/, 95];
-                    case 92:
-                        error_9 = _w.sent();
+                    case 82: return [2 /*return*/, _z.sent()];
+                    case 83: return [3 /*break*/, 87];
+                    case 84:
+                        error_7 = _z.sent();
                         connection.release();
                         return [4 /*yield*/, this.redis.quit()];
+                    case 85:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Column \"".concat(constraintForeignKey, "\" does not exist in table \"").concat(constraintTable, "\"!"), error_7)];
+                    case 86: return [2 /*return*/, _z.sent()];
+                    case 87: return [3 /*break*/, 102];
+                    case 88:
+                        _z.trys.push([88, 90, , 93]);
+                        return [4 /*yield*/, this.getTablePrimaryKey(constraintTable, connection)];
+                    case 89:
+                        primaryKey = _z.sent();
+                        return [3 /*break*/, 93];
+                    case 90:
+                        error_8 = _z.sent();
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 91:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not retrieve primary key of the table \"".concat(constraintTable, "\"!"), error_8)];
+                    case 92: return [2 /*return*/, _z.sent()];
                     case 93:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Query could not be executed for table \"".concat(constraintTable, "\"!"), error_9)];
-                    case 94: return [2 /*return*/, _w.sent()];
+                        _z.trys.push([93, 99, , 102]);
+                        return [4 /*yield*/, connection.query("SELECT *\n\t\t\t\t\t\t\t\tFROM ".concat(constraintTable, "\n\t\t\t\t\t\t\t\tWHERE ").concat(primaryKey, " = ?"), [rows[0][this._.camelCase(columnName)]])];
+                    case 94:
+                        constraintQuery = (_z.sent())[0];
+                        if (!this._.isArray(constraintQuery)) return [3 /*break*/, 95];
+                        rows[this._.camelCase(columnName)] = (_w = {},
+                            _w[this._.camelCase(foreignKeyReference.name)] = this.deepCamelCaseKeys(constraintQuery[0]),
+                            _w);
+                        return [3 /*break*/, 98];
                     case 95:
-                        _i++;
-                        return [3 /*break*/, 58];
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
                     case 96:
-                        if (!(this._.isObject(this.reverseReferences) && !this._.isEmpty(this.reverseReferences))) return [3 /*break*/, 135];
-                        _o = this.reverseReferences;
-                        _p = [];
-                        for (_q in _o)
-                            _p.push(_q);
-                        _r = 0;
-                        _w.label = 97;
-                    case 97:
-                        if (!(_r < _p.length)) return [3 /*break*/, 135];
-                        _q = _p[_r];
-                        if (!(_q in _o)) return [3 /*break*/, 134];
-                        key = _q;
-                        if (!(!("table" in this.reverseReferences[key]) || !("column" in this.reverseReferences[key]))) return [3 /*break*/, 100];
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Could not return the query because it is not an array!")];
+                    case 97: return [2 /*return*/, _z.sent()];
+                    case 98: return [3 /*break*/, 102];
+                    case 99:
+                        error_9 = _z.sent();
                         connection.release();
                         return [4 /*yield*/, this.redis.quit()];
-                    case 98:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(LogicException_1.default, "The referenced column property ".concat(this.reverseReferences[key], " \n\t\t\t\t\t\t\tmust have the properties table and column."))];
-                    case 99: return [2 /*return*/, _w.sent()];
                     case 100:
-                        if (!!this._.isEmpty(this.reverseReferences[key].settings)) return [3 /*break*/, 104];
-                        if (!(!("whereColumn" in this.reverseReferences[key].settings) ||
-                            !("whereTable" in this.reverseReferences[key].settings))) return [3 /*break*/, 103];
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Query could not be executed for table \"".concat(constraintTable, "\"!"), error_9)];
+                    case 101: return [2 /*return*/, _z.sent()];
+                    case 102:
+                        _i++;
+                        return [3 /*break*/, 62];
+                    case 103:
+                        if (!(this._.isObject(this.reverseReferences) && !this._.isEmpty(this.reverseReferences))) return [3 /*break*/, 143];
+                        tableMetaData = void 0;
+                        rowsReversedForeignKey = "";
+                        _p = this.reverseReferences;
+                        _q = [];
+                        for (_r in _p)
+                            _q.push(_r);
+                        _s = 0;
+                        _z.label = 104;
+                    case 104:
+                        if (!(_s < _q.length)) return [3 /*break*/, 143];
+                        _r = _q[_s];
+                        if (!(_r in _p)) return [3 /*break*/, 142];
+                        key = _r;
+                        if (!(!("table" in this.reverseReferences[key]) || !("column" in this.reverseReferences[key]))) return [3 /*break*/, 107];
                         connection.release();
                         return [4 /*yield*/, this.redis.quit()];
-                    case 101:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(LogicException_1.default, "The property \"settings\" of the object ".concat(this.reverseReferences[key].settings, " must have the properties whereColumn and whereTable."))];
-                    case 102: return [2 /*return*/, _w.sent()];
-                    case 103:
-                        whereCol = (_b = this.reverseReferences[key]) === null || _b === void 0 ? void 0 : _b.settings.whereColumn;
-                        whereTbl = (_c = this.reverseReferences[key]) === null || _c === void 0 ? void 0 : _c.settings.whereTable;
-                        _w.label = 104;
-                    case 104:
-                        reverseTable = this.reverseReferences[key].table;
-                        reverseCol = this.reverseReferences[key].column;
-                        reverseName = key;
-                        if (!(!this._.isEmpty(whereCol) && !this._.isEmpty(whereTbl))) return [3 /*break*/, 120];
-                        _w.label = 105;
                     case 105:
-                        _w.trys.push([105, 107, , 110]);
-                        return [4 /*yield*/, this.getTablePrimaryKey(whereTbl, connection)];
-                    case 106:
-                        primaryKey = _w.sent();
-                        return [3 /*break*/, 110];
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "The referenced column property \"".concat(this.reverseReferences[key], "\"\n\t\t\t\t\t\t\tmust have the properties table and column."))];
+                    case 106: return [2 /*return*/, _z.sent()];
                     case 107:
-                        error_10 = _w.sent();
+                        if (!!this._.isEmpty(this.reverseReferences[key].settings)) return [3 /*break*/, 111];
+                        if (!(!("whereColumn" in this.reverseReferences[key].settings) ||
+                            !("whereTable" in this.reverseReferences[key].settings))) return [3 /*break*/, 110];
                         connection.release();
                         return [4 /*yield*/, this.redis.quit()];
                     case 108:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not retrieve primary key of the table \"".concat(constraintTable, "\"!"), error_10)];
-                    case 109: return [2 /*return*/, _w.sent()];
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "The property \"settings\" of the object \"".concat(this.reverseReferences[key].settings, "\" must have the properties \"whereColumn\" and \"whereTable\"."))];
+                    case 109: return [2 /*return*/, _z.sent()];
                     case 110:
-                        _w.trys.push([110, 116, , 119]);
+                        whereCol = (_c = this.reverseReferences[key]) === null || _c === void 0 ? void 0 : _c.settings.whereColumn;
+                        whereTbl = (_d = this.reverseReferences[key]) === null || _d === void 0 ? void 0 : _d.settings.whereTable;
+                        _z.label = 111;
+                    case 111:
+                        reverseTable = this.reverseReferences[key].table;
+                        reverseCol = this.reverseReferences[key].column;
+                        reverseName = key;
+                        return [4 /*yield*/, this.fetchTableMetadata(reverseTable, connection)];
+                    case 112:
+                        tableMetaData = _z.sent();
+                        if (!(!this._.isEmpty(whereCol) && !this._.isEmpty(whereTbl))) return [3 /*break*/, 128];
+                        _z.label = 113;
+                    case 113:
+                        _z.trys.push([113, 115, , 118]);
+                        return [4 /*yield*/, this.getTablePrimaryKey(whereTbl, connection)];
+                    case 114:
+                        primaryKey = _z.sent();
+                        return [3 /*break*/, 118];
+                    case 115:
+                        error_10 = _z.sent();
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 116:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not retrieve primary key of the table \"".concat(constraintTable, "\"!"), error_10)];
+                    case 117: return [2 /*return*/, _z.sent()];
+                    case 118:
+                        _z.trys.push([118, 124, , 127]);
                         sqlStatement = "SELECT * FROM " +
                             reverseTable +
                             " " +
@@ -1337,103 +1402,111 @@ var SqlModel = /** @class */ (function () {
                             "FROM " +
                             whereTbl;
                         if (!this._.isNil(rows[0][whereCol])) {
-                            sqlStatement += " " + "WHERE " + whereCol + " = " + "?" + " )";
+                            sqlStatement += " " + "WHERE " + whereCol + " = " + rows[0][whereCol] + " )";
                         }
                         else {
                             sqlStatement += " )";
                         }
                         return [4 /*yield*/, connection.query(sqlStatement)];
-                    case 111:
-                        constraintQuery = (_w.sent())[0];
-                        if (!this._.isArray(constraintQuery)) return [3 /*break*/, 112];
-                        this._.assign(rows, (_u = {},
-                            _u[this._.camelCase(reverseName)] = this.deepCamelCaseKeys(constraintQuery[0]),
-                            _u.reverseTableName = reverseTable,
-                            _u.reversedNestedTableName = whereTbl,
-                            _u.reversedNestedColumnName = whereCol,
-                            _u));
-                        return [3 /*break*/, 115];
-                    case 112:
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 113:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Could not return the query because it is not an array!")];
-                    case 114: return [2 /*return*/, _w.sent()];
-                    case 115: return [3 /*break*/, 119];
-                    case 116:
-                        error_11 = _w.sent();
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 117:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Reverse query for the table ".concat(reverseTable, " could not be executed!"), error_11)];
-                    case 118: return [2 /*return*/, _w.sent()];
-                    case 119: return [3 /*break*/, 134];
+                    case 119:
+                        constraintQuery = (_z.sent())[0];
+                        if (!this._.isArray(constraintQuery)) return [3 /*break*/, 120];
+                        this._.assign(rows, (_x = {},
+                            _x[this._.camelCase(reverseName)] = this.deepCamelCaseKeys(constraintQuery[0]),
+                            _x.reverseTableName = reverseTable,
+                            _x.reversedNestedTableName = whereTbl,
+                            _x.reversedNestedColumnName = whereCol,
+                            _x));
+                        return [3 /*break*/, 123];
                     case 120:
-                        _w.trys.push([120, 122, , 125]);
-                        return [4 /*yield*/, this.getTablePrimaryKey(reverseTable, connection)];
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
                     case 121:
-                        primaryKey = _w.sent();
-                        return [3 /*break*/, 125];
-                    case 122:
-                        error_12 = _w.sent();
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 123:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not retrieve primary key of the table \"".concat(reverseTable, "\"!"), error_12)];
-                    case 124: return [2 /*return*/, _w.sent()];
-                    case 125:
-                        _w.trys.push([125, 131, , 134]);
-                        // todo reverseCol that does not match the primary key of the table must be fetched and identified seperatly in order to get the right name from the rows variable to have the value and then to assign the reversed reference name to the results array
-                        // todo get table meta data and see the reverseCol relationship to which column does it reference then call the column name from meta data and then attach it as index to rows variable to get the right value
-                        // todo and then attach redis to the rest of the functions in sqlModel
-                        sql = "SELECT * FROM ".concat(reverseTable, " WHERE ").concat(reverseCol, " = ?");
-                        return [4 /*yield*/, connection.query(sql, [rows[0][reverseCol]])];
-                    case 126:
-                        constraintQuery = (_w.sent())[0];
-                        console.log(sql);
-                        console.log(reverseTable);
-                        console.log(reverseCol);
-                        console.log(rows);
-                        if (!this._.isArray(constraintQuery)) return [3 /*break*/, 127];
-                        this._.assign(rows, (_v = {},
-                            _v[this._.camelCase(reverseName)] = this.deepCamelCaseKeys(constraintQuery[0]),
-                            _v.reverseTableName = reverseTable,
-                            _v));
-                        return [3 /*break*/, 130];
-                    case 127:
-                        connection.release();
-                        return [4 /*yield*/, this.redis.quit()];
-                    case 128:
-                        _w.sent();
+                        _z.sent();
                         return [4 /*yield*/, this.handleException(LogicException_1.default, "Could not return the query because it is not an array!")];
-                    case 129: return [2 /*return*/, _w.sent()];
-                    case 130: return [3 /*break*/, 134];
-                    case 131:
-                        error_13 = _w.sent();
+                    case 122: return [2 /*return*/, _z.sent()];
+                    case 123: return [3 /*break*/, 127];
+                    case 124:
+                        error_11 = _z.sent();
                         connection.release();
                         return [4 /*yield*/, this.redis.quit()];
-                    case 132:
-                        _w.sent();
-                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Query for column ".concat(reverseCol, " with the value of ").concat(rows[0][primaryKey], " of the table \"").concat(reverseTable, "\" could not be executed!"), error_13)];
-                    case 133: return [2 /*return*/, _w.sent()];
+                    case 125:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Reverse query for the table \"".concat(reverseTable, "\" could not be executed!"), error_11)];
+                    case 126: return [2 /*return*/, _z.sent()];
+                    case 127: return [3 /*break*/, 142];
+                    case 128:
+                        _z.trys.push([128, 130, , 133]);
+                        return [4 /*yield*/, this.getTablePrimaryKey(reverseTable, connection)];
+                    case 129:
+                        primaryKey = _z.sent();
+                        return [3 /*break*/, 133];
+                    case 130:
+                        error_12 = _z.sent();
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 131:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not retrieve primary key of the table \"".concat(reverseTable, "\"!"), error_12)];
+                    case 132: return [2 /*return*/, _z.sent()];
+                    case 133:
+                        _z.trys.push([133, 139, , 142]);
+                        if (!this._.isEmpty(tableMetaData)) {
+                            for (key_1 in tableMetaData) {
+                                if (this._.isArray(tableMetaData[key_1])) {
+                                    for (_t = 0, _u = tableMetaData[key_1]; _t < _u.length; _t++) {
+                                        element = _u[_t];
+                                        if (element.foreign_key_column === reverseCol) {
+                                            rowsReversedForeignKey = element.referenced_column;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (this._.isEmpty(rowsReversedForeignKey)) {
+                            return [2 /*return*/, this.handleException(SQLException_1.default, "Could not get the foreign key column (reversed column) \"".concat(reverseCol, "\" from the model \"").concat(this.model, "\" of the primary key of the table \"").concat(table, "\""))];
+                        }
+                        sql = "SELECT * FROM ".concat(reverseTable, " WHERE ").concat(reverseCol, " = ?");
+                        return [4 /*yield*/, connection.query(sql, [rows[0][rowsReversedForeignKey]])];
                     case 134:
-                        _r++;
-                        return [3 /*break*/, 97];
+                        constraintQuery = (_z.sent())[0];
+                        if (!this._.isArray(constraintQuery)) return [3 /*break*/, 135];
+                        this._.assign(rows, (_y = {},
+                            _y[this._.camelCase(reverseName)] = this.deepCamelCaseKeys(constraintQuery[0]),
+                            _y.reverseTableName = reverseTable,
+                            _y));
+                        return [3 /*break*/, 138];
                     case 135:
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 136:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(LogicException_1.default, "Could not return the query because it is not an array!")];
+                    case 137: return [2 /*return*/, _z.sent()];
+                    case 138: return [3 /*break*/, 142];
+                    case 139:
+                        error_13 = _z.sent();
+                        connection.release();
+                        return [4 /*yield*/, this.redis.quit()];
+                    case 140:
+                        _z.sent();
+                        return [4 /*yield*/, this.handleException(SQLException_1.default, "Query for column \"".concat(reverseCol, "\" with the value of \"").concat(rows[0][primaryKey], "\" of the table \"").concat(reverseTable, "\" could not be executed!"), error_13)];
+                    case 141: return [2 /*return*/, _z.sent()];
+                    case 142:
+                        _s++;
+                        return [3 /*break*/, 104];
+                    case 143:
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
-                        if (!rows) return [3 /*break*/, 137];
+                        if (!rows) return [3 /*break*/, 145];
                         return [4 /*yield*/, this.redis.cacheResult(cacheKey, rows, config.configurations().redisCacheExpiry)];
-                    case 136:
-                        _w.sent();
-                        _w.label = 137;
-                    case 137: return [4 /*yield*/, this.redis.quit()];
-                    case 138:
-                        _w.sent();
+                    case 144:
+                        _z.sent();
+                        _z.label = 145;
+                    case 145: return [4 /*yield*/, this.redis.quit()];
+                    case 146:
+                        _z.sent();
                         return [2 /*return*/, Promise.resolve(rows)];
                 }
             });
@@ -1449,7 +1522,7 @@ var SqlModel = /** @class */ (function () {
      */
     SqlModel.prototype.fetchTableMetadata = function (table, connection) {
         return __awaiter(this, void 0, void 0, function () {
-            var automaticConnectionRelease, primaryKey, metadataQuery, result, rows, relationships, error_14;
+            var automaticConnectionRelease, foreignKey, metadataQuery, result, rows, relationships, error_14;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -1466,15 +1539,15 @@ var SqlModel = /** @class */ (function () {
                         return [4 /*yield*/, this.escapeDatabaseName(table)];
                     case 4:
                         table = _a.sent();
-                        primaryKey = "";
-                        metadataQuery = "\n\t\t\t\tSELECT COLUMN_NAME as primaryKey, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME, COLUMN_NAME as foreignKeyColumn\n\t\t\t\tFROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n\t\t\t\tWHERE TABLE_NAME = ?\n\t\t\t\tAND REFERENCED_TABLE_SCHEMA = DATABASE();";
+                        foreignKey = "";
+                        metadataQuery = "\n\t\t\t\tSELECT COLUMN_NAME as foreignKey, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME, COLUMN_NAME as foreignKeyColumn\n\t\t\t\tFROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE\n\t\t\t\tWHERE TABLE_NAME = ?\n\t\t\t\tAND REFERENCED_TABLE_SCHEMA = DATABASE();";
                         return [4 /*yield*/, connection.query(metadataQuery, [table])];
                     case 5:
                         result = (_a.sent())[0];
                         if (this._.isArray(result)) {
                             rows = result;
                             if (!this._.isEmpty(rows[0])) {
-                                primaryKey = rows[0]["primaryKey"];
+                                foreignKey = rows[0]["foreignKey"];
                             }
                             relationships = result.map(function (row) { return ({
                                 foreign_key_column: row.foreignKeyColumn,
@@ -1484,7 +1557,7 @@ var SqlModel = /** @class */ (function () {
                             if (automaticConnectionRelease) {
                                 connection.release();
                             }
-                            return [2 /*return*/, { primaryKey: primaryKey, relationships: relationships }];
+                            return [2 /*return*/, { foreignKey: foreignKey, relationships: relationships }];
                         }
                         return [3 /*break*/, 8];
                     case 6:
@@ -1521,7 +1594,7 @@ var SqlModel = /** @class */ (function () {
                         connection = _f.sent();
                         _f.label = 3;
                     case 3:
-                        _f.trys.push([3, 26, , 28]);
+                        _f.trys.push([3, 24, , 26]);
                         if (this._.isEmpty(table)) {
                             table = this.table;
                         }
@@ -1549,18 +1622,13 @@ var SqlModel = /** @class */ (function () {
                             sql = "SELECT * FROM ".concat(table, " WHERE ").concat(whereClause, " ORDER BY ").concat(primaryKey, " ASC LIMIT 1;");
                             params = Object.values(params);
                         }
-                        return [3 /*break*/, 12];
+                        return [3 /*break*/, 10];
                     case 8:
-                        if (!this._.isString(params)) return [3 /*break*/, 9];
-                        params = this.mysql.escape(params);
-                        sql = "SELECT * FROM ".concat(table, " WHERE ? ORDER BY ").concat(primaryKey, " ASC LIMIT 1;");
-                        return [3 /*break*/, 12];
-                    case 9:
-                        if (!this._.isNumber(params)) return [3 /*break*/, 12];
-                        if (!(this._.isEmpty(metadata.primaryKey) || this._.isEmpty(metadata.relationships))) return [3 /*break*/, 11];
+                        if (!this._.isNumber(params)) return [3 /*break*/, 10];
+                        if (!(this._.isEmpty(metadata.foreignKey) || this._.isEmpty(metadata.relationships))) return [3 /*break*/, 10];
                         sql = "SELECT * FROM ".concat(table, " WHERE ").concat(primaryKey, " = ? ORDER BY ").concat(primaryKey, " ASC LIMIT 1;");
                         return [4 /*yield*/, connection.query(sql, [params])];
-                    case 10:
+                    case 9:
                         result = (_f.sent())[0];
                         if (this._.isArray(result)) {
                             if (automaticConnectionRelease) {
@@ -1568,32 +1636,29 @@ var SqlModel = /** @class */ (function () {
                             }
                             return [2 /*return*/, result[0]];
                         }
-                        _f.label = 11;
+                        _f.label = 10;
+                    case 10: return [4 /*yield*/, connection.query(sql, [params])];
                     case 11:
-                        sql = "SELECT * FROM ".concat(table, " WHERE ").concat(metadata.primaryKey, " = ? ORDER BY ").concat(primaryKey, " ASC LIMIT 1");
-                        _f.label = 12;
-                    case 12: return [4 /*yield*/, connection.query(sql, [params])];
-                    case 13:
                         record = (_f.sent())[0];
-                        if (!(!this._.isEmpty(metadata.relationships) && !this._.isEmpty(record) && this._.isArray(record))) return [3 /*break*/, 22];
+                        if (!(!this._.isEmpty(metadata.relationships) && !this._.isEmpty(record) && this._.isArray(record))) return [3 /*break*/, 20];
                         _i = 0, _a = metadata.relationships;
-                        _f.label = 14;
-                    case 14:
-                        if (!(_i < _a.length)) return [3 /*break*/, 22];
+                        _f.label = 12;
+                    case 12:
+                        if (!(_i < _a.length)) return [3 /*break*/, 20];
                         relationship = _a[_i];
-                        _f.label = 15;
-                    case 15:
-                        _f.trys.push([15, 19, , 21]);
+                        _f.label = 13;
+                    case 13:
+                        _f.trys.push([13, 17, , 19]);
                         relatedQuery = "\n\t\t\t\t\t\t\tSELECT *\n\t\t\t\t\t\t\tFROM ".concat(relationship.referenced_table, "\n\t\t\t\t\t\t\tWHERE ").concat(relationship.referenced_column, " = ?");
                         return [4 /*yield*/, connection.query(relatedQuery, [
                                 record[0][relationship.foreign_key_column]
                             ])];
-                    case 16:
+                    case 14:
                         _b = _f.sent(), result = _b[0], fields = _b[1];
                         if (!(!this._.isEmpty(result) &&
                             this._.isArray(result) &&
                             this._.isArray(fields) &&
-                            !this._.isEmpty(fields))) return [3 /*break*/, 18];
+                            !this._.isEmpty(fields))) return [3 /*break*/, 16];
                         for (_c = 0, fields_1 = fields; _c < fields_1.length; _c++) {
                             column = fields_1[_c];
                             if (column.flags === this.MYSQL_PRIMARY_KEY_FLAG) {
@@ -1603,41 +1668,41 @@ var SqlModel = /** @class */ (function () {
                         _d = record[0];
                         _e = relationship.foreign_key_column;
                         return [4 /*yield*/, this.getRecursiveData(result[0][primaryKey], relationship.referenced_table, connection)];
-                    case 17:
+                    case 15:
                         _d[_e] = _f.sent();
-                        _f.label = 18;
-                    case 18: return [3 /*break*/, 21];
-                    case 19:
+                        _f.label = 16;
+                    case 16: return [3 /*break*/, 19];
+                    case 17:
                         error_15 = _f.sent();
                         connection.release();
                         return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not fetch recursive data for the table \"".concat(table, "\"! \n ").concat(error_15))];
-                    case 20: return [2 /*return*/, _f.sent()];
-                    case 21:
+                    case 18: return [2 /*return*/, _f.sent()];
+                    case 19:
                         _i++;
-                        return [3 /*break*/, 14];
-                    case 22:
-                        if (this._.isEmpty(metadata.primaryKey)) {
+                        return [3 /*break*/, 12];
+                    case 20:
+                        if (this._.isEmpty(metadata.foreignKey)) {
                             if (automaticConnectionRelease) {
                                 connection.release();
                             }
                             return [2 /*return*/, {}];
                         }
-                        if (!this._.isArray(record)) return [3 /*break*/, 23];
+                        if (!this._.isArray(record)) return [3 /*break*/, 21];
                         if (automaticConnectionRelease) {
                             connection.release();
                         }
                         return [2 /*return*/, record[0]];
-                    case 23:
+                    case 21:
                         connection.release();
                         return [4 /*yield*/, this.handleException(LogicException_1.default, "Could not return the query because it is not an array!")];
-                    case 24: return [2 /*return*/, _f.sent()];
-                    case 25: return [3 /*break*/, 28];
-                    case 26:
+                    case 22: return [2 /*return*/, _f.sent()];
+                    case 23: return [3 /*break*/, 26];
+                    case 24:
                         error_16 = _f.sent();
                         connection.release();
                         return [4 /*yield*/, this.handleException(SQLException_1.default, "Could not fetch recursive data for the tablesss \"".concat(table, "\"! \n ").concat(error_16))];
-                    case 27: return [2 /*return*/, _f.sent()];
-                    case 28: return [2 /*return*/];
+                    case 25: return [2 /*return*/, _f.sent()];
+                    case 26: return [2 /*return*/];
                 }
             });
         });
@@ -1678,7 +1743,7 @@ var SqlModel = /** @class */ (function () {
                     case 5:
                         descTable = _e.sent();
                         validFields_1 = descTable.map(function (field) { return field.Field; });
-                        if (this._.isString(params) && !isAll) {
+                        if (this._.isString(params) && !isAll && !this._.isEmpty(params)) {
                             conditions = params.split(/\s+(AND|OR)\s+/i);
                             filteredConditions = conditions
                                 .map(function (condition) {
@@ -1714,9 +1779,6 @@ var SqlModel = /** @class */ (function () {
                                 .filter(Boolean);
                             params = filteredConditions.join(" AND ");
                             sql = "SELECT * FROM ".concat(table, " WHERE ").concat(params, " ORDER BY ").concat(primaryKey, " ").concat(order);
-                        }
-                        else if (this._.isNumber(params) && !isAll) {
-                            sql = "SELECT * FROM ".concat(table, " WHERE ").concat(primaryKey, " = ? ORDER BY ").concat(primaryKey, " ").concat(order);
                         }
                         if (!this._.isNil(limit) && !this._.isEmpty() && !isAll) {
                             sql += " LIMIT ".concat(limit.toString(), ";");
@@ -1759,7 +1821,7 @@ var SqlModel = /** @class */ (function () {
                     case 15:
                         if (!this._.isArray(records)) return [3 /*break*/, 16];
                         connection.release();
-                        return [2 /*return*/, records[0]];
+                        return [2 /*return*/, records];
                     case 16:
                         connection.release();
                         return [4 /*yield*/, this.handleException(LogicException_1.default, "Could not return the query because it is not an array!")];
@@ -1802,12 +1864,34 @@ var SqlModel = /** @class */ (function () {
      */
     SqlModel.prototype.parseSqlConditionString = function (condition) {
         var conditionObject = {};
-        var regex = /([a-zA-Z_]+)\s*(=|>|<|<=|>=|!=|LIKE|IN)\s*(['"]?[\w\s]*['"]?)/g;
+        // Regex to capture key, operator, and value
+        var regex = /([a-zA-Z_]+)\s*(=|!=|<>|>|<|>=|<=|LIKE|ILIKE|NOT LIKE|BETWEEN|IN|NOT IN|IS NULL|IS NOT NULL)\s*(.*?)(?=\s+(AND|OR|$))/gi;
         var match;
         while ((match = regex.exec(condition)) !== null) {
             var _2 = match[0], key = match[1], operator = match[2], value = match[3];
-            var cleanedValue = value.replace(/['"]/g, "");
-            conditionObject[key] = cleanedValue;
+            // Handle IS NULL and IS NOT NULL
+            if (operator.toUpperCase() === "IS NULL" || operator.toUpperCase() === "IS NOT NULL") {
+                conditionObject[key.trim()] = "NULL";
+            }
+            // Handle BETWEEN clause and return the first value only
+            else if (operator.toUpperCase() === "BETWEEN") {
+                var betweenValues = value.split(/\s+(AND|OR)\s+/i);
+                if (betweenValues.length > 0) {
+                    conditionObject[key.trim()] = betweenValues[0].trim(); // Return the first value only
+                }
+                else {
+                    conditionObject[key.trim()] = "INVALID BETWEEN CLAUSE";
+                }
+            }
+            // Handle LIKE, IN, and other operators with string values
+            else if (operator.toUpperCase() === "IN" || operator.toUpperCase() === "NOT IN") {
+                var cleanedValue = value.replace(/[\(\)'"]/g, "").trim();
+                conditionObject[key.trim()] = cleanedValue;
+            }
+            // Handle LIKE and other single-value operators
+            else {
+                conditionObject[key.trim()] = value.replace(/['"]/g, "").trim();
+            }
         }
         return conditionObject;
     };

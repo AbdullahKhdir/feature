@@ -35,7 +35,9 @@ export = class Product extends SqlModel {
 	};
 	public override modelColumns = {
 		id: {
-			label: "id"
+			label: "id",
+			// todo add to all models
+			isPrimaryKey: true
 		},
 		user_id: {
 			label: "user_id",
@@ -45,6 +47,8 @@ export = class Product extends SqlModel {
 				class: User,
 				column: "id"
 			},
+			// todo add to all models and check in sqlModel
+			isForeignKey: true,
 			required: true
 		},
 		title: {

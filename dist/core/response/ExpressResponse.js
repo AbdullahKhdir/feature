@@ -306,29 +306,34 @@ var ExpressResponse = /** @class */ (function () {
      * @returns {Response | void}
      */
     ExpressResponse.prototype.onError = function (response, next, error) {
+        var _a, _b, _c;
         var environment = config.configurations().environment;
-        var error_message = typeof error === "string" ? error : error.message || "Unexpected error";
+        var detailedError = this.getDetailedError();
+        var error_message = typeof error === "string" ? error : error instanceof Error ? (_a = error.stack) !== null && _a !== void 0 ? _a : "" : "Unexpected error";
         if (environment === "development") {
             if (typeof error === "string") {
+                error = error + "\n".concat(detailedError);
                 var customError = new Error_1.default(error);
                 customError.statusCode = this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
                 return next(customError);
             }
             else if (error instanceof Error) {
+                error.message = "".concat(error.stack);
                 return next(error);
             }
             return this.renderErrorPage(response, "Unexpected error", 500, "Please contact the support team.");
         }
         if (error instanceof Error && !(error instanceof ApiException_1.default)) {
-            error.statusCode = this.constants.HTTPS_STATUS.SERVER_ERRORS.INTERNAL_SERVER_ERROR;
-            return next(error);
+            console.error(error_message);
+            error.statusCode = 500;
+            return next((_b = error.stack) !== null && _b !== void 0 ? _b : "\n".concat(detailedError));
         }
         else if (typeof error === "string") {
-            var genericError = new Error(error);
+            var genericError = new Error(error + "\n".concat(detailedError));
             return next(genericError);
         }
         else if (typeof error === "object" && error instanceof ApiException_1.default) {
-            return next(error);
+            return next((_c = error.stack) !== null && _c !== void 0 ? _c : "\n".concat(detailedError));
         }
         return this.renderErrorPage(response, error_message, 500, "Unexpected error occurred.");
     };
@@ -391,6 +396,25 @@ var ExpressResponse = /** @class */ (function () {
             if (typeof clone[i] === "undefined")
                 delete clone[i];
         return clone;
+    };
+    /**
+     * @function getErrorDetails
+     * @description Captures and returns detailed error information, including function name, file name, line number, and column number.
+     * @returns {string} A string containing error information.
+     */
+    ExpressResponse.prototype.getDetailedError = function () {
+        var util = require("node:util");
+        var callSites = util.getCallSite(); // Adjust based on actual util method availability
+        var detailedError = "\n Stack Trace: \n";
+        callSites.forEach(function (callSite, index) {
+            var _a, _b, _c, _d;
+            detailedError += "CallSite ".concat(index + 1, ": \n");
+            detailedError += "Function Name: ".concat((_a = callSite.functionName) !== null && _a !== void 0 ? _a : "N/A", " \n");
+            detailedError += "Script Name: ".concat((_b = callSite.scriptName) !== null && _b !== void 0 ? _b : "N/A", " \n");
+            detailedError += "Line Number: ".concat((_c = callSite.lineNumer) !== null && _c !== void 0 ? _c : "N/A", " \n");
+            detailedError += "Column Number: ".concat((_d = callSite.column) !== null && _d !== void 0 ? _d : "N/A", " \n");
+        });
+        return detailedError || "Unable to extract stack trace.";
     };
     return ExpressResponse;
 }());

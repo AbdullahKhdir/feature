@@ -36,7 +36,6 @@ import FileSystem from "../core/node/FileSystem";
  * @version 1.0.0
  * @author Khdir, Abdullah <abdullahkhder77@gmail.com>
  */
-
 // Todo Install and activate the i18n functionality
 export = class Application extends BaseController {
 	private static applicationInstance: Application;

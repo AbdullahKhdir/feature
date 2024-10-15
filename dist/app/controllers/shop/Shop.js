@@ -154,69 +154,56 @@ module.exports = /** @class */ (function (_super) {
          */
         _this.index = function () {
             return _this.route("get", "/", {}, function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-                var product, cartItem, testModel, _a, _b, user_products;
+                var product, cartItem, testModel, user_products;
                 var _this = this;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            if (!req.isGet()) {
-                                return [2 /*return*/, this.siteNotFound(res)];
-                            }
-                            res.noCacheNeeded();
-                            product = new Product_1.default();
-                            cartItem = new CartItem_1.default();
-                            testModel = new TestModel_1.default();
-                            // console.log();
-                            // console.log(await product.filter({ id: 1 }));
-                            // console.log(await product.filter({ id: 1, user_id: 1 }, true));
-                            _b = (_a = console).log;
-                            return [4 /*yield*/, product.get(1)];
-                        case 1:
-                            // console.log();
-                            // console.log(await product.filter({ id: 1 }));
-                            // console.log(await product.filter({ id: 1, user_id: 1 }, true));
-                            _b.apply(_a, [_c.sent()]);
-                            user_products = req.getCurrentUser() ? req.getCurrentUser().getProducts() : false;
-                            if (typeof user_products === "object") {
-                                user_products
-                                    .then(function (rows) {
-                                    var paginator = Singleton_1.Singleton.getPagination().getRecords(req, rows, 12);
-                                    var records = paginator[0], current_page = paginator[1], pages = paginator[2], _paginator = paginator[3];
-                                    return _this.render(res, "shop/index", {
-                                        products: records || [],
-                                        nav_title: "shop",
-                                        path: "/",
-                                        root: "shop",
-                                        breadcrumbs: [
-                                            {
-                                                title: "Shop",
-                                                url: "/"
-                                            }
-                                        ],
-                                        pages: pages,
-                                        current_page: current_page,
-                                        _paginator: _paginator
-                                    });
-                                })
-                                    .catch(function (err) { return _this.onError(res, next, err); });
-                            }
-                            else {
-                                return [2 /*return*/, this.render(res, "shop/index", {
-                                        products: [],
-                                        nav_title: "shop",
-                                        path: "/",
-                                        success: res.locals["success"],
-                                        root: "shop",
-                                        breadcrumbs: [
-                                            {
-                                                title: "Shop",
-                                                url: "/"
-                                            }
-                                        ]
-                                    })];
-                            }
-                            return [2 /*return*/];
+                return __generator(this, function (_a) {
+                    if (!req.isGet()) {
+                        return [2 /*return*/, this.siteNotFound(res)];
                     }
+                    res.noCacheNeeded();
+                    product = new Product_1.default();
+                    cartItem = new CartItem_1.default();
+                    testModel = new TestModel_1.default();
+                    user_products = req.getCurrentUser() ? req.getCurrentUser().getProducts() : false;
+                    if (typeof user_products === "object") {
+                        user_products
+                            .then(function (rows) {
+                            var paginator = Singleton_1.Singleton.getPagination().getRecords(req, rows, 12);
+                            var records = paginator[0], current_page = paginator[1], pages = paginator[2], _paginator = paginator[3];
+                            return _this.render(res, "shop/index", {
+                                products: records || [],
+                                nav_title: "shop",
+                                path: "/",
+                                root: "shop",
+                                breadcrumbs: [
+                                    {
+                                        title: "Shop",
+                                        url: "/"
+                                    }
+                                ],
+                                pages: pages,
+                                current_page: current_page,
+                                _paginator: _paginator
+                            });
+                        })
+                            .catch(function (err) { return _this.onError(res, next, err); });
+                    }
+                    else {
+                        return [2 /*return*/, this.render(res, "shop/index", {
+                                products: [],
+                                nav_title: "shop",
+                                path: "/",
+                                success: res.locals["success"],
+                                root: "shop",
+                                breadcrumbs: [
+                                    {
+                                        title: "Shop",
+                                        url: "/"
+                                    }
+                                ]
+                            })];
+                    }
+                    return [2 /*return*/];
                 });
             }); });
         };

@@ -156,10 +156,15 @@ export = class Shop extends BaseController {
 			const product = new Product();
 			const cartItem = new CartItem();
 			const testModel = new TestModel();
+
 			// console.log();
 			// console.log(await product.filter({ id: 1 }));
-			// console.log(await product.filter({ id: 1, user_id: 1 }, true));
-			console.log(await product.get(1));
+			// console.log(await product.filter("id = 1"));
+			// console.log(await product.filter({}));
+			// console.log(await product.filter({}, true));
+
+			// console.log(await product.describeTable());
+			// console.log(await product.get(1, true));
 			// console.log(await product.filter("id = 1 and user_id = 1", true));
 			// console.log(await product.filter("id = 1 and user_id = 1", true));
 

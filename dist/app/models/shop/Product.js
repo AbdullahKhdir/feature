@@ -40,7 +40,9 @@ module.exports = /** @class */ (function (_super) {
         };
         _this.modelColumns = {
             id: {
-                label: "id"
+                label: "id",
+                // todo add to all models
+                isPrimaryKey: true
             },
             user_id: {
                 label: "user_id",
@@ -50,6 +52,8 @@ module.exports = /** @class */ (function (_super) {
                     class: User_1.default,
                     column: "id"
                 },
+                // todo add to all models and check in sqlModel
+                isForeignKey: true,
                 required: true
             },
             title: {
