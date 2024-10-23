@@ -1,4 +1,15 @@
 "use strict";
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reqUtil = void 0;
 var Singleton_1 = require("../../Singleton/Singleton");
@@ -8,13 +19,12 @@ var reqUtil = function (req, res, next) {
     res.globalGetFormData = function () { return (res.locals["getData"] ? res.locals["getData"] : ""); };
     req.sendFormPostedData = function () { return req.setProp("postData", req.getAllFormPostedData()); };
     req.getAllFormPostedData = function () {
-        return req.body
-            ? req.file
-                ? Object.assign(req.body, req.file)
-                : req.files
-                    ? Object.assign(req.body, req.files)
-                    : req.body
-            : "";
+        var _a = req.body || {}, _ = _a["x-csrf-token"], filteredBody = __rest(_a, ["x-csrf-token"]);
+        return req.file
+            ? Object.assign(filteredBody, req.file)
+            : req.files
+                ? Object.assign(filteredBody, req.files)
+                : filteredBody;
     };
     req.getUploadedFiles = function () { return (req.file ? req.file : req.files ? req.files : {}); };
     req.getUploadedFile = function () { return (req.file ? req.file : {}); };

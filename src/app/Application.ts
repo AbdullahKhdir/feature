@@ -27,6 +27,7 @@ import { ENDPOINTS } from "../core/api/apis_endpoints/endpoints";
 import * as config from "../core/config";
 import { csrf } from "../core/utils/undefined-routes-logic";
 import FileSystem from "../core/node/FileSystem";
+import io from "@pm2/io";
 
 /**
  * @class Application
@@ -53,30 +54,41 @@ export = class Application extends BaseController {
 		this.path = Singleton.getPath();
 		this.session = Singleton.getExpressSession();
 
+		// todo
+		const currentReqs = io.counter({
+			name: "Realtime request count",
+			id: "app/realtime/requests"
+		});
+
 		this.app.use((req: Request, res: Response, next: NextFunction) => {
 			const origin = req.headers.origin || `${req.protocol}://${req.get("host")}`;
 			req.origin = origin;
+
+			currentReqs.inc();
+			req.on("end", () => {
+				currentReqs.dec();
+			});
 			next();
 		});
 
 		/*
-            * Sets the following policies
-            ? contentSecurityPolicy
-            ? crossOriginEmbedderPolicy
-            ? crossOriginOpenerPolicy
-            ? crossOriginResourcePolicy
-            ? dnsPrefetchControl
-            ? expectCt
-            ? frameguard
-            ? hidePoweredBy
-            ? hsts
-            ? ieNoOpen 
-            ? noSniff
-            ? originAgentCluster 
-            ? permittedCrossDomainPolicies
-            ? referrerPolicy
-            ? xssFilter
-        */
+		 * Sets the following policies
+		 ? contentSecurityPolicy
+		 ? crossOriginEmbedderPolicy
+		 ? crossOriginOpenerPolicy
+		 ? crossOriginResourcePolicy
+		 ? dnsPrefetchControl
+		 ? expectCt
+		 ? frameguard
+		 ? hidePoweredBy
+		 ? hsts
+		 ? ieNoOpen 
+		 ? noSniff
+		 ? originAgentCluster 
+		 ? permittedCrossDomainPolicies
+		 ? referrerPolicy
+		 ? xssFilter
+         */
 		this.app.use(Helmet.contentSecurityPolicy(this.constants.CONTENT_SECURITY_POLICY));
 		this.app.use(Helmet.crossOriginEmbedderPolicy());
 		this.app.use(Helmet.crossOriginOpenerPolicy());
@@ -132,7 +144,6 @@ export = class Application extends BaseController {
 		/*
 		 * CSRF Enabled
 		 */
-		//? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
 		this.app.use((req: Request, res: Response, next: NextFunction) => {
 			if (ENDPOINTS.length > 0) {
 				if (
@@ -144,16 +155,17 @@ export = class Application extends BaseController {
 				}
 			}
 
-			const isExcluded = FileSystem.getAllSubfolders(this.path.join(__dirname, "..", "app", "public")).some(
-				(path) => req.url.startsWith(path)
-			);
+			const isExcluded =
+				FileSystem.getAllSubfolders(this.path.join(__dirname, "..", "app", "public")).some((path) =>
+					req.url.startsWith(path)
+				) || req.url === "/favicon.ico";
 
 			if (isExcluded) {
 				return next();
 			}
 
 			if (!this.constants.CSRF.methods.includes(req.method)) {
-				const csrf = Crypto.randomBytes(24).toString("hex");
+				var csrf = Crypto.randomBytes(24).toString("hex");
 				req.session["x-csrf-token"] = csrf;
 				res.cookie(this.constants.CSRF.cookieHeaderName, csrf, {
 					httpOnly: true,
@@ -164,6 +176,7 @@ export = class Application extends BaseController {
 				res.locals["csrf"] = csrf;
 				this.app.locals["csrf"] = csrf;
 			}
+
 			next();
 		});
 
@@ -173,10 +186,16 @@ export = class Application extends BaseController {
 		this.app.use((req: Request, res: Response, next: NextFunction) => {
 			res.locals["isUserAuthenticated"] = req.session.isUserAuthenticated;
 			this.app.locals["isUserAuthenticated"] = req.session.isUserAuthenticated;
+
 			next();
 		});
 
 		this.app.use((req: Request, res: Response, next: NextFunction) => {
+			const requestBodyCsrf = req.body ? req.body["x-csrf-token"] : undefined;
+			const requestHeaderCsrf = req.get ? req.get("x-csrf-token") : undefined;
+			const requestCsrfFromSession = req.session ? req.session["x-csrf-token"] : undefined;
+			const tokenFromClient = requestBodyCsrf ?? requestHeaderCsrf;
+
 			if (this.constants.CSRF.methods.includes(req.method)) {
 				if (
 					ENDPOINTS.length > 0 &&
@@ -186,11 +205,6 @@ export = class Application extends BaseController {
 				) {
 					return next();
 				}
-
-				const requestBodyCsrf = req.body ? req.body["x-csrf-token"] : undefined;
-				const requestHeaderCsrf = req.get ? req.get("x-csrf-token") : undefined;
-				const requestCsrfFromSession = req.session ? req.session["x-csrf-token"] : undefined;
-				const tokenFromClient = requestBodyCsrf || requestHeaderCsrf;
 
 				if (!tokenFromClient || tokenFromClient !== requestCsrfFromSession) {
 					return res
@@ -269,15 +283,6 @@ export = class Application extends BaseController {
 		Singleton.getApis().deployApi(this.app);
 
 		/*
-		 * Middleware for saving cookie in the request
-		 */
-		this.app.use((req: Request, res: Response, next: NextFunction) => {
-			const key = Crypto.randomBytes(48).toString("base64");
-			req.user_cookie = key;
-			next();
-		});
-
-		/*
 		 * Middleware populating file or files attribute on file upload's request
 		 */
 		this.app.use((req: Request, res: Response, next: NextFunction) => {
@@ -298,6 +303,7 @@ export = class Application extends BaseController {
 					}
 				}
 			}
+
 			next();
 		});
 

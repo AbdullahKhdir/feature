@@ -4,16 +4,15 @@ export const reqUtil = (req: Request, res: Response, next: NextFunction) => {
 	const constants = Singleton.getConstantsInstance();
 	res.globalPostFormData = () => (res.locals["postData"] ? res.locals["postData"] : "");
 	res.globalGetFormData = () => (res.locals["getData"] ? res.locals["getData"] : "");
-
 	req.sendFormPostedData = () => req.setProp("postData", req.getAllFormPostedData());
-	req.getAllFormPostedData = () =>
-		req.body
-			? req.file
-				? Object.assign(req.body, req.file)
-				: req.files
-				? Object.assign(req.body, req.files)
-				: req.body
-			: "";
+	req.getAllFormPostedData = () => {
+		const { "x-csrf-token": _, ...filteredBody } = req.body || {};
+		return req.file
+			? Object.assign(filteredBody, req.file)
+			: req.files
+			? Object.assign(filteredBody, req.files)
+			: filteredBody;
+	};
 	req.getUploadedFiles = () => (req.file ? req.file : req.files ? req.files : {});
 	req.getUploadedFile = () => (req.file ? req.file : {});
 	req.getFormPostedData = (param: string) => (req.body ? (req.body[param] ? req.body[param].toString() : "") : "");

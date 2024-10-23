@@ -256,7 +256,12 @@ var ExpressResponse = /** @class */ (function () {
         else {
             status = this.constants.HTTPS_STATUS.REDIRECTION.TEMPORARY_REDIRECT;
         }
-        response.redirect(status, response.req.url || "/");
+        response.req.session.save(function (err) {
+            if (err) {
+                return response.redirect("/");
+            }
+            response.redirect(response.req.url || "/");
+        });
         return response;
     };
     /**

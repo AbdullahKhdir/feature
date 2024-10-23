@@ -117,7 +117,6 @@ module.exports = /** @class */ (function (_super) {
                             if (!req.isPost()) {
                                 return [2 /*return*/, this.siteNotFound(res)];
                             }
-                            console.log("checked 1");
                             req.sendFormPostedData();
                             errors = (0, express_validator_1.validationResult)(req);
                             email = req.getFormPostedData("email");
@@ -143,9 +142,7 @@ module.exports = /** @class */ (function (_super) {
                             error_1 = _a.sent();
                             return [3 /*break*/, 4];
                         case 4: return [3 /*break*/, 6];
-                        case 5:
-                            console.log("checked 111");
-                            return [2 /*return*/, this.onErrorValidation(res, errors.array())];
+                        case 5: return [2 /*return*/, this.onErrorValidation(res, errors.array())];
                         case 6: return [2 /*return*/];
                     }
                 });

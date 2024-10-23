@@ -65,6 +65,7 @@ var endpoints_1 = require("../core/api/apis_endpoints/endpoints");
 var config = __importStar(require("../core/config"));
 var undefined_routes_logic_1 = require("../core/utils/undefined-routes-logic");
 var FileSystem_1 = __importDefault(require("../core/node/FileSystem"));
+var io_1 = __importDefault(require("@pm2/io"));
 module.exports = /** @class */ (function (_super) {
     __extends(Application, _super);
     function Application() {
@@ -76,29 +77,38 @@ module.exports = /** @class */ (function (_super) {
         _this.bodyParser = Singleton_1.Singleton.getBodyParser();
         _this.path = Singleton_1.Singleton.getPath();
         _this.session = Singleton_1.Singleton.getExpressSession();
+        // todo
+        var currentReqs = io_1.default.counter({
+            name: "Realtime request count",
+            id: "app/realtime/requests"
+        });
         _this.app.use(function (req, res, next) {
             var origin = req.headers.origin || "".concat(req.protocol, "://").concat(req.get("host"));
             req.origin = origin;
+            currentReqs.inc();
+            req.on("end", function () {
+                currentReqs.dec();
+            });
             next();
         });
         /*
-            * Sets the following policies
-            ? contentSecurityPolicy
-            ? crossOriginEmbedderPolicy
-            ? crossOriginOpenerPolicy
-            ? crossOriginResourcePolicy
-            ? dnsPrefetchControl
-            ? expectCt
-            ? frameguard
-            ? hidePoweredBy
-            ? hsts
-            ? ieNoOpen
-            ? noSniff
-            ? originAgentCluster
-            ? permittedCrossDomainPolicies
-            ? referrerPolicy
-            ? xssFilter
-        */
+         * Sets the following policies
+         ? contentSecurityPolicy
+         ? crossOriginEmbedderPolicy
+         ? crossOriginOpenerPolicy
+         ? crossOriginResourcePolicy
+         ? dnsPrefetchControl
+         ? expectCt
+         ? frameguard
+         ? hidePoweredBy
+         ? hsts
+         ? ieNoOpen
+         ? noSniff
+         ? originAgentCluster
+         ? permittedCrossDomainPolicies
+         ? referrerPolicy
+         ? xssFilter
+         */
         _this.app.use(helmet_1.default.contentSecurityPolicy(_this.constants.CONTENT_SECURITY_POLICY));
         _this.app.use(helmet_1.default.crossOriginEmbedderPolicy());
         _this.app.use(helmet_1.default.crossOriginOpenerPolicy());
@@ -144,7 +154,6 @@ module.exports = /** @class */ (function (_super) {
         /*
          * CSRF Enabled
          */
-        //? Deploying API's endpoints and bypass csrf on requesting these endpoints ?\\
         _this.app.use(function (req, res, next) {
             if (endpoints_1.ENDPOINTS.length > 0) {
                 if (endpoints_1.ENDPOINTS.includes(req.headers.referer || "") ||
@@ -153,21 +162,23 @@ module.exports = /** @class */ (function (_super) {
                     return next();
                 }
             }
-            var isExcluded = FileSystem_1.default.getAllSubfolders(_this.path.join(__dirname, "..", "app", "public")).some(function (path) { return req.url.startsWith(path); });
+            var isExcluded = FileSystem_1.default.getAllSubfolders(_this.path.join(__dirname, "..", "app", "public")).some(function (path) {
+                return req.url.startsWith(path);
+            }) || req.url === "/favicon.ico";
             if (isExcluded) {
                 return next();
             }
             if (!_this.constants.CSRF.methods.includes(req.method)) {
-                var csrf_1 = crypto_1.default.randomBytes(24).toString("hex");
-                req.session["x-csrf-token"] = csrf_1;
-                res.cookie(_this.constants.CSRF.cookieHeaderName, csrf_1, {
+                var csrf = crypto_1.default.randomBytes(24).toString("hex");
+                req.session["x-csrf-token"] = csrf;
+                res.cookie(_this.constants.CSRF.cookieHeaderName, csrf, {
                     httpOnly: true,
                     secure: config.configurations().environment === "production",
                     sameSite: "lax"
                 });
-                res.header(_this.constants.CSRF.cookieHeaderName, csrf_1);
-                res.locals["csrf"] = csrf_1;
-                _this.app.locals["csrf"] = csrf_1;
+                res.header(_this.constants.CSRF.cookieHeaderName, csrf);
+                res.locals["csrf"] = csrf;
+                _this.app.locals["csrf"] = csrf;
             }
             next();
         });
@@ -180,6 +191,10 @@ module.exports = /** @class */ (function (_super) {
             next();
         });
         _this.app.use(function (req, res, next) {
+            var requestBodyCsrf = req.body ? req.body["x-csrf-token"] : undefined;
+            var requestHeaderCsrf = req.get ? req.get("x-csrf-token") : undefined;
+            var requestCsrfFromSession = req.session ? req.session["x-csrf-token"] : undefined;
+            var tokenFromClient = requestBodyCsrf !== null && requestBodyCsrf !== void 0 ? requestBodyCsrf : requestHeaderCsrf;
             if (_this.constants.CSRF.methods.includes(req.method)) {
                 if (endpoints_1.ENDPOINTS.length > 0 &&
                     (endpoints_1.ENDPOINTS.includes(req.headers.referer || "") ||
@@ -187,10 +202,6 @@ module.exports = /** @class */ (function (_super) {
                         endpoints_1.ENDPOINTS.includes(req.url || ""))) {
                     return next();
                 }
-                var requestBodyCsrf = req.body ? req.body["x-csrf-token"] : undefined;
-                var requestHeaderCsrf = req.get ? req.get("x-csrf-token") : undefined;
-                var requestCsrfFromSession = req.session ? req.session["x-csrf-token"] : undefined;
-                var tokenFromClient = requestBodyCsrf || requestHeaderCsrf;
                 if (!tokenFromClient || tokenFromClient !== requestCsrfFromSession) {
                     return res
                         .status(_this.constants.HTTPS_STATUS.CLIENT_ERRORS.FORBIDDEN)
@@ -250,14 +261,6 @@ module.exports = /** @class */ (function (_super) {
          * Deploying api's endpoints
          */
         Singleton_1.Singleton.getApis().deployApi(_this.app);
-        /*
-         * Middleware for saving cookie in the request
-         */
-        _this.app.use(function (req, res, next) {
-            var key = crypto_1.default.randomBytes(48).toString("base64");
-            req.user_cookie = key;
-            next();
-        });
         /*
          * Middleware populating file or files attribute on file upload's request
          */

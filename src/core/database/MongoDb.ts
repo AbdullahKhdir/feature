@@ -1,6 +1,6 @@
 "use strict";
 
-import { MongoClient, Db, Collection, DbOptions, InsertOneOptions, UUID, RunCommandOptions } from "mongodb";
+import { MongoClient, Db, Collection, DbOptions, RunCommandOptions } from "mongodb";
 import * as config from "../config";
 import MongoException from "../exception/types/MongoException";
 import { Singleton } from "../Singleton/Singleton";

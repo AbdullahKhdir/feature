@@ -129,7 +129,6 @@ export = class Auth extends BaseController {
 					return this.siteNotFound(res);
 				}
 
-				console.log("checked 1");
 				req.sendFormPostedData();
 
 				const errors = validationResult(req);
@@ -205,7 +204,6 @@ export = class Auth extends BaseController {
 					// })
 					// .catch((err: any) => )
 				} else {
-					console.log("checked 111");
 					return this.onErrorValidation(res, errors.array());
 				}
 			}

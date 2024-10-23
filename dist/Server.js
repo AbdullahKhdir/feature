@@ -63,8 +63,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = void 0;
-var https_1 = __importDefault(require("https"));
-var cluster_1 = __importDefault(require("cluster"));
+// import https from "https";
+// import http2 from "http2";
+var http_1 = __importDefault(require("http"));
 var os_1 = __importDefault(require("os"));
 var endpoints_1 = require("./core/api/apis_endpoints/endpoints");
 var config = __importStar(require("./core/config"));
@@ -93,63 +94,73 @@ var Server = /** @class */ (function () {
         return (this.server_instance = new Server());
     };
     Server.prototype.run = function () {
+        // if (cluster.isPrimary) {
+        // 	const numCPUs = OS.cpus().length;
+        // 	console.log(
+        // 		`${this.constants.COLORS.FgGreen} Master ${process.pid} is running!${this.constants.COLORS.Reset}`
+        // 	);
         var _this = this;
-        if (cluster_1.default.isPrimary) {
-            var numCPUs = os_1.default.cpus().length;
-            console.log("".concat(this.constants.COLORS.FgGreen, " Master ").concat(process.pid, " is running!").concat(this.constants.COLORS.Reset));
-            //? Fork workers (one per CPU core)
-            for (var i = 0; i < numCPUs; i++) {
-                cluster_1.default.fork();
-            }
-            //? Listen for dying workers and replace them
-            cluster_1.default.on("exit", function (worker, code, signal) {
-                console.log("".concat(_this.constants.COLORS.FgGreen, "Worker ").concat(worker.process.pid, " died. Forking a new one...").concat(_this.constants.COLORS.Reset));
-                cluster_1.default.fork();
-            });
-            //? Graceful shutdown on SIGINT (Ctrl + C)
-            process.on("SIGINT", function () {
-                var _a, _b;
-                console.warn("".concat(_this.constants.COLORS.FgRed).concat(_this.constants.COLORS.BgWhite, "SIGINT received. Closing all workers...").concat(_this.constants.COLORS.Reset));
-                for (var id in cluster_1.default.workers) {
-                    (_a = cluster_1.default.workers[id]) === null || _a === void 0 ? void 0 : _a.send("shutdown");
-                    (_b = cluster_1.default.workers[id]) === null || _b === void 0 ? void 0 : _b.disconnect();
+        // 	//? Fork workers (one per CPU core)
+        // 	for (let i = 0; i < numCPUs; i++) {
+        // 		cluster.fork();
+        // 	}
+        // 	//? Listen for dying workers and replace them
+        // 	cluster.on("exit", (worker, code, signal) => {
+        // 		console.log(
+        // 			`${this.constants.COLORS.FgGreen}Worker ${worker.process.pid} died. Forking a new one...${this.constants.COLORS.Reset}`
+        // 		);
+        // 		cluster.fork();
+        // 	});
+        // 	// //? Graceful shutdown on SIGINT (Ctrl + C)
+        // 	process.on("SIGINT", () => {
+        // 		console.warn(
+        // 			`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}SIGINT received. Closing all workers...${this.constants.COLORS.Reset}`
+        // 		);
+        // 		for (const id in cluster.workers) {
+        // 			cluster.workers[id]?.send("shutdown");
+        // 			cluster.workers[id]?.disconnect();
+        // 		}
+        // 		//? Allow time for workers to clean up
+        // 		setTimeout(() => process.exit(0), 5000);
+        // 	});
+        // 	// //? Add error handling for unhandled errors
+        // 	process.on("uncaughtException", (err) => {
+        // 		console.error(
+        // 			`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}Unhandled exception in master process:${this.constants.COLORS.Reset}`,
+        // 			err
+        // 		);
+        // 	});
+        // 	process.on("unhandledRejection", (err) => {
+        // 		console.error(
+        // 			`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}Unhandled promise rejection in master process:${this.constants.COLORS.Reset}`,
+        // 			err
+        // 		);
+        // 	});
+        // } else {
+        // }
+        //? Worker process runs the server
+        (function () { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.setupWorker()];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
                 }
-                //? Allow time for workers to clean up
-                setTimeout(function () { return process.exit(0); }, 5000);
             });
-            //? Add error handling for unhandled errors
-            process.on("uncaughtException", function (err) {
-                console.error("".concat(_this.constants.COLORS.FgRed).concat(_this.constants.COLORS.BgWhite, "Unhandled exception in master process:").concat(_this.constants.COLORS.Reset), err);
-            });
-            process.on("unhandledRejection", function (err) {
-                console.error("".concat(_this.constants.COLORS.FgRed).concat(_this.constants.COLORS.BgWhite, "Unhandled promise rejection in master process:").concat(_this.constants.COLORS.Reset), err);
-            });
-        }
-        else {
-            //? Worker process runs the server
-            (function () { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.setupWorker()];
-                        case 1:
-                            _a.sent();
-                            return [2 /*return*/];
-                    }
-                });
-            }); })();
-        }
+        }); })();
     };
     Server.prototype.port = function () {
         return config.configurations().server_port || this.constants.PORTS.SERVER_PORT;
     };
     Server.prototype.setupWorker = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var mkcert, ca, cert, httpsOptions, port_1, httpServer, server_1;
+            var mkcert, ca, port, httpServer, server_1;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!(config.configurations().environment === "development")) return [3 /*break*/, 3];
+                        if (!(config.configurations().environment === "development")) return [3 /*break*/, 2];
                         mkcert = require("mkcert");
                         return [4 /*yield*/, mkcert.createCA({
                                 organization: "Node",
@@ -160,16 +171,7 @@ var Server = /** @class */ (function () {
                             })];
                     case 1:
                         ca = _a.sent();
-                        return [4 /*yield*/, mkcert.createCert({
-                                domains: ["127.0.0.1", "test"],
-                                validityDays: 1,
-                                caKey: ca.key,
-                                caCert: ca.cert
-                            })];
-                    case 2:
-                        cert = _a.sent();
-                        httpsOptions = { key: cert.key, cert: cert.cert };
-                        port_1 = Server.getServerInstance().port();
+                        port = Server.getServerInstance().port();
                         //****************************************************************************************************\\
                         //* Will be triggered only on errors or next(new Error('error message')) or next({error: 'message'}) *\\
                         //****************************************************************************************************\\
@@ -307,13 +309,14 @@ var Server = /** @class */ (function () {
                                 }
                             }
                         });
-                        httpServer = https_1.default.createServer(httpsOptions, this.app);
-                        // const httpServer = http.createServer(this.app);
-                        // const _class = Websocket.getClassInstance();
+                        httpServer = http_1.default.createServer(this.app);
                         // const io = Websocket.getIoInstance(httpServer);
-                        // _class.initializeHandlers([
+                        // class.initializeHandlers([
                         //     { path: '/chat', handler: new ChatSockets() }
                         // ]);
+                        // todo read migrations
+                        // todo httpbin
+                        // todo nginx
                         process.on("message", function (msg) {
                             if (msg === "shutdown") {
                                 console.log("".concat(_this.constants.COLORS.FgRed).concat(_this.constants.COLORS.BgWhite, "Worker ").concat(process.pid, " shutting down gracefully...").concat(_this.constants.COLORS.Reset));
@@ -323,35 +326,38 @@ var Server = /** @class */ (function () {
                                 });
                             }
                         });
-                        //? Handle worker errors
                         process.on("uncaughtException", function (err) {
                             console.error("".concat(_this.constants.COLORS.FgRed).concat(_this.constants.COLORS.BgWhite, "Unhandled exception in worker process:").concat(_this.constants.COLORS.Reset), err);
                         });
                         process.on("unhandledRejection", function (err) {
                             console.error("".concat(_this.constants.COLORS.FgRed).concat(_this.constants.COLORS.BgWhite, "Unhandled promise rejection in worker process:").concat(_this.constants.COLORS.Reset), err);
                         });
-                        //? Catch EPIPE error in workers
                         process.on("error", function (err) {
                             if (err.code === "EPIPE") {
                                 console.error("".concat(_this.constants.COLORS.FgRed).concat(_this.constants.COLORS.BgWhite, "EPIPE error occurred in worker process").concat(_this.constants.COLORS.Reset));
                             }
                         });
-                        server_1 = httpServer.listen(port_1, function () {
-                            if (config.configurations().executionPoint === _this.constants.NPM) {
-                                console.log("".concat(_this.constants.COLORS.FgBlue).concat(_this.constants.COLORS.Bright, "Express Server Is Running Natively On Port ").concat(port_1, "!").concat(_this.constants.COLORS.Reset));
-                            }
-                            else if (config.configurations().executionPoint === _this.constants.PM2) {
-                                console.log("".concat(_this.constants.COLORS.BgMagenta).concat(_this.constants.COLORS.Bright, "Running On Load Balancer PM2..!").concat(_this.constants.COLORS.Reset));
-                                console.log("".concat(_this.constants.COLORS.FgBlue).concat(_this.constants.COLORS.Bright, "Express Server Is Running On Port ").concat(port_1, "!").concat(_this.constants.COLORS.Reset));
-                                process.send("ready");
-                            }
-                            else {
-                                console.log("".concat(_this.constants.COLORS.FgBlue).concat(_this.constants.COLORS.Bright, " Express Server Is Running Natively On Port ").concat(port_1, "!").concat(_this.constants.COLORS.Reset));
-                            }
-                            console.log("".concat(_this.constants.COLORS.FgYellow).concat(_this.constants.COLORS.Bright, "Worker ").concat(process.pid, " is running the server on port ").concat(port_1, " using TypeScript!").concat(_this.constants.COLORS.Reset));
-                        });
+                        server_1 = httpServer.listen(port, "localhost", function () { return __awaiter(_this, void 0, void 0, function () {
+                            var _a, address, port;
+                            return __generator(this, function (_b) {
+                                _a = server_1.address(), address = _a.address, port = _a.port;
+                                if (config.configurations().executionPoint === this.constants.NPM) {
+                                    console.log("".concat(this.constants.COLORS.FgBlue).concat(this.constants.COLORS.Bright, "Express Server Is Running Natively On Port ").concat(port, "!").concat(this.constants.COLORS.Reset));
+                                }
+                                else if (config.configurations().executionPoint === this.constants.PM2) {
+                                    console.log("".concat(this.constants.COLORS.BgMagenta).concat(this.constants.COLORS.Bright, "Running On Load Balancer PM2..!").concat(this.constants.COLORS.Reset));
+                                    console.log("".concat(this.constants.COLORS.FgBlue).concat(this.constants.COLORS.Bright, "Express Server Is Running On Port ").concat(port, "!").concat(this.constants.COLORS.Reset));
+                                    process.send("ready");
+                                }
+                                else {
+                                    console.log("".concat(this.constants.COLORS.FgBlue).concat(this.constants.COLORS.Bright, " Express Server Is Running Natively On Port ").concat(port, "!").concat(this.constants.COLORS.Reset));
+                                }
+                                console.log("".concat(this.constants.COLORS.FgYellow).concat(this.constants.COLORS.Bright, "Worker ").concat(process.pid, " is running the server on port ").concat(port, " on the IP-Address ").concat(address, " using TypeScript!").concat(this.constants.COLORS.Reset));
+                                return [2 /*return*/];
+                            });
+                        }); });
                         return [2 /*return*/, server_1];
-                    case 3: return [2 /*return*/];
+                    case 2: return [2 /*return*/];
                 }
             });
         });

@@ -1,0 +1,123 @@
+version: "3.8"
+
+services:
+    # httpbin:
+    #     build:
+    #         context: .
+    #         dockerfile: ./docker/httpbin/DockerFile.development.node.js
+    #     ports:
+    #         - "8000:80"
+    #     # Configure Gunicorn for detailed logging
+    #     command: gunicorn -b 0.0.0.0:80 --access-logfile '-' --error-logfile '-' --log-level debug httpbin:app
+    #     healthcheck:
+    #         test: ["CMD", "curl", "-f", "http://localhost:80"]
+    #         interval: 10s
+    #         timeout: 5s
+    #         retries: 3
+    #     networks:
+    #         - node_network
+
+    db:
+        image: mysql
+        ports:
+            - "33306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: sql_database
+        healthcheck:
+            test: ["CMD-SHELL", "mysql -uroot -proot -e 'SELECT 1'"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        volumes:
+            - mysql_data:/var/lib/mysql
+            # - /run/mysqld:/run/mysqld
+        networks:
+            - node_network # Attach to the custom network
+
+    wait-for-db:
+        image: alpine
+        depends_on:
+            db:
+                condition: service_healthy
+        volumes:
+            - ./wait-for-db.sh:/nodeApp/wait-for-db.sh
+        command: ["sh", "-c", "apk update && apk add ncurses && sh /nodeApp/wait-for-db.sh"]
+        networks:
+            - node_network # Attach to the custom network
+
+    nodeapp:
+        build:
+            context: .
+            dockerfile: ./docker/DockerFile.development.node.js
+            args:
+                NODE_ENV: development
+        depends_on:
+            db:
+                condition: service_healthy
+            wait-for-db:
+                condition: service_completed_successfully
+        ports:
+            - "8010:8010"
+            - "9229:9229"
+        working_dir: /nodeApp
+        container_name: node_app_container
+        user: root
+        volumes:
+            - .:/nodeApp
+        environment:
+            NODE_ENV: development
+        env_file:
+            - .env
+        networks:
+            - node_network # Attach to the custom network
+
+    nginx:
+        build:
+            context: .
+            dockerfile: ./docker/nginx/DockerFile.development.nods.js
+        container_name: nginx_server
+        ports:
+            - "80:80"
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://nodeapp:8010"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./nginx/blocked_ips.conf:/etc/nginx/blocked_ips.conf
+            - ./nginx/logs:/var/log/nginx
+            - ./nginx/certs:/etc/nginx/certs
+            - ./nginx/error_pages:/etc/nginx/error_pages
+            - ./nginx/block_ips.sh:/var/nginx/scripts/block_ips.sh
+        depends_on:
+            # httpbin:
+            #     condition: service_healthy
+            nodeapp:
+                condition: service_healthy
+        networks:
+            - node_network
+
+    cron:
+        image: alpine
+        container_name: cron_service
+        volumes:
+            - ./nginx/block_ips.sh:/usr/local/bin/block_ips.sh # Mount the block_ips.sh script
+            - ./nginx/blocked_ips.conf:/etc/nginx/blocked_ips.conf # Share the blocked IPs config with NGINX
+            - /var/log/nginx:/var/log/nginx # Share the NGINX log directory to analyze IPs
+        entrypoint: >
+            sh -c "echo '0 0 * * * /usr/local/bin/block_ips.sh >> /var/log/nginx/cron.log 2>&1' | crontab - &&
+            crond -f"
+        depends_on:
+            nginx:
+                condition: service_healthy
+        networks:
+            - node_network # Attach to the custom network
+
+volumes:
+    mysql_data:
+
+networks:
+    node_network:
+        driver: bridge

@@ -34,7 +34,7 @@
 			"problemMatcher": []
 		},
 		{
-			"label": "Sass Compile",
+			"label": "SASS Compile",
 			"type": "shell",
 			"command": "npx sass --update -c --verbose dist/app/public/sass:dist/app/public/css --style=compressed",
 			"group": "build"
@@ -73,25 +73,31 @@
 		{
 			"label": "Compile typescript",
 			"type": "shell",
-			"command": "node_modules/typescript/bin/tsc",
+			"command": "sudo node_modules/typescript/bin/tsc",
 			"group": "build"
 		},
 		{
 			"label": "Compile typescript and watch",
 			"type": "shell",
-			"command": "node_modules/typescript/bin/tsc --watch",
+			"command": "sudo node_modules/typescript/bin/tsc --watch",
 			"group": "build"
 		},
 		{
 			"label": "PM2 List Apps",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 list",
+			"command": "npx pm2 list",
+			"group": "build"
+		},
+		{
+			"label": "Run Server With Nodemon",
+			"type": "shell",
+			"command": "npm run start-nodemon",
 			"group": "build"
 		},
 		{
 			"label": "PM2 Cluster Max",
 			"type": "shell",
-			"command": "npm install && npm update &&  node_modules/pm2/bin/pm2 start dist/Server.js -i max --watch",
+			"command": "node dist/core/database/migrations/execute_migrations/ExecuteSQL.js && npx pm2-runtime start dist/Server.js -i max --name node",
 			"options": {
 				"env": {
 					"EXECUTION_POINT": "PM2"
@@ -102,7 +108,7 @@
 		{
 			"label": "PM2 cluster one process",
 			"type": "shell",
-			"command": "npm install && npm update && node_modules/pm2/bin/pm2 start dist/Server.js -i 1 --watch --wait-ready",
+			"command": "node dist/core/database/migrations/execute_migrations/ExecuteSQL.js && npx pm2-runtime start dist/Server.js -i 1  --name node",
 			"options": {
 				"env": {
 					"EXECUTION_POINT": "PM2"
@@ -111,63 +117,95 @@
 			"group": "build"
 		},
 		{
+			"label": "Docker build node js (development)",
+			"type": "shell",
+			"command": "docker system prune -f && docker volume prune -f && docker-compose -f docker-compose-development.yml build --build-arg NODE_ENV=development && docker-compose -f docker-compose-development.yml up --force-recreate",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Docker Logs for httpbin and nodeapp",
+			"type": "shell",
+			"command": "docker-compose -f docker-compose-development.yml logs -f httpbin nodeapp",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Docker restart node js (development)",
+			"type": "shell",
+			"command": "docker-compose -f docker-compose-development.yml restart",
+			"group": "build"
+		},
+		{
+			"label": "Docker stop node js (development)",
+			"type": "shell",
+			"command": "docker-compose -f docker-compose-development.yml stop",
+			"group": "build"
+		},
+		{
+			"label": "Docker start node js (development)",
+			"type": "shell",
+			"command": "docker-compose -f docker-compose-development.yml start",
+			"group": "build"
+		},
+		{
 			"label": "PM2 delete all process",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 delete all",
+			"command": "npx pm2 delete all",
 			"group": "build"
 		},
 		{
 			"label": "PM2 GUI",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 plus",
+			"command": "npx pm2 plus",
 			"group": "build"
 		},
 		{
 			"label": "PM2 describe",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 describe dist/Server",
+			"command": "npx pm2 describe dist/Server",
 			"group": "build"
 		},
 		{
 			"label": "PM2 monitor all",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 monit",
+			"command": "npx pm2 monit",
 			"group": "build"
 		},
 		{
 			"label": "PM2 logger",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 logs",
+			"command": "npx pm2 logs",
 			"group": "build"
 		},
 		{
 			"label": "PM2 stop all",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 stop all",
+			"command": "npx pm2 stop all",
 			"group": "build"
 		},
 		{
 			"label": "PM2 restart all",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 restart all",
+			"command": "npx pm2 restart all",
 			"group": "build"
 		},
 		{
 			"label": "PM2 reload all",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 reload all",
+			"command": "npx pm2 reload all",
 			"group": "build"
 		},
 		{
 			"label": "PM2 update",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 updatePM2",
+			"command": "npx pm2 updatePM2",
 			"group": "build"
 		},
 		{
 			"label": "PM2 ping",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 ping",
+			"command": "npx pm2 ping",
 			"group": "build"
 		},
 		{
@@ -184,7 +222,7 @@
 		{
 			"label": "Clear all logs",
 			"type": "shell",
-			"command": "node_modules/pm2/bin/pm2 flush",
+			"command": "npx pm2 flush",
 			"group": "build"
 		}
 	]

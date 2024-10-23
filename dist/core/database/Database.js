@@ -108,8 +108,8 @@ module.exports = (_a = /** @class */ (function (_super) {
                 user: config.configurations().user,
                 password: config.configurations().password,
                 database: config.configurations().database,
-                connectionLimit: config.configurations().connectionLimit,
-                socketPath: config.configurations().os !== "WINDOWS" ? "/tmp/mysql.sock" : ""
+                connectionLimit: config.configurations().connectionLimit
+                // socketPath: config.configurations().os !== "WINDOWS" ? "/tmp/mysql.sock" : ""
             }));
             Database.instanceCount++; // Increment the count when an instance is created
             return _this;
@@ -178,8 +178,11 @@ module.exports = (_a = /** @class */ (function (_super) {
                 port: config.configurations().port,
                 user: config.configurations().user,
                 password: config.configurations().password,
-                connectionLimit: config.configurations().connectionLimit,
-                socketPath: config.configurations().os !== "WINDOWS" ? "/tmp/mysql.sock" : ""
+                connectionLimit: config.configurations().connectionLimit
+                //? cat /etc/mysql/my.cnf
+                //? cat /tmp/mysql.sock
+                //? cat /run/mysqld/mysqld.sock
+                // socketPath: config.configurations().os !== "WINDOWS" ? "/run/mysqld/mysqld.sock" : ""
             }));
             return pool;
         };

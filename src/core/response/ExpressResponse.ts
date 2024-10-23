@@ -248,7 +248,12 @@ export abstract class ExpressResponse {
 			status = this.constants.HTTPS_STATUS.REDIRECTION.TEMPORARY_REDIRECT;
 		}
 
-		response.redirect(status, response.req.url || "/");
+		response.req.session.save((err: any) => {
+			if (err) {
+				return response.redirect("/");
+			}
+			response.redirect(response.req.url || "/");
+		});
 
 		return response;
 	}

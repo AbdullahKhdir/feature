@@ -30,6 +30,7 @@ export const toast = (req: Request, res: Response, next: NextFunction, app: any)
 	if (typeof flashArray["erroredInputs"] !== "undefined") {
 		erroredInputs = JSON.parse(flashArray["erroredInputs"]);
 	}
+
 	res.locals["error"] = error;
 	res.locals["warning"] = warning;
 	res.locals["success"] = success;

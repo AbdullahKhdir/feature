@@ -1,7 +1,7 @@
 "use strict";
 
-import https from "https";
-import http2 from "http2";
+// import https from "https";
+// import http2 from "http2";
 import http from "http";
 import cluster from "cluster";
 import OS from "os";
@@ -36,63 +36,64 @@ export class Server {
 		if (this.server_instance) {
 			return this.server_instance;
 		}
+
 		return (this.server_instance = new Server());
 	}
 
 	run() {
-		if (cluster.isPrimary) {
-			const numCPUs = OS.cpus().length;
-			console.log(
-				`${this.constants.COLORS.FgGreen} Master ${process.pid} is running!${this.constants.COLORS.Reset}`
-			);
+		// if (cluster.isPrimary) {
+		// 	const numCPUs = OS.cpus().length;
+		// 	console.log(
+		// 		`${this.constants.COLORS.FgGreen} Master ${process.pid} is running!${this.constants.COLORS.Reset}`
+		// 	);
 
-			//? Fork workers (one per CPU core)
-			for (let i = 0; i < numCPUs; i++) {
-				cluster.fork();
-			}
+		// 	//? Fork workers (one per CPU core)
+		// 	for (let i = 0; i < numCPUs; i++) {
+		// 		cluster.fork();
+		// 	}
 
-			//? Listen for dying workers and replace them
-			cluster.on("exit", (worker, code, signal) => {
-				console.log(
-					`${this.constants.COLORS.FgGreen}Worker ${worker.process.pid} died. Forking a new one...${this.constants.COLORS.Reset}`
-				);
-				cluster.fork();
-			});
+		// 	//? Listen for dying workers and replace them
+		// 	cluster.on("exit", (worker, code, signal) => {
+		// 		console.log(
+		// 			`${this.constants.COLORS.FgGreen}Worker ${worker.process.pid} died. Forking a new one...${this.constants.COLORS.Reset}`
+		// 		);
+		// 		cluster.fork();
+		// 	});
 
-			//? Graceful shutdown on SIGINT (Ctrl + C)
-			process.on("SIGINT", () => {
-				console.warn(
-					`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}SIGINT received. Closing all workers...${this.constants.COLORS.Reset}`
-				);
-				for (const id in cluster.workers) {
-					cluster.workers[id]?.send("shutdown");
-					cluster.workers[id]?.disconnect();
-				}
+		// 	// //? Graceful shutdown on SIGINT (Ctrl + C)
+		// 	process.on("SIGINT", () => {
+		// 		console.warn(
+		// 			`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}SIGINT received. Closing all workers...${this.constants.COLORS.Reset}`
+		// 		);
+		// 		for (const id in cluster.workers) {
+		// 			cluster.workers[id]?.send("shutdown");
+		// 			cluster.workers[id]?.disconnect();
+		// 		}
 
-				//? Allow time for workers to clean up
-				setTimeout(() => process.exit(0), 5000);
-			});
+		// 		//? Allow time for workers to clean up
+		// 		setTimeout(() => process.exit(0), 5000);
+		// 	});
 
-			//? Add error handling for unhandled errors
-			process.on("uncaughtException", (err) => {
-				console.error(
-					`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}Unhandled exception in master process:${this.constants.COLORS.Reset}`,
-					err
-				);
-			});
+		// 	// //? Add error handling for unhandled errors
+		// 	process.on("uncaughtException", (err) => {
+		// 		console.error(
+		// 			`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}Unhandled exception in master process:${this.constants.COLORS.Reset}`,
+		// 			err
+		// 		);
+		// 	});
 
-			process.on("unhandledRejection", (err) => {
-				console.error(
-					`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}Unhandled promise rejection in master process:${this.constants.COLORS.Reset}`,
-					err
-				);
-			});
-		} else {
-			//? Worker process runs the server
-			(async () => {
-				await this.setupWorker();
-			})();
-		}
+		// 	process.on("unhandledRejection", (err) => {
+		// 		console.error(
+		// 			`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}Unhandled promise rejection in master process:${this.constants.COLORS.Reset}`,
+		// 			err
+		// 		);
+		// 	});
+		// } else {
+		// }
+		//? Worker process runs the server
+		(async () => {
+			await this.setupWorker();
+		})();
 	}
 
 	port(): number | string {
@@ -116,19 +117,13 @@ export class Server {
 			});
 
 			// then create a tls certificate
-			const cert = await mkcert.createCert({
-				domains: ["127.0.0.1", "test"],
-				validityDays: 1,
-				caKey: ca.key,
-				caCert: ca.cert
-			});
-
-			// certificate info
-			// console.log(cert.key, cert.cert);
-			// create a full chain certificate by merging CA and domain certificates
-			// console.log(`${cert.cert}\n${ca.cert}`);
-
-			const httpsOptions = { key: cert.key, cert: cert.cert };
+			// const cert = await mkcert.createCert({
+			// 	domains: ["127.0.0.1", "test"],
+			// 	validityDays: 1,
+			// 	caKey: ca.key,
+			// 	caCert: ca.cert
+			// });
+			// const httpsOptions = { key: cert.key, cert: cert.cert };
 			// const httpsOptions = {
 			// 	key: fs.readFileSync(__dirname + "/certificates/example.cert.key"),
 			// 	cert: fs.readFileSync(__dirname + "/certificates/example.cert.pem")
@@ -282,15 +277,15 @@ export class Server {
 				}
 			});
 
-			const httpServer = https.createServer(httpsOptions, this.app);
-			// const httpServer = http.createServer(this.app);
-
-			// const _class = Websocket.getClassInstance();
+			// const httpServer = https.createServer(httpsOptions, this.app);
+			const httpServer = http.createServer(this.app);
 			// const io = Websocket.getIoInstance(httpServer);
-			// _class.initializeHandlers([
+			// class.initializeHandlers([
 			//     { path: '/chat', handler: new ChatSockets() }
 			// ]);
-
+			// todo read migrations
+			// todo httpbin
+			// todo nginx
 			process.on("message", (msg) => {
 				if (msg === "shutdown") {
 					console.log(
@@ -304,23 +299,18 @@ export class Server {
 					});
 				}
 			});
-
-			//? Handle worker errors
 			process.on("uncaughtException", (err) => {
 				console.error(
 					`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}Unhandled exception in worker process:${this.constants.COLORS.Reset}`,
 					err
 				);
 			});
-
 			process.on("unhandledRejection", (err) => {
 				console.error(
 					`${this.constants.COLORS.FgRed}${this.constants.COLORS.BgWhite}Unhandled promise rejection in worker process:${this.constants.COLORS.Reset}`,
 					err
 				);
 			});
-
-			//? Catch EPIPE error in workers
 			process.on("error", (err) => {
 				if (err.code === "EPIPE") {
 					console.error(
@@ -329,7 +319,9 @@ export class Server {
 				}
 			});
 
-			const server = httpServer.listen(port, () => {
+			// @ts-ignore
+			const server = httpServer.listen(port, "localhost", async () => {
+				const { address, port } = server.address() as { address: string; port: number };
 				if (config.configurations().executionPoint === this.constants.NPM) {
 					console.log(
 						`${this.constants.COLORS.FgBlue}${this.constants.COLORS.Bright}Express Server Is Running Natively On Port ${port}!${this.constants.COLORS.Reset}`
@@ -347,8 +339,9 @@ export class Server {
 						`${this.constants.COLORS.FgBlue}${this.constants.COLORS.Bright} Express Server Is Running Natively On Port ${port}!${this.constants.COLORS.Reset}`
 					);
 				}
+
 				console.log(
-					`${this.constants.COLORS.FgYellow}${this.constants.COLORS.Bright}Worker ${process.pid} is running the server on port ${port} using TypeScript!${this.constants.COLORS.Reset}`
+					`${this.constants.COLORS.FgYellow}${this.constants.COLORS.Bright}Worker ${process.pid} is running the server on port ${port} on the IP-Address ${address} using TypeScript!${this.constants.COLORS.Reset}`
 				);
 			});
 
